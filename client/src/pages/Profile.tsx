@@ -68,6 +68,28 @@ export default function Profile() {
               Phone
               <input name="phone" defaultValue={me.phone} />
             </label>
+            <label>
+              Content language preference
+              <select name="locale" defaultValue={me.locale || "en"}>
+                <option value="en">English</option>
+                <option value="hi">Hindi</option>
+              </select>
+            </label>
+            <label>
+              Personal time zone
+              <input
+                name="timeZone"
+                required
+                defaultValue={me.timeZone || "UTC"}
+              />
+            </label>
+            <label>
+              Theme
+              <select name="theme" defaultValue={me.theme || "light"}>
+                <option value="light">Light</option>
+                <option value="dark">Dark</option>
+              </select>
+            </label>
             <button>Save profile</button>
           </form>
         </section>

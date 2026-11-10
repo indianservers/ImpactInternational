@@ -1,0 +1,250 @@
+{
+  "tests": [
+    {
+      "test": "anonymous API denied",
+      "passed": true
+    },
+    {
+      "test": "admin login",
+      "passed": true
+    },
+    {
+      "test": "multiple authorized workspaces",
+      "passed": true
+    },
+    {
+      "test": "workspace activation",
+      "passed": true
+    },
+    {
+      "test": "server pagination",
+      "passed": true
+    },
+    {
+      "test": "live dashboard",
+      "passed": true
+    },
+    {
+      "test": "organization creation",
+      "passed": true
+    },
+    {
+      "test": "duplicate code rejected",
+      "passed": true
+    },
+    {
+      "test": "invalid parent type rejected",
+      "passed": true
+    },
+    {
+      "test": "organization update",
+      "passed": true
+    },
+    {
+      "test": "stale update rejected",
+      "passed": true
+    },
+    {
+      "test": "organization search",
+      "passed": true
+    },
+    {
+      "test": "cross-tenant detail denied",
+      "passed": true
+    },
+    {
+      "test": "cross-tenant parent denied",
+      "passed": true
+    },
+    {
+      "test": "manager login",
+      "passed": true
+    },
+    {
+      "test": "manager cannot modify sibling",
+      "passed": true
+    },
+    {
+      "test": "archive requires atomic permission",
+      "passed": true
+    },
+    {
+      "test": "denied mutation does not persist",
+      "passed": true
+    },
+    {
+      "test": "manager cannot manage roles",
+      "passed": true
+    },
+    {
+      "test": "workspace id tampering denied",
+      "passed": true
+    },
+    {
+      "test": "member write denied",
+      "passed": true
+    },
+    {
+      "test": "member admin denied",
+      "passed": true
+    },
+    {
+      "test": "role assignment",
+      "passed": true
+    },
+    {
+      "test": "role creation",
+      "passed": true
+    },
+    {
+      "test": "unassigned role editing",
+      "passed": true
+    },
+    {
+      "test": "scoped role assignment",
+      "passed": true
+    },
+    {
+      "test": "assignment cannot escalate privileges",
+      "passed": true
+    },
+    {
+      "test": "assigned role editing protected",
+      "passed": true
+    },
+    {
+      "test": "association provisioning",
+      "passed": true
+    },
+    {
+      "test": "non-platform provisioning denied",
+      "passed": true
+    },
+    {
+      "test": "registration request",
+      "passed": true
+    },
+    {
+      "test": "platform registration review",
+      "passed": true
+    },
+    {
+      "test": "registration provisioning",
+      "passed": true
+    },
+    {
+      "test": "registration provisioning idempotency",
+      "passed": true
+    },
+    {
+      "test": "scoped role revocation",
+      "passed": true
+    },
+    {
+      "test": "revoked workspace denied",
+      "passed": true
+    },
+    {
+      "test": "registration review denied to member",
+      "passed": true
+    },
+    {
+      "test": "audit generated",
+      "passed": true
+    },
+    {
+      "test": "registration",
+      "passed": true
+    },
+    {
+      "test": "unverified login denied",
+      "passed": true
+    },
+    {
+      "test": "verification can be resent",
+      "passed": true
+    },
+    {
+      "test": "email verification",
+      "passed": true
+    },
+    {
+      "test": "verification replay denied",
+      "passed": true
+    },
+    {
+      "test": "verified login",
+      "passed": true
+    },
+    {
+      "test": "signup grants no workspace",
+      "passed": true
+    },
+    {
+      "test": "forgot password",
+      "passed": true
+    },
+    {
+      "test": "password reset",
+      "passed": true
+    },
+    {
+      "test": "reset revokes sessions",
+      "passed": true
+    },
+    {
+      "test": "session revoke",
+      "passed": true
+    },
+    {
+      "test": "revoked session denied",
+      "passed": true
+    },
+    {
+      "test": "account lockout enforced",
+      "passed": true
+    },
+    {
+      "test": "logout",
+      "passed": true
+    },
+    {
+      "test": "logout invalidates session",
+      "passed": true
+    },
+    {
+      "test": "concurrent writes have one winner",
+      "passed": true
+    },
+    {
+      "test": "missing CSRF token rejected",
+      "passed": true
+    },
+    {
+      "test": "migration history applied",
+      "passed": true
+    },
+    {
+      "test": "database cross-tenant parent constraint",
+      "passed": true
+    },
+    {
+      "test": "database self-cycle rejected",
+      "passed": true
+    },
+    {
+      "test": "expired session denied",
+      "passed": true
+    },
+    {
+      "test": "OpenAPI document available",
+      "passed": true
+    }
+  ],
+  "performance": {
+    "samples": 100,
+    "median_ms": 11.31,
+    "p95_ms": 34.07,
+    "conditions": "Loopback HTTP, warm EF/query/connection pool, sequential requests, development seed plus integration-created rows; not a scale test."
+  }
+}

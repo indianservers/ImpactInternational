@@ -1,0 +1,7 @@
+{
+  "fixture_clubs": 10000,
+  "samples": 30,
+  "median_database_ms": 20.93,
+  "p95_database_ms": 22.246,
+  "conditions": "PostgreSQL 17.6, Windows local, rollback-only fictional fixture, warm repeated EXPLAIN ANALYZE BUFFERS of scoped recursive hierarchy projection sorted to 20 rows; no concurrent users. First sample discarded. Full plans in explain.txt."
+}

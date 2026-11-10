@@ -1,4 +1,11 @@
-import { lazy, Suspense, useState, createContext, useContext } from "react";
+import {
+  lazy,
+  Suspense,
+  useState,
+  useEffect,
+  createContext,
+  useContext,
+} from "react";
 import {
   Link,
   NavLink,
@@ -11,6 +18,14 @@ import {
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   Globe2,
+  Sun,
+  Moon,
+  UserRound,
+  CreditCard,
+  ClipboardCheck,
+  ArrowRightLeft,
+  Upload,
+  SlidersHorizontal,
   LayoutDashboard,
   Network,
   Building2,
@@ -37,6 +52,46 @@ const SettingsPage = lazy(() => import("./pages/Settings"));
 const Audit = lazy(() => import("./pages/Audit"));
 const Profile = lazy(() => import("./pages/Profile"));
 const Auth = lazy(() => import("./pages/Auth"));
+const Members = lazy(() => import("./pages/Members"));
+const MemberProfile = lazy(() => import("./pages/MemberProfile"));
+const MemberPortal = lazy(() => import("./pages/MemberPortal"));
+const MembershipApplications = lazy(
+  () => import("./pages/MembershipApplications"),
+);
+const MembershipSettings = lazy(() => import("./pages/MembershipSettings"));
+const MemberImports = lazy(() => import("./pages/MemberImports"));
+const MembershipInsights = lazy(() => import("./pages/MembershipInsights"));
+const MembershipOperations = lazy(() => import("./pages/MembershipOperations"));
+const JoinInvitation = lazy(() =>
+  import("./pages/MembershipPublic").then((m) => ({
+    default: m.JoinInvitation,
+  })),
+);
+const VerifyMembershipCard = lazy(() =>
+  import("./pages/MembershipPublic").then((m) => ({
+    default: m.VerifyMembershipCard,
+  })),
+);
+const ClubDirectory = lazy(() => import("./pages/GovernanceClubs"));
+const ClubWorkspace = lazy(() => import("./pages/GovernanceClubs").then(m=>({default:m.ClubWorkspace})));
+const GovernanceDashboard = lazy(() => import("./pages/GovernanceClubs").then(m=>({default:m.GovernanceDashboard})));
+const LeadershipDirectory = lazy(() => import("./pages/GovernanceLeadership"));
+const LeadershipCalendar = lazy(() => import("./pages/GovernanceLeadership").then(m=>({default:m.LeadershipCalendar})));
+const LeadershipHandovers = lazy(() => import("./pages/GovernanceLeadership").then(m=>({default:m.LeadershipHandovers})));
+const CommitteeDirectory = lazy(() => import("./pages/GovernanceCommittees"));
+const CommitteeWorkspace = lazy(() => import("./pages/GovernanceCommittees").then(m=>({default:m.CommitteeWorkspace})));
+const GovernanceApprovals = lazy(() => import("./pages/GovernanceApprovals"));
+const GovernanceSettings = lazy(() => import("./pages/GovernanceSettings"));
+const GovernanceDocuments = lazy(() => import("./pages/GovernanceDocuments"));
+const GovernanceResolutions = lazy(() => import("./pages/GovernanceDocuments").then(m=>({default:m.GovernanceResolutions})));
+function WorkspaceHome() {
+  const { w } = useWorkspace();
+  return w?.permissions.includes("governance.reports") ? <GovernanceDashboard/> : w?.permissions.includes("members.view") ? (
+    <Dashboard />
+  ) : (
+    <MemberPortal />
+  );
+}
 const Context = createContext<{ w: Workspace | undefined; me: any }>({
   w: undefined,
   me: null,
@@ -78,6 +133,12 @@ function Shell() {
     [active, setActive] = useState(""),
     [error, setError] = useState<unknown>();
   const me = useQuery({ queryKey: ["me"], queryFn: () => api("/auth/me") });
+  useEffect(() => {
+    document.documentElement.dataset.theme = me.data?.theme || "light";
+    return () => {
+      document.documentElement.dataset.theme = "light";
+    };
+  }, [me.data?.theme]);
   const workspaces = useQuery({
     queryKey: ["workspaces"],
     queryFn: () => api<Workspace[]>("/workspaces"),
@@ -90,6 +151,8 @@ function Shell() {
     try {
       await api("/workspaces/" + id + "/activate", "POST");
       setActive(id);
+      nav("/app");
+      setOpen(false);
       qc.removeQueries({
         predicate: (q) => !["me", "workspaces"].includes(String(q.queryKey[0])),
       });
@@ -101,7 +164,31 @@ function Shell() {
   const menus = [
     ["Dashboard", "/app", LayoutDashboard, "organization.view"],
     ["Organizations", "/app/organizations", Network, "organization.view"],
-    ["Club directory", "/app/clubs", Building2, "organization.view"],
+    ["Club directory", "/app/clubs", Building2, "clubs.view"],
+    ["Leadership", "/app/leadership", ShieldCheck, "leadership.view"],
+    ["Leadership calendar", "/app/leadership-calendar", CalendarDays, "leadership.view"],
+    ["Handovers", "/app/handovers", ArrowRightLeft, "leadership.view"],
+    ["Committees", "/app/committees", Users, "committees.view"],
+    ["Governance approvals", "/app/governance", ClipboardCheck, "governance.approve"],
+    ["Resolutions", "/app/resolutions", ScrollText, "governance.documents"],
+    ["Governance documents", "/app/governance-documents", Briefcase, "governance.documents"],
+    ["Governance configuration", "/app/governance-settings", SlidersHorizontal, "governance.configure"],
+    ["Members", "/app/members", Users, "members.view"],
+    ["Member directory", "/app/directory", UserRound, "directory.view"],
+    ["Applications", "/app/approvals", ClipboardCheck, "members.approve"],
+    [
+      "Membership operations",
+      "/app/transfers",
+      ArrowRightLeft,
+      "members.transfer.approve",
+    ],
+    ["Import members", "/app/imports", Upload, "members.import"],
+    [
+      "Membership settings",
+      "/app/membership-settings",
+      SlidersHorizontal,
+      "members.workflow.manage",
+    ],
     ["Administration", "/app/administration", ShieldCheck, "roles.view"],
     ["Audit trail", "/app/audit", ScrollText, "audit.view"],
     ["Settings", "/app/settings", Settings, "settings.view"],
@@ -119,7 +206,12 @@ function Shell() {
     );
   return (
     <Context.Provider value={{ w, me: me.data }}>
-      <div className="app-shell">
+      <div
+        className="app-shell"
+        style={
+          { "--brand-accent": w?.color || "#2563eb" } as React.CSSProperties
+        }
+      >
         <aside className={open ? "sidebar open" : "sidebar"}>
           <Link to="/" className="brand">
             <span className="brand-icon">
@@ -148,7 +240,7 @@ function Shell() {
           <div className="sidebar-label">WORKSPACE</div>
           <nav>
             {menus
-              .filter((x) => w?.permissions.includes(x[3]))
+              .filter((x) => x[1] === "/app/governance" ? w?.permissions.some(p => ["governance.approve","clubs.manage","leadership.manage","committees.manage","governance.documents"].includes(p)) : w?.permissions.includes(x[3]))
               .map(([name, to, Icon]) => (
                 <NavLink
                   end={to === "/app"}
@@ -161,25 +253,38 @@ function Shell() {
                 </NavLink>
               ))}
           </nav>
-          <div className="sidebar-label upcoming-label">
-            GROWING TOGETHER <span>UPCOMING</span>
-          </div>
-          <div className="upcoming">
-            {[
-              [Users, "Members"],
-              [CalendarDays, "Events & meetings"],
-              [Mail, "Communication"],
-              [Briefcase, "Service projects"],
-              [Wallet, "Finance"],
-              [ChartNoAxesCombined, "Reports"],
-            ].map(([I, label]: any) => (
-              <div key={label}>
-                <I size={18} />
-                {label}
-                <span>↗</span>
-              </div>
-            ))}
-          </div>
+          <div className="sidebar-label">MY COMMUNITY</div>
+          <nav>
+            <NavLink to="/app/my-membership" onClick={() => setOpen(false)}>
+              <CreditCard size={18} />
+              My membership
+            </NavLink>
+            <NavLink to="/app/apply" onClick={() => setOpen(false)}>
+              <ClipboardCheck size={18} />
+              Join a club
+            </NavLink>
+          </nav>
+          <Link className="panel-link" to="/app/committees">My committee workspaces →</Link>
+          <details className="upcoming-details">
+            <summary className="sidebar-label upcoming-label">
+              GROWING TOGETHER <span>UPCOMING</span>
+            </summary>
+            <div className="upcoming">
+              {[
+                [CalendarDays, "Events & meetings"],
+                [Mail, "Communication"],
+                [Briefcase, "Service projects"],
+                [Wallet, "Finance"],
+                [ChartNoAxesCombined, "Reports"],
+              ].map(([I, label]: any) => (
+                <div key={label}>
+                  <I size={18} />
+                  {label}
+                  <span>↗</span>
+                </div>
+              ))}
+            </div>
+          </details>
           <div className="sidebar-bottom">
             <div className="help-card">
               <span className="gold-dot" />
@@ -226,6 +331,35 @@ function Shell() {
               </Link>
               <button
                 className="icon-button"
+                aria-label={
+                  me.data.theme === "dark"
+                    ? "Switch to light theme"
+                    : "Switch to dark theme"
+                }
+                onClick={async () => {
+                  try {
+                    const theme = me.data.theme === "dark" ? "light" : "dark";
+                    await api("/users/profile", "PUT", {
+                      name: me.data.name,
+                      phone: me.data.phone,
+                      locale: me.data.locale || "en",
+                      timeZone: me.data.timeZone || "UTC",
+                      theme,
+                    });
+                    qc.setQueryData(["me"], { ...me.data, theme });
+                  } catch (e) {
+                    setError(e);
+                  }
+                }}
+              >
+                {me.data.theme === "dark" ? (
+                  <Sun size={18} />
+                ) : (
+                  <Moon size={18} />
+                )}
+              </button>
+              <button
+                className="icon-button"
                 aria-label="Sign out"
                 onClick={async () => {
                   await api("/auth/logout", "POST");
@@ -239,7 +373,13 @@ function Shell() {
           </header>
           <main>
             <ErrorBox error={error} />
-            {!w && location.pathname !== "/app/profile" ? (
+            {!w &&
+            ![
+              "/app/profile",
+              "/app/my-membership",
+              "/app/apply",
+              "/app/members/",
+            ].some((p) => location.pathname.startsWith(p)) ? (
               <div className="welcome-select">
                 <Globe2 size={48} />
                 <h1>Find your place. Make an impact.</h1>
@@ -248,11 +388,16 @@ function Shell() {
                 </p>
                 {workspaces.data?.length === 0 && (
                   <p>
-                    Your account is ready. Ask an association administrator to
-                    assign your organizational role.
+                    Your account is ready. Apply to a club or accept an
+                    invitation to start your membership journey.
                   </p>
                 )}
-                <Link to="/app/profile">Profile & security</Link>
+                <Link className="button" to="/app/apply">
+                  Find a club and apply →
+                </Link>
+                <Link className="panel-link" to="/app/my-membership">
+                  Open my membership portal →
+                </Link>
                 {me.data.platformAdmin && (
                   <Provision
                     onDone={() =>
@@ -269,7 +414,7 @@ function Shell() {
           </main>
           <footer>
             ClubSphere <span>Connected leadership. Meaningful impact.</span>
-            <span>Foundation · Phase 01</span>
+            <span>Connected community · Phase 03</span>
           </footer>
         </div>
       </div>
@@ -391,14 +536,44 @@ export default function App() {
     <Suspense fallback={<Skeleton />}>
       <Routes>
         <Route path="/" element={<Landing />} />
+        <Route path="/join" element={<JoinInvitation />} />
+        <Route path="/verify" element={<VerifyMembershipCard />} />
         <Route path="/request-organization" element={<RequestOrganization />} />
-        {["login", "signup", "forgot-password", "complete"].map((p) => (
+        {[
+          "login",
+          "signup",
+          "forgot-password",
+          "resend-verification",
+          "complete",
+        ].map((p) => (
           <Route key={p} path={"/" + p} element={<Auth mode={p} />} />
         ))}
         <Route path="/app" element={<Shell />}>
-          <Route index element={<Dashboard />} />
+          <Route index element={<WorkspaceHome />} />
+          <Route path="members" element={<Members />} />
+          <Route path="directory" element={<Members directory />} />
+          <Route path="members/:id" element={<MemberProfile />} />
+          <Route path="my-membership" element={<MemberPortal />} />
+          <Route path="apply" element={<MembershipApplications />} />
+          <Route path="approvals" element={<MembershipApplications review />} />
+          <Route path="imports" element={<MemberImports />} />
+          <Route path="membership-insights" element={<MembershipInsights />} />
+          <Route path="membership-settings" element={<MembershipSettings />} />
+          <Route path="transfers" element={<MembershipOperations />} />
           <Route path="organizations" element={<Organizations />} />
-          <Route path="clubs" element={<Organizations clubs />} />
+          <Route path="clubs" element={<ClubDirectory />} />
+          <Route path="clubs/:id" element={<ClubWorkspace />} />
+          <Route path="club-administration" element={<GovernanceDashboard />} />
+          <Route path="leadership" element={<LeadershipDirectory />} />
+          <Route path="leadership-calendar" element={<LeadershipCalendar />} />
+          <Route path="handovers" element={<LeadershipHandovers />} />
+          <Route path="committees" element={<CommitteeDirectory />} />
+          <Route path="committees/:id" element={<CommitteeWorkspace />} />
+          <Route path="governance" element={<GovernanceApprovals />} />
+          <Route path="governance-settings" element={<GovernanceSettings />} />
+          <Route path="governance-documents" element={<GovernanceDocuments />} />
+          <Route path="resolutions" element={<GovernanceResolutions />} />
+          <Route path="foundation-overview" element={<Dashboard />} />
           <Route path="administration" element={<Administration />} />
           <Route path="settings" element={<SettingsPage />} />
           <Route path="audit" element={<Audit />} />

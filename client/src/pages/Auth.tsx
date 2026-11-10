@@ -12,7 +12,7 @@ export default function Auth({ mode }: { mode: string }) {
     [error, setError] = useState<unknown>(),
     [message, setMessage] = useState("");
   const signup = mode === "signup",
-    forgot = mode === "forgot-password",
+    forgot = mode === "forgot-password" || mode === "resend-verification",
     complete = mode === "complete",
     verify =
       complete && new URLSearchParams(location.search).get("kind") === "verify";
@@ -25,13 +25,18 @@ export default function Auth({ mode }: { mode: string }) {
       if (mode === "login") {
         await api("/auth/login", "POST", data);
         qc.clear();
-        nav("/app");
+        const target = new URLSearchParams(location.search).get("returnTo");
+        nav(
+          target?.startsWith("/") && !target.startsWith("//") ? target : "/app",
+        );
       } else {
         const result = await api(
           signup
             ? "/auth/register"
             : forgot
-              ? "/auth/forgot-password"
+              ? mode === "resend-verification"
+                ? "/auth/resend-verification"
+                : "/auth/forgot-password"
               : "/auth/complete",
           "POST",
           {
@@ -188,6 +193,11 @@ export default function Auth({ mode }: { mode: string }) {
           {mode === "login" && (
             <Link className="forgot-link" to="/forgot-password">
               Forgot password?
+            </Link>
+          )}
+          {mode === "login" && (
+            <Link className="forgot-link" to="/resend-verification">
+              Resend verification email
             </Link>
           )}
           <ErrorBox error={error} />

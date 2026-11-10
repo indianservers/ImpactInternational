@@ -1,0 +1,7 @@
+{
+  "expired document bytes cleared": true,
+  "expired notification contents cleared": true,
+  "old import source text redacted": true,
+  "import provenance remains valid": true,
+  "old verification events removed": true
+}

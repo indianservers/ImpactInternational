@@ -1,0 +1,23 @@
+{
+  "runs": [
+    {
+      "rows": 1000,
+      "validation_and_commit_seconds": 7.558,
+      "conditions": "Local HTTP and PostgreSQL, 200-row EF batches within an atomic final transaction; includes worker polling delay.",
+      "rss_before_mib": 246.3,
+      "rss_peak_mib": 311.3,
+      "rss_after_mib": 311.3,
+      "rss_samples": 225
+    },
+    {
+      "rows": 5000,
+      "validation_and_commit_seconds": 13.042,
+      "conditions": "Local HTTP and PostgreSQL, 200-row EF batches within an atomic final transaction; includes worker polling delay.",
+      "rss_before_mib": 311.3,
+      "rss_peak_mib": 362.9,
+      "rss_after_mib": 362.9,
+      "rss_samples": 242
+    }
+  ],
+  "conditions": "Windows process working set (RSS), sampled every 200 ms across the complete import suite, not only final commit. Same API process for both runs. Includes .NET JIT, connection pools and other test endpoints; retained working set is not proof of a leak. Inputs and staging are bounded to 10 MB / 10,000 rows; EF write tracker clears every 200 rows. No claim of constant memory at arbitrary input sizes."
+}

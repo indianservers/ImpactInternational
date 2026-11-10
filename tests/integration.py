@@ -40,8 +40,11 @@ check('stale update rejected',a.req('/organizations/'+created['id'],'PUT',create
 s,found=a.req('/organizations?search='+urllib.parse.quote(created['name']));check('organization search',s==200 and found['total']==1,found)
 other=next(x for x in ws if x['association']=='Civic Futures Network');check('cross-tenant detail denied',a.req('/organizations/'+other['orgId'])[0]==404)
 r['parentId']=other['orgId'];check('cross-tenant parent denied',a.req('/organizations','POST',r)[0]==403)
-manager=Client();check('manager login',manager.login('manager@example.test')[0]==200);mw=manager.req('/workspaces')[1][0];manager.req('/workspaces/'+mw['id']+'/activate','POST',{})
+manager=Client();check('manager login',manager.login('manager@example.test')[0]==200);mw=next(w for w in manager.req('/workspaces')[1] if w['role']=='Club Manager');manager.req('/workspaces/'+mw['id']+'/activate','POST',{})
 check('manager cannot modify sibling',manager.req('/organizations/'+created['id'],'PUT',updated)[0] in (403,404))
+own=manager.req('/organizations/'+mw['orgId'])[1];old_name=own['name'];own['name']='Unauthorized name';own['status']='Archived'
+check('archive requires atomic permission',manager.req('/organizations/'+own['id'],'PUT',own)[0]==403)
+check('denied mutation does not persist',manager.req('/organizations/'+own['id'])[1]['name']==old_name)
 check('manager cannot manage roles',manager.req('/roles','POST',{'name':'Escalated','permissions':['roles.manage']})[0]==403)
 check('workspace id tampering denied',manager.req('/workspaces/'+w['id']+'/activate','POST',{})[0]==403)
 member=Client();member.login('member@example.test');bw=member.req('/workspaces')[1][0];member.req('/workspaces/'+bw['id']+'/activate','POST',{})
@@ -60,18 +63,26 @@ check('association provisioning',a.req('/associations','POST',{'name':'Integrati
 check('non-platform provisioning denied',member.req('/associations','POST',{'name':'Unauthorized Association'})[0]==403)
 check('registration request',a.req('/registration-requests','POST',{'name':'Requested Community','email':'requester@example.test','description':'Fictional integration request'})[0]==202)
 check('platform registration review',a.req('/registration-requests')[0]==200)
+request=a.req('/registration-requests')[1][0]
+check('registration provisioning',a.req('/registration-requests/'+request['id']+'/provision','POST',{})[0]==200)
+check('registration provisioning idempotency',a.req('/registration-requests/'+request['id']+'/provision','POST',{})[0]==409)
+assignment=next(x for x in a.req('/assignments')[1] if x['role']==role['name'])
+check('scoped role revocation',a.req('/assignments/'+assignment['id'],'DELETE',{})[0]==204)
+check('revoked workspace denied',member.req('/dashboard')[0]==403)
+
 check('registration review denied to member',member.req('/registration-requests')[0]==403)
 check('audit generated',any(x['action']=='organization.update' for x in a.req('/audit-logs')[1]['items']))
 new=Client();email='test-'+uuid.uuid4().hex+'@example.test';reg={'name':'Test User','email':email,'phone':'+910000000000','password':password,'confirmation':password,'agreed':True}
 check('registration',new.req('/auth/register','POST',reg)[0]==202)
 check('unverified login denied',new.login(email)[0]==401)
-mail=new.req('/development/mail')[1][-1];token=mail['link'].split('token=')[1].split('&')[0]
+check('verification can be resent',new.req('/auth/resend-verification','POST',{'email':email})[0]==202)
+mail=next(x for x in new.req('/development/mail')[1] if x['email']==email);token=mail['link'].split('token=')[1].split('&')[0]
 check('email verification',new.req('/auth/complete','POST',{'token':token,'password':''})[0]==200)
 check('verification replay denied',new.req('/auth/complete','POST',{'token':token,'password':''})[0]==400)
 check('verified login',new.login(email)[0]==200)
 check('signup grants no workspace',new.req('/workspaces')[1]==[])
 check('forgot password',new.req('/auth/forgot-password','POST',{'email':email})[0]==202)
-mail=new.req('/development/mail')[1][-1];token=mail['link'].split('token=')[1].split('&')[0]
+mail=next(x for x in new.req('/development/mail')[1] if x['email']==email);token=mail['link'].split('token=')[1].split('&')[0]
 check('password reset',new.req('/auth/complete','POST',{'token':token,'password':password+'x'})[0]==200)
 check('reset revokes sessions',new.req('/auth/me')[0]==401)
 new.req('/auth/login','POST',{'email':email,'password':password+'x'});sessions=new.req('/auth/sessions')[1]

@@ -1,0 +1,62 @@
+PASS anonymous API denied 
+PASS admin login 
+PASS multiple authorized workspaces 
+PASS workspace activation 
+PASS server pagination 
+PASS live dashboard 
+PASS organization creation 
+PASS duplicate code rejected 
+PASS invalid parent type rejected 
+PASS organization update 
+PASS stale update rejected 
+PASS organization search 
+PASS cross-tenant detail denied 
+PASS cross-tenant parent denied 
+PASS manager login 
+PASS manager cannot modify sibling 
+PASS archive requires atomic permission 
+PASS denied mutation does not persist 
+PASS manager cannot manage roles 
+PASS workspace id tampering denied 
+PASS member write denied 
+PASS member admin denied 
+PASS role assignment 
+PASS role creation 
+PASS unassigned role editing 
+PASS scoped role assignment 
+PASS assignment cannot escalate privileges 
+PASS assigned role editing protected 
+PASS association provisioning 
+PASS non-platform provisioning denied 
+PASS registration request 
+PASS platform registration review 
+PASS registration provisioning 
+PASS registration provisioning idempotency 
+PASS scoped role revocation 
+PASS revoked workspace denied 
+PASS registration review denied to member 
+PASS audit generated 
+PASS registration 
+PASS unverified login denied 
+PASS verification can be resent 
+PASS email verification 
+PASS verification replay denied 
+PASS verified login 
+PASS signup grants no workspace 
+PASS forgot password 
+PASS password reset 
+PASS reset revokes sessions 
+PASS session revoke 
+PASS revoked session denied 
+PASS account lockout enforced 
+PASS logout 
+PASS logout invalidates session 
+PASS concurrent writes have one winner 
+PASS missing CSRF token rejected 
+PASS migration history applied 
+PASS database cross-tenant parent constraint 
+PASS database self-cycle rejected 
+PASS expired session denied 
+PASS OpenAPI document available 
+{"samples": 100, "median_ms": 5.5, "p95_ms": 7.27, "conditions": "Loopback HTTP, warm EF/query/connection pool, sequential requests, development seed plus integration-created rows; not a scale test."}
+60 tests passed

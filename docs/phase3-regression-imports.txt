@@ -1,0 +1,54 @@
+PASS GET /membership/options 
+PASS GET /membership/config 
+PASS stage CSV or Excel import 
+PASS POST /membership/imports/0680f5a1-cf2f-4a6f-ba68-47712f574309/mapping 
+PASS bulk import validation reports invalid rows 
+PASS invalid batch cannot commit 
+PASS POST /membership/imports/0680f5a1-cf2f-4a6f-ba68-47712f574309/cancel 
+PASS cancel before final commit 
+PASS stage CSV or Excel import 
+PASS stage CSV or Excel import 
+PASS upload retry is idempotent 
+PASS POST /membership/imports/43969683-62e4-40bf-9819-3c6e3aef2bf5/mapping 
+PASS shared family mobile is flagged rather than merged 
+PASS POST /membership/imports/43969683-62e4-40bf-9819-3c6e3aef2bf5/resolve 
+PASS GET /membership/imports/43969683-62e4-40bf-9819-3c6e3aef2bf5 
+PASS all duplicate decisions are explicit 
+PASS POST /membership/imports/43969683-62e4-40bf-9819-3c6e3aef2bf5/commit 
+PASS atomic import commits all reviewed rows 
+PASS POST /membership/imports/43969683-62e4-40bf-9819-3c6e3aef2bf5/commit 
+PASS commit retry does not duplicate memberships 
+PASS shared mobile creates distinct persons 
+PASS GET /members 
+PASS GET /members/77f154a0-99b1-49ee-b987-2d4b79b19426 
+PASS POST /membership/categories 
+PASS stage CSV or Excel import 
+PASS POST /membership/imports/c080afac-da65-49d6-9369-c913a552cbee/mapping 
+PASS POST /membership/imports/c080afac-da65-49d6-9369-c913a552cbee/resolve 
+PASS POST /membership/imports/c080afac-da65-49d6-9369-c913a552cbee/commit 
+PASS GET /members/77f154a0-99b1-49ee-b987-2d4b79b19426 
+PASS import never overwrites verified profile information 
+PASS stage CSV or Excel import 
+PASS POST /membership/imports/5e0813d7-037c-4d42-a5cd-49be8addcb68/mapping 
+PASS POST /membership/imports/5e0813d7-037c-4d42-a5cd-49be8addcb68/commit 
+PASS Excel memberships imported 
+PASS Excel formula cells rejected without evaluation 
+PASS stage CSV or Excel import 
+PASS POST /membership/imports/fe28159d-fabd-4a77-b3cb-c01ab9314b62/mapping 
+PASS cross-club import assignment rejected 
+PASS stage CSV or Excel import 
+PASS POST /membership/imports/858ae88f-4b61-41fb-a7c2-f2ded786ca14/mapping 
+PASS DELETE /assignments/dc6af096-579d-41ff-a86f-f2041ce07845 
+PASS POST /membership/imports/858ae88f-4b61-41fb-a7c2-f2ded786ca14/commit 
+PASS revoked importing permission rolls back safely 
+PASS GET /roles 
+PASS POST /assignments 
+PASS POST /membership/imports/858ae88f-4b61-41fb-a7c2-f2ded786ca14/retry 
+PASS POST /membership/imports/858ae88f-4b61-41fb-a7c2-f2ded786ca14/commit 
+PASS authorized import retry is safe and idempotent 
+PASS stage CSV or Excel import 
+PASS POST /membership/imports/14f34634-c903-4043-b9ea-a5d264fb0faf/mapping 
+PASS 1000-row validation completes 
+PASS POST /membership/imports/14f34634-c903-4043-b9ea-a5d264fb0faf/commit 
+PASS 1000-row background import completes 
+53 import checks passed

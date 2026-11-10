@@ -1,0 +1,216 @@
+{
+  "tests": [
+    {
+      "test": "GET /membership/options",
+      "passed": true
+    },
+    {
+      "test": "GET /membership/config",
+      "passed": true
+    },
+    {
+      "test": "stage CSV or Excel import",
+      "passed": true
+    },
+    {
+      "test": "POST /membership/imports/0680f5a1-cf2f-4a6f-ba68-47712f574309/mapping",
+      "passed": true
+    },
+    {
+      "test": "bulk import validation reports invalid rows",
+      "passed": true
+    },
+    {
+      "test": "invalid batch cannot commit",
+      "passed": true
+    },
+    {
+      "test": "POST /membership/imports/0680f5a1-cf2f-4a6f-ba68-47712f574309/cancel",
+      "passed": true
+    },
+    {
+      "test": "cancel before final commit",
+      "passed": true
+    },
+    {
+      "test": "stage CSV or Excel import",
+      "passed": true
+    },
+    {
+      "test": "stage CSV or Excel import",
+      "passed": true
+    },
+    {
+      "test": "upload retry is idempotent",
+      "passed": true
+    },
+    {
+      "test": "POST /membership/imports/43969683-62e4-40bf-9819-3c6e3aef2bf5/mapping",
+      "passed": true
+    },
+    {
+      "test": "shared family mobile is flagged rather than merged",
+      "passed": true
+    },
+    {
+      "test": "POST /membership/imports/43969683-62e4-40bf-9819-3c6e3aef2bf5/resolve",
+      "passed": true
+    },
+    {
+      "test": "GET /membership/imports/43969683-62e4-40bf-9819-3c6e3aef2bf5",
+      "passed": true
+    },
+    {
+      "test": "all duplicate decisions are explicit",
+      "passed": true
+    },
+    {
+      "test": "POST /membership/imports/43969683-62e4-40bf-9819-3c6e3aef2bf5/commit",
+      "passed": true
+    },
+    {
+      "test": "atomic import commits all reviewed rows",
+      "passed": true
+    },
+    {
+      "test": "POST /membership/imports/43969683-62e4-40bf-9819-3c6e3aef2bf5/commit",
+      "passed": true
+    },
+    {
+      "test": "commit retry does not duplicate memberships",
+      "passed": true
+    },
+    {
+      "test": "shared mobile creates distinct persons",
+      "passed": true
+    },
+    {
+      "test": "GET /members",
+      "passed": true
+    },
+    {
+      "test": "GET /members/77f154a0-99b1-49ee-b987-2d4b79b19426",
+      "passed": true
+    },
+    {
+      "test": "POST /membership/categories",
+      "passed": true
+    },
+    {
+      "test": "stage CSV or Excel import",
+      "passed": true
+    },
+    {
+      "test": "POST /membership/imports/c080afac-da65-49d6-9369-c913a552cbee/mapping",
+      "passed": true
+    },
+    {
+      "test": "POST /membership/imports/c080afac-da65-49d6-9369-c913a552cbee/resolve",
+      "passed": true
+    },
+    {
+      "test": "POST /membership/imports/c080afac-da65-49d6-9369-c913a552cbee/commit",
+      "passed": true
+    },
+    {
+      "test": "GET /members/77f154a0-99b1-49ee-b987-2d4b79b19426",
+      "passed": true
+    },
+    {
+      "test": "import never overwrites verified profile information",
+      "passed": true
+    },
+    {
+      "test": "stage CSV or Excel import",
+      "passed": true
+    },
+    {
+      "test": "POST /membership/imports/5e0813d7-037c-4d42-a5cd-49be8addcb68/mapping",
+      "passed": true
+    },
+    {
+      "test": "POST /membership/imports/5e0813d7-037c-4d42-a5cd-49be8addcb68/commit",
+      "passed": true
+    },
+    {
+      "test": "Excel memberships imported",
+      "passed": true
+    },
+    {
+      "test": "Excel formula cells rejected without evaluation",
+      "passed": true
+    },
+    {
+      "test": "stage CSV or Excel import",
+      "passed": true
+    },
+    {
+      "test": "POST /membership/imports/fe28159d-fabd-4a77-b3cb-c01ab9314b62/mapping",
+      "passed": true
+    },
+    {
+      "test": "cross-club import assignment rejected",
+      "passed": true
+    },
+    {
+      "test": "stage CSV or Excel import",
+      "passed": true
+    },
+    {
+      "test": "POST /membership/imports/858ae88f-4b61-41fb-a7c2-f2ded786ca14/mapping",
+      "passed": true
+    },
+    {
+      "test": "DELETE /assignments/dc6af096-579d-41ff-a86f-f2041ce07845",
+      "passed": true
+    },
+    {
+      "test": "POST /membership/imports/858ae88f-4b61-41fb-a7c2-f2ded786ca14/commit",
+      "passed": true
+    },
+    {
+      "test": "revoked importing permission rolls back safely",
+      "passed": true
+    },
+    {
+      "test": "GET /roles",
+      "passed": true
+    },
+    {
+      "test": "POST /assignments",
+      "passed": true
+    },
+    {
+      "test": "POST /membership/imports/858ae88f-4b61-41fb-a7c2-f2ded786ca14/retry",
+      "passed": true
+    },
+    {
+      "test": "POST /membership/imports/858ae88f-4b61-41fb-a7c2-f2ded786ca14/commit",
+      "passed": true
+    },
+    {
+      "test": "authorized import retry is safe and idempotent",
+      "passed": true
+    },
+    {
+      "test": "stage CSV or Excel import",
+      "passed": true
+    },
+    {
+      "test": "POST /membership/imports/14f34634-c903-4043-b9ea-a5d264fb0faf/mapping",
+      "passed": true
+    },
+    {
+      "test": "1000-row validation completes",
+      "passed": true
+    },
+    {
+      "test": "POST /membership/imports/14f34634-c903-4043-b9ea-a5d264fb0faf/commit",
+      "passed": true
+    },
+    {
+      "test": "1000-row background import completes",
+      "passed": true
+    }
+  ]
+}

@@ -1,0 +1,46 @@
+[
+  {
+    "test": "submitted application retains frozen workflow version",
+    "passed": true
+  },
+  {
+    "test": "quorum does not activate after first approval",
+    "passed": true
+  },
+  {
+    "test": "same officer cannot satisfy quorum twice",
+    "passed": true
+  },
+  {
+    "test": "two independent approvers satisfy frozen quorum",
+    "passed": true
+  },
+  {
+    "test": "outstanding administrative clearance blocks final transfer",
+    "passed": true
+  },
+  {
+    "test": "future transfer schedules without early mutation",
+    "passed": true
+  },
+  {
+    "test": "durable worker completes transfer at effective time",
+    "passed": true
+  },
+  {
+    "test": "cross-district private profile denied",
+    "passed": true
+  },
+  {
+    "test": "cross-district member list filter cannot widen scope",
+    "passed": true
+  },
+  {
+    "test": "cross-district administrative creation denied",
+    "passed": true
+  },
+  {
+    "test": "district officer sees authorized descendant members",
+    "passed": true
+  }
+]

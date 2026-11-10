@@ -9,7 +9,7 @@ using static Clubs.Access;
 var b = WebApplication.CreateBuilder(args);
 b.Logging.ClearProviders();
 b.Logging.AddJsonConsole();
-b.WebHost.ConfigureKestrel(o => o.Limits.MaxRequestBodySize = 32768);
+b.WebHost.ConfigureKestrel(o => o.Limits.MaxRequestBodySize = 12582912);
 if (
     !b.Environment.IsDevelopment()
     && string.IsNullOrEmpty(b.Configuration.GetConnectionString("Database"))
@@ -27,9 +27,14 @@ b.Services.AddDbContext<Db>(o =>
     )
 );
 b.Services.AddHostedService<MailWorker>();
+b.Services.AddHostedService<MembershipWorker>();
 b.Services.AddHostedService<MaintenanceWorker>();
 b.Services.AddHttpContextAccessor();
 b.Services.AddScoped<Access>();
+b.Services.AddScoped<MembershipService>();
+b.Services.AddScoped<NotificationService>();
+b.Services.AddScoped<GovernanceService>();
+b.Services.AddHostedService<GovernanceWorker>();
 b.Services.AddSingleton<IPasswordHasher<User>, PasswordHasher<User>>();
 b.Services.AddAntiforgery(o => o.HeaderName = "X-CSRF");
 b.Services.AddOpenApi();
@@ -46,6 +51,16 @@ b.Services.AddRateLimiter(o =>
             )
     );
 });
+b.Services.AddRateLimiter(o =>
+    o.AddPolicy(
+        "cards",
+        c =>
+            RateLimitPartition.GetFixedWindowLimiter(
+                c.Connection.RemoteIpAddress?.ToString() ?? "unknown",
+                _ => new() { PermitLimit = 60, Window = TimeSpan.FromMinutes(1) }
+            )
+    )
+);
 var app = b.Build();
 app.UseExceptionHandler();
 app.UseRateLimiter();
@@ -55,6 +70,16 @@ app.Use(
     async (c, next) =>
     {
         var elapsed = System.Diagnostics.Stopwatch.StartNew();
+        var bodyLimit =
+            c.Request.Path.Value?.Contains("/imports") == true
+            || c.Request.Path.Value?.EndsWith("/documents") == true
+            || c.Request.Path.Value?.EndsWith("/photo") == true
+                ? 12582912
+                : 65536;
+        var bodyFeature =
+            c.Features.Get<Microsoft.AspNetCore.Http.Features.IHttpMaxRequestBodySizeFeature>();
+        if (bodyFeature is { IsReadOnly: false })
+            bodyFeature.MaxRequestBodySize = bodyLimit;
         c.Response.Headers["X-Content-Type-Options"] = "nosniff";
         c.Response.Headers["X-Frame-Options"] = "DENY";
         c.Response.Headers["X-Correlation-ID"] = c.TraceIdentifier;
@@ -85,8 +110,14 @@ app.Use(
                 new { detail = "Record changed. Refresh before saving." }
             );
         }
-        catch (DbUpdateException)
+        catch (DbUpdateException error)
         {
+            var postgres = error.InnerException as Npgsql.PostgresException;
+            app.Logger.LogWarning(
+                "Write rejected by database constraint {Constraint} ({SqlState})",
+                postgres?.ConstraintName,
+                postgres?.SqlState
+            );
             c.Response.StatusCode = 409;
             await c.Response.WriteAsJsonAsync(
                 new { detail = "A unique code or relationship constraint was violated." }
@@ -97,7 +128,9 @@ app.Use(
             app.Logger.LogInformation(
                 "HTTP {Method} {Path} returned {Status} in {ElapsedMs} ms ({CorrelationId})",
                 c.Request.Method,
-                c.Request.Path.Value,
+                c.Request.Path.StartsWithSegments("/api/v1/cards/verify")
+                    ? "/api/v1/cards/verify/[redacted]"
+                    : c.Request.Path.Value,
                 c.Response.StatusCode,
                 elapsed.Elapsed.TotalMilliseconds,
                 c.TraceIdentifier
@@ -107,6 +140,12 @@ app.Use(
 );
 app.MapOpenApi();
 var api = app.MapGroup("/api/v1");
+api.MapMembership();
+api.MapMembershipWorkflows();
+api.MapGovernance();
+api.MapMembershipLifecycle();
+api.MapMemberMedia();
+api.MapMemberImports();
 api.MapGet(
     "/auth/csrf",
     (HttpContext c, IAntiforgery a) => new { token = a.GetAndStoreTokens(c).RequestToken }
@@ -212,6 +251,27 @@ api.MapPost(
     )
     .RequireRateLimiting("auth");
 api.MapPost(
+        "/auth/resend-verification",
+        async (EmailRequest r, Db db) =>
+        {
+            var user = await db.Users.SingleOrDefaultAsync(x =>
+                x.Email == (r.Email ?? "").Trim().ToLowerInvariant()
+            );
+            if (user != null && !user.Verified)
+            {
+                Queue(db, user, "verify");
+                await db.SaveChangesAsync();
+            }
+            return Results.Accepted(
+                value: new
+                {
+                    message = "If the account needs verification, new instructions have been queued.",
+                }
+            );
+        }
+    )
+    .RequireRateLimiting("auth");
+api.MapPost(
         "/auth/forgot-password",
         async (EmailRequest r, Db db) =>
         {
@@ -242,6 +302,9 @@ api.MapPost(
                 x.TokenHash == hash && !x.Used && x.ExpiresAt > DateTimeOffset.UtcNow
             );
             Check(m != null, "Invalid or expired link.");
+            await db.Database.ExecuteSqlInterpolatedAsync(
+                $"SELECT pg_advisory_xact_lock(hashtext({m.UserId.ToString()}))"
+            );
             Check(
                 await db
                     .Mails.Where(x => x.Id == m!.Id && !x.Used)
@@ -250,6 +313,11 @@ api.MapPost(
                     ) == 1,
                 "Link already used."
             );
+            await db
+                .Mails.Where(x => x.UserId == m!.UserId && x.Kind == m.Kind && !x.Used)
+                .ExecuteUpdateAsync(s =>
+                    s.SetProperty(x => x.Used, true).SetProperty(x => x.Link, "")
+                );
             var u = await db.Users.SingleAsync(x => x.Id == m!.UserId);
             if (m!.Kind == "verify")
                 u.Verified = true;
@@ -278,6 +346,9 @@ api.MapGet(
             u.Email,
             u.Phone,
             u.PlatformAdmin,
+            u.Locale,
+            u.Theme,
+            u.TimeZone,
             session.WorkspaceId,
         };
     }
@@ -327,6 +398,19 @@ api.MapPut(
         var u = await a.User();
         u.Name = r.Name!;
         u.Phone = r.Phone;
+        Check(new[] { "en", "hi" }.Contains(r.Locale), "Unsupported language preference.");
+        try
+        {
+            TimeZoneInfo.FindSystemTimeZoneById(r.TimeZone);
+        }
+        catch
+        {
+            throw new ApiError(400, "Invalid time zone.");
+        }
+        Check(r.Theme is "light" or "dark", "Invalid theme.");
+        u.Theme = r.Theme;
+        u.Locale = r.Locale;
+        u.TimeZone = r.TimeZone;
         await a.Db.SaveChangesAsync();
         return Results.NoContent();
     }
@@ -367,6 +451,7 @@ api.MapGet(
                 x.TenantId,
                 Organization = o.Name,
                 Association = t.Name,
+                t.Color,
                 RoleEntity = r,
             }
         ).ToListAsync();
@@ -377,6 +462,7 @@ api.MapGet(
             x.TenantId,
             x.Organization,
             x.Association,
+            x.Color,
             Role = x.RoleEntity.Name,
             x.RoleEntity.Permissions,
         });
@@ -497,10 +583,13 @@ api.MapGet(
             ?? throw new ApiError(404, "Organization not found.");
     }
 );
-api.MapPost("/organizations", async (Org r, Access a) => await Operations.Save(r, null, a));
+api.MapPost(
+    "/organizations",
+    async (Org r, Access a, GovernanceService g) => await Operations.Save(r, null, a, g)
+);
 api.MapPut(
     "/organizations/{id:guid}",
-    async (Guid id, Org r, Access a) => await Operations.Save(r, id, a)
+    async (Guid id, Org r, Access a, GovernanceService g) => await Operations.Save(r, id, a, g)
 );
 api.MapGet(
     "/levels",
@@ -571,6 +660,7 @@ api.MapPut(
     async (Guid id, Role r, Access a) =>
     {
         var w = await a.TenantWorkspace("roles.manage");
+        await using var tx = await a.Mutation(w);
         var held = await a.Grants(w);
         Check(
             r.Permissions.All(held.Contains) && r.Permissions.All(All.Contains),
@@ -586,8 +676,20 @@ api.MapPut(
             "Assigned roles are immutable; create a replacement role."
         );
         role!.Name = r.Name;
-        role.Permissions = r.Permissions;
+        foreach (
+            var grant in role.Grants.Where(x => !r.Permissions.Contains(x.PermissionId)).ToList()
+        )
+            role.Grants.Remove(grant);
+        foreach (
+            var permission in r.Permissions.Where(x => !role.Grants.Any(g => g.PermissionId == x))
+        )
+        {
+            var added = new RolePermission { RoleId = role.Id, PermissionId = permission };
+            role.Grants.Add(added);
+            a.Db.RolePermissions.Add(added);
+        }
         await a.Log(w, "role.update", r.Name);
+        await tx.CommitAsync();
         return Results.NoContent();
     }
 );
@@ -620,6 +722,7 @@ api.MapPost(
     async (AssignRequest r, Access a) =>
     {
         var w = await a.Workspace("roles.assign");
+        await using var tx = await a.Mutation(w);
         Check(await a.Visible(w).AnyAsync(x => x.Id == r.OrgId), "Scope denied.", 403);
         var role = await a.Db.Roles.SingleOrDefaultAsync(x =>
             x.Id == r.RoleId && x.TenantId == w.TenantId
@@ -642,6 +745,7 @@ api.MapPost(
             }
         );
         await a.Log(w, "role.assign", r.OrgId.ToString());
+        await tx.CommitAsync();
         return Results.NoContent();
     }
 );
@@ -675,7 +779,11 @@ api.MapPut(
         t.Currency = r.Currency!;
         t.TimeZone = r.TimeZone;
         t.Language = r.Language;
-        t.Color = r.Color;
+        Check(
+            System.Text.RegularExpressions.Regex.IsMatch(r.Color ?? "", "^#[0-9a-fA-F]{6}$"),
+            "Invalid brand color."
+        );
+        t.Color = r.Color!;
         await a.Log(w, "settings.update", t.Name);
         return Results.NoContent();
     }
@@ -721,50 +829,72 @@ api.MapGet(
 );
 api.MapPost(
     "/associations",
-    async (AssociationRequest r, Access a) =>
+    async (AssociationRequest r, Access a) => Results.Ok(await Operations.Provision(r.Name, a))
+);
+api.MapPost(
+    "/registration-requests/{id:guid}/provision",
+    async (Guid id, Access a) =>
     {
-        var u = await a.User();
-        Check(u.PlatformAdmin, "Platform administrator required.", 403);
-        Check((r.Name?.Trim().Length ?? 0) > 2, "Name required.");
-        var t = new Tenant { Name = r.Name! };
-        var l = new Level { TenantId = t.Id, Name = "Headquarters" };
-        var o = new Org
-        {
-            TenantId = t.Id,
-            LevelId = l.Id,
-            Name = r.Name!,
-            Code = "HQ",
-        };
-        var role = new Role
-        {
-            TenantId = t.Id,
-            Name = "Association Super Admin",
-            Permissions = All,
-        };
-        a.Db.AddRange(
-            t,
-            l,
-            o,
-            role,
-            new Assignment
-            {
-                UserId = u.Id,
-                TenantId = t.Id,
-                RoleId = role.Id,
-                OrgId = o.Id,
-            }
+        Check((await a.User()).PlatformAdmin, "Platform administrator required.", 403);
+        await using var tx = await a.Db.Database.BeginTransactionAsync();
+        await a.Db.Database.ExecuteSqlInterpolatedAsync(
+            $"SELECT pg_advisory_xact_lock(hashtext({id.ToString()}))"
         );
+        var request = await a.Db.RegistrationRequests.SingleOrDefaultAsync(x => x.Id == id);
+        Check(request != null, "Request not found.", 404);
+        Check(request.Status == "Pending", "Request already processed.", 409);
+        var tenant = await Operations.Provision(request.Name, a);
+        request.Status = "Provisioned";
         await a.Db.SaveChangesAsync();
-        return Results.Ok(t);
+        await tx.CommitAsync();
+        return Results.Ok(tenant);
     }
 );
+api.MapDelete(
+    "/assignments/{id:guid}",
+    async (Guid id, Access a) =>
+    {
+        var w = await a.Workspace("roles.assign");
+        await using var tx = await a.Mutation(w);
+        var assignment = await a.Db.Assignments.SingleOrDefaultAsync(x =>
+            x.Id == id && x.TenantId == w.TenantId
+        );
+        Check(assignment != null, "Assignment not found.", 404);
+        Check(
+            assignment.UserId != w.UserId,
+            "Use another administrator to revoke your own access."
+        );
+        Check(await a.Visible(w).AnyAsync(x => x.Id == assignment.OrgId), "Scope denied.", 403);
+        var grants = await a.Grants(w);
+        Check(
+            (await a.Grants(assignment)).All(grants.Contains),
+            "Cannot revoke access exceeding your own permissions.",
+            403
+        );
+        a.Db.Assignments.Remove(assignment);
+        await a.Log(w, "role.revoke", id.ToString());
+        await tx.CommitAsync();
+        return Results.NoContent();
+    }
+);
+
 if (app.Environment.IsDevelopment())
     api.MapGet(
         "/development/mail",
         async (Db db) =>
             await db
-                .Mails.Where(x => !x.Used && x.ExpiresAt > DateTimeOffset.UtcNow)
-                .Select(x => new { x.Kind, x.Link })
+                .Mails.Where(x =>
+                    !x.Used
+                    && x.SentAt == null
+                    && x.Link != ""
+                    && x.ExpiresAt > DateTimeOffset.UtcNow
+                )
+                .Select(x => new
+                {
+                    x.Kind,
+                    x.Link,
+                    Email = db.Users.Where(u => u.Id == x.UserId).Select(u => u.Email).First(),
+                })
                 .ToListAsync()
     );
 api.MapPost(
@@ -806,6 +936,12 @@ app.MapGet(
             ? Results.Ok(new { status = "ready" })
             : Results.StatusCode(503)
 );
+if (args.Contains("--seed-phase2") && !args.Contains("--migrate"))
+{
+    using var scope = app.Services.CreateScope();
+    await MembershipSetup.Demo(scope.ServiceProvider);
+    return;
+}
 if (args.Contains("--grant-platform-admin"))
 {
     using var scope = app.Services.CreateScope();
@@ -828,6 +964,15 @@ if (args.Contains("--migrate"))
     await scope.ServiceProvider.GetRequiredService<Db>().Database.MigrateAsync();
     if (args.Contains("--seed"))
         await Seed.Run(scope.ServiceProvider);
+    if (args.Contains("--seed-phase2"))
+        await MembershipSetup.Demo(scope.ServiceProvider);
+    if (args.Contains("--seed-phase3"))
+        await GovernanceSetup.Initialize(app.Services);
+    return;
+}
+if (args.Contains("--seed-phase3"))
+{
+    await GovernanceSetup.Initialize(app.Services);
     return;
 }
 app.Run();
@@ -847,7 +992,13 @@ public record EmailRequest(string Email);
 
 public record Complete(string Token, string Password);
 
-public record Profile(string Name, string Phone);
+public record Profile(
+    string Name,
+    string Phone,
+    string Locale = "en",
+    string TimeZone = "UTC",
+    string Theme = "light"
+);
 
 public record ChangePassword(string Current, string Password);
 

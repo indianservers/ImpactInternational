@@ -1,0 +1,62 @@
+[
+  {
+    "test": "handover captures actual administrative snapshot",
+    "passed": true
+  },
+  {
+    "test": "incomplete handover cannot be accepted",
+    "passed": true
+  },
+  {
+    "test": "outgoing/requester cannot impersonate incoming acceptance",
+    "passed": true
+  },
+  {
+    "test": "incoming officer accepts completed checklist",
+    "passed": true
+  },
+  {
+    "test": "incoming officer cannot approve own handover",
+    "passed": true
+  },
+  {
+    "test": "independent review approves controlled handover",
+    "passed": true
+  },
+  {
+    "test": "handover archives after successor term takes effect",
+    "passed": true
+  },
+  {
+    "test": "historical outgoing appointment remains completed",
+    "passed": true
+  },
+  {
+    "test": "governance revisions retain earlier decisions",
+    "passed": true
+  },
+  {
+    "test": "profile update cannot bypass restructuring authority",
+    "passed": true
+  },
+  {
+    "test": "approved restructuring changes authoritative hierarchy",
+    "passed": true
+  },
+  {
+    "test": "club history records parent transition",
+    "passed": true
+  },
+  {
+    "test": "one approval cannot satisfy two-person governance quorum",
+    "passed": true
+  },
+  {
+    "test": "delegation cannot double count the same principal",
+    "passed": true
+  },
+  {
+    "test": "two distinct principals complete governance quorum",
+    "passed": true
+  }
+]

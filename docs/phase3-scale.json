@@ -1,0 +1,66 @@
+{
+  "counts": {
+    "Persons": 101035,
+    "Memberships": 206038,
+    "OfficerAppointments": 55000,
+    "OfficerAppointmentHistory": 55000,
+    "Committees": 5000,
+    "CommitteeMemberships": 25000,
+    "GovernanceRequests": 3000
+  },
+  "api": {
+    "/clubs?size=20": {
+      "samples": 30,
+      "median_ms": 66.97,
+      "p95_ms": 74.93
+    },
+    "/clubs?size=20&search=Scale%20Club%20999": {
+      "samples": 30,
+      "median_ms": 66.74,
+      "p95_ms": 74.62
+    },
+    "/officer-appointments?status=Current": {
+      "samples": 30,
+      "median_ms": 72.41,
+      "p95_ms": 89.54
+    },
+    "/officer-appointments?status=Completed": {
+      "samples": 30,
+      "median_ms": 99.29,
+      "p95_ms": 118.49
+    },
+    "/committees": {
+      "samples": 30,
+      "median_ms": 35.34,
+      "p95_ms": 41.98
+    },
+    "/governance/requests": {
+      "samples": 30,
+      "median_ms": 32.41,
+      "p95_ms": 40.02
+    },
+    "/administration/dashboard": {
+      "samples": 30,
+      "median_ms": 240.09,
+      "p95_ms": 268.29
+    }
+  },
+  "sql": {
+    "current_leadership": {
+      "samples": 30,
+      "median_ms": 29.92,
+      "p95_ms": 37.91
+    },
+    "committee_members": {
+      "samples": 30,
+      "median_ms": 0.08,
+      "p95_ms": 0.1
+    },
+    "district_hierarchy": {
+      "samples": 30,
+      "median_ms": 7.17,
+      "p95_ms": 8.67
+    }
+  },
+  "conditions": "PostgreSQL 17.6, Windows local, isolated synthetic clone, warm sequential loopback HTTP, 30 samples after one warmup. 50,000 nonoverlapping historical terms plus 5,000 current terms. API measurements include authorization/projections/pagination. SQL uses EXPLAIN ANALYZE BUFFERS TIMING OFF, retains measured Execution Time. No concurrent user load or production deployment claim."
+}

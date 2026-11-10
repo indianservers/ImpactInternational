@@ -1,0 +1,506 @@
+[
+  {
+    "test": "administrator login",
+    "passed": true
+  },
+  {
+    "test": "GET /workspaces",
+    "passed": true
+  },
+  {
+    "test": "GET /governance/options",
+    "passed": true
+  },
+  {
+    "test": "GET /workspaces",
+    "passed": true
+  },
+  {
+    "test": "existing independent reviewer authority reused",
+    "passed": true
+  },
+  {
+    "test": "GET /workspaces",
+    "passed": true
+  },
+  {
+    "test": "GET /workspaces",
+    "passed": true
+  },
+  {
+    "test": "POST /clubs",
+    "passed": true
+  },
+  {
+    "test": "club proposal does not bypass approval",
+    "passed": true
+  },
+  {
+    "test": "POST /governance/requests/67925cdd-bdf5-41e4-adf9-8de7e5375425/submit",
+    "passed": true
+  },
+  {
+    "test": "self approval denied",
+    "passed": true
+  },
+  {
+    "test": "POST /governance/requests/67925cdd-bdf5-41e4-adf9-8de7e5375425/decisions",
+    "passed": true
+  },
+  {
+    "test": "approved club creation persisted",
+    "passed": true
+  },
+  {
+    "test": "duplicate club code rejected",
+    "passed": true
+  },
+  {
+    "test": "invalid parent type rejected",
+    "passed": true
+  },
+  {
+    "test": "cross-tenant parent rejected",
+    "passed": true
+  },
+  {
+    "test": "GET /clubs/a874a047-4804-47b9-83a1-442a239c88c2",
+    "passed": true
+  },
+  {
+    "test": "PUT /clubs/a874a047-4804-47b9-83a1-442a239c88c2",
+    "passed": true
+  },
+  {
+    "test": "POST /governance/requests/8dfbdce0-4407-4c85-977b-7af7c6afa441/submit",
+    "passed": true
+  },
+  {
+    "test": "POST /governance/requests/8dfbdce0-4407-4c85-977b-7af7c6afa441/decisions",
+    "passed": true
+  },
+  {
+    "test": "GET /clubs/a874a047-4804-47b9-83a1-442a239c88c2",
+    "passed": true
+  },
+  {
+    "test": "club profile changes require independent decision",
+    "passed": true
+  },
+  {
+    "test": "GET /clubs/a874a047-4804-47b9-83a1-442a239c88c2/history",
+    "passed": true
+  },
+  {
+    "test": "club history retains before/after",
+    "passed": true
+  },
+  {
+    "test": "GET /clubs/a874a047-4804-47b9-83a1-442a239c88c2",
+    "passed": true
+  },
+  {
+    "test": "POST /clubs/a874a047-4804-47b9-83a1-442a239c88c2/status",
+    "passed": true
+  },
+  {
+    "test": "POST /governance/requests/bed10c29-c689-4106-9f52-e74520f9dac4/submit",
+    "passed": true
+  },
+  {
+    "test": "POST /governance/requests/bed10c29-c689-4106-9f52-e74520f9dac4/decisions",
+    "passed": true
+  },
+  {
+    "test": "GET /clubs/a874a047-4804-47b9-83a1-442a239c88c2",
+    "passed": true
+  },
+  {
+    "test": "club lifecycle Suspended",
+    "passed": true
+  },
+  {
+    "test": "GET /clubs/a874a047-4804-47b9-83a1-442a239c88c2",
+    "passed": true
+  },
+  {
+    "test": "POST /clubs/a874a047-4804-47b9-83a1-442a239c88c2/status",
+    "passed": true
+  },
+  {
+    "test": "POST /governance/requests/2de9923c-a399-4945-90ea-764097dd02b3/submit",
+    "passed": true
+  },
+  {
+    "test": "POST /governance/requests/2de9923c-a399-4945-90ea-764097dd02b3/decisions",
+    "passed": true
+  },
+  {
+    "test": "GET /clubs/a874a047-4804-47b9-83a1-442a239c88c2",
+    "passed": true
+  },
+  {
+    "test": "club lifecycle Active",
+    "passed": true
+  },
+  {
+    "test": "GET /clubs/a874a047-4804-47b9-83a1-442a239c88c2",
+    "passed": true
+  },
+  {
+    "test": "POST /clubs/a874a047-4804-47b9-83a1-442a239c88c2/status",
+    "passed": true
+  },
+  {
+    "test": "POST /governance/requests/8804ac88-f7b0-42a6-95bd-7a77ad9d1d6b/submit",
+    "passed": true
+  },
+  {
+    "test": "POST /governance/requests/8804ac88-f7b0-42a6-95bd-7a77ad9d1d6b/decisions",
+    "passed": true
+  },
+  {
+    "test": "GET /clubs/a874a047-4804-47b9-83a1-442a239c88c2",
+    "passed": true
+  },
+  {
+    "test": "club lifecycle Inactive",
+    "passed": true
+  },
+  {
+    "test": "GET /clubs/a874a047-4804-47b9-83a1-442a239c88c2",
+    "passed": true
+  },
+  {
+    "test": "POST /clubs/a874a047-4804-47b9-83a1-442a239c88c2/status",
+    "passed": true
+  },
+  {
+    "test": "POST /governance/requests/6f7eb90e-d450-4436-ab86-72ea35911f49/submit",
+    "passed": true
+  },
+  {
+    "test": "POST /governance/requests/6f7eb90e-d450-4436-ab86-72ea35911f49/decisions",
+    "passed": true
+  },
+  {
+    "test": "GET /clubs/a874a047-4804-47b9-83a1-442a239c88c2",
+    "passed": true
+  },
+  {
+    "test": "club lifecycle Closed",
+    "passed": true
+  },
+  {
+    "test": "ordinary member club administration denied",
+    "passed": true
+  },
+  {
+    "test": "POST /roles",
+    "passed": true
+  },
+  {
+    "test": "POST /officer-positions",
+    "passed": true
+  },
+  {
+    "test": "position grants do not escalate creator authority",
+    "passed": true
+  },
+  {
+    "test": "unauthorized self-appointment denied",
+    "passed": true
+  },
+  {
+    "test": "POST /officer-appointments",
+    "passed": true
+  },
+  {
+    "test": "proposed appointment has no authority",
+    "passed": true
+  },
+  {
+    "test": "POST /governance/requests/0c7ad6e7-a371-492b-ae7c-105c163ea51b/submit",
+    "passed": true
+  },
+  {
+    "test": "concurrent governance decisions have one winner",
+    "passed": true
+  },
+  {
+    "test": "GET /officer-appointments/f6ab28b5-295d-442e-91ef-19928099070d",
+    "passed": true
+  },
+  {
+    "test": "appointment active after approval",
+    "passed": true
+  },
+  {
+    "test": "leadership history preserved",
+    "passed": true
+  },
+  {
+    "test": "explicit term role grants scoped access",
+    "passed": true
+  },
+  {
+    "test": "overlapping office capacity rejected",
+    "passed": true
+  },
+  {
+    "test": "cross-club office cannot widen private scope",
+    "passed": true
+  },
+  {
+    "test": "cross-tenant governance request denied",
+    "passed": true
+  },
+  {
+    "test": "effective dates deny expired administrative authority",
+    "passed": true
+  },
+  {
+    "test": "term worker completes and preserves expired appointment",
+    "passed": true
+  },
+  {
+    "test": "only appointment-sourced grant removed",
+    "passed": true
+  },
+  {
+    "test": "POST /officer-positions",
+    "passed": true
+  },
+  {
+    "test": "GET /leadership/eligible",
+    "passed": true
+  },
+  {
+    "test": "POST /officer-appointments",
+    "passed": true
+  },
+  {
+    "test": "POST /governance/requests/8fa31963-3816-438f-8428-770517ddbca0/submit",
+    "passed": true
+  },
+  {
+    "test": "POST /governance/requests/8fa31963-3816-438f-8428-770517ddbca0/decisions",
+    "passed": true
+  },
+  {
+    "test": "POST /officer-appointments",
+    "passed": true
+  },
+  {
+    "test": "POST /governance/requests/6d74fc28-1c1b-4ee2-b75c-4969e243671c/submit",
+    "passed": true
+  },
+  {
+    "test": "POST /governance/requests/6d74fc28-1c1b-4ee2-b75c-4969e243671c/decisions",
+    "passed": true
+  },
+  {
+    "test": "two configured concurrent officeholders allowed",
+    "passed": true
+  },
+  {
+    "test": "POST /officer-appointments",
+    "passed": true
+  },
+  {
+    "test": "POST /governance/requests/6b908727-060f-4bea-8415-a38ea636012d/submit",
+    "passed": true
+  },
+  {
+    "test": "POST /governance/requests/6b908727-060f-4bea-8415-a38ea636012d/decisions",
+    "passed": true
+  },
+  {
+    "test": "GET /officer-appointments/39f4fb23-0155-47e9-b73e-a66d0b0f127b",
+    "passed": true
+  },
+  {
+    "test": "appointment rejection grants no authority",
+    "passed": true
+  },
+  {
+    "test": "POST /officer-appointments",
+    "passed": true
+  },
+  {
+    "test": "POST /governance/requests/18ea83f1-fad3-4bce-9179-4ac0f1be6874/submit",
+    "passed": true
+  },
+  {
+    "test": "POST /governance/requests/18ea83f1-fad3-4bce-9179-4ac0f1be6874/decisions",
+    "passed": true
+  },
+  {
+    "test": "GET /officer-appointments/538191d7-dd82-4bd0-8171-29192caaeba5",
+    "passed": true
+  },
+  {
+    "test": "future appointment is scheduled",
+    "passed": true
+  },
+  {
+    "test": "future title grants no early authority",
+    "passed": true
+  },
+  {
+    "test": "scheduled appointment activates through durable worker",
+    "passed": true
+  },
+  {
+    "test": "POST /committees",
+    "passed": true
+  },
+  {
+    "test": "POST /governance/requests/eac245fa-8051-401e-9316-6cdb659ab7be/submit",
+    "passed": true
+  },
+  {
+    "test": "POST /governance/requests/eac245fa-8051-401e-9316-6cdb659ab7be/decisions",
+    "passed": true
+  },
+  {
+    "test": "GET /committees/7afdd94c-6fbd-4e2b-b8af-cbea125d74df/roles",
+    "passed": true
+  },
+  {
+    "test": "POST /committees/7afdd94c-6fbd-4e2b-b8af-cbea125d74df/chair",
+    "passed": true
+  },
+  {
+    "test": "POST /governance/requests/5833e6d3-c710-41b9-b260-4ac52e61c194/submit",
+    "passed": true
+  },
+  {
+    "test": "POST /governance/requests/5833e6d3-c710-41b9-b260-4ac52e61c194/decisions",
+    "passed": true
+  },
+  {
+    "test": "GET /committees/7afdd94c-6fbd-4e2b-b8af-cbea125d74df",
+    "passed": true
+  },
+  {
+    "test": "committee chair can manage own committee",
+    "passed": true
+  },
+  {
+    "test": "POST /committees/7afdd94c-6fbd-4e2b-b8af-cbea125d74df/members",
+    "passed": true
+  },
+  {
+    "test": "chair can assign ordinary committee member",
+    "passed": true
+  },
+  {
+    "test": "chair cannot grant committee leadership directly",
+    "passed": true
+  },
+  {
+    "test": "POST /committees",
+    "passed": true
+  },
+  {
+    "test": "POST /governance/requests/a1cea0ed-9ba8-4033-bf53-ad0a4626095e/submit",
+    "passed": true
+  },
+  {
+    "test": "POST /governance/requests/a1cea0ed-9ba8-4033-bf53-ad0a4626095e/decisions",
+    "passed": true
+  },
+  {
+    "test": "chair cannot manage another committee",
+    "passed": true
+  },
+  {
+    "test": "GET /committees/7afdd94c-6fbd-4e2b-b8af-cbea125d74df",
+    "passed": true
+  },
+  {
+    "test": "POST /committees/7afdd94c-6fbd-4e2b-b8af-cbea125d74df/members/4e11ea4d-2093-409a-a77c-35d404db9a14/remove",
+    "passed": true
+  },
+  {
+    "test": "GET /committees/7afdd94c-6fbd-4e2b-b8af-cbea125d74df",
+    "passed": true
+  },
+  {
+    "test": "committee removal preserves history",
+    "passed": true
+  },
+  {
+    "test": "secure governance document upload",
+    "passed": true
+  },
+  {
+    "test": "anonymous governance document access denied",
+    "passed": true
+  },
+  {
+    "test": "ordinary member cannot access organizational document",
+    "passed": true
+  },
+  {
+    "test": "authorized governance document download",
+    "passed": true
+  },
+  {
+    "test": "unsafe governance file rejected",
+    "passed": true
+  },
+  {
+    "test": "POST /governance/resolutions",
+    "passed": true
+  },
+  {
+    "test": "POST /governance/requests/d212b4fb-dd9d-4520-8987-7f9ace33b46b/submit",
+    "passed": true
+  },
+  {
+    "test": "POST /governance/requests/d212b4fb-dd9d-4520-8987-7f9ace33b46b/decisions",
+    "passed": true
+  },
+  {
+    "test": "GET /governance/resolutions",
+    "passed": true
+  },
+  {
+    "test": "resolution approval persisted",
+    "passed": true
+  },
+  {
+    "test": "GET /clubs/18e82eb4-ca4b-4bdb-928f-c2291eca759b/health",
+    "passed": true
+  },
+  {
+    "test": "club health uses documented weighted formula",
+    "passed": true
+  },
+  {
+    "test": "GET /administration/dashboard",
+    "passed": true
+  },
+  {
+    "test": "national aggregate matches source memberships",
+    "passed": true
+  },
+  {
+    "test": "GET /administration/dashboard",
+    "passed": true
+  },
+  {
+    "test": "club officer dashboard stays within club scope",
+    "passed": true
+  },
+  {
+    "test": "cross-tenant position reference denied",
+    "passed": true
+  },
+  {
+    "test": "governance migration recorded",
+    "passed": true
+  }
+]

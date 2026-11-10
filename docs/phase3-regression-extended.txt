@@ -1,0 +1,12 @@
+PASS submitted application retains frozen workflow version
+PASS quorum does not activate after first approval
+PASS same officer cannot satisfy quorum twice
+PASS two independent approvers satisfy frozen quorum
+PASS outstanding administrative clearance blocks final transfer
+PASS future transfer schedules without early mutation
+PASS durable worker completes transfer at effective time
+PASS cross-district private profile denied
+PASS cross-district member list filter cannot widen scope
+PASS cross-district administrative creation denied
+PASS district officer sees authorized descendant members
+11 extended checks passed

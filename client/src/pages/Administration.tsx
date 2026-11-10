@@ -169,6 +169,7 @@ export default function Administration() {
                 <th>Person</th>
                 <th>Role</th>
                 <th>Scope</th>
+                <th>Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -180,6 +181,32 @@ export default function Administration() {
                   </td>
                   <td>{x.role}</td>
                   <td>{x.organization}</td>
+                  <td>
+                    {w?.permissions.includes("roles.assign") &&
+                      x.email !== me.email && (
+                        <button
+                          className="secondary"
+                          onClick={async () => {
+                            if (
+                              !window.confirm(
+                                "Revoke this organizational role assignment?",
+                              )
+                            )
+                              return;
+                            try {
+                              await api("/assignments/" + x.id, "DELETE");
+                              qc.invalidateQueries({
+                                queryKey: ["assignments"],
+                              });
+                            } catch (e) {
+                              setError(e);
+                            }
+                          }}
+                        >
+                          Revoke
+                        </button>
+                      )}
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -197,6 +224,28 @@ export default function Administration() {
               </span>
               <span>{r.description}</span>
               <span className="badge pending">{r.status}</span>
+              {r.status === "Pending" && (
+                <button
+                  className="secondary"
+                  onClick={async () => {
+                    try {
+                      await api(
+                        "/registration-requests/" + r.id + "/provision",
+                        "POST",
+                        {},
+                      );
+                      qc.invalidateQueries({
+                        queryKey: ["registration-requests"],
+                      });
+                      qc.invalidateQueries({ queryKey: ["workspaces"] });
+                    } catch (e) {
+                      setError(e);
+                    }
+                  }}
+                >
+                  Provision association
+                </button>
+              )}
             </div>
           ))}
           {!requests.data?.length && <p>No registration requests.</p>}

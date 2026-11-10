@@ -1,0 +1,8 @@
+{
+  "passed": true,
+  "test": "PostgreSQL-backed outbox delivered a verification message through local SMTP",
+  "limitations": [
+    "No real provider TLS or credentials were tested",
+    "At-least-once delivery can duplicate after a process crash"
+  ]
+}

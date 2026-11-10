@@ -1,0 +1,82 @@
+[
+  {
+    "test": "legacy club creation cannot bypass governance",
+    "passed": true
+  },
+  {
+    "test": "legacy direct activation blocked",
+    "passed": true
+  },
+  {
+    "test": "legacy proposal uses same approval engine",
+    "passed": true
+  },
+  {
+    "test": "legacy workflow kinds migrated",
+    "passed": true
+  },
+  {
+    "test": "legacy fiscal defaults migrated",
+    "passed": true
+  },
+  {
+    "test": "ancestor leadership calendar applies to child organization",
+    "passed": true
+  },
+  {
+    "test": "appointment cannot exceed selected calendar",
+    "passed": true
+  },
+  {
+    "test": "appointment must satisfy membership eligibility at start",
+    "passed": true
+  },
+  {
+    "test": "term-derived document role cannot read historical private file",
+    "passed": true
+  },
+  {
+    "test": "explicit successor sharing permits appropriate historical file",
+    "passed": true
+  },
+  {
+    "test": "historical confidential resolution excluded from successor list",
+    "passed": true
+  },
+  {
+    "test": "historical request payload cannot bypass resolution privacy",
+    "passed": true
+  },
+  {
+    "test": "historical metadata absent from successor document list",
+    "passed": true
+  },
+  {
+    "test": "position renaming preserves historical title snapshot",
+    "passed": true
+  },
+  {
+    "test": "background import revalidates effective appointment authority",
+    "passed": true
+  },
+  {
+    "test": "expired-term import remains atomic",
+    "passed": true
+  },
+  {
+    "test": "district dashboard aggregation matches recursive SQL truth",
+    "passed": true
+  },
+  {
+    "test": "cross-district club record denied",
+    "passed": true
+  },
+  {
+    "test": "national dashboard aggregation matches recursive SQL truth",
+    "passed": true
+  },
+  {
+    "test": "ordinary member cannot configure governance workflows",
+    "passed": true
+  }
+]

@@ -30,6 +30,31 @@ public class Access(Db db, IHttpContextAccessor ctx)
         "settings.manage",
         "reports.view",
         "audit.view",
+        "members.view",
+        "members.manage",
+        "members.personal.view",
+        "members.contacts.view",
+        "members.export",
+        "members.import",
+        "members.invite",
+        "members.approve",
+        "members.transfer.approve",
+        "members.link",
+        "members.documents",
+        "members.cards",
+        "members.workflow.manage",
+        "directory.view",
+        "clubs.view",
+        "clubs.manage",
+        "leadership.view",
+        "leadership.manage",
+        "governance.configure",
+        "governance.approve",
+        "governance.restructure",
+        "governance.documents",
+        "committees.view",
+        "committees.manage",
+        "governance.reports",
     ];
 
     public static string Token() => Convert.ToHexString(RandomNumberGenerator.GetBytes(32));
@@ -53,15 +78,50 @@ public class Access(Db db, IHttpContextAccessor ctx)
         return await db.Users.SingleAsync(x => x.Id == s.UserId);
     }
 
-    public async Task<Assignment> Workspace(string permission)
+    public Task<Assignment> Workspace(string permission) => WorkspaceAny(permission);
+
+    public async Task<bool> Effective(Assignment w)
     {
-        var s = await Session();
+        var instant = DateTimeOffset.UtcNow;
+        return (
+                w.MembershipId == null
+                || await db.Memberships.AnyAsync(m =>
+                    m.Id == w.MembershipId
+                    && m.Status == "Active"
+                    && (m.EndsAt == null || m.EndsAt > instant)
+                )
+            )
+            && (
+                w.AppointmentId == null
+                || await GovernanceService.Current(db).AnyAsync(p => p.Id == w.AppointmentId)
+            );
+    }
+
+    public async Task<Assignment> WorkspaceAny(params string[] permissions)
+    {
+        var session = await Session();
         var w =
             await db.Assignments.SingleOrDefaultAsync(x =>
-                x.Id == s.WorkspaceId && x.UserId == s.UserId
+                x.Id == session.WorkspaceId && x.UserId == session.UserId
             ) ?? throw new ApiError(403, "Choose an authorized workspace.");
-        if (!(await Grants(w)).Contains(permission))
-            throw new ApiError(403, "Action not permitted in this workspace.");
+        Check(
+            w.MembershipId == null
+                || await db.Memberships.AnyAsync(m =>
+                    m.Id == w.MembershipId
+                    && m.Status == "Active"
+                    && (m.EndsAt == null || m.EndsAt > DateTimeOffset.UtcNow)
+                ),
+            "This membership no longer grants an active workspace.",
+            403
+        );
+        var grants = await Grants(w);
+        Check(
+            w.AppointmentId == null
+                || await GovernanceService.Current(db).AnyAsync(x => x.Id == w.AppointmentId),
+            "This office no longer grants effective authority.",
+            403
+        );
+        Check(permissions.Any(grants.Contains), "Action not permitted in this workspace.", 403);
         return w;
     }
 
@@ -82,14 +142,57 @@ public class Access(Db db, IHttpContextAccessor ctx)
             .Select(x => x.PermissionId)
             .ToArrayAsync();
 
+#pragma warning disable EF1002 // Only canonical typed GUID literals enter this SQL; see below.
     public IQueryable<Org> Tree(Guid tenant, Guid root) =>
+        // Typed GUID literals avoid EF raw-query parameter renaming collisions when
+        // the hierarchy is composed repeatedly with parameterized search predicates.
+        // Both values are Guid, never caller-provided SQL or text.
         db.Orgs.FromSqlRaw(
-            "WITH RECURSIVE tree AS (SELECT * FROM \"Orgs\" WHERE \"TenantId\"=@scope_tenant AND \"Id\"=@scope_root UNION ALL SELECT o.* FROM \"Orgs\" o JOIN tree t ON o.\"ParentId\"=t.\"Id\" AND o.\"TenantId\"=t.\"TenantId\") SELECT * FROM tree",
-            new Npgsql.NpgsqlParameter("scope_tenant", tenant),
-            new Npgsql.NpgsqlParameter("scope_root", root)
+            $"""
+            WITH RECURSIVE tree AS (
+              SELECT * FROM "Orgs" WHERE "TenantId"='{tenant:D}'::uuid AND "Id"='{root:D}'::uuid
+              UNION ALL SELECT o.* FROM "Orgs" o JOIN tree t
+                ON o."ParentId"=t."Id" AND o."TenantId"=t."TenantId"
+            ) SELECT * FROM tree
+            """
         );
+#pragma warning restore EF1002
 
     public IQueryable<Org> Visible(Assignment w) => Tree(w.TenantId, w.OrgId);
+
+    // Same recursive scope, narrow projection for member queries over large subtrees.
+    public IQueryable<Guid> VisibleIds(Assignment w) =>
+        db.Database.SqlQuery<Guid>(
+            $"""
+            WITH RECURSIVE tree AS (
+              SELECT "Id","TenantId" FROM "Orgs" WHERE "TenantId"={w.TenantId} AND "Id"={w.OrgId}
+              UNION ALL SELECT o."Id",o."TenantId" FROM "Orgs" o JOIN tree t
+                ON o."ParentId"=t."Id" AND o."TenantId"=t."TenantId"
+            ) SELECT "Id" AS "Value" FROM tree
+            """
+        );
+
+    public async Task<Microsoft.EntityFrameworkCore.Storage.IDbContextTransaction> Mutation(
+        Assignment w
+    )
+    {
+        var tx = await db.Database.BeginTransactionAsync();
+        try
+        {
+            await db.Database.ExecuteSqlInterpolatedAsync(
+                $"SELECT pg_advisory_xact_lock(hashtext({w.TenantId.ToString()}))"
+            );
+            await db.Database.ExecuteSqlInterpolatedAsync(
+                $"SELECT set_config('clubs.actor', {w.UserId.ToString()}, true)"
+            );
+            return tx;
+        }
+        catch
+        {
+            await tx.DisposeAsync();
+            throw;
+        }
+    }
 
     public async Task Log(Assignment w, string action, string resource, string changes = "")
     {

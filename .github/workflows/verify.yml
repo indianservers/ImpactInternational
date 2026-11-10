@@ -1,0 +1,51 @@
+name: Phase 1 verification
+on: [push, pull_request]
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_DB: clubs_test
+          POSTGRES_USER: clubs
+          POSTGRES_HOST_AUTH_METHOD: trust
+        ports: ["55432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U clubs -d clubs_test"
+          --health-interval 5s --health-retries 20
+    env:
+      ASPNETCORE_ENVIRONMENT: Development
+      ConnectionStrings__Database: Host=127.0.0.1;Port=55432;Database=clubs_test;Username=clubs
+      CLUBS_PSQL: psql
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with: {dotnet-version: "10.0.x"}
+      - uses: actions/setup-node@v4
+        with: {node-version: "24", cache: npm, cache-dependency-path: client/package-lock.json}
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - run: sudo apt-get update && sudo apt-get install -y postgresql-client
+      - name: Generate disposable test credentials
+        shell: bash
+        run: |
+          password=$(openssl rand -hex 24)
+          echo "::add-mask::$password"
+          echo "CLUBS_SEED_PASSWORD=$password" >> "$GITHUB_ENV"
+      - run: npm --prefix client ci
+      - run: npm run build
+      - run: dotnet run --project server --no-build --no-launch-profile -- --migrate --seed
+      - name: API integration checks
+        shell: bash
+        run: |
+          dotnet run --project server --no-build --no-launch-profile --urls http://127.0.0.1:5081 > /tmp/clubs-test-api.log 2>&1 &
+          api_pid=$!
+          trap 'kill "$api_pid"' EXIT
+          for attempt in $(seq 1 30); do curl -sf http://127.0.0.1:5081/health && break || sleep 1; done
+          python tests/integration.py
+      - run: python tests/benchmark.py
+      - run: python tests/smtp.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: {name: verification-results, path: test-results/}

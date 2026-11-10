@@ -1,0 +1,512 @@
+{
+  "tests": [
+    {
+      "test": "Phase 2 administrator login",
+      "passed": true
+    },
+    {
+      "test": "GET /membership/config",
+      "passed": true
+    },
+    {
+      "test": "GET /organizations",
+      "passed": true
+    },
+    {
+      "test": "new applicant signup",
+      "passed": true
+    },
+    {
+      "test": "unverified applicant blocked",
+      "passed": true
+    },
+    {
+      "test": "applicant email verification",
+      "passed": true
+    },
+    {
+      "test": "applicant sign in",
+      "passed": true
+    },
+    {
+      "test": "member portal works without administrative workspace",
+      "passed": true
+    },
+    {
+      "test": "POST /membership/invitations",
+      "passed": true
+    },
+    {
+      "test": "POST /membership/invitations/accept",
+      "passed": true
+    },
+    {
+      "test": "invitation only creates a draft",
+      "passed": true
+    },
+    {
+      "test": "duplicate invitation processing denied",
+      "passed": true
+    },
+    {
+      "test": "POST /membership/invitations",
+      "passed": true
+    },
+    {
+      "test": "expired invitation denied",
+      "passed": true
+    },
+    {
+      "test": "POST /membership/invitations",
+      "passed": true
+    },
+    {
+      "test": "invitation intended recipient enforced",
+      "passed": true
+    },
+    {
+      "test": "GET /membership/me",
+      "passed": true
+    },
+    {
+      "test": "member profile update",
+      "passed": true
+    },
+    {
+      "test": "field-level date validation",
+      "passed": true
+    },
+    {
+      "test": "GET /membership/applications/bded2f8f-f3bf-49eb-9679-28782acceb03",
+      "passed": true
+    },
+    {
+      "test": "PUT /membership/applications/bded2f8f-f3bf-49eb-9679-28782acceb03",
+      "passed": true
+    },
+    {
+      "test": "draft is not a membership",
+      "passed": true
+    },
+    {
+      "test": "POST /membership/applications/bded2f8f-f3bf-49eb-9679-28782acceb03/submit",
+      "passed": true
+    },
+    {
+      "test": "submitted application has no membership yet",
+      "passed": true
+    },
+    {
+      "test": "president cannot skip secretary stage",
+      "passed": true
+    },
+    {
+      "test": "POST /membership/applications/bded2f8f-f3bf-49eb-9679-28782acceb03/decisions",
+      "passed": true
+    },
+    {
+      "test": "request changes state",
+      "passed": true
+    },
+    {
+      "test": "PUT /membership/applications/bded2f8f-f3bf-49eb-9679-28782acceb03",
+      "passed": true
+    },
+    {
+      "test": "POST /membership/applications/bded2f8f-f3bf-49eb-9679-28782acceb03/submit",
+      "passed": true
+    },
+    {
+      "test": "concurrent approval attempts have one winner",
+      "passed": true
+    },
+    {
+      "test": "GET /membership/applications/bded2f8f-f3bf-49eb-9679-28782acceb03",
+      "passed": true
+    },
+    {
+      "test": "secretary approval advances to president",
+      "passed": true
+    },
+    {
+      "test": "POST /membership/applications/bded2f8f-f3bf-49eb-9679-28782acceb03/decisions",
+      "passed": true
+    },
+    {
+      "test": "president approval activates membership",
+      "passed": true
+    },
+    {
+      "test": "GET /membership/me",
+      "passed": true
+    },
+    {
+      "test": "one activation for approved application",
+      "passed": true
+    },
+    {
+      "test": "ordinary member cannot access administration CRM",
+      "passed": true
+    },
+    {
+      "test": "directory hides opted-out person",
+      "passed": true
+    },
+    {
+      "test": "unauthorized private profile denied to directory role",
+      "passed": true
+    },
+    {
+      "test": "own full profile is accessible",
+      "passed": true
+    },
+    {
+      "test": "GET /members/4378f1eb-960b-4fcc-b192-0e1cd962ba3d",
+      "passed": true
+    },
+    {
+      "test": "sensitive fields removed before serialization",
+      "passed": true
+    },
+    {
+      "test": "PUT /persons/me/privacy",
+      "passed": true
+    },
+    {
+      "test": "GET /directory",
+      "passed": true
+    },
+    {
+      "test": "directory field-level privacy",
+      "passed": true
+    },
+    {
+      "test": "GET /members/4378f1eb-960b-4fcc-b192-0e1cd962ba3d",
+      "passed": true
+    },
+    {
+      "test": "directory profile never includes birth date or emergency data",
+      "passed": true
+    },
+    {
+      "test": "PUT /persons/me/privacy",
+      "passed": true
+    },
+    {
+      "test": "GET /directory",
+      "passed": true
+    },
+    {
+      "test": "professional directory is opt-in",
+      "passed": true
+    },
+    {
+      "test": "unauthorized export denied",
+      "passed": true
+    },
+    {
+      "test": "server-rendered downloadable digital card",
+      "passed": true
+    },
+    {
+      "test": "GET /members/4378f1eb-960b-4fcc-b192-0e1cd962ba3d/cards",
+      "passed": true
+    },
+    {
+      "test": "QR uses an opaque identifier rather than personal details",
+      "passed": true
+    },
+    {
+      "test": "GET /cards/verify/9B5C46B6EBE65F7B72D5DC976333DCFE64D8DB2A1996D9E4603EB0AD8347F10A",
+      "passed": true
+    },
+    {
+      "test": "public verification minimizes PII",
+      "passed": true
+    },
+    {
+      "test": "POST /membership/cards/5f8cd3d3-1100-4c7d-b913-0fc4bc9ad0cc/revoke",
+      "passed": true
+    },
+    {
+      "test": "revoked QR does not verify",
+      "passed": true
+    },
+    {
+      "test": "POST /members/4378f1eb-960b-4fcc-b192-0e1cd962ba3d/cards/reissue",
+      "passed": true
+    },
+    {
+      "test": "reissuance does not revive old QR",
+      "passed": true
+    },
+    {
+      "test": "duplicate/shared-contact review required",
+      "passed": true
+    },
+    {
+      "test": "POST /members",
+      "passed": true
+    },
+    {
+      "test": "shared family mobile allowed without identity merge",
+      "passed": true
+    },
+    {
+      "test": "invalid membership transition rejected",
+      "passed": true
+    },
+    {
+      "test": "POST /members/4378f1eb-960b-4fcc-b192-0e1cd962ba3d/status",
+      "passed": true
+    },
+    {
+      "test": "membership suspension revokes managed workspace",
+      "passed": true
+    },
+    {
+      "test": "POST /members/4378f1eb-960b-4fcc-b192-0e1cd962ba3d/status",
+      "passed": true
+    },
+    {
+      "test": "POST /membership/applications",
+      "passed": true
+    },
+    {
+      "test": "POST /membership/applications/1bab1aae-9cfa-45b7-b49f-618d5459f872/submit",
+      "passed": true
+    },
+    {
+      "test": "cross-club approval denied",
+      "passed": true
+    },
+    {
+      "test": "POST /membership/applications/1bab1aae-9cfa-45b7-b49f-618d5459f872/decisions",
+      "passed": true
+    },
+    {
+      "test": "POST /membership/applications/1bab1aae-9cfa-45b7-b49f-618d5459f872/decisions",
+      "passed": true
+    },
+    {
+      "test": "multiple club memberships share one person",
+      "passed": true
+    },
+    {
+      "test": "POST /members/4378f1eb-960b-4fcc-b192-0e1cd962ba3d/transfers",
+      "passed": true
+    },
+    {
+      "test": "GET /members/4378f1eb-960b-4fcc-b192-0e1cd962ba3d",
+      "passed": true
+    },
+    {
+      "test": "transfer request does not mutate current affiliation",
+      "passed": true
+    },
+    {
+      "test": "POST /membership/transfers/d4554901-64bb-44a8-b730-a989300b52bb/decisions",
+      "passed": true
+    },
+    {
+      "test": "source approval does not activate destination",
+      "passed": true
+    },
+    {
+      "test": "source-only officer cannot approve destination stage",
+      "passed": true
+    },
+    {
+      "test": "POST /membership/transfers/d4554901-64bb-44a8-b730-a989300b52bb/decisions",
+      "passed": true
+    },
+    {
+      "test": "effective transfer completed",
+      "passed": true
+    },
+    {
+      "test": "GET /membership/me",
+      "passed": true
+    },
+    {
+      "test": "transfer preserves person and source history",
+      "passed": true
+    },
+    {
+      "test": "source membership permission reevaluated after transfer",
+      "passed": true
+    },
+    {
+      "test": "POST /members/365492e1-4279-4ee8-898f-fe2f21c217bb/transfers",
+      "passed": true
+    },
+    {
+      "test": "POST /membership/transfers/d4d9422f-ecbd-4e62-bacc-3d827f3188f1/decisions",
+      "passed": true
+    },
+    {
+      "test": "transfer rejection preserves active membership",
+      "passed": true
+    },
+    {
+      "test": "POST /membership/applications",
+      "passed": true
+    },
+    {
+      "test": "POST /membership/applications/767b4d38-6cc4-4213-84a5-d30b09896a10/submit",
+      "passed": true
+    },
+    {
+      "test": "POST /membership/applications/767b4d38-6cc4-4213-84a5-d30b09896a10/decisions",
+      "passed": true
+    },
+    {
+      "test": "rejected application has no membership",
+      "passed": true
+    },
+    {
+      "test": "cross-tenant club parameter denied",
+      "passed": true
+    },
+    {
+      "test": "GET /membership/options",
+      "passed": true
+    },
+    {
+      "test": "POST /membership/applications",
+      "passed": true
+    },
+    {
+      "test": "POST /membership/applications/9e5e7f0d-a3d8-4d93-8ef3-7f8f1144f8ea/submit",
+      "passed": true
+    },
+    {
+      "test": "POST /membership/applications/9e5e7f0d-a3d8-4d93-8ef3-7f8f1144f8ea/decisions",
+      "passed": true
+    },
+    {
+      "test": "POST /membership/applications/9e5e7f0d-a3d8-4d93-8ef3-7f8f1144f8ea/decisions",
+      "passed": true
+    },
+    {
+      "test": "cross-tenant member detail denied",
+      "passed": true
+    },
+    {
+      "test": "cross-club private member detail denied",
+      "passed": true
+    },
+    {
+      "test": "new applicant signup",
+      "passed": true
+    },
+    {
+      "test": "unverified applicant blocked",
+      "passed": true
+    },
+    {
+      "test": "applicant email verification",
+      "passed": true
+    },
+    {
+      "test": "applicant sign in",
+      "passed": true
+    },
+    {
+      "test": "POST /membership/invitations",
+      "passed": true
+    },
+    {
+      "test": "POST /membership/invitations/accept",
+      "passed": true
+    },
+    {
+      "test": "account linking waits for identity review",
+      "passed": true
+    },
+    {
+      "test": "POST /membership/link-requests/de2f5e8f-0160-4c1a-9b34-58c3ce376f35/decide",
+      "passed": true
+    },
+    {
+      "test": "reviewed account links to imported person",
+      "passed": true
+    },
+    {
+      "test": "secure document upload",
+      "passed": true
+    },
+    {
+      "test": "document cannot be downloaded anonymously",
+      "passed": true
+    },
+    {
+      "test": "cross-club private document access denied",
+      "passed": true
+    },
+    {
+      "test": "owner document download",
+      "passed": true
+    },
+    {
+      "test": "unsafe upload rejected",
+      "passed": true
+    },
+    {
+      "test": "POST /members",
+      "passed": true
+    },
+    {
+      "test": "CSV formula injection escaped",
+      "passed": true
+    },
+    {
+      "test": "export applies phone privacy",
+      "passed": true
+    },
+    {
+      "test": "Excel export is a real workbook",
+      "passed": true
+    },
+    {
+      "test": "GET /members",
+      "passed": true
+    },
+    {
+      "test": "GET /members",
+      "passed": true
+    },
+    {
+      "test": "stable large-list cursor pagination",
+      "passed": true
+    },
+    {
+      "test": "GET /members",
+      "passed": true
+    },
+    {
+      "test": "member search",
+      "passed": true
+    },
+    {
+      "test": "GET /membership/metrics",
+      "passed": true
+    },
+    {
+      "test": "dashboard aggregation matches PostgreSQL truth",
+      "passed": true
+    },
+    {
+      "test": "retention cohort excludes new people",
+      "passed": true
+    },
+    {
+      "test": "POST /membership/views",
+      "passed": true
+    },
+    {
+      "test": "saved grid views persisted",
+      "passed": true
+    }
+  ]
+}

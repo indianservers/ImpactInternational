@@ -1,0 +1,56 @@
+{
+  "counts": {
+    "Tenants": 13,
+    "Orgs": 10030,
+    "Persons": 101035,
+    "Memberships": 106038,
+    "MembershipApplications": 3006,
+    "Clubs": 10013,
+    "PendingApplications": 3000
+  },
+  "sql": {
+    "member_page": {
+      "samples": 30,
+      "median_ms": 0.47,
+      "p95_ms": 0.54
+    },
+    "member_search": {
+      "samples": 30,
+      "median_ms": 9.17,
+      "p95_ms": 9.56
+    },
+    "member_count": {
+      "samples": 30,
+      "median_ms": 11.26,
+      "p95_ms": 24.4
+    },
+    "directory_count": {
+      "samples": 30,
+      "median_ms": 72.8,
+      "p95_ms": 97.68
+    }
+  },
+  "api": {
+    "/members?size=25": {
+      "samples": 30,
+      "median_ms": 59.34,
+      "p95_ms": 72.18
+    },
+    "/members?size=25&search=scale%20person%200999": {
+      "samples": 30,
+      "median_ms": 52.05,
+      "p95_ms": 70.36
+    },
+    "/directory?size=25": {
+      "samples": 30,
+      "median_ms": 117.54,
+      "p95_ms": 136.1
+    },
+    "/members?size=25&sort=number": {
+      "samples": 30,
+      "median_ms": 56.14,
+      "p95_ms": 71.63
+    }
+  },
+  "conditions": "PostgreSQL 17.6, Windows local, warm sequential loopback HTTP, 30 measured requests per case after one warmup, no concurrent traffic; separate disposable database cloned from integration fixtures. SQL uses EXPLAIN ANALYZE BUFFERS TIMING OFF to avoid per-node clock instrumentation; Execution Time remains measured. Scope checks the sole-root invariant in SQL and falls back to recursive IDs for district/club workspaces. API includes authorization, count and field projection. Not a concurrent load test."
+}

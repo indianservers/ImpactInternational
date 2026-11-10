@@ -6,7 +6,54 @@ namespace Clubs;
 
 public static class Operations
 {
-    public static async Task<IResult> Save(Org r, Guid? id, Access a)
+    public static async Task<Tenant> Provision(string name, Access a)
+    {
+        var user = await a.User();
+        Check(user.PlatformAdmin, "Platform administrator required.", 403);
+        Check((name?.Trim().Length ?? 0) is >= 3 and <= 200, "Organization name required.");
+        var tenant = new Tenant { Name = name!.Trim() };
+        var level = new Level { TenantId = tenant.Id, Name = "Headquarters" };
+        var org = new Org
+        {
+            TenantId = tenant.Id,
+            LevelId = level.Id,
+            Name = tenant.Name,
+            Code = "HQ",
+        };
+        var role = new Role
+        {
+            TenantId = tenant.Id,
+            Name = "Association Super Admin",
+            Permissions = All,
+        };
+        a.Db.AddRange(
+            tenant,
+            level,
+            org,
+            role,
+            new Assignment
+            {
+                UserId = user.Id,
+                TenantId = tenant.Id,
+                RoleId = role.Id,
+                OrgId = org.Id,
+            },
+            new Audit
+            {
+                TenantId = tenant.Id,
+                OrgId = org.Id,
+                ActorId = user.Id,
+                Action = "association.provisioned",
+                Resource = tenant.Name,
+            }
+        );
+        await a.Db.SaveChangesAsync();
+        await MembershipSetup.Tenant(a.Db, tenant.Id);
+        await GovernanceSetup.Tenant(a.Db, tenant.Id);
+        return tenant;
+    }
+
+    public static async Task<IResult> Save(Org r, Guid? id, Access a, GovernanceService governance)
     {
         var w = await a.Workspace(id == null ? "organization.create" : "organization.update");
         Check(
@@ -41,8 +88,25 @@ public static class Operations
             entity =
                 await a.Visible(w).SingleOrDefaultAsync(x => x.Id == id)
                 ?? throw new ApiError(404, "Organization not found.");
+            if (await a.Db.Levels.AnyAsync(l => l.Id == entity.LevelId && l.IsClub))
+            {
+                var needsApproval = await a.Db.ClubHealthConfigurations.AnyAsync(c =>
+                    c.TenantId == w.TenantId && c.RequireClubChangeApproval
+                );
+                Check(!needsApproval, "Submit club changes through governance approval.", 409);
+                Check(
+                    entity.ParentId == r.ParentId,
+                    "Use the controlled organization restructuring workflow.",
+                    409
+                );
+            }
             Check(entity.Version == r.Version, "Record changed. Refresh.", 409);
             Check(entity.LevelId == r.LevelId, "Existing level cannot be changed.");
+            Check(
+                entity.ParentId == r.ParentId,
+                "Use the controlled organization restructuring workflow.",
+                409
+            );
             if (r.ParentId != null)
                 Check(
                     !await a.Tree(w.TenantId, id.Value).AnyAsync(x => x.Id == r.ParentId),
@@ -99,7 +163,13 @@ public static class Operations
                 403
             );
         }
-        entity.Status = r.Status;
+        if (id != null && level.IsClub)
+            Check(
+                entity.Status == r.Status,
+                "Submit club lifecycle changes through governance approval.",
+                409
+            );
+        entity.Status = id == null && level.IsClub ? "Pending" : r.Status;
         entity.Version++;
         entity.UpdatedAt = DateTimeOffset.UtcNow;
         await a.Log(
@@ -120,6 +190,19 @@ public static class Operations
                 }
             )
         );
+        if (id == null && level.IsClub)
+        {
+            await governance.Request(
+                w,
+                entity.Id,
+                "ClubStatus",
+                "Approve new club: " + entity.Name,
+                GovernanceService.Pack(
+                    new ClubStatusInput("Active", "New club activation", entity.Version)
+                )
+            );
+            await a.Db.SaveChangesAsync();
+        }
         await tx.CommitAsync();
         return Results.Ok(entity);
     }
@@ -215,6 +298,8 @@ public static class Seed
                         ],
                 })
                 .ToArray();
+            foreach (var role in roles)
+                MembershipSetup.Template(role);
             db.Roles.AddRange(roles);
             Org? parent = null;
             var path = second

@@ -9,6 +9,9 @@ public class User
     public Guid Id { get; set; } = Guid.NewGuid();
     public string Email { get; set; } = "";
     public string PasswordHash { get; set; } = "";
+    public string Theme { get; set; } = "light";
+    public string Locale { get; set; } = "en";
+    public string TimeZone { get; set; } = "UTC";
     public string Name { get; set; } = "";
     public string Phone { get; set; } = "";
     public bool Verified { get; set; }
@@ -48,6 +51,19 @@ public class Level
 
 public class Org
 {
+    public string Description { get; set; } = "";
+    public string ClubType { get; set; } = "Community";
+    public string Registration { get; set; } = "";
+    public string PostalCode { get; set; } = "";
+    public double? Latitude { get; set; }
+    public double? Longitude { get; set; }
+    public string MeetingDay { get; set; } = "";
+    public string MeetingSchedule { get; set; } = "";
+    public string MeetingVenue { get; set; } = "";
+    public int FiscalStartMonth { get; set; } = 1;
+    public string PreferredLanguage { get; set; } = "en";
+    public string BrandingColor { get; set; } = "#2563eb";
+    public string OperatingPolicies { get; set; } = "";
     public Guid Id { get; set; } = Guid.NewGuid();
     public Guid TenantId { get; set; }
     public Guid LevelId { get; set; }
@@ -104,7 +120,9 @@ public class RolePermission
 
 public class Assignment
 {
+    public Guid? AppointmentId { get; set; }
     public Guid Id { get; set; } = Guid.NewGuid();
+    public Guid? MembershipId { get; set; }
     public Guid UserId { get; set; }
     public Guid TenantId { get; set; }
     public Guid RoleId { get; set; }
@@ -127,11 +145,17 @@ public class Audit
 public class Mail
 {
     public Guid Id { get; set; } = Guid.NewGuid();
-    public Guid UserId { get; set; }
+    public Guid? TenantId { get; set; }
+    public Guid? OrgId { get; set; }
+    public string Recipient { get; set; } = "";
+    public string Subject { get; set; } = "";
+    public string Body { get; set; } = "";
+    public Guid? UserId { get; set; }
     public string Kind { get; set; } = "";
     public string TokenHash { get; set; } = "";
     public string Link { get; set; } = "";
     public DateTimeOffset ExpiresAt { get; set; }
+    public bool Suppressed { get; set; }
     public bool Used { get; set; }
     public DateTimeOffset? SentAt { get; set; }
     public int Attempts { get; set; }
@@ -180,7 +204,7 @@ public class OrganizationSetting
     public string Value { get; set; } = "";
 }
 
-public class Db(DbContextOptions<Db> options) : DbContext(options)
+public partial class Db(DbContextOptions<Db> options) : DbContext(options)
 {
     public DbSet<AuthAudit> AuthenticationAudits => Set<AuthAudit>();
     public DbSet<RegistrationRequest> RegistrationRequests => Set<RegistrationRequest>();
@@ -201,6 +225,7 @@ public class Db(DbContextOptions<Db> options) : DbContext(options)
 
     protected override void OnModelCreating(ModelBuilder b)
     {
+        ConfigureMembership(b);
         b.Entity<User>()
             .SplitToTable(
                 "UserProfiles",
@@ -208,6 +233,9 @@ public class Db(DbContextOptions<Db> options) : DbContext(options)
                 {
                     t.Property(x => x.Name);
                     t.Property(x => x.Phone);
+                    t.Property(x => x.Locale);
+                    t.Property(x => x.Theme);
+                    t.Property(x => x.TimeZone);
                 }
             );
         b.Entity<Tenant>()

@@ -1,0 +1,49 @@
+{
+  "counts": {
+    "Tenants": 13,
+    "Orgs": 10030,
+    "Persons": 101035,
+    "Memberships": 106038,
+    "MembershipApplications": 3006
+  },
+  "sql": {
+    "member_page": {
+      "samples": 30,
+      "median_ms": 7.87,
+      "p95_ms": 8.14
+    },
+    "member_search": {
+      "samples": 30,
+      "median_ms": 8.71,
+      "p95_ms": 9.39
+    },
+    "member_count": {
+      "samples": 30,
+      "median_ms": 147.48,
+      "p95_ms": 189.1
+    }
+  },
+  "api": {
+    "/members?size=25": {
+      "samples": 30,
+      "median_ms": 120.81,
+      "p95_ms": 140.84
+    },
+    "/members?size=25&search=scale%20person%200999": {
+      "samples": 30,
+      "median_ms": 413.53,
+      "p95_ms": 470.77
+    },
+    "/directory?size=25": {
+      "samples": 30,
+      "median_ms": 319.48,
+      "p95_ms": 378.07
+    },
+    "/members?size=25&sort=number": {
+      "samples": 30,
+      "median_ms": 107.53,
+      "p95_ms": 125.2
+    }
+  },
+  "conditions": "PostgreSQL 17.6, Windows local, warm sequential loopback HTTP, 30 measured requests per case after one warmup, no concurrent traffic; separate disposable database cloned from integration fixtures. SQL includes scoped recursive hierarchy. API includes authorization, count and field projection. Not a concurrent load test."
+}
