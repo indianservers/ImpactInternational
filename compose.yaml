@@ -1,0 +1,43 @@
+services:
+  postgres:
+    image: postgres:17
+    environment:
+      POSTGRES_DB: clubs
+      POSTGRES_USER: clubs
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
+    volumes: ["pgdata:/var/lib/postgresql/data"]
+    command: ["postgres", "-c", "statement_timeout=15000", "-c", "lock_timeout=5000", "-c", "log_min_duration_statement=100"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U clubs -d clubs"]
+      interval: 5s
+      retries: 20
+  migrate:
+    build: {context: ., dockerfile: server/Dockerfile}
+    command: ["--migrate"]
+    environment: &api-env
+      ASPNETCORE_ENVIRONMENT: Production
+      AllowedHosts: ${PUBLIC_HOST:?Set PUBLIC_HOST to the public hostname}
+      ConnectionStrings__Database: Host=postgres;Database=clubs;Username=clubs;Password=${POSTGRES_PASSWORD};Maximum Pool Size=100
+      DataProtection__Path: /app/keys
+      PublicOrigin: ${PUBLIC_ORIGIN:?Set PUBLIC_ORIGIN to the HTTPS public URL}
+      Smtp__Host: ${SMTP_HOST:-}
+      Smtp__Port: ${SMTP_PORT:-587}
+      Smtp__From: ${SMTP_FROM:-}
+      Smtp__Username: ${SMTP_USERNAME:-}
+      Smtp__Password: ${SMTP_PASSWORD:-}
+    depends_on:
+      postgres: {condition: service_healthy}
+  api:
+    build: {context: ., dockerfile: server/Dockerfile}
+    environment: *api-env
+    volumes: ["keys:/app/keys"]
+    depends_on:
+      migrate: {condition: service_completed_successfully}
+    restart: unless-stopped
+  web:
+    build: {context: ., dockerfile: client/Dockerfile}
+    ports: ["127.0.0.1:8080:80"]
+    depends_on: [api]
+volumes:
+  pgdata:
+  keys:

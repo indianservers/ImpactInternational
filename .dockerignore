@@ -1,0 +1,8 @@
+.infra
+.tools
+**/node_modules
+**/bin
+**/obj
+**/dist
+.env
+.git
