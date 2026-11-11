@@ -195,6 +195,7 @@ public class GovernanceService(
         "EventRegistration",
         "CommunicationBroadcast",
         "CommunicationAutomation",
+        "IdCardIssue", "IdCardBatch",
         "FinanceExpense", "FinanceBudget",
         "OperationImpactCorrection",
         "OperationProject",
@@ -304,7 +305,8 @@ public class GovernanceService(
             )
         )
             q = q.Where(x =>
-                (grants.Contains("events.manage") && x.Kind.StartsWith("Event"))
+                (grants.Contains("cards.issue") && x.Kind.StartsWith("IdCard"))
+                || (grants.Contains("events.manage") && x.Kind.StartsWith("Event"))
                 || (grants.Contains("communications.manage") && x.Kind.StartsWith("Communication"))
                 || (grants.Contains("operations.manage") && x.Kind.StartsWith("Operation"))
             );
@@ -921,6 +923,7 @@ public class GovernanceService(
 
     public async Task Apply(GovernanceRequest r, Assignment w)
     {
+        if(r.Kind.StartsWith("IdCard")){await IdCardService.Approve(A,r,w);return;}
         if(r.Kind.StartsWith("Finance")){await new FinanceService(A,this,notifications).Apply(r,w);return;}
         if (r.Kind.StartsWith("Operation"))
         {

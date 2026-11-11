@@ -127,7 +127,7 @@ public static partial class OperationsEndpoints
                 var w = await s.Workspace();
                 return await s
                     .Db.CertificateTemplates.Where(t =>
-                        t.TenantId == w.TenantId && s.A.VisibleIds(w).Contains(t.OrgId)
+                        t.Type != "IdCard" && t.TenantId == w.TenantId && s.A.VisibleIds(w).Contains(t.OrgId)
                     )
                     .OrderBy(t => t.Name)
                     .Take(100)
@@ -141,6 +141,7 @@ public static partial class OperationsEndpoints
             {
                 var w = await s.A.Workspace("operations.certificates");
                 await s.Governance.Scope(w, i.OrgId);
+                Check(i.Type!="IdCard", "Use the ID card template studio.");
                 ValidateLayout(i.Layout);
                 OperationsService.Title(i.Name);
                 var t = new CertificateTemplate
@@ -165,10 +166,11 @@ public static partial class OperationsEndpoints
             {
                 var w = await s.A.Workspace("operations.certificates");
                 var t = await s.Db.CertificateTemplates.SingleOrDefaultAsync(t =>
-                    t.Id == id && t.TenantId == w.TenantId && s.A.VisibleIds(w).Contains(t.OrgId)
+                    t.Id == id && t.Type != "IdCard" && t.TenantId == w.TenantId && s.A.VisibleIds(w).Contains(t.OrgId)
                 );
                 Check(t != null, "Template unavailable.", 404);
                 Check(t.Version == i.Version && t.OrgId == i.OrgId, "Template changed.", 409);
+                Check(i.Type!="IdCard", "Use the ID card template studio.");
                 ValidateLayout(i.Layout);
                 OperationsService.Title(i.Name);
                 s.Revision(t, "CertificateTemplate", t.Layout, w.UserId);
@@ -187,6 +189,7 @@ public static partial class OperationsEndpoints
             async (CertificateTemplateInput i, OperationsService s) =>
             {
                 await s.Scope(i.OrgId);
+                Check(i.Type!="IdCard", "Use the ID card template studio.");
                 ValidateLayout(i.Layout);
                 return Results.File(
                     CertificatePdf(
@@ -231,7 +234,8 @@ public static partial class OperationsEndpoints
                 var template = await s.Db.CertificateTemplates.SingleOrDefaultAsync(t =>
                     t.Id == i.TemplateId
                     && t.TenantId == w.TenantId
-                    && t.Active
+                    && t.Type != "IdCard"
+                      && t.Active
                     && s.A.VisibleIds(w).Contains(t.OrgId)
                 );
                 Check(template != null, "Template unavailable.", 404);

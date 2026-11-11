@@ -1,0 +1,64 @@
+{
+  "conditions": "Real PostgreSQL, isolated cloned synthetic database, one bounded durable worker, standard CR80 front/back design, 300 DPI PNGs, two-page vector PDF, QR on back; no member photographs in synthetic fixture; shared development workstation. Timings include native rendering, private files, database writes and final ZIP packaging.",
+  "database": "clubs_idcards_scale",
+  "people": 101035,
+  "clubs": 10013,
+  "jobs": [
+    {
+      "count": 1000,
+      "jobId": "bbcaad71-81b3-445e-afa5-5b7ba01369ae",
+      "submitSeconds": 0.282,
+      "approvalSeconds": 0.128,
+      "generationAndPackagingSeconds": 146.485,
+      "cardsPerSecond": 6.83,
+      "downloadSeconds": 0.497,
+      "zipBytes": 391374094,
+      "zipEntries": 3001,
+      "crcVerified": true,
+      "apiPeakRssMiB": 311.4,
+      "apiCpuSeconds": 89.06,
+      "failed": 0
+    },
+    {
+      "count": 10000,
+      "jobId": "695479d2-edd0-42ed-80cb-f10082b232fe",
+      "submitSeconds": 1.252,
+      "approvalSeconds": 0.044,
+      "generationAndPackagingSeconds": 1656.497,
+      "cardsPerSecond": 6.04,
+      "downloadSeconds": 12.672,
+      "zipBytes": 3939711615,
+      "zipEntries": 30001,
+      "crcVerified": true,
+      "apiPeakRssMiB": 343.2,
+      "apiCpuSeconds": 961.36,
+      "failed": 0
+    }
+  ],
+  "concurrentDownloads": {
+    "concurrency": 4,
+    "sameBytes": true,
+    "samples": [
+      {
+        "seconds": 8.209,
+        "bytes": 3939711615,
+        "sha256": "571b6431515693a8ba92f42bce76d26e7b6147dc3c510a1183702becf4a84c35"
+      },
+      {
+        "seconds": 8.112,
+        "bytes": 3939711615,
+        "sha256": "571b6431515693a8ba92f42bce76d26e7b6147dc3c510a1183702becf4a84c35"
+      },
+      {
+        "seconds": 8.156,
+        "bytes": 3939711615,
+        "sha256": "571b6431515693a8ba92f42bce76d26e7b6147dc3c510a1183702becf4a84c35"
+      },
+      {
+        "seconds": 8.168,
+        "bytes": 3939711615,
+        "sha256": "571b6431515693a8ba92f42bce76d26e7b6147dc3c510a1183702becf4a84c35"
+      }
+    ]
+  }
+}

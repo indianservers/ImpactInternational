@@ -1,0 +1,14 @@
+[
+  {
+    "test": "QR absent from enabled side",
+    "passed": true
+  },
+  {
+    "test": "QR too small",
+    "passed": true
+  },
+  {
+    "test": "QR obscured by later layer",
+    "passed": true
+  }
+]

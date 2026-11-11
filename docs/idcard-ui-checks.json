@@ -1,0 +1,34 @@
+[
+  {
+    "test": "Canvas drag snaps physical millimetre coordinates",
+    "passed": true
+  },
+  {
+    "test": "Native editor undo restores original position",
+    "passed": true
+  },
+  {
+    "test": "Native editor redo restores moved position",
+    "passed": true
+  },
+  {
+    "test": "Keyboard duplicate creates a new editable layer",
+    "passed": true
+  },
+  {
+    "test": "Back side displays an actual preview QR",
+    "passed": true
+  },
+  {
+    "test": "Canvas selection resolves grouped layers together",
+    "passed": true
+  },
+  {
+    "test": "Ungroup restores independent layer selection",
+    "passed": true
+  },
+  {
+    "test": "Back-side text edits independently",
+    "passed": true
+  }
+]

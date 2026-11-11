@@ -45,6 +45,13 @@ import {
 } from "lucide-react";
 import { TenantBrand } from "./TenantBrand";
 import { api, type Workspace } from "./api";
+const IdCards = lazy(() => import("./cards/IdCards"));
+const MyIdCard = lazy(() =>
+  import("./cards/IdCards").then((m) => ({ default: m.MyIdCard })),
+);
+const IdVerification = lazy(() =>
+  import("./cards/IdCards").then((m) => ({ default: m.IdVerification })),
+);
 const RequestOrganization = lazy(() => import("./pages/RequestOrganization"));
 const Dashboard = lazy(() => import("./pages/Dashboard"));
 const Organizations = lazy(() => import("./pages/Organizations"));
@@ -250,6 +257,7 @@ function Shell() {
       ChartNoAxesCombined,
       "intelligence.assistant",
     ],
+    ["ID Card Studio", "/app/id-cards", CreditCard, "members.cards"],
     ["Finance", "/app/finance", Wallet, "finance.self"],
     ["Club Operations", "/app/operations", Briefcase, "operations.view"],
     [
@@ -406,6 +414,9 @@ function Shell() {
           </nav>
           <div className="sidebar-label">MY COMMUNITY</div>
           <nav>
+            <NavLink to="/app/my-id" onClick={() => setOpen(false)}>
+              <CreditCard size={18} /> My Digital ID
+            </NavLink>
             <NavLink to="/app/my-membership" onClick={() => setOpen(false)}>
               <CreditCard size={18} />
               My membership
@@ -530,6 +541,7 @@ function Shell() {
             ![
               "/app/profile",
               "/app/my-membership",
+              "/app/my-id",
               "/app/events",
               "/app/my-events",
               "/app/apply",
@@ -568,7 +580,8 @@ function Shell() {
             )}
           </main>
           <footer>
-            Impact International <span>Connected leadership. Meaningful impact.</span>
+            Impact International{" "}
+            <span>Connected leadership. Meaningful impact.</span>
             <span>Connected community · Phase 08</span>
           </footer>
         </div>
@@ -680,8 +693,8 @@ function Landing() {
         ))}
       </section>
       <footer>
-        © {new Date().getFullYear()} Impact International · Independent community
-        management platform
+        © {new Date().getFullYear()} Impact International · Independent
+        community management platform
       </footer>
     </div>
   );
@@ -690,6 +703,7 @@ export default function App() {
   return (
     <Suspense fallback={<Skeleton />}>
       <Routes>
+        <Route path="/verify/id/:token" element={<IdVerification />} />
         <Route
           path="/verify/certificates/:token"
           element={<VerifyCertificate />}
@@ -723,6 +737,8 @@ export default function App() {
           <Route path="transfers" element={<MembershipOperations />} />
           <Route path="organizations" element={<Organizations />} />
           <Route path="intelligence/*" element={<Intelligence />} />
+          <Route path="id-cards/*" element={<IdCards />} />
+          <Route path="my-id" element={<MyIdCard />} />
           <Route path="finance/*" element={<Finance />} />
           <Route path="operations/*" element={<Operations />} />
           <Route path="communications/*" element={<Communications />} />

@@ -43,6 +43,7 @@ public class Access(Db db, IHttpContextAccessor ctx)
         "members.link",
         "members.documents",
         "members.cards",
+        "cards.design", "cards.publish", "cards.issue", "cards.bulk", "cards.settings",
         "members.workflow.manage",
         "directory.view",
         "clubs.view",

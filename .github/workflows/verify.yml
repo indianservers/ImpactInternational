@@ -40,7 +40,7 @@ jobs:
       - name: API integration checks
         shell: bash
         run: |
-          for suite in integration phase2 phase2_extended phase2_imports phase3 phase3_extended phase3_security phase4 phase4_extended phase4_security phase5 phase5_extended phase5_security phase6 phase6_extended phase6_edges phase6_scope phase6_workflows phase7 phase7_extended phase7_security phase7_sources phase8; do
+          for suite in integration phase2 phase2_extended phase2_imports phase3 phase3_extended phase3_security phase4 phase4_extended phase4_security phase5 phase5_extended phase5_security phase6 phase6_extended phase6_edges phase6_scope phase6_workflows phase7 phase7_extended phase7_security phase7_sources phase8 id_cards id_cards_extended; do
             dotnet server/bin/Debug/net10.0/Clubs.Api.dll --urls http://127.0.0.1:5081 > /tmp/clubs-test-api.log 2>&1 &
             api_pid=$!
             trap 'kill "$api_pid" 2>/dev/null || true' EXIT
@@ -49,6 +49,7 @@ jobs:
             kill "$api_pid"
             wait "$api_pid" || true
           done
+      - run: node tests/id_card_design.mjs
       - run: python tests/phase8_providers.py
       - run: python tests/benchmark.py
       - run: python tests/smtp.py

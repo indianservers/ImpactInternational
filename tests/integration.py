@@ -7,7 +7,7 @@ results=[]
 import subprocess,concurrent.futures,hashlib
 PSQL=os.environ.get('CLUBS_PSQL',str(pathlib.Path('.infra/pgsql/bin/psql.exe').resolve()))
 def sql(query):
- return subprocess.check_output([PSQL,'-h','127.0.0.1','-p','55432','-U','clubs','-d','clubs_test','-X','-At','-v','ON_ERROR_STOP=1','-c',query],text=True).strip()
+ return subprocess.check_output([PSQL,'-h','127.0.0.1','-p','55432','-U','clubs','-d',os.environ.get('CLUBS_TEST_DATABASE','clubs_test'),'-X','-At','-v','ON_ERROR_STOP=1','-c',query],text=True).strip()
 
 class Client:
  def __init__(self):
@@ -107,7 +107,7 @@ check('missing CSRF token rejected',csrf_status==400)
 check('migration history applied',int(sql('SELECT count(*) FROM "__EFMigrationsHistory"'))>=6)
 # Direct SQL attempts verify that the database itself enforces tenant and cycle constraints.
 for name,query in [('database cross-tenant parent constraint',f'UPDATE "Orgs" SET "ParentId"=\'{other["orgId"]}\' WHERE "Id"=\'{created["id"]}\''),('database self-cycle rejected',f'UPDATE "Orgs" SET "ParentId"="Id" WHERE "Id"=\'{created["id"]}\'')]:
- process=subprocess.run([PSQL,'-h','127.0.0.1','-p','55432','-U','clubs','-d','clubs_test','-X','-v','ON_ERROR_STOP=1','-c',query],capture_output=True,text=True)
+ process=subprocess.run([PSQL,'-h','127.0.0.1','-p','55432','-U','clubs','-d',os.environ.get('CLUBS_TEST_DATABASE','clubs_test'),'-X','-v','ON_ERROR_STOP=1','-c',query],capture_output=True,text=True)
  check(name,process.returncode!=0)
 # A real server-side expiry check, rather than merely removing the browser cookie.
 raw_session=next(cookie.value for cookie in c1.jar if cookie.name=='clubs_session');sid=hashlib.sha256(raw_session.encode()).hexdigest().upper()

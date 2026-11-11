@@ -50,7 +50,7 @@ check('cross-club office cannot widen private scope',member.req('/clubs/'+dest)[
 check('cross-tenant governance request denied',member.req('/clubs/'+other['orgId'])[0]==404)
 # Hold the worker's tenant lock while proving request-time expiry on an unprocessed Active row.
 sql(f'UPDATE "OfficerAppointments" SET "EndsAt"=now()-interval \'1 second\' WHERE "Id"=\'{app["id"]}\'')
-lock=subprocess.Popen([PSQL,'-h','127.0.0.1','-p','55432','-U','clubs','-d','clubs_test','-X','-At','-c',f'BEGIN; SELECT pg_advisory_xact_lock(hashtext(\'{root["tenantId"]}\')); SELECT pg_sleep(8); COMMIT;'],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
+lock=subprocess.Popen([PSQL,'-h','127.0.0.1','-p','55432','-U','clubs','-d',__import__('os').environ.get('CLUBS_TEST_DATABASE','clubs_test'),'-X','-At','-c',f'BEGIN; SELECT pg_advisory_xact_lock(hashtext(\'{root["tenantId"]}\')); SELECT pg_sleep(8); COMMIT;'],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
 try:check('effective dates deny expired administrative authority',member.req('/clubs')[0]==403)
 finally:lock.terminate();lock.wait()
 deadline=time.monotonic()+12

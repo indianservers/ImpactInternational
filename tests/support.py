@@ -3,7 +3,8 @@ import json,urllib.request,urllib.error,http.cookiejar,os,pathlib,uuid,subproces
 PASSWORD=os.environ.get('CLUBS_SEED_PASSWORD') or pathlib.Path('.infra/seed-password').read_text()
 BASE=os.environ.get('CLUBS_TEST_URL','http://127.0.0.1:5081')
 PSQL=os.environ.get('CLUBS_PSQL',str(pathlib.Path('.infra/pgsql/bin/psql.exe').resolve()))
-def sql(query,database='clubs_test'):
+def sql(query,database=None):
+ database=database or os.environ.get('CLUBS_TEST_DATABASE','clubs_test')
  return subprocess.check_output([PSQL,'-h','127.0.0.1','-p','55432','-U','clubs','-d',database,'-X','-At','-v','ON_ERROR_STOP=1','-c',query],text=True).strip()
 class Client:
  def __init__(self):

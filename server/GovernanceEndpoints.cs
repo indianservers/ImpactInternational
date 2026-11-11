@@ -903,6 +903,11 @@ public static class GovernanceEndpoints
                         row.Version++;
                     }
                 }
+                if(r.Kind.StartsWith("IdCard") && input.Decision is "Reject" or "RequestChanges"){
+                    var reference=GovernanceService.Unpack<IdCardReview>(r.Payload);
+                    if(r.Kind=="IdCardBatch"){var job=await s.Db.IdCardJobs.SingleAsync(j=>j.Id==reference.Id&&j.RequestId==r.Id);job.Status="Rejected";job.Version++;}
+                    else {var card=await s.Db.DigitalCards.SingleAsync(c=>c.Id==reference.Id&&c.RequestId==r.Id);card.State="Rejected";card.Version++;}
+                }
                 if (
                     r.Kind == "CommunicationAutomation"
                     && input.Decision is "Reject" or "RequestChanges"

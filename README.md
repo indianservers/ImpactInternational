@@ -1,4 +1,4 @@
-# ClubSphere — Global Clubs Management, Phases 1–7
+# Impact International — Global Clubs Management
 
 React/TypeScript/Vite frontend, ASP.NET Core 10 API, EF Core/Npgsql and PostgreSQL. The repository was empty at the start of implementation. No SQLite, browser storage, or mock production API is used.
 
@@ -221,3 +221,7 @@ Tests require the existing fictional Phase 1–6 fixtures and PostgreSQL test da
 Open `/app/intelligence` for scoped metrics, a metric catalog, a read-only assistant, PDF knowledge retrieval, independently reviewed follow-up workflows, branding/domain controls and operator diagnostics. Ctrl-K opens authorized cross-module search. Existing source permissions and explicit finance entity grants still apply. Optional OpenAI routing is server-configured and tenant-opt-in; local tools require no model credentials.
 
 Apply the additive intelligence migration (34 total) before starting. See [Phase 8 report](PHASE8_COMPLETION_REPORT.md), [API inventory](docs/phase8-api.md), [initial audit](PHASE8_INITIAL_AUDIT.md), [regressions](docs/phase8-regressions.json), [scale measurements](docs/phase8-scale.json) and [recovery drill](docs/phase8-recovery.json). 54 new integration and 15 provider-contract checks pass; 848 selected prior-phase assertions pass. Production readiness remains blocked by the explicit gaps in the report, including MFA, off-host recovery, provider certification and deployment/TLS verification. The complete aspirational eight-phase scope is not marked finished.
+
+## Advanced ID Card Studio
+
+Open `/app/id-cards` for design, reviewed issuance, bulk jobs and print presets; `/app/my-id` shows official member cards. The module reuses membership, DigitalCards, certificate templates, governance, vault and tenant authorization. See [completion report](ID_CARD_MODULE_COMPLETION_REPORT.md) for verification and measured scale results. Apply migrations before starting the upgraded API. Combined PDFs support up to 1,000 cards; ZIP/image jobs support 10,000. Official output requires independent review.

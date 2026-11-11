@@ -197,10 +197,11 @@ public static class MemberMediaEndpoints
                     409
                 );
                 await s
-                    .Db.DigitalCards.Where(x => x.MembershipId == id && x.RevokedAt == null)
+                    .Db.DigitalCards.Where(x => x.MembershipId == id && x.RevokedAt == null && (x.State == "Legacy" || x.State == "Issued"))
                     .ExecuteUpdateAsync(u =>
                         u.SetProperty(x => x.RevokedAt, DateTimeOffset.UtcNow)
                     );
+                Check(!await s.Db.DigitalCards.AnyAsync(c=>c.MembershipId==id&&c.TemplateVersionId!=null), "Use the reviewed ID card reissue workflow for designed cards.",409);
                 s.Card(m);
                 s.Activity(m, (await s.Access.User()).Id, "card.reissued");
                 await s.Db.SaveChangesAsync();
@@ -214,6 +215,7 @@ public static class MemberMediaEndpoints
             {
                 var card = await s.Db.DigitalCards.SingleOrDefaultAsync(x => x.Id == id);
                 Check(card != null, "Card not found.", 404);
+                Check(card.TemplateVersionId==null,"Use the ID Card Studio revocation workflow for designed cards.",409);
                 var m = await s.Find(card.MembershipId, "members.cards");
                 card.RevokedAt = DateTimeOffset.UtcNow;
                 s.Activity(m, (await s.Access.User()).Id, "card.revoked", id.ToString());
@@ -228,13 +230,14 @@ public static class MemberMediaEndpoints
                 var m = await s.Find(id, "members.cards");
                 var p = await s.Db.Persons.SingleAsync(x => x.Id == m.PersonId);
                 var card = await s.Db.DigitalCards.SingleOrDefaultAsync(x =>
-                    x.MembershipId == id && x.RevokedAt == null
+                    x.MembershipId == id && x.RevokedAt == null && (x.State == "Legacy" || x.State == "Issued")
                 );
                 Check(
                     card != null,
                     "No current card. An active member can request reissuance.",
                     404
                 );
+                if(card.TemplateVersionId!=null)return Results.Redirect("/api/v1/id-cards/issuances/"+card.Id+"/preview");
                 var tenant = await s.Db.Tenants.SingleAsync(x => x.Id == m.TenantId);
                 var origin = config["PublicOrigin"] ?? "http://127.0.0.1:5174";
                 var url = origin.TrimEnd('/') + "/verify?token=" + s.Unprotect(card.ProtectedToken);
@@ -292,6 +295,8 @@ public static class MemberMediaEndpoints
                         .SingleAsync(x => x.Id == card.MembershipId);
                     var valid =
                         card.RevokedAt == null
+                        && (card.State == "Legacy" || card.State == "Issued")
+                        && (card.ExpiryAt == null || card.ExpiryAt > DateTimeOffset.UtcNow)
                         && m.Status == "Active"
                         && (m.EndsAt == null || m.EndsAt > DateTimeOffset.UtcNow);
                     db.DigitalCardVerifications.Add(new() { CardId = card.Id, Valid = valid });

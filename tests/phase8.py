@@ -1,5 +1,5 @@
 """Real PostgreSQL finance workflow tests. Fictional records; no live payments."""
-from support import Client,sql
+from support import Client,sql,BASE
 import uuid,json,pathlib,datetime,concurrent.futures,subprocess
 results=[];tag=uuid.uuid4().hex[:8];today=datetime.date.today();date=today.isoformat();start=f'{today.year}-01-01';end=f'{today.year}-12-31'
 def check(name,ok,data=None):
@@ -42,7 +42,7 @@ ruleinput={'orgId':club,'name':'Reviewed QA '+tag,'definition':{'trigger':'TaskO
 r=good(admin,base+'/workflows','POST',ruleinput);edited=good(admin,base+'/workflows/'+r['id'],'PUT',{**ruleinput,'name':ruleinput['name']+' edited','version':r['version']});check('draft edits increment version',edited['version']==r['version']+1);check('stale draft edit rejected',admin.req(base+'/workflows/'+r['id'],'PUT',{**ruleinput,'version':r['version']})[0]==409);r=edited;check('workflow created inactive draft',not r['active'] and r['status']=='Draft');dry=good(admin,base+'/workflows/'+r['id']+'/test','POST',{});check('dry run has zero side effects',dry['dryRun'] and dry['actionsExecuted']==0)
 bad={**ruleinput,'definition':{**ruleinput['definition'],'steps':[{'action':'PostJournal'}]}};check('unreviewable workflow action rejected',admin.req(base+'/workflows','POST',bad)[0]==400)
 check('ordinary member cannot create workflow',member.req(base+'/workflows','POST',ruleinput)[0]==403)
-check('liveness and readiness respond',urllib.request.urlopen('http://127.0.0.1:5081/health/live').status==200 and urllib.request.urlopen('http://127.0.0.1:5081/health/ready').status==200)
+check('liveness and readiness respond',urllib.request.urlopen(BASE+'/health/live').status==200 and urllib.request.urlopen(BASE+'/health/ready').status==200)
 ops=good(admin,base+'/operations');check('diagnostics do not claim production readiness',ops['gates']['productionReady']==False)
 check('unsafe domain rejected',admin.req(base+'/domains','POST',{'host':'127.0.0.1'})[0]==400)
 check('domain URL rejected',admin.req(base+'/domains','POST',{'host':'https://example.org'})[0]==400)

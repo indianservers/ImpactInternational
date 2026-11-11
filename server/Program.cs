@@ -34,6 +34,8 @@ b.Services.AddHostedService<MembershipWorker>();
 b.Services.AddHostedService<MaintenanceWorker>();
 b.Services.AddHttpContextAccessor();
 b.Services.AddScoped<Access>();
+b.Services.AddRateLimiter(o=>o.AddPolicy("idcards",c=>RateLimitPartition.GetFixedWindowLimiter(c.Connection.RemoteIpAddress?.ToString()??"unknown",_=>new(){PermitLimit=240,Window=TimeSpan.FromMinutes(1)})));
+b.Services.AddScoped<IdCardService>();b.Services.AddScoped<IdCardRenderer>();b.Services.AddHostedService<IdCardWorker>();
 b.Services.AddScoped<MembershipService>();
 b.Services.AddScoped<NotificationService>();
 b.Services.AddScoped<GovernanceService>();
@@ -115,7 +117,9 @@ app.Use(
             || c.Request.Path.Value?.EndsWith("/photo") == true
             || c.Request.Path.Value?.EndsWith("/attachments") == true
                 ? 12582912
-                : 65536;
+                : c.Request.Path.StartsWithSegments("/api/v1/id-cards")
+                    ? c.Request.Path.Value?.EndsWith("/assets") == true ? 3145728 : 1048576
+                    : 65536;
         var bodyFeature =
             c.Features.Get<Microsoft.AspNetCore.Http.Features.IHttpMaxRequestBodySizeFeature>();
         if (bodyFeature is { IsReadOnly: false })
@@ -209,6 +213,7 @@ api.MapEvents();
 api.MapCommunications();
 api.MapOperations();
 app.MapIntelligence();
+app.MapIdCards();
 app.MapFinance();
 app.MapFinanceMembers();
 api.MapMembershipLifecycle();

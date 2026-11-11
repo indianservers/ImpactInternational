@@ -1,0 +1,10 @@
+{
+  "count": 1000,
+  "format": "A4 duplex PDF",
+  "pages": 250,
+  "seconds": 49.442,
+  "bytes": 1995530,
+  "apiPeakRssMiB": 297.8,
+  "existingCardRecordsUnchanged": true,
+  "failed": 0
+}

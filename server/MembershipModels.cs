@@ -334,6 +334,16 @@ public class DigitalCard : ITenantRecord
     public string ProtectedToken { get; set; } = "";
     public DateTimeOffset IssuedAt { get; set; } = DateTimeOffset.UtcNow;
     public DateTimeOffset? RevokedAt { get; set; }
+    public Guid? TemplateVersionId {get;set;}
+    public string State {get;set;}="Legacy";
+    public string Serial {get;set;}="";
+    [JsonIgnore] public string Snapshot {get;set;}="{}";
+    [JsonIgnore] public string Files {get;set;}="{}";
+    public Guid? CreatorId {get;set;}
+    public Guid? RequestId {get;set;}
+    public Guid? ReplacesId {get;set;}
+    public DateTimeOffset? ExpiryAt {get;set;}
+    public long Version {get;set;}=1;
 }
 
 public class DigitalCardVerification
@@ -463,6 +473,7 @@ public partial class Db
         ConfigureOperations(b);
         ConfigureFinance(b);
         ConfigureIntelligence(b);
+        ConfigureIdCards(b);
         ConfigureGovernance(b);
         ConfigureRoleHistory(b);
         b.Entity<NotificationTemplate>()
@@ -863,10 +874,7 @@ public partial class Db
             .HasPrincipalKey(x => new { x.TenantId, x.Id })
             .OnDelete(DeleteBehavior.Restrict);
         b.Entity<DigitalCard>().HasIndex(x => x.TokenHash).IsUnique();
-        b.Entity<DigitalCard>()
-            .HasIndex(x => x.MembershipId)
-            .IsUnique()
-            .HasFilter("\"RevokedAt\" IS NULL");
+
         b.Entity<DigitalCardVerification>()
             .HasOne<DigitalCard>()
             .WithMany()

@@ -85,3 +85,7 @@ Implemented scoped global metrics/catalog/drill-down/export, six read-only assis
 54 new integration checks and 15 loopback provider-contract checks pass, along with 848 assertions across 22 selected prior-phase suites. Fresh migrations, isolated restore/rollback/reapply, private-object hashes, same-host copied-key decryption and a 100k-person measurement run are documented. See `PHASE8_COMPLETION_REPORT.md` for evidence and bounds.
 
 Specialized metric ratios/reports, every natural-language example, semantic/OCR retrieval, general workflow graphs, complete translation/terminology, predictive ML, large workflow-fleet fairness, full SaaS billing and automated domain infrastructure remain incomplete. MFA/SSO, off-host recovery, external certification, production ingress/container/failover and broad accessibility/load verification remain release blockers. Core delivery does not mean the complete eight-phase product or production readiness is finished.
+
+## Post-phase enhancement — Advanced ID cards
+
+Implemented native front/back design, immutable templates and issued snapshots, reviewed issuance, private downloads, opaque QR verification, durable bulk jobs and physical duplex output. Measurements: `docs/idcard-scale.json`, `docs/idcard-print-scale.json`. Remaining operational acceptance work is documented in `ID_CARD_MODULE_COMPLETION_REPORT.md`.

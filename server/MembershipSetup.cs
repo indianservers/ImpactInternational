@@ -33,6 +33,7 @@ public static class MembershipSetup
                         : Array.Empty<string>()
                 )
                 .ToArray();
+        if (role.Name is "Club Manager" or "Club Secretary" or "Club President") add=add.Concat(IdCardDesign.Permissions.Where(p=>p!="cards.settings")).ToArray();
         if (role.Name is "Club Member" or "Applicant")
             add = add.Concat(new[] { "communications.view", "operations.view" }).ToArray();
         if (role.Name is "Club Secretary" or "Club President" or "Club Manager")
