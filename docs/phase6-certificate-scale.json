@@ -1,0 +1,11 @@
+{
+  "recipients": 50,
+  "prepare_ms": 3498.99,
+  "rendered_pdf_count_per_zip": 50,
+  "zip_bytes": 962324,
+  "samples": 5,
+  "p50_ms": 222.65,
+  "p95_ms": 376.95,
+  "errors": 0,
+  "conditions": "Actual eligibility/placeholder checks and 50-row certificate preparation through API against synthetic verified-hour fixture. Rendering state is explicitly set by benchmark SQL only; real independent approvals are exercised separately in correctness suites. Five local 50-PDF ZIP requests, each parsed and all PDFs checked. Shared Windows machine, loopback API, no external delivery or production SLO."
+}

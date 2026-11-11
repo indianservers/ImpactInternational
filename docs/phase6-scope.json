@@ -1,0 +1,86 @@
+[
+  {
+    "test": "partner cannot read unapproved draft",
+    "passed": true
+  },
+  {
+    "test": "partner cannot read submitted unapproved summary",
+    "passed": true
+  },
+  {
+    "test": "approved partner receives summary without private master",
+    "passed": true
+  },
+  {
+    "test": "partner sees only its own contribution relationship",
+    "passed": true
+  },
+  {
+    "test": "partner cannot operate lead project",
+    "passed": true
+  },
+  {
+    "test": "unapproved project absent from cross-scope listing",
+    "passed": true
+  },
+  {
+    "test": "certificate recipient cannot approve own outcome",
+    "passed": true
+  },
+  {
+    "test": "project manager cannot approve own project",
+    "passed": true
+  },
+  {
+    "test": "explicit invite permits ancestor meeting read",
+    "passed": true
+  },
+  {
+    "test": "invite does not grant ancestor meeting write",
+    "passed": true
+  },
+  {
+    "test": "uninvited peer still cannot read ancestor meeting",
+    "passed": true
+  },
+  {
+    "test": "explicit document share permits cross-org read only",
+    "passed": true
+  },
+  {
+    "test": "ordinary member identity picker contains own person only",
+    "passed": true
+  },
+  {
+    "test": "ordinary member cannot enumerate issuance source records",
+    "passed": true
+  },
+  {
+    "test": "issuer source picker returns scoped human-readable labels",
+    "passed": true
+  },
+  {
+    "test": "parent issuance freezes actual membership club name",
+    "passed": true
+  },
+  {
+    "test": "operations permission cannot bypass event source authority",
+    "passed": true
+  },
+  {
+    "test": "public event quorum does not disclose staff-only source roster",
+    "passed": true
+  },
+  {
+    "test": "legacy source cannot silently convert through version append",
+    "passed": true
+  },
+  {
+    "test": "legacy source cannot acquire misleading new sharing flags",
+    "passed": true
+  },
+  {
+    "test": "vault delivery respects legacy retention before cleanup",
+    "passed": true
+  }
+]

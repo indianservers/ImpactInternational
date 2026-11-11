@@ -1,0 +1,8 @@
+{
+  "verification_retry_and_delivery": true,
+  "membership_invitation_retry_and_delivery": true,
+  "event_invitation_retry_and_delivery": true,
+  "registration_and_pass_link_delivery": true,
+  "database": "clubs_event_transport",
+  "conditions": "Real local SMTP protocol sink; first recipient attempt deliberately rejected, persisted backoff observed and test clock made retry due. No external provider delivery claim."
+}

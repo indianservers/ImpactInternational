@@ -1,0 +1,118 @@
+[
+  {
+    "test": "waitlist promotion reserves an expiring offer",
+    "passed": true
+  },
+  {
+    "test": "valid seat offer can be accepted",
+    "passed": true
+  },
+  {
+    "test": "expired offer cannot confirm a seat",
+    "passed": true
+  },
+  {
+    "test": "guest bearer link remains valid for post-event feedback",
+    "passed": true
+  },
+  {
+    "test": "attended guest can submit anonymous post-event feedback",
+    "passed": true
+  },
+  {
+    "test": "reviewed registration awaits approval without a seat",
+    "passed": true
+  },
+  {
+    "test": "shared engine confirms reviewed registration",
+    "passed": true
+  },
+  {
+    "test": "expired event duty cannot check in",
+    "passed": true
+  },
+  {
+    "test": "venue remains unchanged before amendment review",
+    "passed": true
+  },
+  {
+    "test": "approved amendment updates actual event",
+    "passed": true
+  },
+  {
+    "test": "amendment notification fanout is queued",
+    "passed": true
+  },
+  {
+    "test": "event document reuses secured storage",
+    "passed": true
+  },
+  {
+    "test": "public participant may download event agenda",
+    "passed": true
+  },
+  {
+    "test": "mismatched upload rejected",
+    "passed": true
+  },
+  {
+    "test": "anonymous restricted document denied",
+    "passed": true
+  },
+  {
+    "test": "event mutations require CSRF",
+    "passed": true
+  },
+  {
+    "test": "event document returns private cache validator",
+    "passed": true
+  },
+  {
+    "test": "unchanged authorized document returns 304",
+    "passed": true
+  },
+  {
+    "test": "five attended responses produce accurate SQL rating aggregate",
+    "passed": true
+  },
+  {
+    "test": "anonymous aggregate contains no individual response links",
+    "passed": true
+  },
+  {
+    "test": "attendance CSV neutralizes guest-supplied category formulas",
+    "passed": true
+  },
+  {
+    "test": "event notifications respect stored email consent",
+    "passed": true
+  },
+  {
+    "test": "scheduled reminder is durably claimed",
+    "passed": true
+  },
+  {
+    "test": "reminder fanout uses bounded notice job",
+    "passed": true
+  },
+  {
+    "test": "DST offset instants remain one hour apart",
+    "passed": true
+  },
+  {
+    "test": "invalid time-zone identifier rejected",
+    "passed": true
+  },
+  {
+    "test": "unknown registration form answer rejected",
+    "passed": true
+  },
+  {
+    "test": "duplication resets approval and ticket state",
+    "passed": true
+  },
+  {
+    "test": "paid feature remains disabled server side",
+    "passed": true
+  }
+]

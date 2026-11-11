@@ -66,7 +66,7 @@ check('platform registration review',a.req('/registration-requests')[0]==200)
 request=a.req('/registration-requests')[1][0]
 check('registration provisioning',a.req('/registration-requests/'+request['id']+'/provision','POST',{})[0]==200)
 check('registration provisioning idempotency',a.req('/registration-requests/'+request['id']+'/provision','POST',{})[0]==409)
-assignment=next(x for x in a.req('/assignments')[1] if x['role']==role['name'])
+assignment=next(x for x in a.req('/assignments?roleId='+role['id'])[1] if x['role']==role['name'])
 check('scoped role revocation',a.req('/assignments/'+assignment['id'],'DELETE',{})[0]==204)
 check('revoked workspace denied',member.req('/dashboard')[0]==403)
 

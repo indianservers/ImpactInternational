@@ -1,0 +1,20 @@
+{
+  "event-pass.pdf": {
+    "pages": 1,
+    "text_characters": 339,
+    "valid": true,
+    "size_bytes": 21705
+  },
+  "event-badge.pdf": {
+    "pages": 1,
+    "text_characters": 339,
+    "valid": true,
+    "size_bytes": 21705
+  },
+  "participation-certificate.pdf": {
+    "pages": 1,
+    "text_characters": 222,
+    "valid": true,
+    "size_bytes": 19046
+  }
+}

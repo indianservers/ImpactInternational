@@ -144,6 +144,25 @@ public class Audit
 
 public class Mail
 {
+    public Guid? EventId { get; set; }
+    public DateTimeOffset? CreatedAt { get; set; } = DateTimeOffset.UtcNow;
+    public string Channel { get; set; } = "Email";
+    public Guid? CommunicationId { get; set; }
+    public Guid? AccountId { get; set; }
+    public Guid? SenderId { get; set; }
+    public Guid? SenderAssignmentId { get; set; }
+    public string Purpose { get; set; } = "Transactional";
+    public string DeliveryStatus { get; set; } = "Pending";
+    public string ProviderId { get; set; } = "";
+    public long TemplateVersion { get; set; }
+    public string TemplateName { get; set; } = "";
+    public string TemplateParameters { get; set; } = "[]";
+    public string Language { get; set; } = "en";
+    public string LastError { get; set; } = "";
+    public decimal? Cost { get; set; }
+    public string Currency { get; set; } = "";
+    public bool DeadLetter { get; set; }
+
     public Guid Id { get; set; } = Guid.NewGuid();
     public Guid? TenantId { get; set; }
     public Guid? OrgId { get; set; }

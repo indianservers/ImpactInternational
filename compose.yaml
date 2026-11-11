@@ -19,6 +19,9 @@ services:
       AllowedHosts: ${PUBLIC_HOST:?Set PUBLIC_HOST to the public hostname}
       ConnectionStrings__Database: Host=postgres;Database=clubs;Username=clubs;Password=${POSTGRES_PASSWORD};Maximum Pool Size=100
       DataProtection__Path: /app/keys
+      Communications__StoragePath: /app/communication-objects
+      Communications__MetaVersion: ${META_GRAPH_VERSION:-}
+      Smtp__VerifiedSenders__0: ${SMTP_VERIFIED_SENDER:-}
       PublicOrigin: ${PUBLIC_ORIGIN:?Set PUBLIC_ORIGIN to the HTTPS public URL}
       Smtp__Host: ${SMTP_HOST:-}
       Smtp__Port: ${SMTP_PORT:-587}
@@ -30,7 +33,7 @@ services:
   api:
     build: {context: ., dockerfile: server/Dockerfile}
     environment: *api-env
-    volumes: ["keys:/app/keys"]
+    volumes: ["keys:/app/keys", "communication-objects:/app/communication-objects"]
     depends_on:
       migrate: {condition: service_completed_successfully}
     restart: unless-stopped
@@ -41,3 +44,4 @@ services:
 volumes:
   pgdata:
   keys:
+  communication-objects:

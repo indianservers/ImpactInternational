@@ -2,3 +2,8 @@ openpyxl>=3.1,<4
 Pillow>=11,<13
 zxing-cpp>=2.3,<4
 psutil>=6,<8
+
+# Optional pass rendering / independent QR verification
+PyMuPDF>=2,<3
+
+websocket-client>=1.8,<2

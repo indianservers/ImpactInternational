@@ -1,0 +1,250 @@
+[
+  {
+    "test": "scoped reusable options",
+    "passed": true
+  },
+  {
+    "test": "meeting persisted",
+    "passed": true
+  },
+  {
+    "test": "bounded recurrence persisted",
+    "passed": true
+  },
+  {
+    "test": "member mutation denied",
+    "passed": true
+  },
+  {
+    "test": "range bound enforced",
+    "passed": true
+  },
+  {
+    "test": "member ordinary meeting access",
+    "passed": true
+  },
+  {
+    "test": "senior denied private board",
+    "passed": true
+  },
+  {
+    "test": "member denied private board",
+    "passed": true
+  },
+  {
+    "test": "structured agenda saved",
+    "passed": true
+  },
+  {
+    "test": "agenda reorder persisted",
+    "passed": true
+  },
+  {
+    "test": "requester cannot self-approve OperationAgenda",
+    "passed": true
+  },
+  {
+    "test": "agenda shared approval",
+    "passed": true
+  },
+  {
+    "test": "meeting lifecycle",
+    "passed": true
+  },
+  {
+    "test": "minutes draft persisted",
+    "passed": true
+  },
+  {
+    "test": "requester cannot self-approve OperationMinutes",
+    "passed": true
+  },
+  {
+    "test": "published minutes preserved with correction",
+    "passed": true
+  },
+  {
+    "test": "approved minutes actual PDF",
+    "passed": true
+  },
+  {
+    "test": "quorum eligible actual members",
+    "passed": true
+  },
+  {
+    "test": "correction requires reason",
+    "passed": true
+  },
+  {
+    "test": "attendance history preserved",
+    "passed": true
+  },
+  {
+    "test": "iCalendar export",
+    "passed": true
+  },
+  {
+    "test": "task source and assignee persisted",
+    "passed": true
+  },
+  {
+    "test": "blocker required",
+    "passed": true
+  },
+  {
+    "test": "assignee blocker recorded",
+    "passed": true
+  },
+  {
+    "test": "task completion evidence persisted",
+    "passed": true
+  },
+  {
+    "test": "task comments persisted",
+    "passed": true
+  },
+  {
+    "test": "joint project one master two relationships",
+    "passed": true
+  },
+  {
+    "test": "requester cannot self-approve OperationProject",
+    "passed": true
+  },
+  {
+    "test": "project independently approved",
+    "passed": true
+  },
+  {
+    "test": "project activity persisted",
+    "passed": true
+  },
+  {
+    "test": "volunteer reuses person",
+    "passed": true
+  },
+  {
+    "test": "other volunteer profile denied",
+    "passed": true
+  },
+  {
+    "test": "volunteer application",
+    "passed": true
+  },
+  {
+    "test": "application idempotent",
+    "passed": true
+  },
+  {
+    "test": "coordinator assignment approval",
+    "passed": true
+  },
+  {
+    "test": "member assignment confirmation",
+    "passed": true
+  },
+  {
+    "test": "actual service subtracts breaks",
+    "passed": true
+  },
+  {
+    "test": "overlap rejected",
+    "passed": true
+  },
+  {
+    "test": "self verification denied",
+    "passed": true
+  },
+  {
+    "test": "independent verified hours",
+    "passed": true
+  },
+  {
+    "test": "flexible impact metric stored",
+    "passed": true
+  },
+  {
+    "test": "impact evidence enforced",
+    "passed": true
+  },
+  {
+    "test": "joint duplicate source rejected",
+    "passed": true
+  },
+  {
+    "test": "requester cannot self-approve OperationImpact",
+    "passed": true
+  },
+  {
+    "test": "verified totals exclude estimates and joint duplicates",
+    "passed": true
+  },
+  {
+    "test": "private object upload",
+    "passed": true
+  },
+  {
+    "test": "senior private document denied",
+    "passed": true
+  },
+  {
+    "test": "protected object actual bytes",
+    "passed": true
+  },
+  {
+    "test": "append document version",
+    "passed": true
+  },
+  {
+    "test": "old version retained",
+    "passed": true
+  },
+  {
+    "test": "signature mismatch rejected",
+    "passed": true
+  },
+  {
+    "test": "certificate template persisted",
+    "passed": true
+  },
+  {
+    "test": "rendered preview PDF",
+    "passed": true
+  },
+  {
+    "test": "eligible individual prepared",
+    "passed": true
+  },
+  {
+    "test": "unapproved PDF denied",
+    "passed": true
+  },
+  {
+    "test": "requester cannot self-approve OperationCertificate",
+    "passed": true
+  },
+  {
+    "test": "issued PDF with real generation",
+    "passed": true
+  },
+  {
+    "test": "revocation blocks PDF",
+    "passed": true
+  },
+  {
+    "test": "achievements use verified hours",
+    "passed": true
+  },
+  {
+    "test": "cross tenant meeting",
+    "passed": true
+  },
+  {
+    "test": "cross tenant project",
+    "passed": true
+  },
+  {
+    "test": "cross tenant document",
+    "passed": true
+  }
+]

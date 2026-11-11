@@ -1,0 +1,52 @@
+[
+  {
+    "suite": "integration",
+    "passed_checks": 60,
+    "failed_checks": 0
+  },
+  {
+    "suite": "phase2",
+    "passed_checks": 127,
+    "failed_checks": 0
+  },
+  {
+    "suite": "phase2_extended",
+    "passed_checks": 11,
+    "failed_checks": 0
+  },
+  {
+    "suite": "phase2_imports",
+    "passed_checks": 53,
+    "failed_checks": 0
+  },
+  {
+    "suite": "phase3",
+    "passed_checks": 126,
+    "failed_checks": 0
+  },
+  {
+    "suite": "phase3_extended",
+    "passed_checks": 15,
+    "failed_checks": 0
+  },
+  {
+    "suite": "phase3_security",
+    "passed_checks": 20,
+    "failed_checks": 0
+  },
+  {
+    "suite": "phase4",
+    "passed_checks": 55,
+    "failed_checks": 0
+  },
+  {
+    "suite": "phase4_extended",
+    "passed_checks": 29,
+    "failed_checks": 0
+  },
+  {
+    "suite": "phase4_security",
+    "passed_checks": 28,
+    "failed_checks": 0
+  }
+]

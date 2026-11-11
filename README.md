@@ -1,4 +1,4 @@
-# ClubSphere — Global Clubs Management, Phases 1–3
+# ClubSphere — Global Clubs Management, Phases 1–6
 
 React/TypeScript/Vite frontend, ASP.NET Core 10 API, EF Core/Npgsql and PostgreSQL. The repository was empty at the start of implementation. No SQLite, browser storage, or mock production API is used.
 
@@ -34,7 +34,7 @@ dotnet restore server
 npm --prefix client ci
 $env:ASPNETCORE_ENVIRONMENT='Development'
 $env:CLUBS_SEED_PASSWORD=[Convert]::ToHexString([Security.Cryptography.RandomNumberGenerator]::GetBytes(18))
-dotnet run --project server --no-launch-profile -- --migrate --seed --seed-phase2 --seed-phase3
+dotnet run --project server --no-launch-profile -- --migrate --seed --seed-phase2 --seed-phase3 --seed-phase4
 ```
 
 Retain your generated seed password privately. Development seed is refused outside Development and is skipped when users already exist. Migrations also work without `--seed`. PostgreSQL `pg_trgm` extension creation requires a migration operator with permission to create that extension. Use a separate restricted runtime database role in production.
@@ -58,6 +58,11 @@ python tests/phase2_imports.py
 python tests/phase3.py
 python tests/phase3_extended.py
 python tests/phase3_security.py
+python tests/phase4.py
+python tests/phase4_extended.py
+python tests/phase4_security.py
+python tests/phase4_pdf.py
+python tests/phase4_pdf_unicode.py
 python tests/benchmark.py
 python tests/smtp.py
 ```
@@ -118,6 +123,70 @@ See [Phase 2 completion report](PHASE2_COMPLETION_REPORT.md), [API reference](do
 
 Club workspaces and directories, officer definitions and calendars, independently reviewed appointments, effective-term access, preserved leadership history and handovers, committees, resolutions, private governance documents and scoped dashboards extend the existing foundation. Membership and governance approvals share one decision engine and workflow schema. Titles alone confer no application access; manual role assignments remain independent of appointments.
 
-See [PHASE3_COMPLETION_REPORT.md](PHASE3_COMPLETION_REPORT.md) for migrations, API routes, verification, measurements and operational limits. The clean demo includes three approved title-only offices, a committee and a pending resolution. Phase 4 events remain future work.
+See [PHASE3_COMPLETION_REPORT.md](PHASE3_COMPLETION_REPORT.md) for migrations, API routes, verification, measurements and operational limits. The clean demo includes three approved title-only offices, a committee and a pending resolution. Phase 4 events and Phase 5 communications now extend these shared services.
 
 Run governance tests in the listed order against the disposable clubs_test database. They reuse fictional member fixtures and an independent reviewer. Restart the test API between large suite groups to reset its authentication IP limiter; do not disable it. Scale measurements use a separate disposable clone of the Phase 2 scale database named clubs_governance_scale. Point an API and CLUBS_TEST_URL at that database, run `python tests/phase3_scale.py --fixture` once, then omit `--fixture` on repeat runs.
+
+## Phase 4 — events
+
+Event discovery and five calendar views are at `/app/events`; the six-step wizard at `/app/events/new`; personal invitations, registrations and passes at `/app/my-events`; scoped reports at `/app/event-intelligence`. Event owners manage audiences, invitations, sessions, operational teams, documents and feedback from the event workspace. Submission uses the existing independent governance approval engine before publication. RSVP never reserves capacity. Free registration, waitlists, revocable QR passes and live check-in use PostgreSQL transactions and constraints.
+
+See [Phase 4 completion report](PHASE4_COMPLETION_REPORT.md), [event API inventory](docs/phase4-api.md), [OpenAPI](docs/openapi.json) and [schema](docs/schema.sql). Five additive event migrations bring the total to 21. Apply migrations before running the API. `--seed-phase4` installs tenant event-type presets; it does not create operational event attendance. `tests/phase4_demo.py` creates clearly fictional demonstration events through real APIs and is restricted to a Development API.
+
+The event suites create fictional records in the disposable test database. Restart the test API between authentication-heavy suite groups: the existing 30-per-minute authentication limit is deliberately retained. Retention QA uses `python tests/phase4_retention.py --prepare`, a test API restart, then `python tests/phase4_retention.py`. PDF QA downloads actual app PDFs, renders them and independently decodes their QR; it needs the optional Python QA dependencies in `tests/requirements.txt`.
+
+Scale tests must use the isolated `clubs_governance_scale` clone and `CLUBS_TEST_URL` pointing to its separate API, never the demonstration or production database. `tests/phase4_scale.py` changes synthetic membership categories and creates substantial fixtures; `tests/phase4_calendar_scale.py` prepares 10,000 fictional calendar events. They are explicit benchmark workflows, not normal startup tasks. SMTP QA starts a local sink on 2526 and API on 5082; set `CLUBS_SMTP_DATABASE=clubs_event_transport` to the separately migrated and seeded disposable transport database, avoiding a large old outbox backlog.
+
+PDFsharp 6.2.4 is pinned under its MIT package license. Embedded Noto Sans and its OFL license are in `server/Assets/Fonts`; PDFs do not depend on installed Windows fonts. Tested Latin/Greek coverage does not imply universal script shaping. Paid booking is disabled; no gateway exists. Camera scanning requires a compatible browser and permission; physical camera hardware was not exercised. Check-in requires connectivity and has no offline mode. See the report for delivery, companion attendance, privacy and production deployment limits.
+
+
+## Phase 5 — unified communications
+
+Open `/app/communications` for the permission-aware inbox, private/group/support/committee/event conversations, announcements, campaign wizard, schedules, template/audience libraries, automations, delivery tracking, analytics and communication settings. Messages, receipts, notes, files and campaign jobs are persisted in PostgreSQL; conversation history is keyset-paginated and virtualized. Existing identity, membership, hierarchy, RBAC, approvals, audit and mail outbox remain the shared infrastructure.
+
+Apply `dotnet run --project server --no-launch-profile -- --migrate` before upgrading. Five additive communication migrations bring the total to 26; no Phase 5 seed flag is required. Existing roles receive scoped communication permissions. `tests/phase5_demo.py` creates fictional conversations and drafts through a Development API only.
+
+Set `Communications__StoragePath` to a private persistent directory and retain Data Protection keys. Compose supplies separate durable volumes for both. Multi-replica installations must share private object storage and keys. nginx and Vite forward WebSocket upgrades; the outer HTTPS proxy must also support them. Never expose the object directory as static content. Docker/Compose deployment remains unverified on this machine.
+
+Provider accounts are configured by authorized administrators in the UI; credentials are encrypted server-side. Meta requires the deployment-selected `Communications__MetaVersion` (`META_GRAPH_VERSION` in Compose), verified phone identity, app secret, callback verification and approved supported templates. Twilio requires verified sender ownership and exact public callback URL. SMTP uses the existing server configuration; after verifying your domain/sender with the provider, explicitly allow that address via `Smtp__VerifiedSenders__0` (`SMTP_VERIFIED_SENDER` in Compose). The email HMAC callback requires a trusted provider relay; it is not a native SES/SNS endpoint. No real provider account or external recipient was used in verification.
+
+Communication mail commits a dispatch claim before network delivery. Interrupted or ambiguous submissions are quarantined as Uncertain for reconciliation instead of blind retry. Definitive transient failures retry with bounded backoff; security mail retains priority. Legacy authentication mail remains at least once. Consent, suppressions, current sender authority, quiet hours and quotas are checked again at send time.
+
+With the disposable, migrated and seeded test API on 5081, run `python tests/phase5.py`, `python tests/phase5_security.py`, and `python tests/phase5_extended.py`; restart between authentication-heavy groups rather than disabling the authentication limiter. Run `dotnet run --project tests/CommunicationTimeChecks` for DST checks. Install Python dependencies from `tests/requirements.txt`. `python tests/phase5_providers.py` owns a separate API on 5084 and local fake HTTP/SMTP endpoints, using only the disposable `clubs_communication_transport` database. It requires a migrated clone with fictional accounts. It disables its mock accounts and stops its child processes afterward.
+
+`tests/phase5_scale.py` is an explicit large benchmark against the isolated `clubs_governance_scale` fixture, never normal startup or operational data. It adds substantial synthetic records and two 50,000-recipient campaigns. It records local enqueue/fan-out/read latency and restart/dedup evidence; these are not external provider throughput guarantees.
+
+See [Phase 5 completion report](PHASE5_COMPLETION_REPORT.md), [communication API inventory](docs/phase5-api.md), [OpenAPI](docs/openapi.json) and [schema](docs/schema.sql) for evidence, supported capabilities and remaining limitations. AI assistance is explicitly disabled; private conversations are not sent to an AI provider.
+
+
+## Phase 6 — club operations and community impact
+
+Open `/app/operations` for meetings/calendar, agendas, minutes, attendance/quorum, source-linked tasks, service projects, volunteers/shifts/hours, impact, the protected document vault and certificate studio. Existing governance approvals remain at `/app/governance`; public certificate verification is `/verify/certificates/:token`. Member profiles and the membership portal include verified service and issued certificate records.
+
+Three additive operations migrations bring the total to 29. Apply them before upgrading; no Phase 6 seed flag is required:
+
+```powershell
+dotnet run --project server --no-launch-profile -- --migrate
+# Use an absolute persistent private object path for consistent native launches.
+$env:Communications__StoragePath=Join-Path (Get-Location).Path '.infra/communication-objects'
+```
+
+Existing known roles receive scoped operations permissions; future provisioning reuses role templates. Custom roles need explicit grants. Preserve the existing database, Data Protection keys and private object volume together. New vault objects use the same Phase 5 storage service; earlier document records retain their original authorization and content. Do not serve the private directory as static files. nginx has a same-origin protected PDF preview exception; Docker/proxy startup remains unverified.
+
+On the migrated disposable `clubs_test` API at 5081, run the following in order, restarting the API between authentication-heavy groups rather than disabling its rate limit:
+
+```powershell
+python tests/phase6.py
+python tests/phase6_extended.py
+python tests/phase6_workflows.py
+python tests/phase6_edges.py
+python tests/phase6_scope.py
+```
+
+The suites use actual PostgreSQL and fictional identities. Extended tests require the core fixture and existing Phase 4 event/check-in fixtures. Optional PDF rendering/QR dependencies are in `tests/requirements.txt`. Edge QA explicitly adds 1,200 fictional members to a separate test club to verify quorum beyond the display bound. Scope/conflict tests remove temporary role assignments afterward. No ordinary test sends to real recipients.
+
+`python tests/phase6_demo.py` targets only the Development demo API on 5080 and creates fictional meeting/agenda/project/task records through real APIs. It does not seed production or fabricate approved impact.
+
+`tests/phase6_scale.py` is restricted to the isolated existing `clubs_governance_scale` fixture. Its default is read-only measurement. `--fixture` explicitly adds large synthetic meeting/project/volunteer/document metadata fixtures; `--tasks` explicitly adds 50,000 completed task records. Do not repeat fixture preparation casually and never target operational data. `tests/phase6_certificate_scale.py` prepares 50 real certificate records from that synthetic verified-hour fixture, then explicitly sets issuance state by benchmark SQL to isolate PDF rendering. Correctness suites separately exercise actual independent approvals and two-recipient issuance. Both scale scripts own and stop their API on 5087. The document benchmark measures metadata, not 10,000 distinct complete file downloads.
+
+[Phase 6 completion report](PHASE6_COMPLETION_REPORT.md), [operations API inventory](docs/phase6-api.md), [OpenAPI](docs/openapi.json), [schema](docs/schema.sql) and [roadmap](EIGHT_PHASE_ROADMAP.md) describe implemented scope, test evidence, measurements and incomplete advanced functionality. The studio currently supports positioned text, A4 orientation and colored backgrounds/borders; full image/signature/font design is not complete. Planning estimates are not financial transactions or ledger entries.

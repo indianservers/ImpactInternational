@@ -1,0 +1,69 @@
+{
+  "counts": {
+    "Persons": 101035,
+    "Orgs": 10030,
+    "Conversations": 10002,
+    "ConversationParticipants": 110004,
+    "CommunicationMessages": 200008,
+    "CommunicationRecipients": 200000,
+    "Mails": 102070,
+    "Users": 50037
+  },
+  "campaigns": [
+    {
+      "recipients": 50000,
+      "snapshot_ms": 21702.33
+    },
+    {
+      "recipients": 50000,
+      "snapshot_ms": 21704.14
+    }
+  ],
+  "simultaneous_campaigns": 2,
+  "restart": {
+    "outbox_before": 750,
+    "outbox_after": 750,
+    "recipient_jobs_queued": 100000,
+    "duplicate_messages": 0
+  },
+  "restart_first_inbox_reads": {
+    "samples": 10,
+    "p50_ms": 74.91,
+    "p95_ms": 101.95,
+    "p99_ms": 101.95,
+    "errors": 0
+  },
+  "concurrent_inbox": {
+    "users": 10,
+    "workers": 10,
+    "samples": 100,
+    "p50_ms": 82.36,
+    "p95_ms": 148.31,
+    "p99_ms": 164.2,
+    "errors": 0
+  },
+  "api": {
+    "/conversations": {
+      "samples": 50,
+      "p50_ms": 52.23,
+      "p95_ms": 60.47,
+      "p99_ms": 68.46,
+      "errors": 0
+    },
+    "/conversations/{history}/messages": {
+      "samples": 50,
+      "p50_ms": 37.05,
+      "p95_ms": 42.65,
+      "p99_ms": 52.59,
+      "errors": 0
+    },
+    "/analytics": {
+      "samples": 50,
+      "p50_ms": 48.88,
+      "p95_ms": 60.85,
+      "p99_ms": 66.98,
+      "errors": 0
+    }
+  },
+  "conditions": "Isolated PostgreSQL 17.6 clone; 100k+ people/10k+ organizations. 5,000 additional conversations, 50,000-message history, ten fictional authenticated inbox operators. Two 50,000-recipient snapshots submitted concurrently through real API; approval state is explicit benchmark SQL only. Durable worker is stopped/restarted during fan-out; 100,000 recipient jobs resume without duplicate messages. Synthetic audience members have fictional linked accounts and scoped memberships. In-app fan-out creates real persisted messages/outbox records; no external channel is enabled. Inbox concurrency: 100 requests, ten users/threads during processing. Sequential APIs: 50 warm samples after one warmup. Local shared machine; no external provider or production throughput claim."
+}

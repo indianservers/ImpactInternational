@@ -458,6 +458,9 @@ public partial class Db
 
     private void ConfigureMembership(ModelBuilder b)
     {
+        ConfigureCommunications(b);
+        ConfigureEvents(b);
+        ConfigureOperations(b);
         ConfigureGovernance(b);
         ConfigureRoleHistory(b);
         b.Entity<NotificationTemplate>()

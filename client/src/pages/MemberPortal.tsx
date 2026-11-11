@@ -1,3 +1,4 @@
+import {MemberAchievements} from "./Operations";
 import {OwnLeadership} from "../GovernanceUI";
 import { useState } from "react";
 import { Link } from "react-router-dom";
@@ -282,7 +283,7 @@ export default function MemberPortal() {
             </button>
           </section>
           <section className="panel spaced">
-            <OwnLeadership/><h2>Application access roles</h2>
+            {d.memberships.filter((m:any)=>m.status==='Active').slice(0,1).map((m:any)=><MemberAchievements key={m.id} id={m.id}/>)}<OwnLeadership/><h2>Application access roles</h2>
             {p?.roles?.length ? (
               p.roles.map((r: any, i: number) => (
                 <div className="context-row" key={i}>
@@ -321,10 +322,10 @@ export default function MemberPortal() {
             <CalendarDays size={21} />
             <h3>More ways to connect</h3>
             <p>
-              Club events, meetings and volunteering will arrive in later
-              phases.
+              Discover club events, respond to invitations and find your
+              digital event passes.
             </p>
-            <span className="profile-chip">Upcoming capability</span>
+            <Link to="/app/events">Explore events →</Link>
           </section>
         </aside>
       </div>

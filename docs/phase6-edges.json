@@ -1,0 +1,42 @@
+[
+  {
+    "test": "protected PDF preview returns inline bytes",
+    "passed": true
+  },
+  {
+    "test": "preview permits same-origin frame only",
+    "passed": true
+  },
+  {
+    "test": "protected preview supports actual byte ranges",
+    "passed": true
+  },
+  {
+    "test": "preview flag cannot bypass private file ACL",
+    "passed": true
+  },
+  {
+    "test": "quorum counts all 1200 voters beyond display page",
+    "passed": true
+  },
+  {
+    "test": "attendance display remains bounded independently of quorum",
+    "passed": true
+  },
+  {
+    "test": "selected local zone resolves independent of browser zone",
+    "passed": true
+  },
+  {
+    "test": "edit form receives original zone-local times",
+    "passed": true
+  },
+  {
+    "test": "nonexistent DST local time rejected clearly",
+    "passed": true
+  },
+  {
+    "test": "ambiguous DST local time selects later occurrence",
+    "passed": true
+  }
+]

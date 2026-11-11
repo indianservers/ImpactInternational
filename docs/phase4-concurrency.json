@@ -1,0 +1,10 @@
+{
+  "registration_concurrency": 8,
+  "checkin_devices": 8,
+  "samples": 8,
+  "p50_ms": 65.97764999605715,
+  "p95_ms": 100.28509999392554,
+  "p99_ms": 100.28509999392554,
+  "errors": 0,
+  "conditions": "Eight concurrent PostgreSQL registrations for two seats; eight simultaneous same-pass check-in writes. Small correctness load; not production capacity."
+}

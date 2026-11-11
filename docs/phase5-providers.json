@@ -1,0 +1,150 @@
+[
+  {
+    "test": "provider sender verification uses actual mock HTTP response",
+    "passed": true
+  },
+  {
+    "test": "provider credentials never returned",
+    "passed": true
+  },
+  {
+    "test": "WhatsApp template approval synchronized from provider",
+    "passed": true
+  },
+  {
+    "test": "WhatsApp adapter sends approved template through HTTP",
+    "passed": true
+  },
+  {
+    "test": "WhatsApp parameters contain variable value rather than full message",
+    "passed": true
+  },
+  {
+    "test": "provider accepted is not fabricated as delivered",
+    "passed": true
+  },
+  {
+    "test": "WhatsApp webhook rejects invalid signature",
+    "passed": true
+  },
+  {
+    "test": "authenticated webhook marks actual provider delivery",
+    "passed": true
+  },
+  {
+    "test": "WhatsApp webhook deduplication",
+    "passed": true
+  },
+  {
+    "test": "out-of-order status cannot downgrade delivered",
+    "passed": true
+  },
+  {
+    "test": "signed inbound WhatsApp message persisted",
+    "passed": true
+  },
+  {
+    "test": "unclaimed inquiry does not expose private history",
+    "passed": true
+  },
+  {
+    "test": "explicit claim grants shared inbox participant access",
+    "passed": true
+  },
+  {
+    "test": "WhatsApp reply within actual service window sent",
+    "passed": true
+  },
+  {
+    "test": "WhatsApp document upload and send use actual adapter HTTP",
+    "passed": true
+  },
+  {
+    "test": "signed inbound media durably downloads to protected object storage",
+    "passed": true
+  },
+  {
+    "test": "inbound media respects private conversation access",
+    "passed": true
+  },
+  {
+    "test": "inbound media rejects untrusted download host before network fetch",
+    "passed": true
+  },
+  {
+    "test": "high-frequency authenticated status callbacks persist without errors",
+    "passed": true
+  },
+  {
+    "test": "WhatsApp outside service window requires template",
+    "passed": true
+  },
+  {
+    "test": "late inbound webhook cannot reopen expired WhatsApp service window",
+    "passed": true
+  },
+  {
+    "test": "shared Meta callback routes a second authorized number to its own account",
+    "passed": true
+  },
+  {
+    "test": "SMS transient failure recorded with retry",
+    "passed": true
+  },
+  {
+    "test": "SMS retry eventually accepted exactly once",
+    "passed": true
+  },
+  {
+    "test": "SMS webhook signature rejected when invalid",
+    "passed": true
+  },
+  {
+    "test": "SMS authenticated delivery callback processed",
+    "passed": true
+  },
+  {
+    "test": "SMS callback idempotent",
+    "passed": true
+  },
+  {
+    "test": "SMS permanent failure dead-lettered",
+    "passed": true
+  },
+  {
+    "test": "interrupted provider dispatch is quarantined rather than resent",
+    "passed": true
+  },
+  {
+    "test": "email uses existing SMTP transport with safe HTML",
+    "passed": true
+  },
+  {
+    "test": "email draft is not dispatched before attachment finalization",
+    "passed": true
+  },
+  {
+    "test": "email attachment delivered through the original SMTP pipeline",
+    "passed": true
+  },
+  {
+    "test": "email unsubscribe GET is confirmation-only",
+    "passed": true
+  },
+  {
+    "test": "signed one-click unsubscribe stops promotions while retaining operational preference",
+    "passed": true
+  },
+  {
+    "test": "SMTP acceptance is distinct from inbox delivery",
+    "passed": true
+  },
+  {
+    "test": "signed email adapter bounce suppresses future mail",
+    "passed": true
+  },
+  {
+    "test": "SMTP inbound capability remains unavailable",
+    "passed": true
+  }
+]

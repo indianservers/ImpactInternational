@@ -1,0 +1,222 @@
+[
+  {
+    "test": "club event draft created",
+    "passed": true
+  },
+  {
+    "test": "unauthorized event creation rejected",
+    "passed": true
+  },
+  {
+    "test": "invalid date range rejected",
+    "passed": true
+  },
+  {
+    "test": "paid booking cannot fabricate payment",
+    "passed": true
+  },
+  {
+    "test": "district event ownership stored",
+    "passed": true
+  },
+  {
+    "test": "restricted draft hidden from member",
+    "passed": true
+  },
+  {
+    "test": "cannot publish without approval",
+    "passed": true
+  },
+  {
+    "test": "session agenda persisted",
+    "passed": true
+  },
+  {
+    "test": "room conflict rejected",
+    "passed": true
+  },
+  {
+    "test": "overlapping audience is deduplicated",
+    "passed": true
+  },
+  {
+    "test": "event requester cannot self-approve",
+    "passed": true
+  },
+  {
+    "test": "shared governance engine approves event",
+    "passed": true
+  },
+  {
+    "test": "approved event published",
+    "passed": true
+  },
+  {
+    "test": "eligible member can view published event",
+    "passed": true
+  },
+  {
+    "test": "eligible organization audience discovered",
+    "passed": true
+  },
+  {
+    "test": "duplicate invitation recipients suppressed",
+    "passed": true
+  },
+  {
+    "test": "verified member and guest email alias deduplicate to one person",
+    "passed": true
+  },
+  {
+    "test": "audience frozen after publication",
+    "passed": true
+  },
+  {
+    "test": "personal invitations list includes event",
+    "passed": true
+  },
+  {
+    "test": "RSVP does not reserve a seat",
+    "passed": true
+  },
+  {
+    "test": "RSVP change preserves response history",
+    "passed": true
+  },
+  {
+    "test": "eligible member registration confirmed",
+    "passed": true
+  },
+  {
+    "test": "registration idempotency prevents duplicate seat",
+    "passed": true
+  },
+  {
+    "test": "opaque digital ticket generated",
+    "passed": true
+  },
+  {
+    "test": "anonymous directory remains denied",
+    "passed": true
+  },
+  {
+    "test": "unauthorized check-in denied",
+    "passed": true
+  },
+  {
+    "test": "QR verification returns valid registration",
+    "passed": true
+  },
+  {
+    "test": "multiple devices create one attendance record",
+    "passed": true
+  },
+  {
+    "test": "duplicate QR check-in rejected",
+    "passed": true
+  },
+  {
+    "test": "session attendance separate from event",
+    "passed": true
+  },
+  {
+    "test": "downloadable PDF pass contains actual PDF",
+    "passed": true
+  },
+  {
+    "test": "revoked ticket rejected",
+    "passed": true
+  },
+  {
+    "test": "reissued pass has a new token",
+    "passed": true
+  },
+  {
+    "test": "event requester cannot self-approve",
+    "passed": true
+  },
+  {
+    "test": "secure guest links redeem only intended event",
+    "passed": true
+  },
+  {
+    "test": "concurrent registration does not oversell",
+    "passed": true
+  },
+  {
+    "test": "capacity overflow joins waitlist",
+    "passed": true
+  },
+  {
+    "test": "cancellation promotes earliest waitlisted guest",
+    "passed": true
+  },
+  {
+    "test": "guest registration never creates association membership",
+    "passed": true
+  },
+  {
+    "test": "guest token cannot access a different event",
+    "passed": true
+  },
+  {
+    "test": "expired invitation rejected",
+    "passed": true
+  },
+  {
+    "test": "event operator gains check-in only on assigned event",
+    "passed": true
+  },
+  {
+    "test": "volunteer cannot manage registrations or event ownership",
+    "passed": true
+  },
+  {
+    "test": "event duty grants do not affect other event",
+    "passed": true
+  },
+  {
+    "test": "attendee feedback persisted",
+    "passed": true
+  },
+  {
+    "test": "anonymous response has no registration link",
+    "passed": true
+  },
+  {
+    "test": "small feedback group suppressed",
+    "passed": true
+  },
+  {
+    "test": "anonymous feedback export denied",
+    "passed": true
+  },
+  {
+    "test": "attendance analytics use actual event attendance",
+    "passed": true
+  },
+  {
+    "test": "district dashboard aggregates actual event records",
+    "passed": true
+  },
+  {
+    "test": "cross-tenant modification denied",
+    "passed": true
+  },
+  {
+    "test": "event rejection blocks publication",
+    "passed": true
+  },
+  {
+    "test": "cancelled event cannot register",
+    "passed": true
+  },
+  {
+    "test": "cancellation revokes all event tickets",
+    "passed": true
+  },
+  {
+    "test": "event UTC and original time zone preserved",
+    "passed": true
+  }
+]

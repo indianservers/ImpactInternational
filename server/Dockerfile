@@ -9,6 +9,6 @@ WORKDIR /app
 COPY --from=build /out .
 ENV ASPNETCORE_URLS=http://+:5080
 EXPOSE 5080
-RUN mkdir -p /app/keys && chown -R $APP_UID /app/keys
+RUN mkdir -p /app/keys /app/communication-objects && chown -R $APP_UID /app/keys /app/communication-objects
 USER $APP_UID
 ENTRYPOINT ["dotnet","Clubs.Api.dll"]

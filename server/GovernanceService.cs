@@ -133,7 +133,8 @@ public record GovernanceWorkflowInput(StageInput[] Stages, bool AllowDelegation 
 public class GovernanceService(
     Access access,
     NotificationService notifications,
-    MembershipService memberships
+    MembershipService memberships,
+    Microsoft.AspNetCore.DataProtection.IDataProtectionProvider eventProtection
 )
 {
     public Task<IQueryable<Membership>> Members(Assignment w) => memberships.ScopedList(w);
@@ -189,6 +190,18 @@ public class GovernanceService(
         "CommitteeRemoval",
         "Handover",
         "Resolution",
+        "EventUpdate",
+        "EventPublication",
+        "EventRegistration",
+        "CommunicationBroadcast",
+        "CommunicationAutomation",
+        "OperationImpactCorrection",
+        "OperationProject",
+        "OperationAgenda",
+        "OperationMinutes",
+        "OperationImpact",
+        "OperationDocument",
+        "OperationCertificate",
     ];
     public static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web);
 
@@ -274,6 +287,25 @@ public class GovernanceService(
         var q = Db.GovernanceRequests.Where(x =>
             x.TenantId == w.TenantId && A.VisibleIds(w).Contains(x.OrgId)
         );
+        var grants = await A.Grants(w);
+        if (
+            !grants.Any(p =>
+                new[]
+                {
+                    "governance.approve",
+                    "clubs.manage",
+                    "leadership.manage",
+                    "committees.manage",
+                    "governance.documents",
+                    "governance.configure",
+                }.Contains(p)
+            )
+        )
+            q = q.Where(x =>
+                (grants.Contains("events.manage") && x.Kind.StartsWith("Event"))
+                || (grants.Contains("communications.manage") && x.Kind.StartsWith("Communication"))
+                || (grants.Contains("operations.manage") && x.Kind.StartsWith("Operation"))
+            );
         if (w.AppointmentId != null && !(await A.Grants(w)).Contains("audit.view"))
         {
             var start = await Db
@@ -886,6 +918,118 @@ public class GovernanceService(
 
     public async Task Apply(GovernanceRequest r, Assignment w)
     {
+        if (r.Kind.StartsWith("Operation"))
+        {
+            await new OperationsService(A, this, notifications).Apply(r, w);
+            return;
+        }
+        if (r.Kind == "CommunicationAutomation")
+        {
+            var reference = Unpack<BroadcastReference>(r.Payload);
+            var rule = await Db.CommunicationAutomations.SingleAsync(x =>
+                x.Id == reference.Id && x.TenantId == w.TenantId && x.OrgId == r.OrgId
+            );
+            Check(
+                rule.Status == "Review"
+                    && rule.Version == reference.Version
+                    && rule.ContentHash == reference.Hash
+                    && rule.ApprovalRequestId == r.Id,
+                "Automation changed.",
+                409
+            );
+            Check(
+                await Db.CommunicationTemplates.AnyAsync(t =>
+                    t.Id == rule.TemplateId && t.Version == rule.TemplateVersion && t.Active
+                ),
+                "Template changed; replace this automation proposal.",
+                409
+            );
+            rule.Status = "Approved";
+            rule.Active = true;
+            rule.StartsAt = DateTimeOffset.UtcNow;
+            rule.Version++;
+            r.ResultId = rule.Id;
+            return;
+        }
+        if (r.Kind == "CommunicationBroadcast")
+        {
+            var reference = Unpack<BroadcastReference>(r.Payload);
+            var broadcast = await Db.CommunicationBroadcasts.SingleAsync(b =>
+                b.Id == reference.Id && b.TenantId == w.TenantId && b.OrgId == r.OrgId
+            );
+            Check(
+                broadcast.Status == "Review"
+                    && broadcast.Version == reference.Version
+                    && broadcast.ContentHash == reference.Hash
+                    && broadcast.ApprovalRequestId == r.Id,
+                "Broadcast content/audience changed or proposal was cancelled.",
+                409
+            );
+            broadcast.Status = "Approved";
+            broadcast.Version++;
+            r.ResultId = broadcast.Id;
+            return;
+        }
+        if (r.Kind.StartsWith("Event"))
+        {
+            var reference = Unpack<EventReference>(r.Payload);
+            var es = new EventService(A, this, notifications, eventProtection);
+            await es.Lock(reference.EventId);
+            var ev = await es.Find(reference.EventId);
+            Check(
+                ev.TenantId == w.TenantId && ev.OrgId == r.OrgId && ev.Lifecycle != "Cancelled",
+                "Event is no longer approvable.",
+                409
+            );
+            if (r.Kind == "EventUpdate")
+            {
+                var change = Unpack<EventUpdateInput>(r.Payload);
+                Check(
+                    ev.Publication == "Published"
+                        && ev.Version == change.Version
+                        && ev.Lifecycle is not "Completed" and not "Archived",
+                    "Event changed; replace this amendment.",
+                    409
+                );
+                ev.Title = change.Title;
+                ev.Description = change.Description;
+                ev.Venue = change.Venue;
+                ev.OnlineUrl = change.OnlineUrl;
+                ev.Version++;
+                es.QueueNotice(ev, "Event updated. Venue: " + ev.Venue);
+                es.QueueNotice(ev, "Event updated. Venue: " + ev.Venue, "UnregisteredInvitations");
+            }
+            else if (r.Kind == "EventPublication")
+            {
+                Check(
+                    ev.ApprovalRequestId == r.Id && ev.Publication == "Draft",
+                    "Event proposal was replaced.",
+                    409
+                );
+                ev.Approval = "Approved";
+                ev.Version++;
+            }
+            else
+            {
+                var registration = await Db.EventRegistrations.SingleAsync(x =>
+                    x.Id == reference.RegistrationId && x.EventId == ev.Id
+                );
+                Check(
+                    registration.Status == "Awaiting Approval",
+                    "Registration is no longer awaiting approval.",
+                    409
+                );
+                Check(
+                    ev.Publication == "Published" && ev.EndsAt > DateTimeOffset.UtcNow,
+                    "Event is no longer accepting approvals.",
+                    409
+                );
+                await es.Confirm(ev, registration);
+            }
+            r.ResultId = reference.RegistrationId ?? ev.Id;
+            return;
+        }
+
         switch (r.Kind)
         {
             case "OfficerAppointment":

@@ -1,0 +1,58 @@
+[
+  {
+    "test": "reviewers receive actual frozen body and audience count",
+    "passed": true
+  },
+  {
+    "test": "approval recipient preview keeps contact details private",
+    "passed": true
+  },
+  {
+    "test": "shared rejection marks campaign rejected",
+    "passed": true
+  },
+  {
+    "test": "communication-only role cannot access unrelated governance proposal",
+    "passed": true
+  },
+  {
+    "test": "communication-only governance feed contains only communication requests",
+    "passed": true
+  },
+  {
+    "test": "worker rechecks sender authority before fan-out",
+    "passed": true
+  },
+  {
+    "test": "recipient quiet hours persist a deferred delivery time",
+    "passed": true
+  },
+  {
+    "test": "deferred in-app delivery resumes from durable outbox",
+    "passed": true
+  },
+  {
+    "test": "event registration uses shared notification outbox with event provenance",
+    "passed": true
+  },
+  {
+    "test": "event automation resolves actual event variables",
+    "passed": true
+  },
+  {
+    "test": "approved campaign keeps reviewed event personalization snapshot",
+    "passed": true
+  },
+  {
+    "test": "editing an automation invalidates its prior approval",
+    "passed": true
+  },
+  {
+    "test": "birthday automation honors occasion preference",
+    "passed": true
+  },
+  {
+    "test": "birthday automation runs at most once per day and recipient",
+    "passed": true
+  }
+]

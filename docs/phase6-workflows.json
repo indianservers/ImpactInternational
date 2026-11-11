@@ -1,0 +1,58 @@
+[
+  {
+    "test": "custom agenda template persisted",
+    "passed": true
+  },
+  {
+    "test": "private source unavailable to ordinary assignee",
+    "passed": true
+  },
+  {
+    "test": "private source task cannot notify uninvited assignee",
+    "passed": true
+  },
+  {
+    "test": "denied confidential assignment queues no notice",
+    "passed": true
+  },
+  {
+    "test": "dependency cycle rejected",
+    "passed": true
+  },
+  {
+    "test": "incomplete dependency blocks completion",
+    "passed": true
+  },
+  {
+    "test": "dependent action completes after prerequisite",
+    "passed": true
+  },
+  {
+    "test": "pending correction retains prior verified value",
+    "passed": true
+  },
+  {
+    "test": "reviewer can inspect actual correction content",
+    "passed": true
+  },
+  {
+    "test": "independent correction updates verified total",
+    "passed": true
+  },
+  {
+    "test": "old verified impact preserved in immutable history",
+    "passed": true
+  },
+  {
+    "test": "actual bulk issuance prepares two eligible people",
+    "passed": true
+  },
+  {
+    "test": "bulk ZIP contains two actual issued PDFs",
+    "passed": true
+  },
+  {
+    "test": "bulk duplicate recipients rejected",
+    "passed": true
+  }
+]

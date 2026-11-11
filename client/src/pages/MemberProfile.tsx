@@ -1,3 +1,4 @@
+import {MemberAchievements} from "./Operations";
 import {MemberOffices} from "../GovernanceUI";
 import { useState } from "react";
 import { Link, useParams, useSearchParams } from "react-router-dom";
@@ -409,7 +410,7 @@ export default function MemberProfile() {
           )}
           {tab === "Leadership" && (
             <>
-              {!directory&&<MemberOffices id={id}/>}<h2>Application access roles</h2>
+              {!directory&&<><MemberAchievements id={id}/><MemberOffices id={id}/></>}<h2>Application access roles</h2>
               <p>
                 These roles come from the shared organizational authorization
                 model.

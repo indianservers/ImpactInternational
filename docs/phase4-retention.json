@@ -1,0 +1,6 @@
+{
+  "private registration fields redacted": true,
+  "expired invitation email and protected secret cleared": true,
+  "shared event document bytes expire": true,
+  "registration provenance remains": true
+}

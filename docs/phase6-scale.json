@@ -1,0 +1,57 @@
+{
+  "counts": {
+    "Persons": 101035,
+    "Orgs": 10030,
+    "ClubMeetings": 20001,
+    "ServiceProjects": 3001,
+    "VolunteerAssignments": 50000,
+    "VolunteerHours": 250000,
+    "GovernanceDocuments": 10000,
+    "OperationTasks": 50000
+  },
+  "api": {
+    "/meetings?from=2026-11-01T00:00:00Z&to=2026-12-01T00:00:00Z": {
+      "samples": 40,
+      "p50_ms": 19.84,
+      "p95_ms": 36.28,
+      "p99_ms": 57.2,
+      "errors": 0
+    },
+    "/projects": {
+      "samples": 40,
+      "p50_ms": 16.14,
+      "p95_ms": 21.36,
+      "p99_ms": 23.35,
+      "errors": 0
+    },
+    "/volunteers/hours": {
+      "samples": 40,
+      "p50_ms": 143.07,
+      "p95_ms": 165.21,
+      "p99_ms": 175.08,
+      "errors": 0
+    },
+    "/documents": {
+      "samples": 40,
+      "p50_ms": 21.62,
+      "p95_ms": 26.51,
+      "p99_ms": 28.35,
+      "errors": 0
+    },
+    "/tasks": {
+      "samples": 40,
+      "p50_ms": 16.08,
+      "p95_ms": 19.69,
+      "p99_ms": 22.83,
+      "errors": 0
+    },
+    "/operations/analytics": {
+      "samples": 40,
+      "p50_ms": 228.94,
+      "p95_ms": 282.19,
+      "p99_ms": 338.91,
+      "errors": 0
+    }
+  },
+  "conditions": "Isolated PostgreSQL 17.6 prior-phase 100k-person/10k-org clone. Existing fixture includes 20k meetings, 3k projects, 50k volunteer assignments, 250k hour entries and 10k document metadata records. Optional --tasks adds 50k completed task records. Use --fixture only for explicit initial fixture creation; the default is read-only measurement. SQL fixture approvals/verified hours are synthetic benchmark setup, not application review evidence. Document fixture measures metadata listing; only its seed object was uploaded, and cloned metadata does not claim 10k distinct download files. Forty warm loopback API reads after one warmup; shared local Windows machine. No external delivery or production SLO claim."
+}

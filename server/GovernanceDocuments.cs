@@ -17,7 +17,7 @@ public static class GovernanceDocuments
                 int page = 1
             ) =>
             {
-                IQueryable<GovernanceDocument> q = s.Db.GovernanceDocuments;
+                IQueryable<GovernanceDocument> q = s.Db.GovernanceDocuments.Where(d=>d.ObjectKey=="");
                 var u = await s.A.User();
                 if (committeeId != null)
                 {
@@ -325,9 +325,10 @@ public static class GovernanceDocuments
         );
     }
 
-    private static async Task Authorize(GovernanceDocument d, GovernanceService s)
+    internal static async Task Authorize(GovernanceDocument d, GovernanceService s)
     {
         var user = await s.A.User();
+        if(d.ObjectKey != "") throw new ApiError(404,"Use the protected document vault endpoint.");
         if (d.CommitteeId != null)
         {
             await s.CommitteeAccess(d.CommitteeId.Value);

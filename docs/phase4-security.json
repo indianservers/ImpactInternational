@@ -1,0 +1,114 @@
+[
+  {
+    "test": "event-only role can use scoped organization lookup",
+    "passed": true
+  },
+  {
+    "test": "event-only role can find names without private contacts",
+    "passed": true
+  },
+  {
+    "test": "event-only role can load categories and committee metadata",
+    "passed": true
+  },
+  {
+    "test": "event-only role cannot read unrelated governance request details",
+    "passed": true
+  },
+  {
+    "test": "event-only approval feed excludes unrelated governance records",
+    "passed": true
+  },
+  {
+    "test": "district manager creates an owned event without governance-manager privileges",
+    "passed": true
+  },
+  {
+    "test": "district role cannot create headquarters event",
+    "passed": true
+  },
+  {
+    "test": "district role cannot broaden audience beyond scope",
+    "passed": true
+  },
+  {
+    "test": "event-only manager completes shared approval and publication",
+    "passed": true
+  },
+  {
+    "test": "registration approver cannot approve their own seat",
+    "passed": true
+  },
+  {
+    "test": "member event filters can see their ancestor metadata",
+    "passed": true
+  },
+  {
+    "test": "explicit event manager can queue only approved event audience",
+    "passed": true
+  },
+  {
+    "test": "scheduled invitation rejects expired sender authority",
+    "passed": true
+  },
+  {
+    "test": "expired authority cannot alter event audience",
+    "passed": true
+  },
+  {
+    "test": "cancelling pending registration closes its shared approval request",
+    "passed": true
+  },
+  {
+    "test": "PostgreSQL rejects raw capacity overflow",
+    "passed": true
+  },
+  {
+    "test": "registration transitions retained in existing append-only audit",
+    "passed": true
+  },
+  {
+    "test": "audit excludes tokens and private registration answers",
+    "passed": true
+  },
+  {
+    "test": "database state remains one confirmed seat",
+    "passed": true
+  },
+  {
+    "test": "null required event title gets structured validation",
+    "passed": true
+  },
+  {
+    "test": "district event analytics matches recursive database truth",
+    "passed": true
+  },
+  {
+    "test": "event role cannot configure organization-wide types",
+    "passed": true
+  },
+  {
+    "test": "cross-tenant operational reports denied",
+    "passed": true
+  },
+  {
+    "test": "cross-tenant invitation issuing denied",
+    "passed": true
+  },
+  {
+    "test": "signed-in nonmember cannot bypass guests-disabled policy",
+    "passed": true
+  },
+  {
+    "test": "signed-in external participant is classified as a guest",
+    "passed": true
+  },
+  {
+    "test": "guest metrics follow membership rather than account identity",
+    "passed": true
+  },
+  {
+    "test": "concurrent session creation rejects conflicting rooms and speakers",
+    "passed": true
+  }
+]

@@ -1,0 +1,114 @@
+[
+  {
+    "test": "actual rendered certificate QR independently decoded",
+    "passed": true
+  },
+  {
+    "test": "public verification reflects revocation",
+    "passed": true
+  },
+  {
+    "test": "public privacy hides member identity and contacts",
+    "passed": true
+  },
+  {
+    "test": "invalid verification token denied",
+    "passed": true
+  },
+  {
+    "test": "null input gets validation error",
+    "passed": true
+  },
+  {
+    "test": "certificate retry returns same issuance",
+    "passed": true
+  },
+  {
+    "test": "reissued certificate generates PDF",
+    "passed": true
+  },
+  {
+    "test": "issued public verification has approved minimal name",
+    "passed": true
+  },
+  {
+    "test": "historical revoked certificate stays revoked",
+    "passed": true
+  },
+  {
+    "test": "bulk actual PDF ZIP generated",
+    "passed": true
+  },
+  {
+    "test": "missing issuance placeholder rejected",
+    "passed": true
+  },
+  {
+    "test": "hours source cannot certify unverified volunteer",
+    "passed": true
+  },
+  {
+    "test": "full shift creates waiting-list application",
+    "passed": true
+  },
+  {
+    "test": "coordinator cannot overbook full shift",
+    "passed": true
+  },
+  {
+    "test": "concurrent approvals respect capacity transaction",
+    "passed": true
+  },
+  {
+    "test": "actual check-in timestamp persisted",
+    "passed": true
+  },
+  {
+    "test": "attendance duration minus actual break used",
+    "passed": true
+  },
+  {
+    "test": "scheduled hours are not auto verified",
+    "passed": true
+  },
+  {
+    "test": "linked meeting reads event check-ins",
+    "passed": true
+  },
+  {
+    "test": "linked meeting refuses duplicate attendance write",
+    "passed": true
+  },
+  {
+    "test": "linked meeting stores no duplicate attendance",
+    "passed": true
+  },
+  {
+    "test": "physical attendance does not grant voting eligibility",
+    "passed": true
+  },
+  {
+    "test": "explicit document sharing grants chosen reviewer",
+    "passed": true
+  },
+  {
+    "test": "shared document approved with version binding",
+    "passed": true
+  },
+  {
+    "test": "durable reminder marks cycle",
+    "passed": true
+  },
+  {
+    "test": "reminder uses existing in-app communication outbox",
+    "passed": true
+  },
+  {
+    "test": "expired object immediately inaccessible",
+    "passed": true
+  },
+  {
+    "test": "retention deletes private bytes and retains metadata",
+    "passed": true
+  }
+]

@@ -6,6 +6,7 @@ public static class GovernanceSetup
 {
     public static async Task Tenant(Db db, Guid tenant)
     {
+        await EventSetup.Tenant(db, tenant);
         if (!await db.ClubHealthConfigurations.AnyAsync(x => x.TenantId == tenant))
             db.ClubHealthConfigurations.Add(
                 new() { TenantId = tenant, RequireClubChangeApproval = false }

@@ -84,6 +84,18 @@ const GovernanceApprovals = lazy(() => import("./pages/GovernanceApprovals"));
 const GovernanceSettings = lazy(() => import("./pages/GovernanceSettings"));
 const GovernanceDocuments = lazy(() => import("./pages/GovernanceDocuments"));
 const GovernanceResolutions = lazy(() => import("./pages/GovernanceDocuments").then(m=>({default:m.GovernanceResolutions})));
+const Operations=lazy(()=>import('./pages/Operations'));
+const VerifyCertificate=lazy(()=>import('./pages/Operations').then(m=>({default:m.VerifyCertificate})));
+const Communications=lazy(()=>import('./pages/Communications'));
+const Events=lazy(()=>import('./pages/Events'));
+const EventWizard=lazy(()=>import('./pages/Events').then(m=>({default:m.EventWizard})));
+const EventWorkspace=lazy(()=>import('./pages/EventWorkspace'));
+const MyEvents=lazy(()=>import('./pages/EventParticipation').then(m=>({default:m.MyEvents})));
+const EventCheckin=lazy(()=>import('./pages/EventParticipation').then(m=>({default:m.EventCheckin})));
+const EventSettings=lazy(()=>import('./pages/EventParticipation').then(m=>({default:m.EventSettings})));
+const EventDashboard=lazy(()=>import('./pages/EventParticipation').then(m=>({default:m.EventDashboard})));
+const PublicEvent=lazy(()=>import('./pages/EventParticipation').then(m=>({default:m.PublicEvent})));
+const EventInvitation=lazy(()=>import('./pages/EventParticipation').then(m=>({default:m.EventInvitation})));
 function WorkspaceHome() {
   const { w } = useWorkspace();
   return w?.permissions.includes("governance.reports") ? <GovernanceDashboard/> : w?.permissions.includes("members.view") ? (
@@ -162,6 +174,11 @@ function Shell() {
     }
   }
   const menus = [
+    ["Event types", "/app/event-settings", CalendarDays, "events.configure"],
+    ["Event intelligence", "/app/event-intelligence", CalendarDays, "events.reports"],
+    ["Club Operations", "/app/operations", Briefcase, "operations.view"],
+    ["Communication Center", "/app/communications", Mail, "communications.view"],
+    ["Events & calendar", "/app/events", CalendarDays, "events.view"],
     ["Dashboard", "/app", LayoutDashboard, "organization.view"],
     ["Organizations", "/app/organizations", Network, "organization.view"],
     ["Club directory", "/app/clubs", Building2, "clubs.view"],
@@ -264,6 +281,7 @@ function Shell() {
               Join a club
             </NavLink>
           </nav>
+          <Link className="panel-link" to="/app/my-events">My invitations & event passes →</Link>
           <Link className="panel-link" to="/app/committees">My committee workspaces →</Link>
           <details className="upcoming-details">
             <summary className="sidebar-label upcoming-label">
@@ -271,9 +289,8 @@ function Shell() {
             </summary>
             <div className="upcoming">
               {[
-                [CalendarDays, "Events & meetings"],
-                [Mail, "Communication"],
-                [Briefcase, "Service projects"],
+
+
                 [Wallet, "Finance"],
                 [ChartNoAxesCombined, "Reports"],
               ].map(([I, label]: any) => (
@@ -377,6 +394,8 @@ function Shell() {
             ![
               "/app/profile",
               "/app/my-membership",
+              "/app/events",
+              "/app/my-events",
               "/app/apply",
               "/app/members/",
             ].some((p) => location.pathname.startsWith(p)) ? (
@@ -414,7 +433,7 @@ function Shell() {
           </main>
           <footer>
             ClubSphere <span>Connected leadership. Meaningful impact.</span>
-            <span>Connected community · Phase 03</span>
+            <span>Connected community · Phase 06</span>
           </footer>
         </div>
       </div>
@@ -535,6 +554,9 @@ export default function App() {
   return (
     <Suspense fallback={<Skeleton />}>
       <Routes>
+        <Route path="/verify/certificates/:token" element={<VerifyCertificate/>}/>
+        <Route path="/event/:id" element={<PublicEvent/>}/>
+        <Route path="/event-invitation" element={<EventInvitation/>}/>
         <Route path="/" element={<Landing />} />
         <Route path="/join" element={<JoinInvitation />} />
         <Route path="/verify" element={<VerifyMembershipCard />} />
@@ -561,6 +583,15 @@ export default function App() {
           <Route path="membership-settings" element={<MembershipSettings />} />
           <Route path="transfers" element={<MembershipOperations />} />
           <Route path="organizations" element={<Organizations />} />
+          <Route path="operations/*" element={<Operations/>}/>
+          <Route path="communications/*" element={<Communications/>}/>
+          <Route path="events" element={<Events/>}/>
+          <Route path="events/new" element={<EventWizard/>}/>
+          <Route path="events/:id" element={<EventWorkspace/>}/>
+          <Route path="events/:id/checkin" element={<EventCheckin/>}/>
+          <Route path="my-events" element={<MyEvents/>}/>
+          <Route path="event-settings" element={<EventSettings/>}/>
+          <Route path="event-intelligence" element={<EventDashboard/>}/>
           <Route path="clubs" element={<ClubDirectory />} />
           <Route path="clubs/:id" element={<ClubWorkspace />} />
           <Route path="club-administration" element={<GovernanceDashboard />} />

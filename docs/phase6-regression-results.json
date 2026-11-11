@@ -1,0 +1,92 @@
+[
+  {
+    "suite": "integration",
+    "passed": 60,
+    "failed": 0
+  },
+  {
+    "suite": "phase2",
+    "passed": 127,
+    "failed": 0
+  },
+  {
+    "suite": "phase2_extended",
+    "passed": 11,
+    "failed": 0
+  },
+  {
+    "suite": "phase2_imports",
+    "passed": 53,
+    "failed": 0
+  },
+  {
+    "suite": "phase3",
+    "passed": 126,
+    "failed": 0
+  },
+  {
+    "suite": "phase3_extended",
+    "passed": 15,
+    "failed": 0
+  },
+  {
+    "suite": "phase3_security",
+    "passed": 20,
+    "failed": 0
+  },
+  {
+    "suite": "phase4",
+    "passed": 55,
+    "failed": 0
+  },
+  {
+    "suite": "phase4_extended",
+    "passed": 29,
+    "failed": 0
+  },
+  {
+    "suite": "phase4_security",
+    "passed": 28,
+    "failed": 0
+  },
+  {
+    "suite": "phase5",
+    "passed": 42,
+    "failed": 0
+  },
+  {
+    "suite": "phase5_security",
+    "passed": 22,
+    "failed": 0
+  },
+  {
+    "suite": "phase5_extended",
+    "passed": 14,
+    "failed": 0
+  },
+  {
+    "suite": "phase6",
+    "passed": 62,
+    "failed": 0
+  },
+  {
+    "suite": "phase6_extended",
+    "passed": 28,
+    "failed": 0
+  },
+  {
+    "suite": "phase6_workflows",
+    "passed": 14,
+    "failed": 0
+  },
+  {
+    "suite": "phase6_edges",
+    "passed": 10,
+    "failed": 0
+  },
+  {
+    "suite": "phase6_scope",
+    "passed": 21,
+    "failed": 0
+  }
+]

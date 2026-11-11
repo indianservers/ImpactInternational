@@ -1,0 +1,6 @@
+PASS temporary SMTP failure persisted with backoff; retry made due by test clock
+PASS failed and successful delivery attempts both recorded
+PASS PostgreSQL outbox delivered a verification message over real local SMTP
+PASS membership invitation notification failure, backoff, retry and actual SMTP body delivery
+PASS event invitation failure, backoff, retry and private-link SMTP delivery
+PASS event registration confirmation and digital-pass access link delivered over SMTP

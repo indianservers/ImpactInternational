@@ -55,6 +55,18 @@ public class Access(Db db, IHttpContextAccessor ctx)
         "committees.view",
         "committees.manage",
         "governance.reports",
+        "events.view",
+        "events.manage",
+        "events.checkin",
+        "events.reports",
+        "events.configure",
+        "communications.view",
+        "communications.send",
+        "communications.manage",
+        "communications.inbox",
+        "communications.reports",
+        "communications.configure",
+        "operations.view", "operations.manage", "operations.verify", "operations.documents", "operations.certificates",
     ];
 
     public static string Token() => Convert.ToHexString(RandomNumberGenerator.GetBytes(32));

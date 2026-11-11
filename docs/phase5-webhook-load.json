@@ -1,0 +1,9 @@
+{
+  "samples": 100,
+  "workers": 10,
+  "p50_ms": 41.62585000449326,
+  "p95_ms": 77.31600000988692,
+  "p99_ms": 105.9114999952726,
+  "errors": 0,
+  "conditions": "Actual signed HTTP Meta-compatible callbacks, local API and PostgreSQL, ten concurrent workers. Status events never send real provider traffic."
+}

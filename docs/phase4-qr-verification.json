@@ -1,0 +1,7 @@
+{
+  "png_decoded": true,
+  "rendered_pdf_decoded": true,
+  "same_opaque_payload": true,
+  "payload_characters": 64,
+  "pii_in_payload": false
+}

@@ -25,6 +25,40 @@ public class MaintenanceWorker(IServiceScopeFactory scopes, ILogger<MaintenanceW
                                 .SetProperty(x => x.Recipient, ""),
                         token
                     );
+                // Event private registration details are retained for one year after the event.
+                var oldEvents = db
+                    .Events.Where(e => e.EndsAt < DateTimeOffset.UtcNow.AddYears(-1))
+                    .Select(e => e.Id);
+                await db
+                    .EventRegistrations.Where(r =>
+                        oldEvents.Contains(r.EventId)
+                        && (
+                            r.Email != ""
+                            || r.Responses != "{}"
+                            || r.Accessibility != ""
+                            || r.Dietary != ""
+                            || r.Emergency != ""
+                            || r.GuestNames != "[]"
+                        )
+                    )
+                    .ExecuteUpdateAsync(
+                        x =>
+                            x.SetProperty(r => r.Email, "")
+                                .SetProperty(r => r.Responses, "{}")
+                                .SetProperty(r => r.Accessibility, "")
+                                .SetProperty(r => r.Dietary, "")
+                                .SetProperty(r => r.Emergency, "")
+                                .SetProperty(r => r.GuestNames, "[]"),
+                        token
+                    );
+                await db
+                    .EventInvitations.Where(i =>
+                        oldEvents.Contains(i.EventId) && (i.Email != "" || i.ProtectedToken != "")
+                    )
+                    .ExecuteUpdateAsync(
+                        x => x.SetProperty(i => i.Email, "").SetProperty(i => i.ProtectedToken, ""),
+                        token
+                    );
                 // Preserve provenance IDs and counters, while removing retained source PII.
                 var cutoff = DateTimeOffset.UtcNow.AddDays(-30);
                 var oldJobs = db.MemberImportJobs.Where(x =>
@@ -63,7 +97,8 @@ public class MaintenanceWorker(IServiceScopeFactory scopes, ILogger<MaintenanceW
                     .ExecuteDeleteAsync(token);
                 await db
                     .GovernanceDocuments.Where(x =>
-                        x.RetainUntil != null
+                        x.ObjectKey == ""
+                        && x.RetainUntil != null
                         && x.RetainUntil < DateTimeOffset.UtcNow
                         && x.Status != "Expired"
                     )

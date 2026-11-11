@@ -6,9 +6,12 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using static Clubs.Access;
 
+PdfSharp.Fonts.GlobalFontSettings.FontResolver = new EventFontResolver();
 var b = WebApplication.CreateBuilder(args);
 b.Logging.ClearProviders();
 b.Logging.AddJsonConsole();
+b.Logging.AddFilter("Microsoft.AspNetCore.Hosting.Diagnostics", LogLevel.Warning);
+b.Logging.AddFilter("Microsoft.EntityFrameworkCore.Database.Command", LogLevel.Warning);
 b.WebHost.ConfigureKestrel(o => o.Limits.MaxRequestBodySize = 12582912);
 if (
     !b.Environment.IsDevelopment()
@@ -34,6 +37,21 @@ b.Services.AddScoped<Access>();
 b.Services.AddScoped<MembershipService>();
 b.Services.AddScoped<NotificationService>();
 b.Services.AddScoped<GovernanceService>();
+b.Services.AddScoped<EventService>();
+b.Services.AddScoped<OperationsService>();
+b.Services.AddHostedService<OperationsWorker>();
+b.Services.AddScoped<CommunicationService>();
+b.Services.AddSingleton<CommunicationStorage>();
+b.Services.AddHttpClient("communications", c => c.Timeout = TimeSpan.FromSeconds(20));
+b.Services.AddHttpClient("communication-media", c => c.Timeout = TimeSpan.FromSeconds(20))
+    .ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler { AllowAutoRedirect = false });
+b.Services.AddTransient<MetaCommunicationProvider>();
+b.Services.AddTransient<TwilioCommunicationProvider>();
+b.Services.AddTransient<ICommunicationProvider, MetaCommunicationProvider>();
+b.Services.AddTransient<ICommunicationProvider, TwilioCommunicationProvider>();
+b.Services.AddHostedService<CommunicationWorker>();
+b.Services.AddHostedService<CommunicationMediaWorker>();
+b.Services.AddHostedService<EventWorker>();
 b.Services.AddHostedService<GovernanceWorker>();
 b.Services.AddSingleton<IPasswordHasher<User>, PasswordHasher<User>>();
 b.Services.AddAntiforgery(o => o.HeaderName = "X-CSRF");
@@ -61,7 +79,18 @@ b.Services.AddRateLimiter(o =>
             )
     )
 );
+b.Services.AddRateLimiter(o =>
+    o.AddPolicy(
+        "events",
+        c =>
+            RateLimitPartition.GetFixedWindowLimiter(
+                c.Connection.RemoteIpAddress?.ToString() ?? "unknown",
+                _ => new() { PermitLimit = 6000, Window = TimeSpan.FromMinutes(1) }
+            )
+    )
+);
 var app = b.Build();
+app.UseWebSockets(new() { KeepAliveInterval = TimeSpan.FromSeconds(20) });
 app.UseExceptionHandler();
 app.UseRateLimiter();
 if (!app.Environment.IsDevelopment())
@@ -74,6 +103,7 @@ app.Use(
             c.Request.Path.Value?.Contains("/imports") == true
             || c.Request.Path.Value?.EndsWith("/documents") == true
             || c.Request.Path.Value?.EndsWith("/photo") == true
+            || c.Request.Path.Value?.EndsWith("/attachments") == true
                 ? 12582912
                 : 65536;
         var bodyFeature =
@@ -82,10 +112,16 @@ app.Use(
             bodyFeature.MaxRequestBodySize = bodyLimit;
         c.Response.Headers["X-Content-Type-Options"] = "nosniff";
         c.Response.Headers["X-Frame-Options"] = "DENY";
+        c.Response.Headers["Referrer-Policy"] = "no-referrer";
         c.Response.Headers["X-Correlation-ID"] = c.TraceIdentifier;
         try
         {
-            if (c.Request.Path.StartsWithSegments("/api") && !HttpMethods.IsGet(c.Request.Method))
+            if (
+                c.Request.Path.StartsWithSegments("/api")
+                && !HttpMethods.IsGet(c.Request.Method)
+                && !c.Request.Path.StartsWithSegments("/api/v1/communications/webhooks")
+                && c.Request.Path != "/api/v1/communications/unsubscribe"
+            )
                 await c.RequestServices.GetRequiredService<IAntiforgery>().ValidateRequestAsync(c);
             await next();
         }
@@ -94,6 +130,20 @@ app.Use(
             c.Response.StatusCode = 400;
             await c.Response.WriteAsJsonAsync(
                 new { detail = "Invalid CSRF token. Refresh and retry." }
+            );
+        }
+        catch (BadHttpRequestException)
+        {
+            c.Response.StatusCode = 400;
+            await c.Response.WriteAsJsonAsync(
+                new { detail = "Invalid request data.", status = 400 }
+            );
+        }
+        catch (System.Text.Json.JsonException)
+        {
+            c.Response.StatusCode = 400;
+            await c.Response.WriteAsJsonAsync(
+                new { detail = "Invalid structured input.", status = 400 }
             );
         }
         catch (ApiError e)
@@ -143,6 +193,9 @@ var api = app.MapGroup("/api/v1");
 api.MapMembership();
 api.MapMembershipWorkflows();
 api.MapGovernance();
+api.MapEvents();
+api.MapCommunications();
+api.MapOperations();
 api.MapMembershipLifecycle();
 api.MapMemberMedia();
 api.MapMemberImports();
@@ -695,7 +748,7 @@ api.MapPut(
 );
 api.MapGet(
     "/assignments",
-    async (Access a) =>
+    async (Access a, Guid? roleId = null) =>
     {
         var w = await a.Workspace("roles.view");
         return await (
@@ -703,7 +756,7 @@ api.MapGet(
             join u in a.Db.Users on x.UserId equals u.Id
             join r in a.Db.Roles on x.RoleId equals r.Id
             join o in a.Visible(w) on x.OrgId equals o.Id
-            where x.TenantId == w.TenantId
+            where x.TenantId == w.TenantId && (roleId == null || x.RoleId == roleId)
             select new
             {
                 x.Id,
@@ -893,7 +946,10 @@ if (app.Environment.IsDevelopment())
                 {
                     x.Kind,
                     x.Link,
-                    Email = db.Users.Where(u => u.Id == x.UserId).Select(u => u.Email).First(),
+                    Email = db.Users.Where(u => u.Id == x.UserId)
+                        .Select(u => u.Email)
+                        .FirstOrDefault()
+                        ?? x.Recipient,
                 })
                 .ToListAsync()
     );
@@ -968,6 +1024,13 @@ if (args.Contains("--migrate"))
         await MembershipSetup.Demo(scope.ServiceProvider);
     if (args.Contains("--seed-phase3"))
         await GovernanceSetup.Initialize(app.Services);
+    if (args.Contains("--seed-phase4"))
+        await EventSetup.Initialize(app.Services);
+    return;
+}
+if (args.Contains("--seed-phase4"))
+{
+    await EventSetup.Initialize(app.Services);
     return;
 }
 if (args.Contains("--seed-phase3"))

@@ -33,6 +33,13 @@ public static class MembershipSetup
                         : Array.Empty<string>()
                 )
                 .ToArray();
+        if (role.Name is "Club Member" or "Applicant")
+            add = add.Concat(new[] { "communications.view", "operations.view" }).ToArray();
+        if (role.Name is "Club Secretary" or "Club President" or "Club Manager")
+            add = add.Concat(
+                    CommunicationService.Permissions.Where(p => p != "communications.configure")
+                )
+                .ToArray();
         if (role.Name is "Club Secretary" or "Club President" or "Club Manager")
             add = add.Concat(
                     GovernanceService.Permissions.Where(p =>
@@ -44,6 +51,12 @@ public static class MembershipSetup
                     )
                 )
                 .ToArray();
+        if (role.Name is "Club Secretary" or "Club President" or "Club Manager")
+            add = add.Concat(EventSetup.Permissions.Where(p => p != "events.configure")).ToArray();
+        if (role.Name is "Club Member" or "Guest / Applicant")
+            add = add.Concat(["events.view"]).ToArray();
+        if (role.Name is "Club Secretary" or "Club President" or "Club Manager")
+            add = add.Concat(OperationsService.Permissions).ToArray();
         role.Permissions = role.Permissions.Concat(add).Distinct().ToArray();
     }
 

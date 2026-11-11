@@ -1,0 +1,90 @@
+[
+  {
+    "test": "WebSocket connection authenticates scoped participant",
+    "passed": true
+  },
+  {
+    "test": "persisted message produces scoped live invalidation",
+    "passed": true
+  },
+  {
+    "test": "WebSocket event contains no private message body",
+    "passed": true
+  },
+  {
+    "test": "same user cannot read tenant-one conversation from tenant-two workspace",
+    "passed": true
+  },
+  {
+    "test": "cross-origin WebSocket rejected",
+    "passed": true
+  },
+  {
+    "test": "revocation closes existing protected live subscription",
+    "passed": true
+  },
+  {
+    "test": "revoked participant loses message history immediately",
+    "passed": true
+  },
+  {
+    "test": "staff membership grant cannot be delegated to ineligible user",
+    "passed": true
+  },
+  {
+    "test": "message cursor must belong to the same conversation",
+    "passed": true
+  },
+  {
+    "test": "null message input rejected rather than server failure",
+    "passed": true
+  },
+  {
+    "test": "deep audience expression bounded",
+    "passed": true
+  },
+  {
+    "test": "club sender cannot resolve ancestor audience",
+    "passed": true
+  },
+  {
+    "test": "originating club bounds audience even for headquarters sender",
+    "passed": true
+  },
+  {
+    "test": "inactive staff participant cannot access inbox context",
+    "passed": true
+  },
+  {
+    "test": "database rejects revision-history mutation",
+    "passed": true
+  },
+  {
+    "test": "domain notification signal triggers approved automation",
+    "passed": true
+  },
+  {
+    "test": "automation execution idempotency prevents repeated reminder",
+    "passed": true
+  },
+  {
+    "test": "old private message content redacted without deleting provenance",
+    "passed": true
+  },
+  {
+    "test": "legacy outbox rows migrated to email channel",
+    "passed": true
+  },
+  {
+    "test": "unconfigured AI cannot transmit private conversations",
+    "passed": true
+  },
+  {
+    "test": "SMTP cannot be advertised as an inbound mailbox",
+    "passed": true
+  },
+  {
+    "test": "period analytics exposes unsupported opens honestly",
+    "passed": true
+  }
+]

@@ -206,6 +206,15 @@ public class GovernanceResolution : ITenantRecord
 
 public class GovernanceDocument : ITenantRecord
 {
+    public Guid? EventId { get; set; }
+    public string ObjectKey { get; set; } = "";
+    public string Folder { get; set; } = "General";
+    public string Tags { get; set; } = "";
+    public string Visibility { get; set; } = "Organization";
+    public string SharedUsers { get; set; } = "[]";
+    public Guid? OperationId { get; set; }
+    public int CurrentVersion { get; set; } = 1;
+    public Guid? ApprovalRequestId { get; set; }
     public Guid Id { get; set; } = Guid.NewGuid();
     public Guid TenantId { get; set; }
     public Guid OrgId { get; set; }

@@ -255,12 +255,14 @@ public static class GovernanceEndpoints
                 if (applicableToOrgId != null)
                 {
                     await s.Scope(w, applicableToOrgId.Value);
-                    var ancestors = s.Db.Database.SqlQuery<Guid>($"""
+                    var ancestors = s.Db.Database.SqlQuery<Guid>(
+                        $"""
                         WITH RECURSIVE ancestors AS (
                           SELECT "Id","ParentId" FROM "Orgs" WHERE "TenantId"={w.TenantId} AND "Id"={applicableToOrgId.Value}
                           UNION ALL SELECT o."Id",o."ParentId" FROM "Orgs" o JOIN ancestors a ON o."Id"=a."ParentId" WHERE o."TenantId"={w.TenantId}
                         ) SELECT "Id" AS "Value" FROM ancestors
-                        """);
+                        """
+                    );
                     q = q.Where(x => ancestors.Contains(x.OrgId));
                 }
                 else
@@ -471,6 +473,11 @@ public static class GovernanceEndpoints
             {
                 var w = await s.A.WorkspaceAny(
                     "governance.approve",
+                    "events.manage",
+                    "communications.manage",
+                    "operations.manage",
+                    "operations.documents",
+                    "operations.certificates",
                     "clubs.manage",
                     "leadership.manage",
                     "committees.manage",
@@ -522,6 +529,11 @@ public static class GovernanceEndpoints
             {
                 var w = await s.A.WorkspaceAny(
                     "governance.approve",
+                    "events.manage",
+                    "communications.manage",
+                    "operations.manage",
+                    "operations.documents",
+                    "operations.certificates",
                     "clubs.manage",
                     "leadership.manage",
                     "committees.manage",
@@ -535,6 +547,12 @@ public static class GovernanceEndpoints
                     );
                 return new
                 {
+                    communication = await CommunicationReview(r, s.Db),
+                    operation = await new OperationsService(
+                        s.A,
+                        s,
+                        new NotificationService(s.Db)
+                    ).Review(r, w),
                     request = r,
                     stage = stage == null
                         ? null
@@ -596,6 +614,11 @@ public static class GovernanceEndpoints
             async (Guid id, VersionInput input, GovernanceService s) =>
             {
                 var w = await s.A.WorkspaceAny(
+                    "events.manage",
+                    "communications.manage",
+                    "operations.manage",
+                    "operations.documents",
+                    "operations.certificates",
                     "clubs.manage",
                     "leadership.manage",
                     "committees.manage",
@@ -623,6 +646,11 @@ public static class GovernanceEndpoints
             async (Guid id, GovernanceChangeInput input, GovernanceService s) =>
             {
                 var w = await s.A.WorkspaceAny(
+                    "events.manage",
+                    "communications.manage",
+                    "operations.manage",
+                    "operations.documents",
+                    "operations.certificates",
                     "clubs.manage",
                     "leadership.manage",
                     "committees.manage",
@@ -695,6 +723,11 @@ public static class GovernanceEndpoints
             async (Guid id, VersionInput input, GovernanceService s) =>
             {
                 var w = await s.A.WorkspaceAny(
+                    "events.manage",
+                    "communications.manage",
+                    "operations.manage",
+                    "operations.documents",
+                    "operations.certificates",
                     "clubs.manage",
                     "leadership.manage",
                     "committees.manage",
@@ -805,6 +838,96 @@ public static class GovernanceEndpoints
                         x.Id == r.AppointmentId
                     );
                     await s.End(p, "Cancelled", "Appointment rejected: " + input.Comment, w.UserId);
+                }
+                if (
+                    r.Kind.StartsWith("Operation") && input.Decision is "Reject" or "RequestChanges"
+                )
+                {
+                    var reference = GovernanceService.Unpack<OperationReference>(r.Payload);
+                    var state = input.Decision == "Reject" ? "Rejected" : "Changes Requested";
+                    if (r.Kind == "OperationProject")
+                    {
+                        var row = await s.Db.ServiceProjects.SingleAsync(x => x.Id == reference.Id);
+                        row.Status = state;
+                        row.Version++;
+                    }
+                    if (r.Kind == "OperationAgenda")
+                    {
+                        var row = await s.Db.ClubMeetings.SingleAsync(x => x.Id == reference.Id);
+                        row.AgendaStatus = state;
+                        row.Version++;
+                    }
+                    if (r.Kind == "OperationMinutes")
+                    {
+                        var row = await s.Db.MeetingMinutes.SingleAsync(x => x.Id == reference.Id);
+                        row.Status = state;
+                        row.Version++;
+                    }
+                    if (r.Kind == "OperationImpact")
+                    {
+                        var row = await s.Db.ProjectImpacts.SingleAsync(x => x.Id == reference.Id);
+                        row.Status = state;
+                        row.Version++;
+                    }
+                    if (r.Kind == "OperationDocument")
+                    {
+                        var row = await s.Db.GovernanceDocuments.SingleAsync(x =>
+                            x.Id == reference.Id
+                        );
+                        row.Status = state;
+                    }
+                    if (r.Kind == "OperationCertificate")
+                    {
+                        var row = await s.Db.IssuedCertificates.SingleAsync(x =>
+                            x.Id == reference.Id
+                        );
+                        row.Status = state;
+                        row.Version++;
+                    }
+                }
+                if (
+                    r.Kind == "CommunicationAutomation"
+                    && input.Decision is "Reject" or "RequestChanges"
+                )
+                {
+                    var reference = GovernanceService.Unpack<BroadcastReference>(r.Payload);
+                    var rule = await s.Db.CommunicationAutomations.SingleAsync(x =>
+                        x.Id == reference.Id
+                    );
+                    rule.Status = input.Decision == "Reject" ? "Rejected" : "Changes Requested";
+                    rule.Active = false;
+                    rule.Version++;
+                }
+                if (
+                    r.Kind == "CommunicationBroadcast"
+                    && input.Decision is "Reject" or "RequestChanges"
+                )
+                {
+                    var reference = GovernanceService.Unpack<BroadcastReference>(r.Payload);
+                    var broadcast = await s.Db.CommunicationBroadcasts.SingleAsync(b =>
+                        b.Id == reference.Id
+                    );
+                    broadcast.Status =
+                        input.Decision == "Reject" ? "Rejected" : "Changes Requested";
+                    broadcast.Version++;
+                }
+                if (r.Kind.StartsWith("Event") && input.Decision is "Reject" or "RequestChanges")
+                {
+                    var er = GovernanceService.Unpack<EventReference>(r.Payload);
+                    if (r.Kind == "EventPublication")
+                    {
+                        var ev = await s.Db.Events.SingleAsync(x => x.Id == er.EventId);
+                        ev.Approval = input.Decision == "Reject" ? "Rejected" : "Changes Requested";
+                        ev.Version++;
+                    }
+                    else if (input.Decision == "Reject")
+                    {
+                        var registration = await s.Db.EventRegistrations.SingleAsync(x =>
+                            x.Id == er.RegistrationId
+                        );
+                        registration.Status = "Rejected";
+                        registration.Version++;
+                    }
                 }
                 r.Version++;
                 r.UpdatedAt = DateTimeOffset.UtcNow;
@@ -949,6 +1072,89 @@ public static class GovernanceEndpoints
         return r;
     }
 
+    private static async Task<object?> CommunicationReview(GovernanceRequest request, Db db)
+    {
+        if (request.Kind == "CommunicationBroadcast")
+        {
+            var id = GovernanceService.Unpack<BroadcastReference>(request.Payload).Id;
+            var b = await db.CommunicationBroadcasts.SingleAsync(b =>
+                b.Id == id && b.TenantId == request.TenantId && b.OrgId == request.OrgId
+            );
+            var revision = GovernanceService.Unpack<BroadcastReference>(request.Payload).Version;
+            var raw = await db
+                .CommunicationRevisions.Where(v => v.ResourceId == id && v.Version == revision)
+                .Select(v => v.Snapshot)
+                .SingleAsync();
+            using var frozen = System.Text.Json.JsonDocument.Parse(raw);
+            System.Text.Json.JsonElement? context = frozen.RootElement.TryGetProperty(
+                "ResolvedContext",
+                out var values
+            )
+                ? values.Clone()
+                : null;
+            return new
+            {
+                type = "Broadcast",
+                context,
+                b.Title,
+                b.Body,
+                b.Subject,
+                b.Channel,
+                b.Purpose,
+                b.SendAt,
+                b.TimeZone,
+                b.RepeatDays,
+                b.Cycles,
+                b.Rules,
+                b.ContentHash,
+                b.TemplateVersion,
+                organization = await db
+                    .Orgs.Where(o => o.Id == b.OrgId)
+                    .Select(o => o.Name)
+                    .SingleAsync(),
+                recipients = await db.CommunicationRecipients.CountAsync(r => r.BroadcastId == id),
+                sample = await db
+                    .CommunicationRecipients.Where(r => r.BroadcastId == id)
+                    .OrderBy(r => r.Id)
+                    .Take(20)
+                    .Select(r => new { r.Name, r.Club })
+                    .ToListAsync(),
+            };
+        }
+        if (request.Kind == "CommunicationAutomation")
+        {
+            using var saved = System.Text.Json.JsonDocument.Parse(request.Payload);
+            if (saved.RootElement.TryGetProperty("body", out _))
+                return saved.RootElement.Clone();
+            var id = GovernanceService.Unpack<BroadcastReference>(request.Payload).Id;
+            var rule = await db.CommunicationAutomations.SingleAsync(r =>
+                r.Id == id && r.TenantId == request.TenantId && r.OrgId == request.OrgId
+            );
+            var template = await db.CommunicationTemplates.SingleAsync(t =>
+                t.Id == rule.TemplateId
+            );
+            return new
+            {
+                type = "Automation",
+                title = rule.Name,
+                body = template.Body,
+                subject = template.Subject,
+                channel = template.Channel,
+                purpose = "Promotional / opt-in only",
+                rule.Trigger,
+                rule.DelayMinutes,
+                rule.DailyLimit,
+                rule.TemplateVersion,
+                currentTemplateVersion = template.Version,
+                organization = await db
+                    .Orgs.Where(o => o.Id == rule.OrgId)
+                    .Select(o => o.Name)
+                    .SingleAsync(),
+            };
+        }
+        return null;
+    }
+
     private static async Task RequiredPermission(
         GovernanceRequest r,
         GovernanceService s,
@@ -959,6 +1165,8 @@ public static class GovernanceEndpoints
             r.Kind.StartsWith("Club") ? "clubs.manage"
             : r.Kind == "Restructure" ? "governance.restructure"
             : r.Kind.StartsWith("Committee") ? "committees.manage"
+            : r.Kind.StartsWith("Event") ? "events.manage"
+            : r.Kind.StartsWith("Communication") ? "communications.manage"
             : r.Kind == "Resolution" ? "governance.documents"
             : "leadership.manage";
         Check(

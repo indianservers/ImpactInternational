@@ -1,0 +1,56 @@
+{
+  "counts": {
+    "Persons": 101035,
+    "Orgs": 10030,
+    "ClubMeetings": 20001,
+    "ServiceProjects": 3001,
+    "VolunteerAssignments": 50000,
+    "VolunteerHours": 250000,
+    "GovernanceDocuments": 10000
+  },
+  "api": {
+    "/meetings?from=2026-11-01T00:00:00Z&to=2026-12-01T00:00:00Z": {
+      "samples": 40,
+      "p50_ms": 17.36,
+      "p95_ms": 25.16,
+      "p99_ms": 30.58,
+      "errors": 0
+    },
+    "/projects": {
+      "samples": 40,
+      "p50_ms": 17.9,
+      "p95_ms": 20.72,
+      "p99_ms": 24.08,
+      "errors": 0
+    },
+    "/volunteers/hours": {
+      "samples": 40,
+      "p50_ms": 137.26,
+      "p95_ms": 156.36,
+      "p99_ms": 162.63,
+      "errors": 0
+    },
+    "/documents": {
+      "samples": 40,
+      "p50_ms": 20.1,
+      "p95_ms": 23.79,
+      "p99_ms": 28.36,
+      "errors": 0
+    },
+    "/tasks": {
+      "samples": 40,
+      "p50_ms": 4.84,
+      "p95_ms": 7.87,
+      "p99_ms": 8.88,
+      "errors": 0
+    },
+    "/operations/analytics": {
+      "samples": 40,
+      "p50_ms": 219.62,
+      "p95_ms": 245.16,
+      "p99_ms": 285.6,
+      "errors": 0
+    }
+  },
+  "conditions": "Isolated PostgreSQL 17.6 prior-phase 100k-person/10k-org clone. This run adds 20k meetings, 3k projects, 50k volunteer assignments, 250k hour entries and 10k document metadata records. SQL fixture approvals/verified hours are synthetic benchmark setup, not application review evidence. Document fixture measures metadata listing; only its seed object was uploaded, and cloned metadata does not claim 10k distinct download files. Forty warm loopback API reads after one warmup; shared local Windows machine. No external delivery or production SLO claim."
+}

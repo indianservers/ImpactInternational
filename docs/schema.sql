@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
-\restrict yzOab4FQeotcaXOCL30ObxiGuXwnsyTY02ez9J8Xm3jXFk3kfzTKIMPUCcaIW2d
+\restrict Ixnd9FHFPWgSBcHYI0zZwsOwJzRTuaL6biXJ1Ikfp0XjF1Sao93HtX4vuCLdaFE
 
 -- Dumped from database version 17.6
 -- Dumped by pg_dump version 17.6
@@ -51,6 +51,101 @@ BEGIN
  IF maximum IS NOT NULL AND EXISTS(SELECT 1 FROM (SELECT NEW."StartsAt" AS point UNION SELECT a."StartsAt" FROM "OfficerAppointments" a WHERE a."Id"<>NEW."Id" AND a."TenantId"=NEW."TenantId" AND a."OrgId"=NEW."OrgId" AND a."PositionId"=NEW."PositionId" AND a."Status" IN ('Approved','Scheduled','Active') AND a."StartsAt">NEW."StartsAt" AND a."StartsAt"<NEW."EndsAt") points WHERE (SELECT count(*) FROM "OfficerAppointments" a WHERE a."Id"<>NEW."Id" AND a."TenantId"=NEW."TenantId" AND a."OrgId"=NEW."OrgId" AND a."PositionId"=NEW."PositionId" AND a."Status" IN ('Approved','Scheduled','Active') AND a."StartsAt"<=points.point AND a."EndsAt">points.point)>=maximum) THEN RAISE EXCEPTION 'Office capacity exceeded' USING ERRCODE='23514'; END IF;
  END IF; RETURN NEW;
 END $$;
+
+
+--
+-- Name: clubs_communication_broadcast_guard(); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.clubs_communication_broadcast_guard() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$ BEGIN
+ IF OLD."Status"<>'Draft' AND (NEW."Body",NEW."Subject",NEW."Rules",NEW."Channel",NEW."OrgId",NEW."CreatorId",NEW."AccountId",NEW."Purpose",NEW."ContentHash") IS DISTINCT FROM (OLD."Body",OLD."Subject",OLD."Rules",OLD."Channel",OLD."OrgId",OLD."CreatorId",OLD."AccountId",OLD."Purpose",OLD."ContentHash") THEN RAISE EXCEPTION 'Approved broadcast identity/content is immutable; duplicate for revision' USING ERRCODE='23514';END IF;RETURN NEW;END $$;
+
+
+--
+-- Name: clubs_communication_recipient_guard(); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.clubs_communication_recipient_guard() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$ BEGIN IF (NEW."BroadcastId",NEW."PersonId",NEW."UserId",NEW."Name",NEW."Club",NEW."MemberNumber") IS DISTINCT FROM (OLD."BroadcastId",OLD."PersonId",OLD."UserId",OLD."Name",OLD."Club",OLD."MemberNumber") THEN RAISE EXCEPTION 'Approved recipient identity snapshot is immutable' USING ERRCODE='23514';END IF;RETURN NEW;END $$;
+
+
+--
+-- Name: clubs_communication_revision_guard(); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.clubs_communication_revision_guard() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$ BEGIN RAISE EXCEPTION 'Communication revisions are immutable' USING ERRCODE='23514';END $$;
+
+
+--
+-- Name: clubs_event_link_guard(); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.clubs_event_link_guard() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$ BEGIN
+ IF NOT EXISTS(SELECT 1 FROM "EventRegistrations" r WHERE r."Id"=NEW."RegistrationId" AND r."EventId"=NEW."EventId" AND r."TenantId"=NEW."TenantId") THEN RAISE EXCEPTION 'Wrong event registration' USING ERRCODE='23514'; END IF;
+ RETURN NEW;
+END $$;
+
+
+--
+-- Name: clubs_event_registration_audit(); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.clubs_event_registration_audit() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+DECLARE owner_id uuid; previous text;
+BEGIN
+ IF TG_OP='UPDATE' THEN previous=OLD."Status"; IF NEW."Status"=OLD."Status" THEN RETURN NEW; END IF; END IF;
+ SELECT "OrgId" INTO owner_id FROM "Events" WHERE "Id"=NEW."EventId";
+ INSERT INTO "Audits"("Id","TenantId","OrgId","ActorId","Action","Resource","Changes","Outcome","At") VALUES(gen_random_uuid(),NEW."TenantId",owner_id,nullif(current_setting('clubs.actor',true),'')::uuid,'events.registration.status',NEW."EventId"::text,jsonb_build_object('registrationId',NEW."Id",'before',previous,'after',NEW."Status")::text,'Success',clock_timestamp()); RETURN NEW;
+END $$;
+
+
+--
+-- Name: clubs_event_registration_guard(); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.clubs_event_registration_guard() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+DECLARE ev "Events"; used integer;
+BEGIN
+ IF TG_OP='UPDATE' AND NEW."EventId"=OLD."EventId" AND NEW."TenantId"=OLD."TenantId" AND NEW."Id"=OLD."Id" AND NEW."Status"=OLD."Status" AND NEW."Companions"=OLD."Companions" THEN RETURN NEW; END IF;
+ SELECT * INTO ev FROM "Events" WHERE "Id"=NEW."EventId" AND "TenantId"=NEW."TenantId" FOR NO KEY UPDATE;
+ IF NEW."Status" IN ('Confirmed','Offered') THEN
+  IF ev."Lifecycle" IN ('Cancelled','Archived','Completed') OR ev."Publication"<>'Published' OR ev."Paid" THEN RAISE EXCEPTION 'Event cannot confirm registration' USING ERRCODE='23514'; END IF;
+  SELECT COALESCE(sum(1+"Companions"),0) INTO used FROM "EventRegistrations" WHERE "EventId"=NEW."EventId" AND "Id"<>NEW."Id" AND "Status" IN ('Confirmed','Offered');
+  IF used+1+NEW."Companions">ev."Capacity" THEN RAISE EXCEPTION 'Event capacity exceeded' USING ERRCODE='23514'; END IF;
+ END IF; RETURN NEW;
+END $$;
+
+
+--
+-- Name: clubs_event_session_guard(); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.clubs_event_session_guard() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$ BEGIN
+ IF NEW."SessionId" IS NOT NULL AND NOT EXISTS(SELECT 1 FROM "EventSessions" s WHERE s."Id"=NEW."SessionId" AND s."TenantId"=NEW."TenantId" AND s."EventId"=NEW."EventId") THEN RAISE EXCEPTION 'Session belongs to a different event' USING ERRCODE='23514'; END IF; RETURN NEW; END $$;
+
+
+--
+-- Name: clubs_event_state_audit(); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.clubs_event_state_audit() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$ BEGIN
+ IF NEW."Approval" IS DISTINCT FROM OLD."Approval" OR NEW."Publication" IS DISTINCT FROM OLD."Publication" OR NEW."Lifecycle" IS DISTINCT FROM OLD."Lifecycle" OR NEW."RegistrationEnabled" IS DISTINCT FROM OLD."RegistrationEnabled" THEN
+ INSERT INTO "Audits"("Id","TenantId","OrgId","ActorId","Action","Resource","Changes","Outcome","At") VALUES(gen_random_uuid(),NEW."TenantId",NEW."OrgId",nullif(current_setting('clubs.actor',true),'')::uuid,'events.state',NEW."Id"::text,jsonb_build_object('before',jsonb_build_object('approval',OLD."Approval",'publication',OLD."Publication",'lifecycle',OLD."Lifecycle",'registrationEnabled',OLD."RegistrationEnabled"),'after',jsonb_build_object('approval',NEW."Approval",'publication',NEW."Publication",'lifecycle',NEW."Lifecycle",'registrationEnabled',NEW."RegistrationEnabled"))::text,'Success',clock_timestamp()); END IF;RETURN NEW;END $$;
 
 
 --
@@ -160,6 +255,34 @@ BEGIN
 END $$;
 
 
+--
+-- Name: guard_issued_certificate(); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.guard_issued_certificate() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$ BEGIN
+  IF OLD."Snapshot" IS DISTINCT FROM NEW."Snapshot" OR OLD."Layout" IS DISTINCT FROM NEW."Layout" OR OLD."PersonId" IS DISTINCT FROM NEW."PersonId" OR OLD."Number" IS DISTINCT FROM NEW."Number" OR OLD."TokenHash" IS DISTINCT FROM NEW."TokenHash" THEN RAISE EXCEPTION 'Certificate identity and content are immutable'; END IF; RETURN NEW; END $$;
+
+
+--
+-- Name: guard_minutes_body(); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.guard_minutes_body() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$ BEGIN IF OLD."Status" IN ('Review','Published') AND OLD."Body" IS DISTINCT FROM NEW."Body" THEN RAISE EXCEPTION 'Reviewed minutes require a new revision'; END IF; RETURN NEW; END $$;
+
+
+--
+-- Name: guard_operation_history(); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.guard_operation_history() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$ BEGIN RAISE EXCEPTION 'Operational revisions are immutable'; END $$;
+
+
 SET default_tablespace = '';
 
 SET default_table_access_method = heap;
@@ -224,6 +347,23 @@ CREATE TABLE public."AuthenticationAudits" (
 
 
 --
+-- Name: CertificateTemplates; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public."CertificateTemplates" (
+    "Id" uuid NOT NULL,
+    "Name" text NOT NULL,
+    "Type" text NOT NULL,
+    "Layout" text NOT NULL,
+    "Active" boolean NOT NULL,
+    "TenantId" uuid NOT NULL,
+    "OrgId" uuid NOT NULL,
+    "Version" bigint NOT NULL,
+    "UpdatedAt" timestamp with time zone NOT NULL
+);
+
+
+--
 -- Name: ClubHealthConfigurations; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -238,6 +378,44 @@ CREATE TABLE public."ClubHealthConfigurations" (
     "Version" bigint NOT NULL,
     "RequireClubChangeApproval" boolean NOT NULL,
     CONSTRAINT "CK_Health_Weights" CHECK ((("LeadershipWeight" >= 0) AND ("MembershipWeight" >= 0) AND ("GovernanceWeight" >= 0) AND ("DataWeight" >= 0) AND (((("LeadershipWeight" + "MembershipWeight") + "GovernanceWeight") + "DataWeight") = 100) AND ("MinimumActiveMembers" > 0)))
+);
+
+
+--
+-- Name: ClubMeetings; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public."ClubMeetings" (
+    "Id" uuid NOT NULL,
+    "Title" text NOT NULL,
+    "Type" text NOT NULL,
+    "OrganizerId" uuid NOT NULL,
+    "ChairId" uuid,
+    "SecretaryId" uuid,
+    "CommitteeId" uuid,
+    "StartsAt" timestamp with time zone NOT NULL,
+    "EndsAt" timestamp with time zone NOT NULL,
+    "TimeZone" text NOT NULL,
+    "Location" text NOT NULL,
+    "OnlineUrl" text NOT NULL,
+    "Visibility" text NOT NULL,
+    "Status" text NOT NULL,
+    "EventId" uuid,
+    "SessionId" uuid,
+    "SeriesId" uuid,
+    "QuorumMinimum" integer NOT NULL,
+    "QuorumPercent" numeric NOT NULL,
+    "VotingCategories" text NOT NULL,
+    "Agenda" text NOT NULL,
+    "AgendaStatus" text NOT NULL,
+    "RequiredPeople" text NOT NULL,
+    "OptionalPeople" text NOT NULL,
+    "AgendaRequestId" uuid,
+    "TenantId" uuid NOT NULL,
+    "OrgId" uuid NOT NULL,
+    "Version" bigint NOT NULL,
+    "UpdatedAt" timestamp with time zone NOT NULL,
+    CONSTRAINT "CK_MeetingDates" CHECK ((("EndsAt" > "StartsAt") AND ("QuorumMinimum" >= 0) AND (("QuorumPercent" >= (0)::numeric) AND ("QuorumPercent" <= (100)::numeric))))
 );
 
 
@@ -311,6 +489,339 @@ CREATE TABLE public."Committees" (
 
 
 --
+-- Name: CommunicationAccounts; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public."CommunicationAccounts" (
+    "Id" uuid NOT NULL,
+    "TenantId" uuid NOT NULL,
+    "OrgId" uuid NOT NULL,
+    "Name" text NOT NULL,
+    "Channel" text NOT NULL,
+    "Provider" text NOT NULL,
+    "Sender" text NOT NULL,
+    "Reference" text NOT NULL,
+    "BusinessId" text NOT NULL,
+    "Secret" text NOT NULL,
+    "WebhookSecret" text NOT NULL,
+    "VerifyTokenHash" text NOT NULL,
+    "Enabled" boolean NOT NULL,
+    "Verified" boolean NOT NULL,
+    "Inbound" boolean NOT NULL,
+    "PerMinute" integer NOT NULL,
+    "WindowAt" timestamp with time zone NOT NULL,
+    "WindowCount" integer NOT NULL,
+    "CallbackUrl" text NOT NULL,
+    "Version" bigint NOT NULL,
+    CONSTRAINT communication_account_channel CHECK (((("Channel" = 'Email'::text) AND ("Provider" = 'SMTP'::text)) OR (("Channel" = 'WhatsApp'::text) AND ("Provider" = 'Meta'::text)) OR (("Channel" = 'SMS'::text) AND ("Provider" = 'Twilio'::text)))),
+    CONSTRAINT communication_account_rate CHECK ((("PerMinute" > 0) AND ("PerMinute" <= 1000)))
+);
+
+
+--
+-- Name: CommunicationAttachments; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public."CommunicationAttachments" (
+    "Id" uuid NOT NULL,
+    "TenantId" uuid NOT NULL,
+    "MessageId" uuid NOT NULL,
+    "Name" text NOT NULL,
+    "Type" text NOT NULL,
+    "Size" bigint NOT NULL,
+    "StorageKey" text NOT NULL,
+    "Hash" text NOT NULL,
+    "ExpiresAt" timestamp with time zone NOT NULL,
+    "Attempts" integer DEFAULT 0 NOT NULL,
+    "NextAttemptAt" timestamp with time zone DEFAULT '-infinity'::timestamp with time zone NOT NULL,
+    "ProviderAccountId" uuid,
+    "ProviderMediaId" text DEFAULT ''::text NOT NULL,
+    "Status" text DEFAULT 'Stored'::text NOT NULL
+);
+
+
+--
+-- Name: CommunicationAudiences; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public."CommunicationAudiences" (
+    "Id" uuid NOT NULL,
+    "TenantId" uuid NOT NULL,
+    "OrgId" uuid NOT NULL,
+    "Name" text NOT NULL,
+    "Rules" text NOT NULL,
+    "Version" bigint NOT NULL
+);
+
+
+--
+-- Name: CommunicationAutomations; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public."CommunicationAutomations" (
+    "Id" uuid NOT NULL,
+    "ApprovalRequestId" uuid,
+    "Status" text NOT NULL,
+    "ContentHash" text NOT NULL,
+    "TemplateVersion" bigint NOT NULL,
+    "TenantId" uuid NOT NULL,
+    "OrgId" uuid NOT NULL,
+    "CreatorId" uuid NOT NULL,
+    "Name" text NOT NULL,
+    "Trigger" text NOT NULL,
+    "TemplateId" uuid NOT NULL,
+    "AccountId" uuid,
+    "Active" boolean NOT NULL,
+    "DelayMinutes" integer NOT NULL,
+    "DailyLimit" integer NOT NULL,
+    "StartsAt" timestamp with time zone NOT NULL,
+    "Version" bigint NOT NULL
+);
+
+
+--
+-- Name: CommunicationBroadcasts; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public."CommunicationBroadcasts" (
+    "Id" uuid NOT NULL,
+    "TenantId" uuid NOT NULL,
+    "OrgId" uuid NOT NULL,
+    "CreatorId" uuid NOT NULL,
+    "AccountId" uuid,
+    "TemplateId" uuid,
+    "EventId" uuid,
+    "ApprovalRequestId" uuid,
+    "Kind" text NOT NULL,
+    "Category" text NOT NULL,
+    "Channel" text NOT NULL,
+    "Purpose" text NOT NULL,
+    "Title" text NOT NULL,
+    "Subject" text NOT NULL,
+    "Body" text NOT NULL,
+    "Rules" text NOT NULL,
+    "ContentHash" text NOT NULL,
+    "Status" text NOT NULL,
+    "Acknowledgment" boolean NOT NULL,
+    "Pinned" boolean NOT NULL,
+    "ExpiresAt" timestamp with time zone,
+    "SendAt" timestamp with time zone NOT NULL,
+    "TimeZone" text NOT NULL,
+    "RepeatDays" integer NOT NULL,
+    "Cycles" integer NOT NULL,
+    "CurrentCycle" integer NOT NULL,
+    "CompletedAt" timestamp with time zone,
+    "Version" bigint NOT NULL,
+    "At" timestamp with time zone NOT NULL,
+    "TemplateVersion" bigint DEFAULT 0 NOT NULL,
+    CONSTRAINT communication_broadcast_state CHECK (("Status" = ANY (ARRAY['Draft'::text, 'Review'::text, 'Approved'::text, 'Scheduled'::text, 'Sending'::text, 'Completed'::text, 'Partially Completed'::text, 'Failed'::text, 'Rejected'::text, 'Changes Requested'::text, 'Cancelled'::text, 'Archived'::text])))
+);
+
+
+--
+-- Name: CommunicationExecutions; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public."CommunicationExecutions" (
+    "Id" uuid NOT NULL,
+    "TenantId" uuid NOT NULL,
+    "AutomationId" uuid NOT NULL,
+    "SourceKey" text NOT NULL,
+    "MailId" uuid,
+    "Status" text NOT NULL,
+    "At" timestamp with time zone NOT NULL
+);
+
+
+--
+-- Name: CommunicationMessages; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public."CommunicationMessages" (
+    "Id" uuid NOT NULL,
+    "TenantId" uuid NOT NULL,
+    "OrgId" uuid NOT NULL,
+    "ConversationId" uuid,
+    "BroadcastId" uuid,
+    "SenderId" uuid,
+    "PersonId" uuid,
+    "ReplyToId" uuid,
+    "Body" text NOT NULL,
+    "Subject" text NOT NULL,
+    "Direction" text NOT NULL,
+    "Internal" boolean NOT NULL,
+    "ClientKey" text NOT NULL,
+    "ProviderId" text NOT NULL,
+    "At" timestamp with time zone NOT NULL
+);
+
+
+--
+-- Name: CommunicationPolicies; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public."CommunicationPolicies" (
+    "Id" uuid NOT NULL,
+    "TenantId" uuid NOT NULL,
+    "OrgId" uuid NOT NULL,
+    "MemberDirect" boolean NOT NULL,
+    "ApprovalThreshold" integer NOT NULL,
+    "RetentionDays" integer NOT NULL
+);
+
+
+--
+-- Name: CommunicationPreferences; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public."CommunicationPreferences" (
+    "Id" uuid NOT NULL,
+    "UserId" uuid NOT NULL,
+    "Channel" text NOT NULL,
+    "Transactional" boolean NOT NULL,
+    "Promotional" boolean NOT NULL,
+    "Direct" boolean NOT NULL,
+    "Birthday" boolean NOT NULL,
+    "QuietStart" integer NOT NULL,
+    "QuietEnd" integer NOT NULL,
+    "QuietEnabled" boolean NOT NULL,
+    "UpdatedAt" timestamp with time zone NOT NULL
+);
+
+
+--
+-- Name: CommunicationProviderEvents; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public."CommunicationProviderEvents" (
+    "Id" uuid NOT NULL,
+    "TenantId" uuid NOT NULL,
+    "AccountId" uuid NOT NULL,
+    "EventKey" text NOT NULL,
+    "ProviderId" text NOT NULL,
+    "Status" text NOT NULL,
+    "Error" text NOT NULL,
+    "At" timestamp with time zone NOT NULL
+);
+
+
+--
+-- Name: CommunicationRecipients; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public."CommunicationRecipients" (
+    "Id" uuid NOT NULL,
+    "TenantId" uuid NOT NULL,
+    "BroadcastId" uuid NOT NULL,
+    "PersonId" uuid NOT NULL,
+    "UserId" uuid,
+    "Name" text NOT NULL,
+    "Club" text NOT NULL,
+    "MemberNumber" text NOT NULL,
+    "QueuedCycle" integer NOT NULL,
+    "Exclusion" text NOT NULL,
+    "SeenAt" timestamp with time zone,
+    "AcknowledgedAt" timestamp with time zone
+);
+
+
+--
+-- Name: CommunicationRevisions; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public."CommunicationRevisions" (
+    "Id" uuid NOT NULL,
+    "TenantId" uuid NOT NULL,
+    "ResourceId" uuid NOT NULL,
+    "Kind" text NOT NULL,
+    "Version" bigint NOT NULL,
+    "Snapshot" text NOT NULL,
+    "ActorId" uuid NOT NULL,
+    "At" timestamp with time zone NOT NULL
+);
+
+
+--
+-- Name: CommunicationSuppressions; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public."CommunicationSuppressions" (
+    "Id" uuid NOT NULL,
+    "TenantId" uuid NOT NULL,
+    "Channel" text NOT NULL,
+    "AddressHash" text NOT NULL,
+    "Reason" text NOT NULL,
+    "At" timestamp with time zone NOT NULL
+);
+
+
+--
+-- Name: CommunicationTemplates; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public."CommunicationTemplates" (
+    "Id" uuid NOT NULL,
+    "TenantId" uuid NOT NULL,
+    "OrgId" uuid NOT NULL,
+    "Name" text NOT NULL,
+    "Channel" text NOT NULL,
+    "Category" text NOT NULL,
+    "Language" text NOT NULL,
+    "Subject" text NOT NULL,
+    "Body" text NOT NULL,
+    "ProviderName" text NOT NULL,
+    "ProviderStatus" text NOT NULL,
+    "Active" boolean NOT NULL,
+    "Version" bigint NOT NULL,
+    "AccountId" uuid
+);
+
+
+--
+-- Name: ConversationParticipants; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public."ConversationParticipants" (
+    "Id" uuid NOT NULL,
+    "TenantId" uuid NOT NULL,
+    "ConversationId" uuid NOT NULL,
+    "UserId" uuid NOT NULL,
+    "Staff" boolean NOT NULL,
+    "Muted" boolean NOT NULL,
+    "Active" boolean NOT NULL,
+    "ReadAt" timestamp with time zone NOT NULL
+);
+
+
+--
+-- Name: Conversations; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public."Conversations" (
+    "Id" uuid NOT NULL,
+    "TenantId" uuid NOT NULL,
+    "OrgId" uuid NOT NULL,
+    "OwnerId" uuid NOT NULL,
+    "AccountId" uuid,
+    "CommitteeId" uuid,
+    "EventId" uuid,
+    "Kind" text NOT NULL,
+    "Channel" text NOT NULL,
+    "Title" text NOT NULL,
+    "ExternalThread" text NOT NULL,
+    "Status" text NOT NULL,
+    "Priority" text NOT NULL,
+    "Tags" text NOT NULL,
+    "AssignedId" uuid,
+    "At" timestamp with time zone NOT NULL,
+    "UpdatedAt" timestamp with time zone NOT NULL,
+    "LastInboundAt" timestamp with time zone,
+    "Preview" text NOT NULL,
+    "Version" bigint NOT NULL
+);
+
+
+--
 -- Name: DigitalCardVerifications; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -334,6 +845,348 @@ CREATE TABLE public."DigitalCards" (
     "ProtectedToken" text NOT NULL,
     "IssuedAt" timestamp with time zone NOT NULL,
     "RevokedAt" timestamp with time zone
+);
+
+
+--
+-- Name: DocumentVersions; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public."DocumentVersions" (
+    "Id" uuid NOT NULL,
+    "DocumentId" uuid NOT NULL,
+    "Number" integer NOT NULL,
+    "ObjectKey" text NOT NULL,
+    "FileName" text NOT NULL,
+    "ContentType" text NOT NULL,
+    "Sha256" text NOT NULL,
+    "Size" bigint NOT NULL,
+    "UploaderId" uuid NOT NULL,
+    "TenantId" uuid NOT NULL,
+    "OrgId" uuid NOT NULL,
+    "Version" bigint NOT NULL,
+    "UpdatedAt" timestamp with time zone NOT NULL
+);
+
+
+--
+-- Name: EventAudiences; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public."EventAudiences" (
+    "Id" uuid NOT NULL,
+    "TenantId" uuid NOT NULL,
+    "EventId" uuid NOT NULL,
+    "OrgId" uuid,
+    "CommitteeId" uuid,
+    "PersonId" uuid,
+    "CategoryId" uuid,
+    "RoleId" uuid,
+    "City" text NOT NULL,
+    "Country" text NOT NULL,
+    "Status" text NOT NULL,
+    "RegistrationStatus" text NOT NULL
+);
+
+
+--
+-- Name: EventCheckins; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public."EventCheckins" (
+    "Id" uuid NOT NULL,
+    "TenantId" uuid NOT NULL,
+    "EventId" uuid NOT NULL,
+    "RegistrationId" uuid NOT NULL,
+    "SessionId" uuid,
+    "OperatorId" uuid NOT NULL,
+    "Device" text NOT NULL,
+    "EntryPoint" text NOT NULL,
+    "At" timestamp with time zone NOT NULL,
+    "Voided" boolean NOT NULL,
+    "CorrectionReason" text NOT NULL,
+    CONSTRAINT "CK_Event_Correction" CHECK (((NOT "Voided") OR (length("CorrectionReason") >= 5)))
+);
+
+
+--
+-- Name: EventCohosts; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public."EventCohosts" (
+    "Id" uuid NOT NULL,
+    "TenantId" uuid NOT NULL,
+    "EventId" uuid NOT NULL,
+    "OrgId" uuid NOT NULL
+);
+
+
+--
+-- Name: EventFeedbackForms; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public."EventFeedbackForms" (
+    "Id" uuid NOT NULL,
+    "TenantId" uuid NOT NULL,
+    "EventId" uuid NOT NULL,
+    "Questions" text NOT NULL,
+    "Anonymous" boolean NOT NULL,
+    "Deadline" timestamp with time zone NOT NULL
+);
+
+
+--
+-- Name: EventFeedbackResponses; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public."EventFeedbackResponses" (
+    "Id" uuid NOT NULL,
+    "TenantId" uuid NOT NULL,
+    "EventId" uuid NOT NULL,
+    "RegistrationId" uuid,
+    "Answers" text NOT NULL,
+    "Day" date NOT NULL
+);
+
+
+--
+-- Name: EventInvitations; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public."EventInvitations" (
+    "Id" uuid NOT NULL,
+    "TenantId" uuid NOT NULL,
+    "EventId" uuid NOT NULL,
+    "PersonId" uuid,
+    "InviterId" uuid NOT NULL,
+    "RecipientKey" text NOT NULL,
+    "GuestName" text NOT NULL,
+    "Email" text NOT NULL,
+    "TokenHash" text NOT NULL,
+    "ProtectedToken" text NOT NULL,
+    "Context" text NOT NULL,
+    "Message" text NOT NULL,
+    "Status" text NOT NULL,
+    "SendAt" timestamp with time zone NOT NULL,
+    "SentAt" timestamp with time zone,
+    "ExpiresAt" timestamp with time zone NOT NULL,
+    "MailId" uuid,
+    "Rsvp" text NOT NULL,
+    "RespondedAt" timestamp with time zone
+);
+
+
+--
+-- Name: EventNotices; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public."EventNotices" (
+    "Id" uuid NOT NULL,
+    "TenantId" uuid NOT NULL,
+    "EventId" uuid NOT NULL,
+    "Message" text NOT NULL,
+    "Audience" text NOT NULL,
+    "Cursor" uuid,
+    "Completed" boolean NOT NULL
+);
+
+
+--
+-- Name: EventRegistrations; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public."EventRegistrations" (
+    "Id" uuid NOT NULL,
+    "TenantId" uuid NOT NULL,
+    "EventId" uuid NOT NULL,
+    "PersonId" uuid,
+    "MembershipId" uuid,
+    "InvitationId" uuid,
+    "ParticipantKey" text NOT NULL,
+    "Name" text NOT NULL,
+    "Email" text NOT NULL,
+    "Category" text NOT NULL,
+    "Status" text NOT NULL,
+    "Companions" integer NOT NULL,
+    "GuestNames" text NOT NULL,
+    "Responses" text NOT NULL,
+    "Accessibility" text NOT NULL,
+    "Dietary" text NOT NULL,
+    "Emergency" text NOT NULL,
+    "CreatedAt" timestamp with time zone NOT NULL,
+    "OfferExpiresAt" timestamp with time zone,
+    "FeedbackSubmitted" boolean NOT NULL,
+    "ApprovalRequestId" uuid,
+    "Version" bigint NOT NULL,
+    CONSTRAINT "CK_Event_Registration" CHECK ((("Companions" >= 0) AND ("Status" = ANY (ARRAY['Pending'::text, 'Awaiting Approval'::text, 'Confirmed'::text, 'Waitlisted'::text, 'Offered'::text, 'Cancelled'::text, 'Rejected'::text]))))
+);
+
+
+--
+-- Name: EventRsvpHistory; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public."EventRsvpHistory" (
+    "Id" uuid NOT NULL,
+    "TenantId" uuid NOT NULL,
+    "InvitationId" uuid NOT NULL,
+    "Response" text NOT NULL,
+    "At" timestamp with time zone NOT NULL
+);
+
+
+--
+-- Name: EventSavedFilters; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public."EventSavedFilters" (
+    "Id" uuid NOT NULL,
+    "UserId" uuid NOT NULL,
+    "Name" text NOT NULL,
+    "Filters" text NOT NULL
+);
+
+
+--
+-- Name: EventSessionBookings; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public."EventSessionBookings" (
+    "Id" uuid NOT NULL,
+    "TenantId" uuid NOT NULL,
+    "EventId" uuid NOT NULL,
+    "SessionId" uuid NOT NULL,
+    "RegistrationId" uuid NOT NULL,
+    "Active" boolean NOT NULL
+);
+
+
+--
+-- Name: EventSessions; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public."EventSessions" (
+    "Id" uuid NOT NULL,
+    "TenantId" uuid NOT NULL,
+    "EventId" uuid NOT NULL,
+    "Title" text NOT NULL,
+    "Description" text NOT NULL,
+    "Speaker" text NOT NULL,
+    "Room" text NOT NULL,
+    "StartsAt" timestamp with time zone NOT NULL,
+    "EndsAt" timestamp with time zone NOT NULL,
+    "Capacity" integer NOT NULL,
+    "RegistrationRequired" boolean NOT NULL,
+    "AttendanceRequired" boolean NOT NULL,
+    "MembersOnly" boolean NOT NULL,
+    "Status" text NOT NULL,
+    CONSTRAINT "CK_Event_Session" CHECK ((("StartsAt" < "EndsAt") AND ("Capacity" > 0)))
+);
+
+
+--
+-- Name: EventStaff; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public."EventStaff" (
+    "Id" uuid NOT NULL,
+    "TenantId" uuid NOT NULL,
+    "EventId" uuid NOT NULL,
+    "PersonId" uuid NOT NULL,
+    "Role" text NOT NULL,
+    "Capability" text NOT NULL,
+    "Responsibilities" text NOT NULL,
+    "Tasks" text NOT NULL,
+    "TaskStatus" text NOT NULL,
+    "Notes" text NOT NULL,
+    "StartsAt" timestamp with time zone NOT NULL,
+    "EndsAt" timestamp with time zone NOT NULL,
+    "Active" boolean NOT NULL,
+    "ShiftCheckinAt" timestamp with time zone,
+    "Version" bigint NOT NULL
+);
+
+
+--
+-- Name: EventTickets; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public."EventTickets" (
+    "Id" uuid NOT NULL,
+    "TenantId" uuid NOT NULL,
+    "EventId" uuid NOT NULL,
+    "RegistrationId" uuid NOT NULL,
+    "TokenHash" text NOT NULL,
+    "ProtectedToken" text NOT NULL,
+    "Revoked" boolean NOT NULL,
+    "IssuedAt" timestamp with time zone NOT NULL
+);
+
+
+--
+-- Name: EventTypes; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public."EventTypes" (
+    "Id" uuid NOT NULL,
+    "TenantId" uuid NOT NULL,
+    "Name" text NOT NULL,
+    "Active" boolean NOT NULL,
+    "DefaultCapacity" integer NOT NULL
+);
+
+
+--
+-- Name: Events; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public."Events" (
+    "Id" uuid NOT NULL,
+    "TenantId" uuid NOT NULL,
+    "OrgId" uuid NOT NULL,
+    "TypeId" uuid NOT NULL,
+    "CommitteeId" uuid,
+    "CreatorId" uuid NOT NULL,
+    "Title" text NOT NULL,
+    "Description" text NOT NULL,
+    "TimeZone" text NOT NULL,
+    "Language" text NOT NULL,
+    "StartsAt" timestamp with time zone NOT NULL,
+    "EndsAt" timestamp with time zone NOT NULL,
+    "VenueType" text NOT NULL,
+    "Venue" text NOT NULL,
+    "OnlineUrl" text NOT NULL,
+    "Contact" text NOT NULL,
+    "Visibility" text NOT NULL,
+    "Approval" text NOT NULL,
+    "Publication" text NOT NULL,
+    "PublishedAt" timestamp with time zone,
+    "Lifecycle" text NOT NULL,
+    "RegistrationEnabled" boolean NOT NULL,
+    "RsvpRequired" boolean NOT NULL,
+    "RegistrationStartsAt" timestamp with time zone NOT NULL,
+    "RegistrationEndsAt" timestamp with time zone NOT NULL,
+    "RsvpDeadline" timestamp with time zone NOT NULL,
+    "Capacity" integer NOT NULL,
+    "Waitlist" boolean NOT NULL,
+    "WaitlistPolicy" text NOT NULL,
+    "OfferMinutes" integer NOT NULL,
+    "AllowGuests" boolean NOT NULL,
+    "MaxCompanions" integer NOT NULL,
+    "RegistrationApproval" boolean NOT NULL,
+    "Paid" boolean NOT NULL,
+    "CancellationPolicy" text NOT NULL,
+    "Fields" text NOT NULL,
+    "ApprovalRequestId" uuid,
+    "ReminderAt" timestamp with time zone,
+    "ReminderSent" boolean NOT NULL,
+    "CompletionSent" boolean NOT NULL,
+    "Version" bigint NOT NULL,
+    "CreatedAt" timestamp with time zone NOT NULL,
+    "Latitude" double precision,
+    "Longitude" double precision,
+    CONSTRAINT "CK_Event_Config" CHECK ((("StartsAt" < "EndsAt") AND ("RegistrationStartsAt" < "RegistrationEndsAt") AND ("RegistrationEndsAt" <= "EndsAt") AND ("Capacity" > 0) AND (("MaxCompanions" >= 0) AND ("MaxCompanions" <= 10)) AND ("Approval" = ANY (ARRAY['Draft'::text, 'Pending Approval'::text, 'Changes Requested'::text, 'Rejected'::text, 'Approved'::text])) AND ("Publication" = ANY (ARRAY['Draft'::text, 'Published'::text])) AND ("Lifecycle" = ANY (ARRAY['Scheduled'::text, 'In Progress'::text, 'Completed'::text, 'Cancelled'::text, 'Archived'::text])))),
+    CONSTRAINT "CK_Event_Location" CHECK (((("Latitude" IS NULL) AND ("Longitude" IS NULL)) OR ((("Latitude" >= ('-90'::integer)::double precision) AND ("Latitude" <= (90)::double precision)) AND (("Longitude" >= ('-180'::integer)::double precision) AND ("Longitude" <= (180)::double precision)))))
 );
 
 
@@ -374,7 +1227,16 @@ CREATE TABLE public."GovernanceDocuments" (
     "At" timestamp with time zone NOT NULL,
     "RetainUntil" timestamp with time zone,
     "Status" text NOT NULL,
-    CONSTRAINT "CK_Governance_Document" CHECK (((octet_length("Content") <= 5242880) AND ((octet_length("Content") > 0) OR ("Status" = 'Expired'::text)) AND ("ContentType" = ANY (ARRAY['application/pdf'::text, 'image/png'::text, 'image/jpeg'::text]))))
+    "EventId" uuid,
+    "ApprovalRequestId" uuid,
+    "CurrentVersion" integer DEFAULT 0 NOT NULL,
+    "Folder" text DEFAULT ''::text NOT NULL,
+    "ObjectKey" text DEFAULT ''::text NOT NULL,
+    "OperationId" uuid,
+    "SharedUsers" text DEFAULT ''::text NOT NULL,
+    "Tags" text DEFAULT ''::text NOT NULL,
+    "Visibility" text DEFAULT ''::text NOT NULL,
+    CONSTRAINT "CK_Governance_Document" CHECK (((octet_length("Content") <= 5242880) AND ((octet_length("Content") > 0) OR ("ObjectKey" ~ '^[0-9a-f]{32}$'::text) OR ("Status" = 'Expired'::text)) AND ("ContentType" = ANY (ARRAY['application/pdf'::text, 'image/png'::text, 'image/jpeg'::text]))))
 );
 
 
@@ -440,6 +1302,56 @@ CREATE TABLE public."HandoverChecklistItems" (
     "Notes" text NOT NULL,
     "Completed" boolean NOT NULL,
     "DocumentId" uuid
+);
+
+
+--
+-- Name: ImpactMetrics; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public."ImpactMetrics" (
+    "Id" uuid NOT NULL,
+    "Name" text NOT NULL,
+    "Unit" text NOT NULL,
+    "Description" text NOT NULL,
+    "DataType" text NOT NULL,
+    "Aggregation" text NOT NULL,
+    "Category" text NOT NULL,
+    "EvidenceRequired" boolean NOT NULL,
+    "TenantId" uuid NOT NULL,
+    "OrgId" uuid NOT NULL,
+    "Version" bigint NOT NULL,
+    "UpdatedAt" timestamp with time zone NOT NULL
+);
+
+
+--
+-- Name: IssuedCertificates; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public."IssuedCertificates" (
+    "Id" uuid NOT NULL,
+    "TemplateId" uuid NOT NULL,
+    "TemplateVersion" bigint NOT NULL,
+    "PersonId" uuid NOT NULL,
+    "SourceType" text NOT NULL,
+    "SourceId" uuid NOT NULL,
+    "Number" text NOT NULL,
+    "TokenHash" text NOT NULL,
+    "ProtectedToken" text NOT NULL,
+    "Snapshot" text NOT NULL,
+    "Layout" text NOT NULL,
+    "Status" text NOT NULL,
+    "IssuerId" uuid NOT NULL,
+    "RequestId" uuid,
+    "IssuedAt" timestamp with time zone,
+    "PublicName" boolean NOT NULL,
+    "RevocationReason" text NOT NULL,
+    "ReplacesId" uuid,
+    "TenantId" uuid NOT NULL,
+    "OrgId" uuid NOT NULL,
+    "Version" bigint NOT NULL,
+    "UpdatedAt" timestamp with time zone NOT NULL
 );
 
 
@@ -527,7 +1439,64 @@ CREATE TABLE public."Mails" (
     "Recipient" text DEFAULT ''::text NOT NULL,
     "Subject" text DEFAULT ''::text NOT NULL,
     "Suppressed" boolean DEFAULT false NOT NULL,
-    "TenantId" uuid
+    "TenantId" uuid,
+    "AccountId" uuid,
+    "Channel" text DEFAULT 'Email'::text NOT NULL,
+    "CommunicationId" uuid,
+    "Cost" numeric,
+    "CreatedAt" timestamp with time zone,
+    "Currency" text DEFAULT ''::text NOT NULL,
+    "DeadLetter" boolean DEFAULT false NOT NULL,
+    "DeliveryStatus" text DEFAULT 'Pending'::text NOT NULL,
+    "Language" text DEFAULT ''::text NOT NULL,
+    "LastError" text DEFAULT ''::text NOT NULL,
+    "ProviderId" text DEFAULT ''::text NOT NULL,
+    "Purpose" text DEFAULT 'Transactional'::text NOT NULL,
+    "SenderAssignmentId" uuid,
+    "SenderId" uuid,
+    "TemplateName" text DEFAULT ''::text NOT NULL,
+    "TemplateParameters" text DEFAULT '[]'::text NOT NULL,
+    "TemplateVersion" bigint DEFAULT 0 NOT NULL,
+    "EventId" uuid
+);
+
+
+--
+-- Name: MeetingAttendances; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public."MeetingAttendances" (
+    "Id" uuid NOT NULL,
+    "MeetingId" uuid NOT NULL,
+    "PersonId" uuid NOT NULL,
+    "Status" text NOT NULL,
+    "Rsvp" text NOT NULL,
+    "Mode" text NOT NULL,
+    "Reason" text NOT NULL,
+    "ActorId" uuid NOT NULL,
+    "TenantId" uuid NOT NULL,
+    "OrgId" uuid NOT NULL,
+    "Version" bigint NOT NULL,
+    "UpdatedAt" timestamp with time zone NOT NULL
+);
+
+
+--
+-- Name: MeetingMinutes; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public."MeetingMinutes" (
+    "Id" uuid NOT NULL,
+    "MeetingId" uuid NOT NULL,
+    "Body" text NOT NULL,
+    "Status" text NOT NULL,
+    "PreparedBy" uuid NOT NULL,
+    "RequestId" uuid,
+    "Revision" integer NOT NULL,
+    "TenantId" uuid NOT NULL,
+    "OrgId" uuid NOT NULL,
+    "Version" bigint NOT NULL,
+    "UpdatedAt" timestamp with time zone NOT NULL
 );
 
 
@@ -960,6 +1929,68 @@ CREATE TABLE public."OfficerPositions" (
 
 
 --
+-- Name: OperationComments; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public."OperationComments" (
+    "Id" uuid NOT NULL,
+    "TaskId" uuid NOT NULL,
+    "AuthorId" uuid NOT NULL,
+    "Body" text NOT NULL,
+    "TenantId" uuid NOT NULL,
+    "OrgId" uuid NOT NULL,
+    "Version" bigint NOT NULL,
+    "UpdatedAt" timestamp with time zone NOT NULL
+);
+
+
+--
+-- Name: OperationRevisions; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public."OperationRevisions" (
+    "Id" uuid NOT NULL,
+    "Kind" text NOT NULL,
+    "RecordId" uuid NOT NULL,
+    "Body" text NOT NULL,
+    "ActorId" uuid NOT NULL,
+    "Status" text NOT NULL,
+    "TenantId" uuid NOT NULL,
+    "OrgId" uuid NOT NULL,
+    "Version" bigint NOT NULL,
+    "UpdatedAt" timestamp with time zone NOT NULL
+);
+
+
+--
+-- Name: OperationTasks; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public."OperationTasks" (
+    "Id" uuid NOT NULL,
+    "Title" text NOT NULL,
+    "Description" text NOT NULL,
+    "SourceType" text NOT NULL,
+    "SourceId" uuid,
+    "PersonId" uuid,
+    "CommitteeId" uuid,
+    "Priority" text NOT NULL,
+    "StartsAt" timestamp with time zone,
+    "DueAt" timestamp with time zone,
+    "Status" text NOT NULL,
+    "Blocker" text NOT NULL,
+    "Evidence" text NOT NULL,
+    "Dependencies" text NOT NULL,
+    "CreatorId" uuid NOT NULL,
+    "RemindedAt" timestamp with time zone,
+    "TenantId" uuid NOT NULL,
+    "OrgId" uuid NOT NULL,
+    "Version" bigint NOT NULL,
+    "UpdatedAt" timestamp with time zone NOT NULL
+);
+
+
+--
 -- Name: OrganizationHistory; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -1152,6 +2183,64 @@ CREATE TABLE public."Persons" (
 
 
 --
+-- Name: ProjectActivities; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public."ProjectActivities" (
+    "Id" uuid NOT NULL,
+    "ProjectId" uuid NOT NULL,
+    "Title" text NOT NULL,
+    "Description" text NOT NULL,
+    "StartsAt" timestamp with time zone NOT NULL,
+    "EndsAt" timestamp with time zone NOT NULL,
+    "Status" text NOT NULL,
+    "TenantId" uuid NOT NULL,
+    "OrgId" uuid NOT NULL,
+    "Version" bigint NOT NULL,
+    "UpdatedAt" timestamp with time zone NOT NULL
+);
+
+
+--
+-- Name: ProjectImpacts; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public."ProjectImpacts" (
+    "Id" uuid NOT NULL,
+    "ProjectId" uuid NOT NULL,
+    "MetricId" uuid NOT NULL,
+    "SourceKey" text NOT NULL,
+    "Value" numeric NOT NULL,
+    "Estimate" boolean NOT NULL,
+    "Evidence" text NOT NULL,
+    "Status" text NOT NULL,
+    "SubmittedBy" uuid NOT NULL,
+    "RequestId" uuid,
+    "TenantId" uuid NOT NULL,
+    "OrgId" uuid NOT NULL,
+    "Version" bigint NOT NULL,
+    "UpdatedAt" timestamp with time zone NOT NULL,
+    CONSTRAINT "CK_ImpactValue" CHECK (("Value" >= (0)::numeric))
+);
+
+
+--
+-- Name: ProjectOrganizations; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public."ProjectOrganizations" (
+    "Id" uuid NOT NULL,
+    "ProjectId" uuid NOT NULL,
+    "Contribution" text NOT NULL,
+    "EstimatedContribution" numeric NOT NULL,
+    "TenantId" uuid NOT NULL,
+    "OrgId" uuid NOT NULL,
+    "Version" bigint NOT NULL,
+    "UpdatedAt" timestamp with time zone NOT NULL
+);
+
+
+--
 -- Name: RegistrationRequests; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -1202,6 +2291,35 @@ CREATE TABLE public."Roles" (
     "Id" uuid NOT NULL,
     "TenantId" uuid NOT NULL,
     "Name" text NOT NULL
+);
+
+
+--
+-- Name: ServiceProjects; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public."ServiceProjects" (
+    "Id" uuid NOT NULL,
+    "Name" text NOT NULL,
+    "Category" text NOT NULL,
+    "Description" text NOT NULL,
+    "Objectives" text NOT NULL,
+    "ManagerId" uuid NOT NULL,
+    "CommitteeId" uuid,
+    "StartsAt" timestamp with time zone NOT NULL,
+    "EndsAt" timestamp with time zone NOT NULL,
+    "Location" text NOT NULL,
+    "Status" text NOT NULL,
+    "TargetBeneficiaries" integer NOT NULL,
+    "PlannedVolunteers" integer NOT NULL,
+    "PlannedHours" numeric NOT NULL,
+    "EstimatedBudget" numeric NOT NULL,
+    "Currency" text NOT NULL,
+    "RequestId" uuid,
+    "TenantId" uuid NOT NULL,
+    "OrgId" uuid NOT NULL,
+    "Version" bigint NOT NULL,
+    "UpdatedAt" timestamp with time zone NOT NULL
 );
 
 
@@ -1296,6 +2414,94 @@ CREATE TABLE public."Users" (
 
 
 --
+-- Name: VolunteerAssignments; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public."VolunteerAssignments" (
+    "Id" uuid NOT NULL,
+    "ShiftId" uuid NOT NULL,
+    "PersonId" uuid NOT NULL,
+    "Status" text NOT NULL,
+    "CheckIn" timestamp with time zone,
+    "CheckOut" timestamp with time zone,
+    "BreakMinutes" integer NOT NULL,
+    "TenantId" uuid NOT NULL,
+    "OrgId" uuid NOT NULL,
+    "Version" bigint NOT NULL,
+    "UpdatedAt" timestamp with time zone NOT NULL
+);
+
+
+--
+-- Name: VolunteerHours; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public."VolunteerHours" (
+    "Id" uuid NOT NULL,
+    "AssignmentId" uuid NOT NULL,
+    "PersonId" uuid NOT NULL,
+    "ProjectId" uuid NOT NULL,
+    "StartsAt" timestamp with time zone NOT NULL,
+    "EndsAt" timestamp with time zone NOT NULL,
+    "BreakMinutes" integer NOT NULL,
+    "Hours" numeric(10,2) NOT NULL,
+    "Reason" text NOT NULL,
+    "Status" text NOT NULL,
+    "SubmittedBy" uuid NOT NULL,
+    "VerifiedBy" uuid,
+    "TenantId" uuid NOT NULL,
+    "OrgId" uuid NOT NULL,
+    "Version" bigint NOT NULL,
+    "UpdatedAt" timestamp with time zone NOT NULL,
+    CONSTRAINT "CK_HourInterval" CHECK ((("EndsAt" > "StartsAt") AND ("Hours" >= (0)::numeric) AND ("BreakMinutes" >= 0)))
+);
+
+
+--
+-- Name: VolunteerProfiles; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public."VolunteerProfiles" (
+    "Id" uuid NOT NULL,
+    "PersonId" uuid NOT NULL,
+    "Skills" text NOT NULL,
+    "Interests" text NOT NULL,
+    "Availability" text NOT NULL,
+    "Training" text NOT NULL,
+    "Language" text NOT NULL,
+    "TenantId" uuid NOT NULL,
+    "OrgId" uuid NOT NULL,
+    "Version" bigint NOT NULL,
+    "UpdatedAt" timestamp with time zone NOT NULL
+);
+
+
+--
+-- Name: VolunteerShifts; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public."VolunteerShifts" (
+    "Id" uuid NOT NULL,
+    "ProjectId" uuid NOT NULL,
+    "ActivityId" uuid,
+    "Title" text NOT NULL,
+    "Location" text NOT NULL,
+    "StartsAt" timestamp with time zone NOT NULL,
+    "EndsAt" timestamp with time zone NOT NULL,
+    "Deadline" timestamp with time zone NOT NULL,
+    "SupervisorId" uuid NOT NULL,
+    "Capacity" integer NOT NULL,
+    "RequiredTraining" text NOT NULL,
+    "ApprovalRequired" boolean NOT NULL,
+    "TenantId" uuid NOT NULL,
+    "OrgId" uuid NOT NULL,
+    "Version" bigint NOT NULL,
+    "UpdatedAt" timestamp with time zone NOT NULL,
+    CONSTRAINT "CK_ShiftCapacity" CHECK ((("Capacity" > 0) AND ("EndsAt" > "StartsAt")))
+);
+
+
+--
 -- Name: __EFMigrationsHistory; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -1318,11 +2524,27 @@ CREATE SEQUENCE public.membership_numbers
 
 
 --
+-- Name: CertificateTemplates AK_CertificateTemplates_TenantId_Id; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."CertificateTemplates"
+    ADD CONSTRAINT "AK_CertificateTemplates_TenantId_Id" UNIQUE ("TenantId", "Id");
+
+
+--
 -- Name: ClubHealthConfigurations AK_ClubHealthConfigurations_TenantId_Id; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public."ClubHealthConfigurations"
     ADD CONSTRAINT "AK_ClubHealthConfigurations_TenantId_Id" UNIQUE ("TenantId", "Id");
+
+
+--
+-- Name: ClubMeetings AK_ClubMeetings_TenantId_Id; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."ClubMeetings"
+    ADD CONSTRAINT "AK_ClubMeetings_TenantId_Id" UNIQUE ("TenantId", "Id");
 
 
 --
@@ -1358,11 +2580,259 @@ ALTER TABLE ONLY public."Committees"
 
 
 --
+-- Name: CommunicationAccounts AK_CommunicationAccounts_TenantId_Id; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."CommunicationAccounts"
+    ADD CONSTRAINT "AK_CommunicationAccounts_TenantId_Id" UNIQUE ("TenantId", "Id");
+
+
+--
+-- Name: CommunicationAttachments AK_CommunicationAttachments_TenantId_Id; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."CommunicationAttachments"
+    ADD CONSTRAINT "AK_CommunicationAttachments_TenantId_Id" UNIQUE ("TenantId", "Id");
+
+
+--
+-- Name: CommunicationAudiences AK_CommunicationAudiences_TenantId_Id; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."CommunicationAudiences"
+    ADD CONSTRAINT "AK_CommunicationAudiences_TenantId_Id" UNIQUE ("TenantId", "Id");
+
+
+--
+-- Name: CommunicationAutomations AK_CommunicationAutomations_TenantId_Id; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."CommunicationAutomations"
+    ADD CONSTRAINT "AK_CommunicationAutomations_TenantId_Id" UNIQUE ("TenantId", "Id");
+
+
+--
+-- Name: CommunicationBroadcasts AK_CommunicationBroadcasts_TenantId_Id; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."CommunicationBroadcasts"
+    ADD CONSTRAINT "AK_CommunicationBroadcasts_TenantId_Id" UNIQUE ("TenantId", "Id");
+
+
+--
+-- Name: CommunicationExecutions AK_CommunicationExecutions_TenantId_Id; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."CommunicationExecutions"
+    ADD CONSTRAINT "AK_CommunicationExecutions_TenantId_Id" UNIQUE ("TenantId", "Id");
+
+
+--
+-- Name: CommunicationMessages AK_CommunicationMessages_TenantId_Id; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."CommunicationMessages"
+    ADD CONSTRAINT "AK_CommunicationMessages_TenantId_Id" UNIQUE ("TenantId", "Id");
+
+
+--
+-- Name: CommunicationPolicies AK_CommunicationPolicies_TenantId_Id; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."CommunicationPolicies"
+    ADD CONSTRAINT "AK_CommunicationPolicies_TenantId_Id" UNIQUE ("TenantId", "Id");
+
+
+--
+-- Name: CommunicationProviderEvents AK_CommunicationProviderEvents_TenantId_Id; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."CommunicationProviderEvents"
+    ADD CONSTRAINT "AK_CommunicationProviderEvents_TenantId_Id" UNIQUE ("TenantId", "Id");
+
+
+--
+-- Name: CommunicationRecipients AK_CommunicationRecipients_TenantId_Id; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."CommunicationRecipients"
+    ADD CONSTRAINT "AK_CommunicationRecipients_TenantId_Id" UNIQUE ("TenantId", "Id");
+
+
+--
+-- Name: CommunicationRevisions AK_CommunicationRevisions_TenantId_Id; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."CommunicationRevisions"
+    ADD CONSTRAINT "AK_CommunicationRevisions_TenantId_Id" UNIQUE ("TenantId", "Id");
+
+
+--
+-- Name: CommunicationSuppressions AK_CommunicationSuppressions_TenantId_Id; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."CommunicationSuppressions"
+    ADD CONSTRAINT "AK_CommunicationSuppressions_TenantId_Id" UNIQUE ("TenantId", "Id");
+
+
+--
+-- Name: CommunicationTemplates AK_CommunicationTemplates_TenantId_Id; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."CommunicationTemplates"
+    ADD CONSTRAINT "AK_CommunicationTemplates_TenantId_Id" UNIQUE ("TenantId", "Id");
+
+
+--
+-- Name: ConversationParticipants AK_ConversationParticipants_TenantId_Id; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."ConversationParticipants"
+    ADD CONSTRAINT "AK_ConversationParticipants_TenantId_Id" UNIQUE ("TenantId", "Id");
+
+
+--
+-- Name: Conversations AK_Conversations_TenantId_Id; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."Conversations"
+    ADD CONSTRAINT "AK_Conversations_TenantId_Id" UNIQUE ("TenantId", "Id");
+
+
+--
 -- Name: DigitalCards AK_DigitalCards_TenantId_Id; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public."DigitalCards"
     ADD CONSTRAINT "AK_DigitalCards_TenantId_Id" UNIQUE ("TenantId", "Id");
+
+
+--
+-- Name: DocumentVersions AK_DocumentVersions_TenantId_Id; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."DocumentVersions"
+    ADD CONSTRAINT "AK_DocumentVersions_TenantId_Id" UNIQUE ("TenantId", "Id");
+
+
+--
+-- Name: EventAudiences AK_EventAudiences_TenantId_Id; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."EventAudiences"
+    ADD CONSTRAINT "AK_EventAudiences_TenantId_Id" UNIQUE ("TenantId", "Id");
+
+
+--
+-- Name: EventCheckins AK_EventCheckins_TenantId_Id; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."EventCheckins"
+    ADD CONSTRAINT "AK_EventCheckins_TenantId_Id" UNIQUE ("TenantId", "Id");
+
+
+--
+-- Name: EventCohosts AK_EventCohosts_TenantId_Id; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."EventCohosts"
+    ADD CONSTRAINT "AK_EventCohosts_TenantId_Id" UNIQUE ("TenantId", "Id");
+
+
+--
+-- Name: EventFeedbackForms AK_EventFeedbackForms_TenantId_Id; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."EventFeedbackForms"
+    ADD CONSTRAINT "AK_EventFeedbackForms_TenantId_Id" UNIQUE ("TenantId", "Id");
+
+
+--
+-- Name: EventFeedbackResponses AK_EventFeedbackResponses_TenantId_Id; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."EventFeedbackResponses"
+    ADD CONSTRAINT "AK_EventFeedbackResponses_TenantId_Id" UNIQUE ("TenantId", "Id");
+
+
+--
+-- Name: EventInvitations AK_EventInvitations_TenantId_Id; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."EventInvitations"
+    ADD CONSTRAINT "AK_EventInvitations_TenantId_Id" UNIQUE ("TenantId", "Id");
+
+
+--
+-- Name: EventNotices AK_EventNotices_TenantId_Id; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."EventNotices"
+    ADD CONSTRAINT "AK_EventNotices_TenantId_Id" UNIQUE ("TenantId", "Id");
+
+
+--
+-- Name: EventRegistrations AK_EventRegistrations_TenantId_Id; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."EventRegistrations"
+    ADD CONSTRAINT "AK_EventRegistrations_TenantId_Id" UNIQUE ("TenantId", "Id");
+
+
+--
+-- Name: EventRsvpHistory AK_EventRsvpHistory_TenantId_Id; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."EventRsvpHistory"
+    ADD CONSTRAINT "AK_EventRsvpHistory_TenantId_Id" UNIQUE ("TenantId", "Id");
+
+
+--
+-- Name: EventSessionBookings AK_EventSessionBookings_TenantId_Id; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."EventSessionBookings"
+    ADD CONSTRAINT "AK_EventSessionBookings_TenantId_Id" UNIQUE ("TenantId", "Id");
+
+
+--
+-- Name: EventSessions AK_EventSessions_TenantId_Id; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."EventSessions"
+    ADD CONSTRAINT "AK_EventSessions_TenantId_Id" UNIQUE ("TenantId", "Id");
+
+
+--
+-- Name: EventStaff AK_EventStaff_TenantId_Id; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."EventStaff"
+    ADD CONSTRAINT "AK_EventStaff_TenantId_Id" UNIQUE ("TenantId", "Id");
+
+
+--
+-- Name: EventTickets AK_EventTickets_TenantId_Id; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."EventTickets"
+    ADD CONSTRAINT "AK_EventTickets_TenantId_Id" UNIQUE ("TenantId", "Id");
+
+
+--
+-- Name: EventTypes AK_EventTypes_TenantId_Id; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."EventTypes"
+    ADD CONSTRAINT "AK_EventTypes_TenantId_Id" UNIQUE ("TenantId", "Id");
+
+
+--
+-- Name: Events AK_Events_TenantId_Id; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."Events"
+    ADD CONSTRAINT "AK_Events_TenantId_Id" UNIQUE ("TenantId", "Id");
 
 
 --
@@ -1406,6 +2876,22 @@ ALTER TABLE ONLY public."HandoverChecklistItems"
 
 
 --
+-- Name: ImpactMetrics AK_ImpactMetrics_TenantId_Id; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."ImpactMetrics"
+    ADD CONSTRAINT "AK_ImpactMetrics_TenantId_Id" UNIQUE ("TenantId", "Id");
+
+
+--
+-- Name: IssuedCertificates AK_IssuedCertificates_TenantId_Id; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."IssuedCertificates"
+    ADD CONSTRAINT "AK_IssuedCertificates_TenantId_Id" UNIQUE ("TenantId", "Id");
+
+
+--
 -- Name: LeadershipHandovers AK_LeadershipHandovers_TenantId_Id; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1427,6 +2913,22 @@ ALTER TABLE ONLY public."LeadershipTerms"
 
 ALTER TABLE ONLY public."Levels"
     ADD CONSTRAINT "AK_Levels_TenantId_Id" UNIQUE ("TenantId", "Id");
+
+
+--
+-- Name: MeetingAttendances AK_MeetingAttendances_TenantId_Id; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."MeetingAttendances"
+    ADD CONSTRAINT "AK_MeetingAttendances_TenantId_Id" UNIQUE ("TenantId", "Id");
+
+
+--
+-- Name: MeetingMinutes AK_MeetingMinutes_TenantId_Id; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."MeetingMinutes"
+    ADD CONSTRAINT "AK_MeetingMinutes_TenantId_Id" UNIQUE ("TenantId", "Id");
 
 
 --
@@ -1582,6 +3084,30 @@ ALTER TABLE ONLY public."OfficerPositions"
 
 
 --
+-- Name: OperationComments AK_OperationComments_TenantId_Id; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."OperationComments"
+    ADD CONSTRAINT "AK_OperationComments_TenantId_Id" UNIQUE ("TenantId", "Id");
+
+
+--
+-- Name: OperationRevisions AK_OperationRevisions_TenantId_Id; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."OperationRevisions"
+    ADD CONSTRAINT "AK_OperationRevisions_TenantId_Id" UNIQUE ("TenantId", "Id");
+
+
+--
+-- Name: OperationTasks AK_OperationTasks_TenantId_Id; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."OperationTasks"
+    ADD CONSTRAINT "AK_OperationTasks_TenantId_Id" UNIQUE ("TenantId", "Id");
+
+
+--
 -- Name: OrganizationHistory AK_OrganizationHistory_TenantId_Id; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1606,6 +3132,30 @@ ALTER TABLE ONLY public."PersonLinkRequests"
 
 
 --
+-- Name: ProjectActivities AK_ProjectActivities_TenantId_Id; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."ProjectActivities"
+    ADD CONSTRAINT "AK_ProjectActivities_TenantId_Id" UNIQUE ("TenantId", "Id");
+
+
+--
+-- Name: ProjectImpacts AK_ProjectImpacts_TenantId_Id; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."ProjectImpacts"
+    ADD CONSTRAINT "AK_ProjectImpacts_TenantId_Id" UNIQUE ("TenantId", "Id");
+
+
+--
+-- Name: ProjectOrganizations AK_ProjectOrganizations_TenantId_Id; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."ProjectOrganizations"
+    ADD CONSTRAINT "AK_ProjectOrganizations_TenantId_Id" UNIQUE ("TenantId", "Id");
+
+
+--
 -- Name: RoleAssignmentHistory AK_RoleAssignmentHistory_TenantId_Id; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1622,11 +3172,51 @@ ALTER TABLE ONLY public."Roles"
 
 
 --
+-- Name: ServiceProjects AK_ServiceProjects_TenantId_Id; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."ServiceProjects"
+    ADD CONSTRAINT "AK_ServiceProjects_TenantId_Id" UNIQUE ("TenantId", "Id");
+
+
+--
 -- Name: TransferDecisions AK_TransferDecisions_TenantId_Id; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public."TransferDecisions"
     ADD CONSTRAINT "AK_TransferDecisions_TenantId_Id" UNIQUE ("TenantId", "Id");
+
+
+--
+-- Name: VolunteerAssignments AK_VolunteerAssignments_TenantId_Id; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."VolunteerAssignments"
+    ADD CONSTRAINT "AK_VolunteerAssignments_TenantId_Id" UNIQUE ("TenantId", "Id");
+
+
+--
+-- Name: VolunteerHours AK_VolunteerHours_TenantId_Id; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."VolunteerHours"
+    ADD CONSTRAINT "AK_VolunteerHours_TenantId_Id" UNIQUE ("TenantId", "Id");
+
+
+--
+-- Name: VolunteerProfiles AK_VolunteerProfiles_TenantId_Id; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."VolunteerProfiles"
+    ADD CONSTRAINT "AK_VolunteerProfiles_TenantId_Id" UNIQUE ("TenantId", "Id");
+
+
+--
+-- Name: VolunteerShifts AK_VolunteerShifts_TenantId_Id; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."VolunteerShifts"
+    ADD CONSTRAINT "AK_VolunteerShifts_TenantId_Id" UNIQUE ("TenantId", "Id");
 
 
 --
@@ -1662,11 +3252,27 @@ ALTER TABLE ONLY public."AuthenticationAudits"
 
 
 --
+-- Name: CertificateTemplates PK_CertificateTemplates; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."CertificateTemplates"
+    ADD CONSTRAINT "PK_CertificateTemplates" PRIMARY KEY ("Id");
+
+
+--
 -- Name: ClubHealthConfigurations PK_ClubHealthConfigurations; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public."ClubHealthConfigurations"
     ADD CONSTRAINT "PK_ClubHealthConfigurations" PRIMARY KEY ("Id");
+
+
+--
+-- Name: ClubMeetings PK_ClubMeetings; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."ClubMeetings"
+    ADD CONSTRAINT "PK_ClubMeetings" PRIMARY KEY ("Id");
 
 
 --
@@ -1702,6 +3308,134 @@ ALTER TABLE ONLY public."Committees"
 
 
 --
+-- Name: CommunicationAccounts PK_CommunicationAccounts; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."CommunicationAccounts"
+    ADD CONSTRAINT "PK_CommunicationAccounts" PRIMARY KEY ("Id");
+
+
+--
+-- Name: CommunicationAttachments PK_CommunicationAttachments; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."CommunicationAttachments"
+    ADD CONSTRAINT "PK_CommunicationAttachments" PRIMARY KEY ("Id");
+
+
+--
+-- Name: CommunicationAudiences PK_CommunicationAudiences; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."CommunicationAudiences"
+    ADD CONSTRAINT "PK_CommunicationAudiences" PRIMARY KEY ("Id");
+
+
+--
+-- Name: CommunicationAutomations PK_CommunicationAutomations; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."CommunicationAutomations"
+    ADD CONSTRAINT "PK_CommunicationAutomations" PRIMARY KEY ("Id");
+
+
+--
+-- Name: CommunicationBroadcasts PK_CommunicationBroadcasts; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."CommunicationBroadcasts"
+    ADD CONSTRAINT "PK_CommunicationBroadcasts" PRIMARY KEY ("Id");
+
+
+--
+-- Name: CommunicationExecutions PK_CommunicationExecutions; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."CommunicationExecutions"
+    ADD CONSTRAINT "PK_CommunicationExecutions" PRIMARY KEY ("Id");
+
+
+--
+-- Name: CommunicationMessages PK_CommunicationMessages; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."CommunicationMessages"
+    ADD CONSTRAINT "PK_CommunicationMessages" PRIMARY KEY ("Id");
+
+
+--
+-- Name: CommunicationPolicies PK_CommunicationPolicies; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."CommunicationPolicies"
+    ADD CONSTRAINT "PK_CommunicationPolicies" PRIMARY KEY ("Id");
+
+
+--
+-- Name: CommunicationPreferences PK_CommunicationPreferences; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."CommunicationPreferences"
+    ADD CONSTRAINT "PK_CommunicationPreferences" PRIMARY KEY ("Id");
+
+
+--
+-- Name: CommunicationProviderEvents PK_CommunicationProviderEvents; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."CommunicationProviderEvents"
+    ADD CONSTRAINT "PK_CommunicationProviderEvents" PRIMARY KEY ("Id");
+
+
+--
+-- Name: CommunicationRecipients PK_CommunicationRecipients; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."CommunicationRecipients"
+    ADD CONSTRAINT "PK_CommunicationRecipients" PRIMARY KEY ("Id");
+
+
+--
+-- Name: CommunicationRevisions PK_CommunicationRevisions; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."CommunicationRevisions"
+    ADD CONSTRAINT "PK_CommunicationRevisions" PRIMARY KEY ("Id");
+
+
+--
+-- Name: CommunicationSuppressions PK_CommunicationSuppressions; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."CommunicationSuppressions"
+    ADD CONSTRAINT "PK_CommunicationSuppressions" PRIMARY KEY ("Id");
+
+
+--
+-- Name: CommunicationTemplates PK_CommunicationTemplates; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."CommunicationTemplates"
+    ADD CONSTRAINT "PK_CommunicationTemplates" PRIMARY KEY ("Id");
+
+
+--
+-- Name: ConversationParticipants PK_ConversationParticipants; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."ConversationParticipants"
+    ADD CONSTRAINT "PK_ConversationParticipants" PRIMARY KEY ("Id");
+
+
+--
+-- Name: Conversations PK_Conversations; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."Conversations"
+    ADD CONSTRAINT "PK_Conversations" PRIMARY KEY ("Id");
+
+
+--
 -- Name: DigitalCardVerifications PK_DigitalCardVerifications; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1715,6 +3449,142 @@ ALTER TABLE ONLY public."DigitalCardVerifications"
 
 ALTER TABLE ONLY public."DigitalCards"
     ADD CONSTRAINT "PK_DigitalCards" PRIMARY KEY ("Id");
+
+
+--
+-- Name: DocumentVersions PK_DocumentVersions; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."DocumentVersions"
+    ADD CONSTRAINT "PK_DocumentVersions" PRIMARY KEY ("Id");
+
+
+--
+-- Name: EventAudiences PK_EventAudiences; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."EventAudiences"
+    ADD CONSTRAINT "PK_EventAudiences" PRIMARY KEY ("Id");
+
+
+--
+-- Name: EventCheckins PK_EventCheckins; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."EventCheckins"
+    ADD CONSTRAINT "PK_EventCheckins" PRIMARY KEY ("Id");
+
+
+--
+-- Name: EventCohosts PK_EventCohosts; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."EventCohosts"
+    ADD CONSTRAINT "PK_EventCohosts" PRIMARY KEY ("Id");
+
+
+--
+-- Name: EventFeedbackForms PK_EventFeedbackForms; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."EventFeedbackForms"
+    ADD CONSTRAINT "PK_EventFeedbackForms" PRIMARY KEY ("Id");
+
+
+--
+-- Name: EventFeedbackResponses PK_EventFeedbackResponses; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."EventFeedbackResponses"
+    ADD CONSTRAINT "PK_EventFeedbackResponses" PRIMARY KEY ("Id");
+
+
+--
+-- Name: EventInvitations PK_EventInvitations; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."EventInvitations"
+    ADD CONSTRAINT "PK_EventInvitations" PRIMARY KEY ("Id");
+
+
+--
+-- Name: EventNotices PK_EventNotices; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."EventNotices"
+    ADD CONSTRAINT "PK_EventNotices" PRIMARY KEY ("Id");
+
+
+--
+-- Name: EventRegistrations PK_EventRegistrations; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."EventRegistrations"
+    ADD CONSTRAINT "PK_EventRegistrations" PRIMARY KEY ("Id");
+
+
+--
+-- Name: EventRsvpHistory PK_EventRsvpHistory; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."EventRsvpHistory"
+    ADD CONSTRAINT "PK_EventRsvpHistory" PRIMARY KEY ("Id");
+
+
+--
+-- Name: EventSavedFilters PK_EventSavedFilters; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."EventSavedFilters"
+    ADD CONSTRAINT "PK_EventSavedFilters" PRIMARY KEY ("Id");
+
+
+--
+-- Name: EventSessionBookings PK_EventSessionBookings; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."EventSessionBookings"
+    ADD CONSTRAINT "PK_EventSessionBookings" PRIMARY KEY ("Id");
+
+
+--
+-- Name: EventSessions PK_EventSessions; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."EventSessions"
+    ADD CONSTRAINT "PK_EventSessions" PRIMARY KEY ("Id");
+
+
+--
+-- Name: EventStaff PK_EventStaff; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."EventStaff"
+    ADD CONSTRAINT "PK_EventStaff" PRIMARY KEY ("Id");
+
+
+--
+-- Name: EventTickets PK_EventTickets; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."EventTickets"
+    ADD CONSTRAINT "PK_EventTickets" PRIMARY KEY ("Id");
+
+
+--
+-- Name: EventTypes PK_EventTypes; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."EventTypes"
+    ADD CONSTRAINT "PK_EventTypes" PRIMARY KEY ("Id");
+
+
+--
+-- Name: Events PK_Events; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."Events"
+    ADD CONSTRAINT "PK_Events" PRIMARY KEY ("Id");
 
 
 --
@@ -1758,6 +3628,22 @@ ALTER TABLE ONLY public."HandoverChecklistItems"
 
 
 --
+-- Name: ImpactMetrics PK_ImpactMetrics; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."ImpactMetrics"
+    ADD CONSTRAINT "PK_ImpactMetrics" PRIMARY KEY ("Id");
+
+
+--
+-- Name: IssuedCertificates PK_IssuedCertificates; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."IssuedCertificates"
+    ADD CONSTRAINT "PK_IssuedCertificates" PRIMARY KEY ("Id");
+
+
+--
 -- Name: LeadershipHandovers PK_LeadershipHandovers; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1795,6 +3681,22 @@ ALTER TABLE ONLY public."MailDeliveryAttempts"
 
 ALTER TABLE ONLY public."Mails"
     ADD CONSTRAINT "PK_Mails" PRIMARY KEY ("Id");
+
+
+--
+-- Name: MeetingAttendances PK_MeetingAttendances; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."MeetingAttendances"
+    ADD CONSTRAINT "PK_MeetingAttendances" PRIMARY KEY ("Id");
+
+
+--
+-- Name: MeetingMinutes PK_MeetingMinutes; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."MeetingMinutes"
+    ADD CONSTRAINT "PK_MeetingMinutes" PRIMARY KEY ("Id");
 
 
 --
@@ -1982,6 +3884,30 @@ ALTER TABLE ONLY public."OfficerPositions"
 
 
 --
+-- Name: OperationComments PK_OperationComments; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."OperationComments"
+    ADD CONSTRAINT "PK_OperationComments" PRIMARY KEY ("Id");
+
+
+--
+-- Name: OperationRevisions PK_OperationRevisions; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."OperationRevisions"
+    ADD CONSTRAINT "PK_OperationRevisions" PRIMARY KEY ("Id");
+
+
+--
+-- Name: OperationTasks PK_OperationTasks; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."OperationTasks"
+    ADD CONSTRAINT "PK_OperationTasks" PRIMARY KEY ("Id");
+
+
+--
 -- Name: OrganizationHistory PK_OrganizationHistory; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -2062,6 +3988,30 @@ ALTER TABLE ONLY public."Persons"
 
 
 --
+-- Name: ProjectActivities PK_ProjectActivities; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."ProjectActivities"
+    ADD CONSTRAINT "PK_ProjectActivities" PRIMARY KEY ("Id");
+
+
+--
+-- Name: ProjectImpacts PK_ProjectImpacts; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."ProjectImpacts"
+    ADD CONSTRAINT "PK_ProjectImpacts" PRIMARY KEY ("Id");
+
+
+--
+-- Name: ProjectOrganizations PK_ProjectOrganizations; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."ProjectOrganizations"
+    ADD CONSTRAINT "PK_ProjectOrganizations" PRIMARY KEY ("Id");
+
+
+--
 -- Name: RegistrationRequests PK_RegistrationRequests; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -2091,6 +4041,14 @@ ALTER TABLE ONLY public."RolePermissions"
 
 ALTER TABLE ONLY public."Roles"
     ADD CONSTRAINT "PK_Roles" PRIMARY KEY ("Id");
+
+
+--
+-- Name: ServiceProjects PK_ServiceProjects; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."ServiceProjects"
+    ADD CONSTRAINT "PK_ServiceProjects" PRIMARY KEY ("Id");
 
 
 --
@@ -2147,6 +4105,38 @@ ALTER TABLE ONLY public."UserProfiles"
 
 ALTER TABLE ONLY public."Users"
     ADD CONSTRAINT "PK_Users" PRIMARY KEY ("Id");
+
+
+--
+-- Name: VolunteerAssignments PK_VolunteerAssignments; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."VolunteerAssignments"
+    ADD CONSTRAINT "PK_VolunteerAssignments" PRIMARY KEY ("Id");
+
+
+--
+-- Name: VolunteerHours PK_VolunteerHours; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."VolunteerHours"
+    ADD CONSTRAINT "PK_VolunteerHours" PRIMARY KEY ("Id");
+
+
+--
+-- Name: VolunteerProfiles PK_VolunteerProfiles; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."VolunteerProfiles"
+    ADD CONSTRAINT "PK_VolunteerProfiles" PRIMARY KEY ("Id");
+
+
+--
+-- Name: VolunteerShifts PK_VolunteerShifts; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."VolunteerShifts"
+    ADD CONSTRAINT "PK_VolunteerShifts" PRIMARY KEY ("Id");
 
 
 --
@@ -2221,10 +4211,59 @@ CREATE INDEX "IX_AuthenticationAudits_ActorId_At" ON public."AuthenticationAudit
 
 
 --
+-- Name: IX_CertificateTemplates_TenantId_OrgId_UpdatedAt; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_CertificateTemplates_TenantId_OrgId_UpdatedAt" ON public."CertificateTemplates" USING btree ("TenantId", "OrgId", "UpdatedAt");
+
+
+--
 -- Name: IX_ClubHealthConfigurations_TenantId; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE UNIQUE INDEX "IX_ClubHealthConfigurations_TenantId" ON public."ClubHealthConfigurations" USING btree ("TenantId");
+
+
+--
+-- Name: IX_ClubMeetings_SeriesId_StartsAt; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX "IX_ClubMeetings_SeriesId_StartsAt" ON public."ClubMeetings" USING btree ("SeriesId", "StartsAt");
+
+
+--
+-- Name: IX_ClubMeetings_TenantId_CommitteeId; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_ClubMeetings_TenantId_CommitteeId" ON public."ClubMeetings" USING btree ("TenantId", "CommitteeId");
+
+
+--
+-- Name: IX_ClubMeetings_TenantId_EventId; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_ClubMeetings_TenantId_EventId" ON public."ClubMeetings" USING btree ("TenantId", "EventId");
+
+
+--
+-- Name: IX_ClubMeetings_TenantId_OrgId_StartsAt; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_ClubMeetings_TenantId_OrgId_StartsAt" ON public."ClubMeetings" USING btree ("TenantId", "OrgId", "StartsAt");
+
+
+--
+-- Name: IX_ClubMeetings_TenantId_OrgId_UpdatedAt; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_ClubMeetings_TenantId_OrgId_UpdatedAt" ON public."ClubMeetings" USING btree ("TenantId", "OrgId", "UpdatedAt");
+
+
+--
+-- Name: IX_ClubMeetings_TenantId_SessionId; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_ClubMeetings_TenantId_SessionId" ON public."ClubMeetings" USING btree ("TenantId", "SessionId");
 
 
 --
@@ -2284,6 +4323,342 @@ CREATE UNIQUE INDEX "IX_Committees_TenantId_OrgId_Code" ON public."Committees" U
 
 
 --
+-- Name: IX_CommunicationAccounts_TenantId_OrgId; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_CommunicationAccounts_TenantId_OrgId" ON public."CommunicationAccounts" USING btree ("TenantId", "OrgId");
+
+
+--
+-- Name: IX_CommunicationAttachments_Status_NextAttemptAt; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_CommunicationAttachments_Status_NextAttemptAt" ON public."CommunicationAttachments" USING btree ("Status", "NextAttemptAt");
+
+
+--
+-- Name: IX_CommunicationAttachments_TenantId_MessageId; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_CommunicationAttachments_TenantId_MessageId" ON public."CommunicationAttachments" USING btree ("TenantId", "MessageId");
+
+
+--
+-- Name: IX_CommunicationAttachments_TenantId_ProviderAccountId; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_CommunicationAttachments_TenantId_ProviderAccountId" ON public."CommunicationAttachments" USING btree ("TenantId", "ProviderAccountId");
+
+
+--
+-- Name: IX_CommunicationAudiences_TenantId_OrgId; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_CommunicationAudiences_TenantId_OrgId" ON public."CommunicationAudiences" USING btree ("TenantId", "OrgId");
+
+
+--
+-- Name: IX_CommunicationAutomations_TenantId_AccountId; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_CommunicationAutomations_TenantId_AccountId" ON public."CommunicationAutomations" USING btree ("TenantId", "AccountId");
+
+
+--
+-- Name: IX_CommunicationAutomations_TenantId_ApprovalRequestId; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_CommunicationAutomations_TenantId_ApprovalRequestId" ON public."CommunicationAutomations" USING btree ("TenantId", "ApprovalRequestId");
+
+
+--
+-- Name: IX_CommunicationAutomations_TenantId_OrgId; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_CommunicationAutomations_TenantId_OrgId" ON public."CommunicationAutomations" USING btree ("TenantId", "OrgId");
+
+
+--
+-- Name: IX_CommunicationAutomations_TenantId_TemplateId; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_CommunicationAutomations_TenantId_TemplateId" ON public."CommunicationAutomations" USING btree ("TenantId", "TemplateId");
+
+
+--
+-- Name: IX_CommunicationBroadcasts_Status_SendAt; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_CommunicationBroadcasts_Status_SendAt" ON public."CommunicationBroadcasts" USING btree ("Status", "SendAt");
+
+
+--
+-- Name: IX_CommunicationBroadcasts_TenantId_AccountId; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_CommunicationBroadcasts_TenantId_AccountId" ON public."CommunicationBroadcasts" USING btree ("TenantId", "AccountId");
+
+
+--
+-- Name: IX_CommunicationBroadcasts_TenantId_ApprovalRequestId; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_CommunicationBroadcasts_TenantId_ApprovalRequestId" ON public."CommunicationBroadcasts" USING btree ("TenantId", "ApprovalRequestId");
+
+
+--
+-- Name: IX_CommunicationBroadcasts_TenantId_EventId; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_CommunicationBroadcasts_TenantId_EventId" ON public."CommunicationBroadcasts" USING btree ("TenantId", "EventId");
+
+
+--
+-- Name: IX_CommunicationBroadcasts_TenantId_OrgId; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_CommunicationBroadcasts_TenantId_OrgId" ON public."CommunicationBroadcasts" USING btree ("TenantId", "OrgId");
+
+
+--
+-- Name: IX_CommunicationBroadcasts_TenantId_TemplateId; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_CommunicationBroadcasts_TenantId_TemplateId" ON public."CommunicationBroadcasts" USING btree ("TenantId", "TemplateId");
+
+
+--
+-- Name: IX_CommunicationExecutions_AutomationId_SourceKey; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX "IX_CommunicationExecutions_AutomationId_SourceKey" ON public."CommunicationExecutions" USING btree ("AutomationId", "SourceKey");
+
+
+--
+-- Name: IX_CommunicationExecutions_TenantId_AutomationId; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_CommunicationExecutions_TenantId_AutomationId" ON public."CommunicationExecutions" USING btree ("TenantId", "AutomationId");
+
+
+--
+-- Name: IX_CommunicationMessages_BroadcastId_At; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_CommunicationMessages_BroadcastId_At" ON public."CommunicationMessages" USING btree ("BroadcastId", "At");
+
+
+--
+-- Name: IX_CommunicationMessages_ConversationId_At_Id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_CommunicationMessages_ConversationId_At_Id" ON public."CommunicationMessages" USING btree ("ConversationId", "At", "Id");
+
+
+--
+-- Name: IX_CommunicationMessages_Provider; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_CommunicationMessages_Provider" ON public."CommunicationMessages" USING btree ("TenantId", "ProviderId") WHERE ("ProviderId" <> ''::text);
+
+
+--
+-- Name: IX_CommunicationMessages_TenantId_BroadcastId; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_CommunicationMessages_TenantId_BroadcastId" ON public."CommunicationMessages" USING btree ("TenantId", "BroadcastId");
+
+
+--
+-- Name: IX_CommunicationMessages_TenantId_ConversationId; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_CommunicationMessages_TenantId_ConversationId" ON public."CommunicationMessages" USING btree ("TenantId", "ConversationId");
+
+
+--
+-- Name: IX_CommunicationMessages_TenantId_OrgId; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_CommunicationMessages_TenantId_OrgId" ON public."CommunicationMessages" USING btree ("TenantId", "OrgId");
+
+
+--
+-- Name: IX_CommunicationMessages_TenantId_SenderId_At; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_CommunicationMessages_TenantId_SenderId_At" ON public."CommunicationMessages" USING btree ("TenantId", "SenderId", "At") WHERE ("ConversationId" IS NOT NULL);
+
+
+--
+-- Name: IX_CommunicationMessages_TenantId_SenderId_ClientKey; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX "IX_CommunicationMessages_TenantId_SenderId_ClientKey" ON public."CommunicationMessages" USING btree ("TenantId", "SenderId", "ClientKey");
+
+
+--
+-- Name: IX_CommunicationPolicies_OrgId; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX "IX_CommunicationPolicies_OrgId" ON public."CommunicationPolicies" USING btree ("OrgId");
+
+
+--
+-- Name: IX_CommunicationPolicies_TenantId_OrgId; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_CommunicationPolicies_TenantId_OrgId" ON public."CommunicationPolicies" USING btree ("TenantId", "OrgId");
+
+
+--
+-- Name: IX_CommunicationPreferences_UserId_Channel; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX "IX_CommunicationPreferences_UserId_Channel" ON public."CommunicationPreferences" USING btree ("UserId", "Channel");
+
+
+--
+-- Name: IX_CommunicationProviderEvents_AccountId_EventKey; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX "IX_CommunicationProviderEvents_AccountId_EventKey" ON public."CommunicationProviderEvents" USING btree ("AccountId", "EventKey");
+
+
+--
+-- Name: IX_CommunicationProviderEvents_TenantId_AccountId; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_CommunicationProviderEvents_TenantId_AccountId" ON public."CommunicationProviderEvents" USING btree ("TenantId", "AccountId");
+
+
+--
+-- Name: IX_CommunicationRecipients_BroadcastId_PersonId; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX "IX_CommunicationRecipients_BroadcastId_PersonId" ON public."CommunicationRecipients" USING btree ("BroadcastId", "PersonId");
+
+
+--
+-- Name: IX_CommunicationRecipients_BroadcastId_QueuedCycle_Id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_CommunicationRecipients_BroadcastId_QueuedCycle_Id" ON public."CommunicationRecipients" USING btree ("BroadcastId", "QueuedCycle", "Id");
+
+
+--
+-- Name: IX_CommunicationRecipients_PersonId; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_CommunicationRecipients_PersonId" ON public."CommunicationRecipients" USING btree ("PersonId");
+
+
+--
+-- Name: IX_CommunicationRecipients_TenantId_BroadcastId; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_CommunicationRecipients_TenantId_BroadcastId" ON public."CommunicationRecipients" USING btree ("TenantId", "BroadcastId");
+
+
+--
+-- Name: IX_CommunicationRecipients_UserId_BroadcastId; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_CommunicationRecipients_UserId_BroadcastId" ON public."CommunicationRecipients" USING btree ("UserId", "BroadcastId");
+
+
+--
+-- Name: IX_CommunicationRevisions_ResourceId_Version; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX "IX_CommunicationRevisions_ResourceId_Version" ON public."CommunicationRevisions" USING btree ("ResourceId", "Version");
+
+
+--
+-- Name: IX_CommunicationSuppressions_TenantId_Channel_AddressHash; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX "IX_CommunicationSuppressions_TenantId_Channel_AddressHash" ON public."CommunicationSuppressions" USING btree ("TenantId", "Channel", "AddressHash");
+
+
+--
+-- Name: IX_CommunicationTemplates_TenantId_AccountId; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_CommunicationTemplates_TenantId_AccountId" ON public."CommunicationTemplates" USING btree ("TenantId", "AccountId");
+
+
+--
+-- Name: IX_CommunicationTemplates_TenantId_OrgId; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_CommunicationTemplates_TenantId_OrgId" ON public."CommunicationTemplates" USING btree ("TenantId", "OrgId");
+
+
+--
+-- Name: IX_ConversationParticipants_ConversationId_UserId; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX "IX_ConversationParticipants_ConversationId_UserId" ON public."ConversationParticipants" USING btree ("ConversationId", "UserId");
+
+
+--
+-- Name: IX_ConversationParticipants_TenantId_ConversationId; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_ConversationParticipants_TenantId_ConversationId" ON public."ConversationParticipants" USING btree ("TenantId", "ConversationId");
+
+
+--
+-- Name: IX_ConversationParticipants_UserId_Active_ConversationId; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_ConversationParticipants_UserId_Active_ConversationId" ON public."ConversationParticipants" USING btree ("UserId", "Active", "ConversationId");
+
+
+--
+-- Name: IX_Conversations_AccountId_ExternalThread; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX "IX_Conversations_AccountId_ExternalThread" ON public."Conversations" USING btree ("AccountId", "ExternalThread") WHERE ("ExternalThread" <> ''::text);
+
+
+--
+-- Name: IX_Conversations_TenantId_AccountId; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_Conversations_TenantId_AccountId" ON public."Conversations" USING btree ("TenantId", "AccountId");
+
+
+--
+-- Name: IX_Conversations_TenantId_CommitteeId; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_Conversations_TenantId_CommitteeId" ON public."Conversations" USING btree ("TenantId", "CommitteeId");
+
+
+--
+-- Name: IX_Conversations_TenantId_EventId; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_Conversations_TenantId_EventId" ON public."Conversations" USING btree ("TenantId", "EventId");
+
+
+--
+-- Name: IX_Conversations_TenantId_OrgId; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_Conversations_TenantId_OrgId" ON public."Conversations" USING btree ("TenantId", "OrgId");
+
+
+--
+-- Name: IX_Conversations_TenantId_UpdatedAt_Id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_Conversations_TenantId_UpdatedAt_Id" ON public."Conversations" USING btree ("TenantId", "UpdatedAt", "Id");
+
+
+--
 -- Name: IX_DigitalCardVerifications_At; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -2319,6 +4694,433 @@ CREATE UNIQUE INDEX "IX_DigitalCards_TokenHash" ON public."DigitalCards" USING b
 
 
 --
+-- Name: IX_DocumentVersions_DocumentId_Number; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX "IX_DocumentVersions_DocumentId_Number" ON public."DocumentVersions" USING btree ("DocumentId", "Number");
+
+
+--
+-- Name: IX_DocumentVersions_TenantId_DocumentId; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_DocumentVersions_TenantId_DocumentId" ON public."DocumentVersions" USING btree ("TenantId", "DocumentId");
+
+
+--
+-- Name: IX_DocumentVersions_TenantId_OrgId_UpdatedAt; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_DocumentVersions_TenantId_OrgId_UpdatedAt" ON public."DocumentVersions" USING btree ("TenantId", "OrgId", "UpdatedAt");
+
+
+--
+-- Name: IX_EventAudiences_PersonId; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_EventAudiences_PersonId" ON public."EventAudiences" USING btree ("PersonId");
+
+
+--
+-- Name: IX_EventAudiences_TenantId_CategoryId; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_EventAudiences_TenantId_CategoryId" ON public."EventAudiences" USING btree ("TenantId", "CategoryId");
+
+
+--
+-- Name: IX_EventAudiences_TenantId_CommitteeId; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_EventAudiences_TenantId_CommitteeId" ON public."EventAudiences" USING btree ("TenantId", "CommitteeId");
+
+
+--
+-- Name: IX_EventAudiences_TenantId_EventId; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_EventAudiences_TenantId_EventId" ON public."EventAudiences" USING btree ("TenantId", "EventId");
+
+
+--
+-- Name: IX_EventAudiences_TenantId_OrgId; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_EventAudiences_TenantId_OrgId" ON public."EventAudiences" USING btree ("TenantId", "OrgId");
+
+
+--
+-- Name: IX_EventAudiences_TenantId_RoleId; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_EventAudiences_TenantId_RoleId" ON public."EventAudiences" USING btree ("TenantId", "RoleId");
+
+
+--
+-- Name: IX_EventCheckins_EventId_SessionId_Voided; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_EventCheckins_EventId_SessionId_Voided" ON public."EventCheckins" USING btree ("EventId", "SessionId", "Voided");
+
+
+--
+-- Name: IX_EventCheckins_OperatorId; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_EventCheckins_OperatorId" ON public."EventCheckins" USING btree ("OperatorId");
+
+
+--
+-- Name: IX_EventCheckins_RegistrationId_SessionId; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX "IX_EventCheckins_RegistrationId_SessionId" ON public."EventCheckins" USING btree ("RegistrationId", "SessionId") NULLS NOT DISTINCT;
+
+
+--
+-- Name: IX_EventCheckins_TenantId_EventId; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_EventCheckins_TenantId_EventId" ON public."EventCheckins" USING btree ("TenantId", "EventId");
+
+
+--
+-- Name: IX_EventCheckins_TenantId_RegistrationId; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_EventCheckins_TenantId_RegistrationId" ON public."EventCheckins" USING btree ("TenantId", "RegistrationId");
+
+
+--
+-- Name: IX_EventCheckins_TenantId_SessionId; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_EventCheckins_TenantId_SessionId" ON public."EventCheckins" USING btree ("TenantId", "SessionId");
+
+
+--
+-- Name: IX_EventCohosts_TenantId_EventId; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_EventCohosts_TenantId_EventId" ON public."EventCohosts" USING btree ("TenantId", "EventId");
+
+
+--
+-- Name: IX_EventCohosts_TenantId_OrgId; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_EventCohosts_TenantId_OrgId" ON public."EventCohosts" USING btree ("TenantId", "OrgId");
+
+
+--
+-- Name: IX_EventFeedbackForms_EventId; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX "IX_EventFeedbackForms_EventId" ON public."EventFeedbackForms" USING btree ("EventId");
+
+
+--
+-- Name: IX_EventFeedbackForms_TenantId_EventId; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_EventFeedbackForms_TenantId_EventId" ON public."EventFeedbackForms" USING btree ("TenantId", "EventId");
+
+
+--
+-- Name: IX_EventFeedbackResponses_EventId_RegistrationId; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX "IX_EventFeedbackResponses_EventId_RegistrationId" ON public."EventFeedbackResponses" USING btree ("EventId", "RegistrationId");
+
+
+--
+-- Name: IX_EventFeedbackResponses_TenantId_EventId; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_EventFeedbackResponses_TenantId_EventId" ON public."EventFeedbackResponses" USING btree ("TenantId", "EventId");
+
+
+--
+-- Name: IX_EventFeedbackResponses_TenantId_RegistrationId; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_EventFeedbackResponses_TenantId_RegistrationId" ON public."EventFeedbackResponses" USING btree ("TenantId", "RegistrationId");
+
+
+--
+-- Name: IX_EventInvitations_EventId_PersonId; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_EventInvitations_EventId_PersonId" ON public."EventInvitations" USING btree ("EventId", "PersonId");
+
+
+--
+-- Name: IX_EventInvitations_EventId_RecipientKey; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX "IX_EventInvitations_EventId_RecipientKey" ON public."EventInvitations" USING btree ("EventId", "RecipientKey");
+
+
+--
+-- Name: IX_EventInvitations_InviterId; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_EventInvitations_InviterId" ON public."EventInvitations" USING btree ("InviterId");
+
+
+--
+-- Name: IX_EventInvitations_PersonId_SendAt; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_EventInvitations_PersonId_SendAt" ON public."EventInvitations" USING btree ("PersonId", "SendAt");
+
+
+--
+-- Name: IX_EventInvitations_Status_SendAt; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_EventInvitations_Status_SendAt" ON public."EventInvitations" USING btree ("Status", "SendAt");
+
+
+--
+-- Name: IX_EventInvitations_TenantId_EventId; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_EventInvitations_TenantId_EventId" ON public."EventInvitations" USING btree ("TenantId", "EventId");
+
+
+--
+-- Name: IX_EventInvitations_TokenHash; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX "IX_EventInvitations_TokenHash" ON public."EventInvitations" USING btree ("TokenHash");
+
+
+--
+-- Name: IX_EventNotices_Completed_EventId; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_EventNotices_Completed_EventId" ON public."EventNotices" USING btree ("Completed", "EventId");
+
+
+--
+-- Name: IX_EventNotices_TenantId_EventId; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_EventNotices_TenantId_EventId" ON public."EventNotices" USING btree ("TenantId", "EventId");
+
+
+--
+-- Name: IX_EventRegistrations_EventId_MembershipId; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_EventRegistrations_EventId_MembershipId" ON public."EventRegistrations" USING btree ("EventId", "MembershipId");
+
+
+--
+-- Name: IX_EventRegistrations_EventId_ParticipantKey; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX "IX_EventRegistrations_EventId_ParticipantKey" ON public."EventRegistrations" USING btree ("EventId", "ParticipantKey");
+
+
+--
+-- Name: IX_EventRegistrations_EventId_Status_CreatedAt_Id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_EventRegistrations_EventId_Status_CreatedAt_Id" ON public."EventRegistrations" USING btree ("EventId", "Status", "CreatedAt", "Id");
+
+
+--
+-- Name: IX_EventRegistrations_PersonId_EventId; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_EventRegistrations_PersonId_EventId" ON public."EventRegistrations" USING btree ("PersonId", "EventId");
+
+
+--
+-- Name: IX_EventRegistrations_TenantId_ApprovalRequestId; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_EventRegistrations_TenantId_ApprovalRequestId" ON public."EventRegistrations" USING btree ("TenantId", "ApprovalRequestId");
+
+
+--
+-- Name: IX_EventRegistrations_TenantId_EventId; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_EventRegistrations_TenantId_EventId" ON public."EventRegistrations" USING btree ("TenantId", "EventId");
+
+
+--
+-- Name: IX_EventRegistrations_TenantId_InvitationId; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_EventRegistrations_TenantId_InvitationId" ON public."EventRegistrations" USING btree ("TenantId", "InvitationId");
+
+
+--
+-- Name: IX_EventRegistrations_TenantId_MembershipId; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_EventRegistrations_TenantId_MembershipId" ON public."EventRegistrations" USING btree ("TenantId", "MembershipId");
+
+
+--
+-- Name: IX_EventRsvpHistory_TenantId_InvitationId; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_EventRsvpHistory_TenantId_InvitationId" ON public."EventRsvpHistory" USING btree ("TenantId", "InvitationId");
+
+
+--
+-- Name: IX_EventSavedFilters_UserId; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_EventSavedFilters_UserId" ON public."EventSavedFilters" USING btree ("UserId");
+
+
+--
+-- Name: IX_EventSessionBookings_RegistrationId_SessionId; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX "IX_EventSessionBookings_RegistrationId_SessionId" ON public."EventSessionBookings" USING btree ("RegistrationId", "SessionId");
+
+
+--
+-- Name: IX_EventSessionBookings_TenantId_EventId; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_EventSessionBookings_TenantId_EventId" ON public."EventSessionBookings" USING btree ("TenantId", "EventId");
+
+
+--
+-- Name: IX_EventSessionBookings_TenantId_RegistrationId; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_EventSessionBookings_TenantId_RegistrationId" ON public."EventSessionBookings" USING btree ("TenantId", "RegistrationId");
+
+
+--
+-- Name: IX_EventSessionBookings_TenantId_SessionId; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_EventSessionBookings_TenantId_SessionId" ON public."EventSessionBookings" USING btree ("TenantId", "SessionId");
+
+
+--
+-- Name: IX_EventSessions_TenantId_EventId; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_EventSessions_TenantId_EventId" ON public."EventSessions" USING btree ("TenantId", "EventId");
+
+
+--
+-- Name: IX_EventStaff_EventId_PersonId; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX "IX_EventStaff_EventId_PersonId" ON public."EventStaff" USING btree ("EventId", "PersonId");
+
+
+--
+-- Name: IX_EventStaff_PersonId_Active; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_EventStaff_PersonId_Active" ON public."EventStaff" USING btree ("PersonId", "Active");
+
+
+--
+-- Name: IX_EventStaff_TenantId_EventId; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_EventStaff_TenantId_EventId" ON public."EventStaff" USING btree ("TenantId", "EventId");
+
+
+--
+-- Name: IX_EventTickets_RegistrationId_Revoked; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_EventTickets_RegistrationId_Revoked" ON public."EventTickets" USING btree ("RegistrationId", "Revoked");
+
+
+--
+-- Name: IX_EventTickets_TenantId_EventId; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_EventTickets_TenantId_EventId" ON public."EventTickets" USING btree ("TenantId", "EventId");
+
+
+--
+-- Name: IX_EventTickets_TenantId_RegistrationId; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_EventTickets_TenantId_RegistrationId" ON public."EventTickets" USING btree ("TenantId", "RegistrationId");
+
+
+--
+-- Name: IX_EventTickets_TokenHash; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX "IX_EventTickets_TokenHash" ON public."EventTickets" USING btree ("TokenHash");
+
+
+--
+-- Name: IX_EventTypes_TenantId_Name; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX "IX_EventTypes_TenantId_Name" ON public."EventTypes" USING btree ("TenantId", "Name");
+
+
+--
+-- Name: IX_Events_CreatorId; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_Events_CreatorId" ON public."Events" USING btree ("CreatorId");
+
+
+--
+-- Name: IX_Events_EndsAt_Id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_Events_EndsAt_Id" ON public."Events" USING btree ("EndsAt", "Id");
+
+
+--
+-- Name: IX_Events_Publication_StartsAt_Id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_Events_Publication_StartsAt_Id" ON public."Events" USING btree ("Publication", "StartsAt", "Id");
+
+
+--
+-- Name: IX_Events_TenantId_ApprovalRequestId; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_Events_TenantId_ApprovalRequestId" ON public."Events" USING btree ("TenantId", "ApprovalRequestId");
+
+
+--
+-- Name: IX_Events_TenantId_CommitteeId; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_Events_TenantId_CommitteeId" ON public."Events" USING btree ("TenantId", "CommitteeId");
+
+
+--
+-- Name: IX_Events_TenantId_OrgId_StartsAt_Id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_Events_TenantId_OrgId_StartsAt_Id" ON public."Events" USING btree ("TenantId", "OrgId", "StartsAt", "Id");
+
+
+--
+-- Name: IX_Events_TenantId_TypeId; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_Events_TenantId_TypeId" ON public."Events" USING btree ("TenantId", "TypeId");
+
+
+--
 -- Name: IX_GovernanceDelegations_TenantId_OrgId; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -2340,10 +5142,24 @@ CREATE INDEX "IX_GovernanceDocuments_TenantId_CommitteeId" ON public."Governance
 
 
 --
+-- Name: IX_GovernanceDocuments_TenantId_EventId; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_GovernanceDocuments_TenantId_EventId" ON public."GovernanceDocuments" USING btree ("TenantId", "EventId");
+
+
+--
 -- Name: IX_GovernanceDocuments_TenantId_OrgId; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX "IX_GovernanceDocuments_TenantId_OrgId" ON public."GovernanceDocuments" USING btree ("TenantId", "OrgId");
+
+
+--
+-- Name: IX_GovernanceDocuments_TenantId_OrgId_Id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_GovernanceDocuments_TenantId_OrgId_Id" ON public."GovernanceDocuments" USING btree ("TenantId", "OrgId", "Id");
 
 
 --
@@ -2431,6 +5247,48 @@ CREATE INDEX "IX_HandoverChecklistItems_TenantId_HandoverId" ON public."Handover
 
 
 --
+-- Name: IX_ImpactMetrics_TenantId_OrgId_UpdatedAt; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_ImpactMetrics_TenantId_OrgId_UpdatedAt" ON public."ImpactMetrics" USING btree ("TenantId", "OrgId", "UpdatedAt");
+
+
+--
+-- Name: IX_IssuedCertificates_PersonId; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_IssuedCertificates_PersonId" ON public."IssuedCertificates" USING btree ("PersonId");
+
+
+--
+-- Name: IX_IssuedCertificates_TenantId_Number; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX "IX_IssuedCertificates_TenantId_Number" ON public."IssuedCertificates" USING btree ("TenantId", "Number");
+
+
+--
+-- Name: IX_IssuedCertificates_TenantId_OrgId_UpdatedAt; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_IssuedCertificates_TenantId_OrgId_UpdatedAt" ON public."IssuedCertificates" USING btree ("TenantId", "OrgId", "UpdatedAt");
+
+
+--
+-- Name: IX_IssuedCertificates_TenantId_TemplateId_PersonId_SourceId_So~; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_IssuedCertificates_TenantId_TemplateId_PersonId_SourceId_So~" ON public."IssuedCertificates" USING btree ("TenantId", "TemplateId", "PersonId", "SourceId", "SourceType", "TemplateVersion");
+
+
+--
+-- Name: IX_IssuedCertificates_TokenHash; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX "IX_IssuedCertificates_TokenHash" ON public."IssuedCertificates" USING btree ("TokenHash");
+
+
+--
 -- Name: IX_LeadershipHandovers_TenantId_IncomingAppointmentId; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -2480,10 +5338,52 @@ CREATE INDEX "IX_MailDeliveryAttempts_MailId" ON public."MailDeliveryAttempts" U
 
 
 --
+-- Name: IX_Mails_CommunicationDispatch; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_Mails_CommunicationDispatch" ON public."Mails" USING btree ("Channel", "NextAttemptAt", "Id") WHERE (("SentAt" IS NULL) AND (NOT "Suppressed") AND (NOT "DeadLetter"));
+
+
+--
+-- Name: IX_Mails_CommunicationId; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX "IX_Mails_CommunicationId" ON public."Mails" USING btree ("CommunicationId");
+
+
+--
 -- Name: IX_Mails_NextAttemptAt; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX "IX_Mails_NextAttemptAt" ON public."Mails" USING btree ("NextAttemptAt") WHERE (("SentAt" IS NULL) AND (NOT "Used"));
+
+
+--
+-- Name: IX_Mails_TenantId_AccountId; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_Mails_TenantId_AccountId" ON public."Mails" USING btree ("TenantId", "AccountId");
+
+
+--
+-- Name: IX_Mails_TenantId_CommunicationId; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_Mails_TenantId_CommunicationId" ON public."Mails" USING btree ("TenantId", "CommunicationId");
+
+
+--
+-- Name: IX_Mails_TenantId_CreatedAt_Channel_DeliveryStatus; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_Mails_TenantId_CreatedAt_Channel_DeliveryStatus" ON public."Mails" USING btree ("TenantId", "CreatedAt", "Channel", "DeliveryStatus");
+
+
+--
+-- Name: IX_Mails_TenantId_EventId; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_Mails_TenantId_EventId" ON public."Mails" USING btree ("TenantId", "EventId");
 
 
 --
@@ -2498,6 +5398,55 @@ CREATE UNIQUE INDEX "IX_Mails_TokenHash" ON public."Mails" USING btree ("TokenHa
 --
 
 CREATE INDEX "IX_Mails_UserId" ON public."Mails" USING btree ("UserId");
+
+
+--
+-- Name: IX_MeetingAttendances_MeetingId_PersonId; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX "IX_MeetingAttendances_MeetingId_PersonId" ON public."MeetingAttendances" USING btree ("MeetingId", "PersonId");
+
+
+--
+-- Name: IX_MeetingAttendances_PersonId; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_MeetingAttendances_PersonId" ON public."MeetingAttendances" USING btree ("PersonId");
+
+
+--
+-- Name: IX_MeetingAttendances_TenantId_MeetingId; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_MeetingAttendances_TenantId_MeetingId" ON public."MeetingAttendances" USING btree ("TenantId", "MeetingId");
+
+
+--
+-- Name: IX_MeetingAttendances_TenantId_OrgId_UpdatedAt; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_MeetingAttendances_TenantId_OrgId_UpdatedAt" ON public."MeetingAttendances" USING btree ("TenantId", "OrgId", "UpdatedAt");
+
+
+--
+-- Name: IX_MeetingMinutes_MeetingId_Revision; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX "IX_MeetingMinutes_MeetingId_Revision" ON public."MeetingMinutes" USING btree ("MeetingId", "Revision");
+
+
+--
+-- Name: IX_MeetingMinutes_TenantId_MeetingId; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_MeetingMinutes_TenantId_MeetingId" ON public."MeetingMinutes" USING btree ("TenantId", "MeetingId");
+
+
+--
+-- Name: IX_MeetingMinutes_TenantId_OrgId_UpdatedAt; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_MeetingMinutes_TenantId_OrgId_UpdatedAt" ON public."MeetingMinutes" USING btree ("TenantId", "OrgId", "UpdatedAt");
 
 
 --
@@ -3019,6 +5968,55 @@ CREATE INDEX "IX_OfficerPositions_TenantId_ReportsToId" ON public."OfficerPositi
 
 
 --
+-- Name: IX_OperationComments_TenantId_OrgId_UpdatedAt; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_OperationComments_TenantId_OrgId_UpdatedAt" ON public."OperationComments" USING btree ("TenantId", "OrgId", "UpdatedAt");
+
+
+--
+-- Name: IX_OperationComments_TenantId_TaskId; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_OperationComments_TenantId_TaskId" ON public."OperationComments" USING btree ("TenantId", "TaskId");
+
+
+--
+-- Name: IX_OperationRevisions_TenantId_OrgId_UpdatedAt; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_OperationRevisions_TenantId_OrgId_UpdatedAt" ON public."OperationRevisions" USING btree ("TenantId", "OrgId", "UpdatedAt");
+
+
+--
+-- Name: IX_OperationRevisions_TenantId_RecordId_UpdatedAt; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_OperationRevisions_TenantId_RecordId_UpdatedAt" ON public."OperationRevisions" USING btree ("TenantId", "RecordId", "UpdatedAt");
+
+
+--
+-- Name: IX_OperationTasks_TenantId_OrgId_Status_DueAt; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_OperationTasks_TenantId_OrgId_Status_DueAt" ON public."OperationTasks" USING btree ("TenantId", "OrgId", "Status", "DueAt");
+
+
+--
+-- Name: IX_OperationTasks_TenantId_OrgId_UpdatedAt; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_OperationTasks_TenantId_OrgId_UpdatedAt" ON public."OperationTasks" USING btree ("TenantId", "OrgId", "UpdatedAt");
+
+
+--
+-- Name: IX_OperationTasks_TenantId_PersonId_Status_DueAt; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_OperationTasks_TenantId_PersonId_Status_DueAt" ON public."OperationTasks" USING btree ("TenantId", "PersonId", "Status", "DueAt");
+
+
+--
 -- Name: IX_OrganizationHistory_TenantId_OrgId; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -3166,6 +6164,69 @@ CREATE UNIQUE INDEX "IX_Persons_UserId" ON public."Persons" USING btree ("UserId
 
 
 --
+-- Name: IX_ProjectActivities_TenantId_OrgId_UpdatedAt; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_ProjectActivities_TenantId_OrgId_UpdatedAt" ON public."ProjectActivities" USING btree ("TenantId", "OrgId", "UpdatedAt");
+
+
+--
+-- Name: IX_ProjectActivities_TenantId_ProjectId; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_ProjectActivities_TenantId_ProjectId" ON public."ProjectActivities" USING btree ("TenantId", "ProjectId");
+
+
+--
+-- Name: IX_ProjectImpacts_ProjectId_MetricId_SourceKey; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX "IX_ProjectImpacts_ProjectId_MetricId_SourceKey" ON public."ProjectImpacts" USING btree ("ProjectId", "MetricId", "SourceKey");
+
+
+--
+-- Name: IX_ProjectImpacts_TenantId_MetricId; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_ProjectImpacts_TenantId_MetricId" ON public."ProjectImpacts" USING btree ("TenantId", "MetricId");
+
+
+--
+-- Name: IX_ProjectImpacts_TenantId_OrgId_UpdatedAt; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_ProjectImpacts_TenantId_OrgId_UpdatedAt" ON public."ProjectImpacts" USING btree ("TenantId", "OrgId", "UpdatedAt");
+
+
+--
+-- Name: IX_ProjectImpacts_TenantId_ProjectId; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_ProjectImpacts_TenantId_ProjectId" ON public."ProjectImpacts" USING btree ("TenantId", "ProjectId");
+
+
+--
+-- Name: IX_ProjectOrganizations_ProjectId_OrgId; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX "IX_ProjectOrganizations_ProjectId_OrgId" ON public."ProjectOrganizations" USING btree ("ProjectId", "OrgId");
+
+
+--
+-- Name: IX_ProjectOrganizations_TenantId_OrgId_UpdatedAt; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_ProjectOrganizations_TenantId_OrgId_UpdatedAt" ON public."ProjectOrganizations" USING btree ("TenantId", "OrgId", "UpdatedAt");
+
+
+--
+-- Name: IX_ProjectOrganizations_TenantId_ProjectId; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_ProjectOrganizations_TenantId_ProjectId" ON public."ProjectOrganizations" USING btree ("TenantId", "ProjectId");
+
+
+--
 -- Name: IX_RoleAssignmentHistory_TenantId_OrgId; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -3208,6 +6269,20 @@ CREATE UNIQUE INDEX "IX_Roles_TenantId_Name" ON public."Roles" USING btree ("Ten
 
 
 --
+-- Name: IX_ServiceProjects_TenantId_OrgId_Status_StartsAt; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_ServiceProjects_TenantId_OrgId_Status_StartsAt" ON public."ServiceProjects" USING btree ("TenantId", "OrgId", "Status", "StartsAt");
+
+
+--
+-- Name: IX_ServiceProjects_TenantId_OrgId_UpdatedAt; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_ServiceProjects_TenantId_OrgId_UpdatedAt" ON public."ServiceProjects" USING btree ("TenantId", "OrgId", "UpdatedAt");
+
+
+--
 -- Name: IX_Sessions_UserId_ExpiresAt; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -3243,6 +6318,118 @@ CREATE UNIQUE INDEX "IX_Users_Email" ON public."Users" USING btree ("Email");
 
 
 --
+-- Name: IX_VolunteerAssignments_PersonId; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_VolunteerAssignments_PersonId" ON public."VolunteerAssignments" USING btree ("PersonId");
+
+
+--
+-- Name: IX_VolunteerAssignments_ShiftId_PersonId; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX "IX_VolunteerAssignments_ShiftId_PersonId" ON public."VolunteerAssignments" USING btree ("ShiftId", "PersonId");
+
+
+--
+-- Name: IX_VolunteerAssignments_TenantId_OrgId_UpdatedAt; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_VolunteerAssignments_TenantId_OrgId_UpdatedAt" ON public."VolunteerAssignments" USING btree ("TenantId", "OrgId", "UpdatedAt");
+
+
+--
+-- Name: IX_VolunteerAssignments_TenantId_ShiftId_Status; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_VolunteerAssignments_TenantId_ShiftId_Status" ON public."VolunteerAssignments" USING btree ("TenantId", "ShiftId", "Status");
+
+
+--
+-- Name: IX_VolunteerHours_PersonId; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_VolunteerHours_PersonId" ON public."VolunteerHours" USING btree ("PersonId");
+
+
+--
+-- Name: IX_VolunteerHours_TenantId_AssignmentId; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_VolunteerHours_TenantId_AssignmentId" ON public."VolunteerHours" USING btree ("TenantId", "AssignmentId");
+
+
+--
+-- Name: IX_VolunteerHours_TenantId_OrgId_Status_StartsAt; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_VolunteerHours_TenantId_OrgId_Status_StartsAt" ON public."VolunteerHours" USING btree ("TenantId", "OrgId", "Status", "StartsAt");
+
+
+--
+-- Name: IX_VolunteerHours_TenantId_OrgId_UpdatedAt; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_VolunteerHours_TenantId_OrgId_UpdatedAt" ON public."VolunteerHours" USING btree ("TenantId", "OrgId", "UpdatedAt");
+
+
+--
+-- Name: IX_VolunteerHours_TenantId_PersonId_StartsAt_EndsAt; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_VolunteerHours_TenantId_PersonId_StartsAt_EndsAt" ON public."VolunteerHours" USING btree ("TenantId", "PersonId", "StartsAt", "EndsAt");
+
+
+--
+-- Name: IX_VolunteerHours_TenantId_ProjectId; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_VolunteerHours_TenantId_ProjectId" ON public."VolunteerHours" USING btree ("TenantId", "ProjectId");
+
+
+--
+-- Name: IX_VolunteerProfiles_PersonId; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_VolunteerProfiles_PersonId" ON public."VolunteerProfiles" USING btree ("PersonId");
+
+
+--
+-- Name: IX_VolunteerProfiles_TenantId_OrgId_UpdatedAt; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_VolunteerProfiles_TenantId_OrgId_UpdatedAt" ON public."VolunteerProfiles" USING btree ("TenantId", "OrgId", "UpdatedAt");
+
+
+--
+-- Name: IX_VolunteerProfiles_TenantId_PersonId; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX "IX_VolunteerProfiles_TenantId_PersonId" ON public."VolunteerProfiles" USING btree ("TenantId", "PersonId");
+
+
+--
+-- Name: IX_VolunteerShifts_TenantId_ActivityId; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_VolunteerShifts_TenantId_ActivityId" ON public."VolunteerShifts" USING btree ("TenantId", "ActivityId");
+
+
+--
+-- Name: IX_VolunteerShifts_TenantId_OrgId_UpdatedAt; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_VolunteerShifts_TenantId_OrgId_UpdatedAt" ON public."VolunteerShifts" USING btree ("TenantId", "OrgId", "UpdatedAt");
+
+
+--
+-- Name: IX_VolunteerShifts_TenantId_ProjectId; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX "IX_VolunteerShifts_TenantId_ProjectId" ON public."VolunteerShifts" USING btree ("TenantId", "ProjectId");
+
+
+--
 -- Name: OfficerAppointmentHistory appointment_history_immutable; Type: TRIGGER; Schema: public; Owner: -
 --
 
@@ -3264,10 +6451,101 @@ CREATE TRIGGER appointment_snapshot_integrity BEFORE UPDATE ON public."OfficerAp
 
 
 --
+-- Name: IssuedCertificates certificate_content_immutable; Type: TRIGGER; Schema: public; Owner: -
+--
+
+CREATE TRIGGER certificate_content_immutable BEFORE UPDATE ON public."IssuedCertificates" FOR EACH ROW EXECUTE FUNCTION public.guard_issued_certificate();
+
+
+--
 -- Name: CommitteeActivities committee_activity_immutable; Type: TRIGGER; Schema: public; Owner: -
 --
 
 CREATE TRIGGER committee_activity_immutable BEFORE DELETE OR UPDATE ON public."CommitteeActivities" FOR EACH ROW EXECUTE FUNCTION public.clubs_membership_history_guard();
+
+
+--
+-- Name: CommunicationBroadcasts communication_broadcast_immutable; Type: TRIGGER; Schema: public; Owner: -
+--
+
+CREATE TRIGGER communication_broadcast_immutable BEFORE UPDATE ON public."CommunicationBroadcasts" FOR EACH ROW EXECUTE FUNCTION public.clubs_communication_broadcast_guard();
+
+
+--
+-- Name: CommunicationRecipients communication_recipient_immutable; Type: TRIGGER; Schema: public; Owner: -
+--
+
+CREATE TRIGGER communication_recipient_immutable BEFORE UPDATE ON public."CommunicationRecipients" FOR EACH ROW EXECUTE FUNCTION public.clubs_communication_recipient_guard();
+
+
+--
+-- Name: CommunicationRevisions communication_revision_immutable; Type: TRIGGER; Schema: public; Owner: -
+--
+
+CREATE TRIGGER communication_revision_immutable BEFORE DELETE OR UPDATE ON public."CommunicationRevisions" FOR EACH ROW EXECUTE FUNCTION public.clubs_communication_revision_guard();
+
+
+--
+-- Name: EventSessionBookings event_booking_session_link; Type: TRIGGER; Schema: public; Owner: -
+--
+
+CREATE TRIGGER event_booking_session_link BEFORE INSERT OR UPDATE ON public."EventSessionBookings" FOR EACH ROW EXECUTE FUNCTION public.clubs_event_session_guard();
+
+
+--
+-- Name: EventCheckins event_checkin_link; Type: TRIGGER; Schema: public; Owner: -
+--
+
+CREATE TRIGGER event_checkin_link BEFORE INSERT OR UPDATE ON public."EventCheckins" FOR EACH ROW EXECUTE FUNCTION public.clubs_event_link_guard();
+
+
+--
+-- Name: EventCheckins event_checkin_session_link; Type: TRIGGER; Schema: public; Owner: -
+--
+
+CREATE TRIGGER event_checkin_session_link BEFORE INSERT OR UPDATE ON public."EventCheckins" FOR EACH ROW EXECUTE FUNCTION public.clubs_event_session_guard();
+
+
+--
+-- Name: EventRegistrations event_registration_audit; Type: TRIGGER; Schema: public; Owner: -
+--
+
+CREATE TRIGGER event_registration_audit AFTER INSERT OR UPDATE ON public."EventRegistrations" FOR EACH ROW EXECUTE FUNCTION public.clubs_event_registration_audit();
+
+
+--
+-- Name: EventRegistrations event_registration_capacity; Type: TRIGGER; Schema: public; Owner: -
+--
+
+CREATE TRIGGER event_registration_capacity BEFORE INSERT OR UPDATE ON public."EventRegistrations" FOR EACH ROW EXECUTE FUNCTION public.clubs_event_registration_guard();
+
+
+--
+-- Name: EventRsvpHistory event_rsvp_history_immutable; Type: TRIGGER; Schema: public; Owner: -
+--
+
+CREATE TRIGGER event_rsvp_history_immutable BEFORE DELETE OR UPDATE ON public."EventRsvpHistory" FOR EACH ROW EXECUTE FUNCTION public.clubs_membership_history_guard();
+
+
+--
+-- Name: EventSessionBookings event_session_booking_link; Type: TRIGGER; Schema: public; Owner: -
+--
+
+CREATE TRIGGER event_session_booking_link BEFORE INSERT OR UPDATE ON public."EventSessionBookings" FOR EACH ROW EXECUTE FUNCTION public.clubs_event_link_guard();
+
+
+--
+-- Name: Events event_state_audit; Type: TRIGGER; Schema: public; Owner: -
+--
+
+CREATE TRIGGER event_state_audit AFTER UPDATE ON public."Events" FOR EACH ROW EXECUTE FUNCTION public.clubs_event_state_audit();
+
+
+--
+-- Name: EventTickets event_ticket_link; Type: TRIGGER; Schema: public; Owner: -
+--
+
+CREATE TRIGGER event_ticket_link BEFORE INSERT OR UPDATE ON public."EventTickets" FOR EACH ROW EXECUTE FUNCTION public.clubs_event_link_guard();
 
 
 --
@@ -3299,10 +6577,24 @@ CREATE TRIGGER membership_integrity_guard BEFORE INSERT OR UPDATE ON public."Mem
 
 
 --
+-- Name: MeetingMinutes minutes_body_immutable; Type: TRIGGER; Schema: public; Owner: -
+--
+
+CREATE TRIGGER minutes_body_immutable BEFORE UPDATE ON public."MeetingMinutes" FOR EACH ROW EXECUTE FUNCTION public.guard_minutes_body();
+
+
+--
 -- Name: Assignments office_assignment_integrity; Type: TRIGGER; Schema: public; Owner: -
 --
 
 CREATE TRIGGER office_assignment_integrity BEFORE INSERT OR UPDATE ON public."Assignments" FOR EACH ROW EXECUTE FUNCTION public.clubs_office_assignment_guard();
+
+
+--
+-- Name: OperationRevisions operation_history_immutable; Type: TRIGGER; Schema: public; Owner: -
+--
+
+CREATE TRIGGER operation_history_immutable BEFORE DELETE OR UPDATE ON public."OperationRevisions" FOR EACH ROW EXECUTE FUNCTION public.guard_operation_history();
 
 
 --
@@ -3396,11 +6688,67 @@ ALTER TABLE ONLY public."Associations"
 
 
 --
+-- Name: CertificateTemplates FK_CertificateTemplates_Associations_TenantId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."CertificateTemplates"
+    ADD CONSTRAINT "FK_CertificateTemplates_Associations_TenantId" FOREIGN KEY ("TenantId") REFERENCES public."Associations"("Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: CertificateTemplates FK_CertificateTemplates_Orgs_TenantId_OrgId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."CertificateTemplates"
+    ADD CONSTRAINT "FK_CertificateTemplates_Orgs_TenantId_OrgId" FOREIGN KEY ("TenantId", "OrgId") REFERENCES public."Orgs"("TenantId", "Id") ON DELETE RESTRICT;
+
+
+--
 -- Name: ClubHealthConfigurations FK_ClubHealthConfigurations_Associations_TenantId; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public."ClubHealthConfigurations"
     ADD CONSTRAINT "FK_ClubHealthConfigurations_Associations_TenantId" FOREIGN KEY ("TenantId") REFERENCES public."Associations"("Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: ClubMeetings FK_ClubMeetings_Associations_TenantId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."ClubMeetings"
+    ADD CONSTRAINT "FK_ClubMeetings_Associations_TenantId" FOREIGN KEY ("TenantId") REFERENCES public."Associations"("Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: ClubMeetings FK_ClubMeetings_Committees_TenantId_CommitteeId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."ClubMeetings"
+    ADD CONSTRAINT "FK_ClubMeetings_Committees_TenantId_CommitteeId" FOREIGN KEY ("TenantId", "CommitteeId") REFERENCES public."Committees"("TenantId", "Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: ClubMeetings FK_ClubMeetings_EventSessions_TenantId_SessionId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."ClubMeetings"
+    ADD CONSTRAINT "FK_ClubMeetings_EventSessions_TenantId_SessionId" FOREIGN KEY ("TenantId", "SessionId") REFERENCES public."EventSessions"("TenantId", "Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: ClubMeetings FK_ClubMeetings_Events_TenantId_EventId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."ClubMeetings"
+    ADD CONSTRAINT "FK_ClubMeetings_Events_TenantId_EventId" FOREIGN KEY ("TenantId", "EventId") REFERENCES public."Events"("TenantId", "Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: ClubMeetings FK_ClubMeetings_Orgs_TenantId_OrgId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."ClubMeetings"
+    ADD CONSTRAINT "FK_ClubMeetings_Orgs_TenantId_OrgId" FOREIGN KEY ("TenantId", "OrgId") REFERENCES public."Orgs"("TenantId", "Id") ON DELETE RESTRICT;
 
 
 --
@@ -3476,6 +6824,366 @@ ALTER TABLE ONLY public."Committees"
 
 
 --
+-- Name: CommunicationAccounts FK_CommunicationAccounts_Associations_TenantId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."CommunicationAccounts"
+    ADD CONSTRAINT "FK_CommunicationAccounts_Associations_TenantId" FOREIGN KEY ("TenantId") REFERENCES public."Associations"("Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: CommunicationAccounts FK_CommunicationAccounts_Orgs_TenantId_OrgId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."CommunicationAccounts"
+    ADD CONSTRAINT "FK_CommunicationAccounts_Orgs_TenantId_OrgId" FOREIGN KEY ("TenantId", "OrgId") REFERENCES public."Orgs"("TenantId", "Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: CommunicationAttachments FK_CommunicationAttachments_Associations_TenantId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."CommunicationAttachments"
+    ADD CONSTRAINT "FK_CommunicationAttachments_Associations_TenantId" FOREIGN KEY ("TenantId") REFERENCES public."Associations"("Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: CommunicationAttachments FK_CommunicationAttachments_CommunicationAccounts_TenantId_Pro~; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."CommunicationAttachments"
+    ADD CONSTRAINT "FK_CommunicationAttachments_CommunicationAccounts_TenantId_Pro~" FOREIGN KEY ("TenantId", "ProviderAccountId") REFERENCES public."CommunicationAccounts"("TenantId", "Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: CommunicationAttachments FK_CommunicationAttachments_CommunicationMessages_TenantId_Mes~; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."CommunicationAttachments"
+    ADD CONSTRAINT "FK_CommunicationAttachments_CommunicationMessages_TenantId_Mes~" FOREIGN KEY ("TenantId", "MessageId") REFERENCES public."CommunicationMessages"("TenantId", "Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: CommunicationAudiences FK_CommunicationAudiences_Associations_TenantId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."CommunicationAudiences"
+    ADD CONSTRAINT "FK_CommunicationAudiences_Associations_TenantId" FOREIGN KEY ("TenantId") REFERENCES public."Associations"("Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: CommunicationAudiences FK_CommunicationAudiences_Orgs_TenantId_OrgId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."CommunicationAudiences"
+    ADD CONSTRAINT "FK_CommunicationAudiences_Orgs_TenantId_OrgId" FOREIGN KEY ("TenantId", "OrgId") REFERENCES public."Orgs"("TenantId", "Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: CommunicationAutomations FK_CommunicationAutomations_Associations_TenantId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."CommunicationAutomations"
+    ADD CONSTRAINT "FK_CommunicationAutomations_Associations_TenantId" FOREIGN KEY ("TenantId") REFERENCES public."Associations"("Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: CommunicationAutomations FK_CommunicationAutomations_CommunicationAccounts_TenantId_Acc~; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."CommunicationAutomations"
+    ADD CONSTRAINT "FK_CommunicationAutomations_CommunicationAccounts_TenantId_Acc~" FOREIGN KEY ("TenantId", "AccountId") REFERENCES public."CommunicationAccounts"("TenantId", "Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: CommunicationAutomations FK_CommunicationAutomations_CommunicationTemplates_TenantId_Te~; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."CommunicationAutomations"
+    ADD CONSTRAINT "FK_CommunicationAutomations_CommunicationTemplates_TenantId_Te~" FOREIGN KEY ("TenantId", "TemplateId") REFERENCES public."CommunicationTemplates"("TenantId", "Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: CommunicationAutomations FK_CommunicationAutomations_GovernanceRequests_TenantId_Approv~; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."CommunicationAutomations"
+    ADD CONSTRAINT "FK_CommunicationAutomations_GovernanceRequests_TenantId_Approv~" FOREIGN KEY ("TenantId", "ApprovalRequestId") REFERENCES public."GovernanceRequests"("TenantId", "Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: CommunicationAutomations FK_CommunicationAutomations_Orgs_TenantId_OrgId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."CommunicationAutomations"
+    ADD CONSTRAINT "FK_CommunicationAutomations_Orgs_TenantId_OrgId" FOREIGN KEY ("TenantId", "OrgId") REFERENCES public."Orgs"("TenantId", "Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: CommunicationBroadcasts FK_CommunicationBroadcasts_Associations_TenantId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."CommunicationBroadcasts"
+    ADD CONSTRAINT "FK_CommunicationBroadcasts_Associations_TenantId" FOREIGN KEY ("TenantId") REFERENCES public."Associations"("Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: CommunicationBroadcasts FK_CommunicationBroadcasts_CommunicationAccounts_TenantId_Acco~; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."CommunicationBroadcasts"
+    ADD CONSTRAINT "FK_CommunicationBroadcasts_CommunicationAccounts_TenantId_Acco~" FOREIGN KEY ("TenantId", "AccountId") REFERENCES public."CommunicationAccounts"("TenantId", "Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: CommunicationBroadcasts FK_CommunicationBroadcasts_CommunicationTemplates_TenantId_Tem~; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."CommunicationBroadcasts"
+    ADD CONSTRAINT "FK_CommunicationBroadcasts_CommunicationTemplates_TenantId_Tem~" FOREIGN KEY ("TenantId", "TemplateId") REFERENCES public."CommunicationTemplates"("TenantId", "Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: CommunicationBroadcasts FK_CommunicationBroadcasts_Events_TenantId_EventId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."CommunicationBroadcasts"
+    ADD CONSTRAINT "FK_CommunicationBroadcasts_Events_TenantId_EventId" FOREIGN KEY ("TenantId", "EventId") REFERENCES public."Events"("TenantId", "Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: CommunicationBroadcasts FK_CommunicationBroadcasts_GovernanceRequests_TenantId_Approva~; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."CommunicationBroadcasts"
+    ADD CONSTRAINT "FK_CommunicationBroadcasts_GovernanceRequests_TenantId_Approva~" FOREIGN KEY ("TenantId", "ApprovalRequestId") REFERENCES public."GovernanceRequests"("TenantId", "Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: CommunicationBroadcasts FK_CommunicationBroadcasts_Orgs_TenantId_OrgId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."CommunicationBroadcasts"
+    ADD CONSTRAINT "FK_CommunicationBroadcasts_Orgs_TenantId_OrgId" FOREIGN KEY ("TenantId", "OrgId") REFERENCES public."Orgs"("TenantId", "Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: CommunicationExecutions FK_CommunicationExecutions_Associations_TenantId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."CommunicationExecutions"
+    ADD CONSTRAINT "FK_CommunicationExecutions_Associations_TenantId" FOREIGN KEY ("TenantId") REFERENCES public."Associations"("Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: CommunicationExecutions FK_CommunicationExecutions_CommunicationAutomations_TenantId_A~; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."CommunicationExecutions"
+    ADD CONSTRAINT "FK_CommunicationExecutions_CommunicationAutomations_TenantId_A~" FOREIGN KEY ("TenantId", "AutomationId") REFERENCES public."CommunicationAutomations"("TenantId", "Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: CommunicationMessages FK_CommunicationMessages_Associations_TenantId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."CommunicationMessages"
+    ADD CONSTRAINT "FK_CommunicationMessages_Associations_TenantId" FOREIGN KEY ("TenantId") REFERENCES public."Associations"("Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: CommunicationMessages FK_CommunicationMessages_CommunicationBroadcasts_TenantId_Broa~; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."CommunicationMessages"
+    ADD CONSTRAINT "FK_CommunicationMessages_CommunicationBroadcasts_TenantId_Broa~" FOREIGN KEY ("TenantId", "BroadcastId") REFERENCES public."CommunicationBroadcasts"("TenantId", "Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: CommunicationMessages FK_CommunicationMessages_Conversations_TenantId_ConversationId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."CommunicationMessages"
+    ADD CONSTRAINT "FK_CommunicationMessages_Conversations_TenantId_ConversationId" FOREIGN KEY ("TenantId", "ConversationId") REFERENCES public."Conversations"("TenantId", "Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: CommunicationMessages FK_CommunicationMessages_Orgs_TenantId_OrgId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."CommunicationMessages"
+    ADD CONSTRAINT "FK_CommunicationMessages_Orgs_TenantId_OrgId" FOREIGN KEY ("TenantId", "OrgId") REFERENCES public."Orgs"("TenantId", "Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: CommunicationPolicies FK_CommunicationPolicies_Associations_TenantId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."CommunicationPolicies"
+    ADD CONSTRAINT "FK_CommunicationPolicies_Associations_TenantId" FOREIGN KEY ("TenantId") REFERENCES public."Associations"("Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: CommunicationPolicies FK_CommunicationPolicies_Orgs_TenantId_OrgId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."CommunicationPolicies"
+    ADD CONSTRAINT "FK_CommunicationPolicies_Orgs_TenantId_OrgId" FOREIGN KEY ("TenantId", "OrgId") REFERENCES public."Orgs"("TenantId", "Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: CommunicationPreferences FK_CommunicationPreferences_UserProfiles_UserId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."CommunicationPreferences"
+    ADD CONSTRAINT "FK_CommunicationPreferences_UserProfiles_UserId" FOREIGN KEY ("UserId") REFERENCES public."UserProfiles"("Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: CommunicationProviderEvents FK_CommunicationProviderEvents_Associations_TenantId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."CommunicationProviderEvents"
+    ADD CONSTRAINT "FK_CommunicationProviderEvents_Associations_TenantId" FOREIGN KEY ("TenantId") REFERENCES public."Associations"("Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: CommunicationProviderEvents FK_CommunicationProviderEvents_CommunicationAccounts_TenantId_~; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."CommunicationProviderEvents"
+    ADD CONSTRAINT "FK_CommunicationProviderEvents_CommunicationAccounts_TenantId_~" FOREIGN KEY ("TenantId", "AccountId") REFERENCES public."CommunicationAccounts"("TenantId", "Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: CommunicationRecipients FK_CommunicationRecipients_Associations_TenantId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."CommunicationRecipients"
+    ADD CONSTRAINT "FK_CommunicationRecipients_Associations_TenantId" FOREIGN KEY ("TenantId") REFERENCES public."Associations"("Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: CommunicationRecipients FK_CommunicationRecipients_CommunicationBroadcasts_TenantId_Br~; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."CommunicationRecipients"
+    ADD CONSTRAINT "FK_CommunicationRecipients_CommunicationBroadcasts_TenantId_Br~" FOREIGN KEY ("TenantId", "BroadcastId") REFERENCES public."CommunicationBroadcasts"("TenantId", "Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: CommunicationRecipients FK_CommunicationRecipients_Persons_PersonId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."CommunicationRecipients"
+    ADD CONSTRAINT "FK_CommunicationRecipients_Persons_PersonId" FOREIGN KEY ("PersonId") REFERENCES public."Persons"("Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: CommunicationRevisions FK_CommunicationRevisions_Associations_TenantId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."CommunicationRevisions"
+    ADD CONSTRAINT "FK_CommunicationRevisions_Associations_TenantId" FOREIGN KEY ("TenantId") REFERENCES public."Associations"("Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: CommunicationSuppressions FK_CommunicationSuppressions_Associations_TenantId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."CommunicationSuppressions"
+    ADD CONSTRAINT "FK_CommunicationSuppressions_Associations_TenantId" FOREIGN KEY ("TenantId") REFERENCES public."Associations"("Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: CommunicationTemplates FK_CommunicationTemplates_Associations_TenantId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."CommunicationTemplates"
+    ADD CONSTRAINT "FK_CommunicationTemplates_Associations_TenantId" FOREIGN KEY ("TenantId") REFERENCES public."Associations"("Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: CommunicationTemplates FK_CommunicationTemplates_CommunicationAccounts_TenantId_Accou~; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."CommunicationTemplates"
+    ADD CONSTRAINT "FK_CommunicationTemplates_CommunicationAccounts_TenantId_Accou~" FOREIGN KEY ("TenantId", "AccountId") REFERENCES public."CommunicationAccounts"("TenantId", "Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: CommunicationTemplates FK_CommunicationTemplates_Orgs_TenantId_OrgId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."CommunicationTemplates"
+    ADD CONSTRAINT "FK_CommunicationTemplates_Orgs_TenantId_OrgId" FOREIGN KEY ("TenantId", "OrgId") REFERENCES public."Orgs"("TenantId", "Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: ConversationParticipants FK_ConversationParticipants_Associations_TenantId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."ConversationParticipants"
+    ADD CONSTRAINT "FK_ConversationParticipants_Associations_TenantId" FOREIGN KEY ("TenantId") REFERENCES public."Associations"("Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: ConversationParticipants FK_ConversationParticipants_Conversations_TenantId_Conversatio~; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."ConversationParticipants"
+    ADD CONSTRAINT "FK_ConversationParticipants_Conversations_TenantId_Conversatio~" FOREIGN KEY ("TenantId", "ConversationId") REFERENCES public."Conversations"("TenantId", "Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: ConversationParticipants FK_ConversationParticipants_UserProfiles_UserId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."ConversationParticipants"
+    ADD CONSTRAINT "FK_ConversationParticipants_UserProfiles_UserId" FOREIGN KEY ("UserId") REFERENCES public."UserProfiles"("Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: Conversations FK_Conversations_Associations_TenantId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."Conversations"
+    ADD CONSTRAINT "FK_Conversations_Associations_TenantId" FOREIGN KEY ("TenantId") REFERENCES public."Associations"("Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: Conversations FK_Conversations_Committees_TenantId_CommitteeId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."Conversations"
+    ADD CONSTRAINT "FK_Conversations_Committees_TenantId_CommitteeId" FOREIGN KEY ("TenantId", "CommitteeId") REFERENCES public."Committees"("TenantId", "Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: Conversations FK_Conversations_CommunicationAccounts_TenantId_AccountId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."Conversations"
+    ADD CONSTRAINT "FK_Conversations_CommunicationAccounts_TenantId_AccountId" FOREIGN KEY ("TenantId", "AccountId") REFERENCES public."CommunicationAccounts"("TenantId", "Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: Conversations FK_Conversations_Events_TenantId_EventId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."Conversations"
+    ADD CONSTRAINT "FK_Conversations_Events_TenantId_EventId" FOREIGN KEY ("TenantId", "EventId") REFERENCES public."Events"("TenantId", "Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: Conversations FK_Conversations_Orgs_TenantId_OrgId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."Conversations"
+    ADD CONSTRAINT "FK_Conversations_Orgs_TenantId_OrgId" FOREIGN KEY ("TenantId", "OrgId") REFERENCES public."Orgs"("TenantId", "Id") ON DELETE RESTRICT;
+
+
+--
 -- Name: DigitalCardVerifications FK_DigitalCardVerifications_DigitalCards_CardId; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -3497,6 +7205,462 @@ ALTER TABLE ONLY public."DigitalCards"
 
 ALTER TABLE ONLY public."DigitalCards"
     ADD CONSTRAINT "FK_DigitalCards_Memberships_TenantId_MembershipId" FOREIGN KEY ("TenantId", "MembershipId") REFERENCES public."Memberships"("TenantId", "Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: DocumentVersions FK_DocumentVersions_Associations_TenantId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."DocumentVersions"
+    ADD CONSTRAINT "FK_DocumentVersions_Associations_TenantId" FOREIGN KEY ("TenantId") REFERENCES public."Associations"("Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: DocumentVersions FK_DocumentVersions_GovernanceDocuments_TenantId_DocumentId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."DocumentVersions"
+    ADD CONSTRAINT "FK_DocumentVersions_GovernanceDocuments_TenantId_DocumentId" FOREIGN KEY ("TenantId", "DocumentId") REFERENCES public."GovernanceDocuments"("TenantId", "Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: DocumentVersions FK_DocumentVersions_Orgs_TenantId_OrgId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."DocumentVersions"
+    ADD CONSTRAINT "FK_DocumentVersions_Orgs_TenantId_OrgId" FOREIGN KEY ("TenantId", "OrgId") REFERENCES public."Orgs"("TenantId", "Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: EventAudiences FK_EventAudiences_Associations_TenantId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."EventAudiences"
+    ADD CONSTRAINT "FK_EventAudiences_Associations_TenantId" FOREIGN KEY ("TenantId") REFERENCES public."Associations"("Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: EventAudiences FK_EventAudiences_Committees_TenantId_CommitteeId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."EventAudiences"
+    ADD CONSTRAINT "FK_EventAudiences_Committees_TenantId_CommitteeId" FOREIGN KEY ("TenantId", "CommitteeId") REFERENCES public."Committees"("TenantId", "Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: EventAudiences FK_EventAudiences_Events_TenantId_EventId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."EventAudiences"
+    ADD CONSTRAINT "FK_EventAudiences_Events_TenantId_EventId" FOREIGN KEY ("TenantId", "EventId") REFERENCES public."Events"("TenantId", "Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: EventAudiences FK_EventAudiences_MembershipCategories_TenantId_CategoryId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."EventAudiences"
+    ADD CONSTRAINT "FK_EventAudiences_MembershipCategories_TenantId_CategoryId" FOREIGN KEY ("TenantId", "CategoryId") REFERENCES public."MembershipCategories"("TenantId", "Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: EventAudiences FK_EventAudiences_Orgs_TenantId_OrgId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."EventAudiences"
+    ADD CONSTRAINT "FK_EventAudiences_Orgs_TenantId_OrgId" FOREIGN KEY ("TenantId", "OrgId") REFERENCES public."Orgs"("TenantId", "Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: EventAudiences FK_EventAudiences_Persons_PersonId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."EventAudiences"
+    ADD CONSTRAINT "FK_EventAudiences_Persons_PersonId" FOREIGN KEY ("PersonId") REFERENCES public."Persons"("Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: EventAudiences FK_EventAudiences_Roles_TenantId_RoleId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."EventAudiences"
+    ADD CONSTRAINT "FK_EventAudiences_Roles_TenantId_RoleId" FOREIGN KEY ("TenantId", "RoleId") REFERENCES public."Roles"("TenantId", "Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: EventCheckins FK_EventCheckins_Associations_TenantId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."EventCheckins"
+    ADD CONSTRAINT "FK_EventCheckins_Associations_TenantId" FOREIGN KEY ("TenantId") REFERENCES public."Associations"("Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: EventCheckins FK_EventCheckins_EventRegistrations_TenantId_RegistrationId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."EventCheckins"
+    ADD CONSTRAINT "FK_EventCheckins_EventRegistrations_TenantId_RegistrationId" FOREIGN KEY ("TenantId", "RegistrationId") REFERENCES public."EventRegistrations"("TenantId", "Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: EventCheckins FK_EventCheckins_EventSessions_TenantId_SessionId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."EventCheckins"
+    ADD CONSTRAINT "FK_EventCheckins_EventSessions_TenantId_SessionId" FOREIGN KEY ("TenantId", "SessionId") REFERENCES public."EventSessions"("TenantId", "Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: EventCheckins FK_EventCheckins_Events_TenantId_EventId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."EventCheckins"
+    ADD CONSTRAINT "FK_EventCheckins_Events_TenantId_EventId" FOREIGN KEY ("TenantId", "EventId") REFERENCES public."Events"("TenantId", "Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: EventCheckins FK_EventCheckins_UserProfiles_OperatorId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."EventCheckins"
+    ADD CONSTRAINT "FK_EventCheckins_UserProfiles_OperatorId" FOREIGN KEY ("OperatorId") REFERENCES public."UserProfiles"("Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: EventCohosts FK_EventCohosts_Associations_TenantId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."EventCohosts"
+    ADD CONSTRAINT "FK_EventCohosts_Associations_TenantId" FOREIGN KEY ("TenantId") REFERENCES public."Associations"("Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: EventCohosts FK_EventCohosts_Events_TenantId_EventId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."EventCohosts"
+    ADD CONSTRAINT "FK_EventCohosts_Events_TenantId_EventId" FOREIGN KEY ("TenantId", "EventId") REFERENCES public."Events"("TenantId", "Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: EventCohosts FK_EventCohosts_Orgs_TenantId_OrgId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."EventCohosts"
+    ADD CONSTRAINT "FK_EventCohosts_Orgs_TenantId_OrgId" FOREIGN KEY ("TenantId", "OrgId") REFERENCES public."Orgs"("TenantId", "Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: EventFeedbackForms FK_EventFeedbackForms_Associations_TenantId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."EventFeedbackForms"
+    ADD CONSTRAINT "FK_EventFeedbackForms_Associations_TenantId" FOREIGN KEY ("TenantId") REFERENCES public."Associations"("Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: EventFeedbackForms FK_EventFeedbackForms_Events_TenantId_EventId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."EventFeedbackForms"
+    ADD CONSTRAINT "FK_EventFeedbackForms_Events_TenantId_EventId" FOREIGN KEY ("TenantId", "EventId") REFERENCES public."Events"("TenantId", "Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: EventFeedbackResponses FK_EventFeedbackResponses_Associations_TenantId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."EventFeedbackResponses"
+    ADD CONSTRAINT "FK_EventFeedbackResponses_Associations_TenantId" FOREIGN KEY ("TenantId") REFERENCES public."Associations"("Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: EventFeedbackResponses FK_EventFeedbackResponses_EventRegistrations_TenantId_Registra~; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."EventFeedbackResponses"
+    ADD CONSTRAINT "FK_EventFeedbackResponses_EventRegistrations_TenantId_Registra~" FOREIGN KEY ("TenantId", "RegistrationId") REFERENCES public."EventRegistrations"("TenantId", "Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: EventFeedbackResponses FK_EventFeedbackResponses_Events_TenantId_EventId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."EventFeedbackResponses"
+    ADD CONSTRAINT "FK_EventFeedbackResponses_Events_TenantId_EventId" FOREIGN KEY ("TenantId", "EventId") REFERENCES public."Events"("TenantId", "Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: EventInvitations FK_EventInvitations_Associations_TenantId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."EventInvitations"
+    ADD CONSTRAINT "FK_EventInvitations_Associations_TenantId" FOREIGN KEY ("TenantId") REFERENCES public."Associations"("Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: EventInvitations FK_EventInvitations_Events_TenantId_EventId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."EventInvitations"
+    ADD CONSTRAINT "FK_EventInvitations_Events_TenantId_EventId" FOREIGN KEY ("TenantId", "EventId") REFERENCES public."Events"("TenantId", "Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: EventInvitations FK_EventInvitations_Persons_PersonId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."EventInvitations"
+    ADD CONSTRAINT "FK_EventInvitations_Persons_PersonId" FOREIGN KEY ("PersonId") REFERENCES public."Persons"("Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: EventInvitations FK_EventInvitations_UserProfiles_InviterId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."EventInvitations"
+    ADD CONSTRAINT "FK_EventInvitations_UserProfiles_InviterId" FOREIGN KEY ("InviterId") REFERENCES public."UserProfiles"("Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: EventNotices FK_EventNotices_Associations_TenantId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."EventNotices"
+    ADD CONSTRAINT "FK_EventNotices_Associations_TenantId" FOREIGN KEY ("TenantId") REFERENCES public."Associations"("Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: EventNotices FK_EventNotices_Events_TenantId_EventId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."EventNotices"
+    ADD CONSTRAINT "FK_EventNotices_Events_TenantId_EventId" FOREIGN KEY ("TenantId", "EventId") REFERENCES public."Events"("TenantId", "Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: EventRegistrations FK_EventRegistrations_Associations_TenantId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."EventRegistrations"
+    ADD CONSTRAINT "FK_EventRegistrations_Associations_TenantId" FOREIGN KEY ("TenantId") REFERENCES public."Associations"("Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: EventRegistrations FK_EventRegistrations_EventInvitations_TenantId_InvitationId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."EventRegistrations"
+    ADD CONSTRAINT "FK_EventRegistrations_EventInvitations_TenantId_InvitationId" FOREIGN KEY ("TenantId", "InvitationId") REFERENCES public."EventInvitations"("TenantId", "Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: EventRegistrations FK_EventRegistrations_Events_TenantId_EventId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."EventRegistrations"
+    ADD CONSTRAINT "FK_EventRegistrations_Events_TenantId_EventId" FOREIGN KEY ("TenantId", "EventId") REFERENCES public."Events"("TenantId", "Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: EventRegistrations FK_EventRegistrations_GovernanceRequests_TenantId_ApprovalRequ~; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."EventRegistrations"
+    ADD CONSTRAINT "FK_EventRegistrations_GovernanceRequests_TenantId_ApprovalRequ~" FOREIGN KEY ("TenantId", "ApprovalRequestId") REFERENCES public."GovernanceRequests"("TenantId", "Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: EventRegistrations FK_EventRegistrations_Memberships_TenantId_MembershipId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."EventRegistrations"
+    ADD CONSTRAINT "FK_EventRegistrations_Memberships_TenantId_MembershipId" FOREIGN KEY ("TenantId", "MembershipId") REFERENCES public."Memberships"("TenantId", "Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: EventRegistrations FK_EventRegistrations_Persons_PersonId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."EventRegistrations"
+    ADD CONSTRAINT "FK_EventRegistrations_Persons_PersonId" FOREIGN KEY ("PersonId") REFERENCES public."Persons"("Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: EventRsvpHistory FK_EventRsvpHistory_Associations_TenantId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."EventRsvpHistory"
+    ADD CONSTRAINT "FK_EventRsvpHistory_Associations_TenantId" FOREIGN KEY ("TenantId") REFERENCES public."Associations"("Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: EventRsvpHistory FK_EventRsvpHistory_EventInvitations_TenantId_InvitationId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."EventRsvpHistory"
+    ADD CONSTRAINT "FK_EventRsvpHistory_EventInvitations_TenantId_InvitationId" FOREIGN KEY ("TenantId", "InvitationId") REFERENCES public."EventInvitations"("TenantId", "Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: EventSavedFilters FK_EventSavedFilters_UserProfiles_UserId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."EventSavedFilters"
+    ADD CONSTRAINT "FK_EventSavedFilters_UserProfiles_UserId" FOREIGN KEY ("UserId") REFERENCES public."UserProfiles"("Id") ON DELETE CASCADE;
+
+
+--
+-- Name: EventSessionBookings FK_EventSessionBookings_Associations_TenantId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."EventSessionBookings"
+    ADD CONSTRAINT "FK_EventSessionBookings_Associations_TenantId" FOREIGN KEY ("TenantId") REFERENCES public."Associations"("Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: EventSessionBookings FK_EventSessionBookings_EventRegistrations_TenantId_Registrati~; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."EventSessionBookings"
+    ADD CONSTRAINT "FK_EventSessionBookings_EventRegistrations_TenantId_Registrati~" FOREIGN KEY ("TenantId", "RegistrationId") REFERENCES public."EventRegistrations"("TenantId", "Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: EventSessionBookings FK_EventSessionBookings_EventSessions_TenantId_SessionId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."EventSessionBookings"
+    ADD CONSTRAINT "FK_EventSessionBookings_EventSessions_TenantId_SessionId" FOREIGN KEY ("TenantId", "SessionId") REFERENCES public."EventSessions"("TenantId", "Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: EventSessionBookings FK_EventSessionBookings_Events_TenantId_EventId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."EventSessionBookings"
+    ADD CONSTRAINT "FK_EventSessionBookings_Events_TenantId_EventId" FOREIGN KEY ("TenantId", "EventId") REFERENCES public."Events"("TenantId", "Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: EventSessions FK_EventSessions_Associations_TenantId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."EventSessions"
+    ADD CONSTRAINT "FK_EventSessions_Associations_TenantId" FOREIGN KEY ("TenantId") REFERENCES public."Associations"("Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: EventSessions FK_EventSessions_Events_TenantId_EventId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."EventSessions"
+    ADD CONSTRAINT "FK_EventSessions_Events_TenantId_EventId" FOREIGN KEY ("TenantId", "EventId") REFERENCES public."Events"("TenantId", "Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: EventStaff FK_EventStaff_Associations_TenantId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."EventStaff"
+    ADD CONSTRAINT "FK_EventStaff_Associations_TenantId" FOREIGN KEY ("TenantId") REFERENCES public."Associations"("Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: EventStaff FK_EventStaff_Events_TenantId_EventId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."EventStaff"
+    ADD CONSTRAINT "FK_EventStaff_Events_TenantId_EventId" FOREIGN KEY ("TenantId", "EventId") REFERENCES public."Events"("TenantId", "Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: EventStaff FK_EventStaff_Persons_PersonId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."EventStaff"
+    ADD CONSTRAINT "FK_EventStaff_Persons_PersonId" FOREIGN KEY ("PersonId") REFERENCES public."Persons"("Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: EventTickets FK_EventTickets_Associations_TenantId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."EventTickets"
+    ADD CONSTRAINT "FK_EventTickets_Associations_TenantId" FOREIGN KEY ("TenantId") REFERENCES public."Associations"("Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: EventTickets FK_EventTickets_EventRegistrations_TenantId_RegistrationId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."EventTickets"
+    ADD CONSTRAINT "FK_EventTickets_EventRegistrations_TenantId_RegistrationId" FOREIGN KEY ("TenantId", "RegistrationId") REFERENCES public."EventRegistrations"("TenantId", "Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: EventTickets FK_EventTickets_Events_TenantId_EventId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."EventTickets"
+    ADD CONSTRAINT "FK_EventTickets_Events_TenantId_EventId" FOREIGN KEY ("TenantId", "EventId") REFERENCES public."Events"("TenantId", "Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: EventTypes FK_EventTypes_Associations_TenantId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."EventTypes"
+    ADD CONSTRAINT "FK_EventTypes_Associations_TenantId" FOREIGN KEY ("TenantId") REFERENCES public."Associations"("Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: Events FK_Events_Associations_TenantId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."Events"
+    ADD CONSTRAINT "FK_Events_Associations_TenantId" FOREIGN KEY ("TenantId") REFERENCES public."Associations"("Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: Events FK_Events_Committees_TenantId_CommitteeId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."Events"
+    ADD CONSTRAINT "FK_Events_Committees_TenantId_CommitteeId" FOREIGN KEY ("TenantId", "CommitteeId") REFERENCES public."Committees"("TenantId", "Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: Events FK_Events_EventTypes_TenantId_TypeId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."Events"
+    ADD CONSTRAINT "FK_Events_EventTypes_TenantId_TypeId" FOREIGN KEY ("TenantId", "TypeId") REFERENCES public."EventTypes"("TenantId", "Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: Events FK_Events_GovernanceRequests_TenantId_ApprovalRequestId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."Events"
+    ADD CONSTRAINT "FK_Events_GovernanceRequests_TenantId_ApprovalRequestId" FOREIGN KEY ("TenantId", "ApprovalRequestId") REFERENCES public."GovernanceRequests"("TenantId", "Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: Events FK_Events_Orgs_TenantId_OrgId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."Events"
+    ADD CONSTRAINT "FK_Events_Orgs_TenantId_OrgId" FOREIGN KEY ("TenantId", "OrgId") REFERENCES public."Orgs"("TenantId", "Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: Events FK_Events_UserProfiles_CreatorId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."Events"
+    ADD CONSTRAINT "FK_Events_UserProfiles_CreatorId" FOREIGN KEY ("CreatorId") REFERENCES public."UserProfiles"("Id") ON DELETE RESTRICT;
 
 
 --
@@ -3537,6 +7701,14 @@ ALTER TABLE ONLY public."GovernanceDocuments"
 
 ALTER TABLE ONLY public."GovernanceDocuments"
     ADD CONSTRAINT "FK_GovernanceDocuments_Committees_TenantId_CommitteeId" FOREIGN KEY ("TenantId", "CommitteeId") REFERENCES public."Committees"("TenantId", "Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: GovernanceDocuments FK_GovernanceDocuments_Events_TenantId_EventId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."GovernanceDocuments"
+    ADD CONSTRAINT "FK_GovernanceDocuments_Events_TenantId_EventId" FOREIGN KEY ("TenantId", "EventId") REFERENCES public."Events"("TenantId", "Id") ON DELETE RESTRICT;
 
 
 --
@@ -3652,6 +7824,54 @@ ALTER TABLE ONLY public."HandoverChecklistItems"
 
 
 --
+-- Name: ImpactMetrics FK_ImpactMetrics_Associations_TenantId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."ImpactMetrics"
+    ADD CONSTRAINT "FK_ImpactMetrics_Associations_TenantId" FOREIGN KEY ("TenantId") REFERENCES public."Associations"("Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: ImpactMetrics FK_ImpactMetrics_Orgs_TenantId_OrgId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."ImpactMetrics"
+    ADD CONSTRAINT "FK_ImpactMetrics_Orgs_TenantId_OrgId" FOREIGN KEY ("TenantId", "OrgId") REFERENCES public."Orgs"("TenantId", "Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: IssuedCertificates FK_IssuedCertificates_Associations_TenantId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."IssuedCertificates"
+    ADD CONSTRAINT "FK_IssuedCertificates_Associations_TenantId" FOREIGN KEY ("TenantId") REFERENCES public."Associations"("Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: IssuedCertificates FK_IssuedCertificates_CertificateTemplates_TenantId_TemplateId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."IssuedCertificates"
+    ADD CONSTRAINT "FK_IssuedCertificates_CertificateTemplates_TenantId_TemplateId" FOREIGN KEY ("TenantId", "TemplateId") REFERENCES public."CertificateTemplates"("TenantId", "Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: IssuedCertificates FK_IssuedCertificates_Orgs_TenantId_OrgId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."IssuedCertificates"
+    ADD CONSTRAINT "FK_IssuedCertificates_Orgs_TenantId_OrgId" FOREIGN KEY ("TenantId", "OrgId") REFERENCES public."Orgs"("TenantId", "Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: IssuedCertificates FK_IssuedCertificates_Persons_PersonId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."IssuedCertificates"
+    ADD CONSTRAINT "FK_IssuedCertificates_Persons_PersonId" FOREIGN KEY ("PersonId") REFERENCES public."Persons"("Id") ON DELETE RESTRICT;
+
+
+--
 -- Name: LeadershipHandovers FK_LeadershipHandovers_Associations_TenantId; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -3724,11 +7944,91 @@ ALTER TABLE ONLY public."MailDeliveryAttempts"
 
 
 --
+-- Name: Mails FK_Mails_CommunicationAccounts_TenantId_AccountId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."Mails"
+    ADD CONSTRAINT "FK_Mails_CommunicationAccounts_TenantId_AccountId" FOREIGN KEY ("TenantId", "AccountId") REFERENCES public."CommunicationAccounts"("TenantId", "Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: Mails FK_Mails_CommunicationMessages_TenantId_CommunicationId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."Mails"
+    ADD CONSTRAINT "FK_Mails_CommunicationMessages_TenantId_CommunicationId" FOREIGN KEY ("TenantId", "CommunicationId") REFERENCES public."CommunicationMessages"("TenantId", "Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: Mails FK_Mails_Events_TenantId_EventId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."Mails"
+    ADD CONSTRAINT "FK_Mails_Events_TenantId_EventId" FOREIGN KEY ("TenantId", "EventId") REFERENCES public."Events"("TenantId", "Id") ON DELETE RESTRICT;
+
+
+--
 -- Name: Mails FK_Mails_UserProfiles_UserId; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public."Mails"
     ADD CONSTRAINT "FK_Mails_UserProfiles_UserId" FOREIGN KEY ("UserId") REFERENCES public."UserProfiles"("Id") ON DELETE CASCADE;
+
+
+--
+-- Name: MeetingAttendances FK_MeetingAttendances_Associations_TenantId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."MeetingAttendances"
+    ADD CONSTRAINT "FK_MeetingAttendances_Associations_TenantId" FOREIGN KEY ("TenantId") REFERENCES public."Associations"("Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: MeetingAttendances FK_MeetingAttendances_ClubMeetings_TenantId_MeetingId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."MeetingAttendances"
+    ADD CONSTRAINT "FK_MeetingAttendances_ClubMeetings_TenantId_MeetingId" FOREIGN KEY ("TenantId", "MeetingId") REFERENCES public."ClubMeetings"("TenantId", "Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: MeetingAttendances FK_MeetingAttendances_Orgs_TenantId_OrgId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."MeetingAttendances"
+    ADD CONSTRAINT "FK_MeetingAttendances_Orgs_TenantId_OrgId" FOREIGN KEY ("TenantId", "OrgId") REFERENCES public."Orgs"("TenantId", "Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: MeetingAttendances FK_MeetingAttendances_Persons_PersonId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."MeetingAttendances"
+    ADD CONSTRAINT "FK_MeetingAttendances_Persons_PersonId" FOREIGN KEY ("PersonId") REFERENCES public."Persons"("Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: MeetingMinutes FK_MeetingMinutes_Associations_TenantId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."MeetingMinutes"
+    ADD CONSTRAINT "FK_MeetingMinutes_Associations_TenantId" FOREIGN KEY ("TenantId") REFERENCES public."Associations"("Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: MeetingMinutes FK_MeetingMinutes_ClubMeetings_TenantId_MeetingId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."MeetingMinutes"
+    ADD CONSTRAINT "FK_MeetingMinutes_ClubMeetings_TenantId_MeetingId" FOREIGN KEY ("TenantId", "MeetingId") REFERENCES public."ClubMeetings"("TenantId", "Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: MeetingMinutes FK_MeetingMinutes_Orgs_TenantId_OrgId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."MeetingMinutes"
+    ADD CONSTRAINT "FK_MeetingMinutes_Orgs_TenantId_OrgId" FOREIGN KEY ("TenantId", "OrgId") REFERENCES public."Orgs"("TenantId", "Id") ON DELETE RESTRICT;
 
 
 --
@@ -4260,6 +8560,62 @@ ALTER TABLE ONLY public."OfficerPositions"
 
 
 --
+-- Name: OperationComments FK_OperationComments_Associations_TenantId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."OperationComments"
+    ADD CONSTRAINT "FK_OperationComments_Associations_TenantId" FOREIGN KEY ("TenantId") REFERENCES public."Associations"("Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: OperationComments FK_OperationComments_OperationTasks_TenantId_TaskId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."OperationComments"
+    ADD CONSTRAINT "FK_OperationComments_OperationTasks_TenantId_TaskId" FOREIGN KEY ("TenantId", "TaskId") REFERENCES public."OperationTasks"("TenantId", "Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: OperationComments FK_OperationComments_Orgs_TenantId_OrgId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."OperationComments"
+    ADD CONSTRAINT "FK_OperationComments_Orgs_TenantId_OrgId" FOREIGN KEY ("TenantId", "OrgId") REFERENCES public."Orgs"("TenantId", "Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: OperationRevisions FK_OperationRevisions_Associations_TenantId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."OperationRevisions"
+    ADD CONSTRAINT "FK_OperationRevisions_Associations_TenantId" FOREIGN KEY ("TenantId") REFERENCES public."Associations"("Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: OperationRevisions FK_OperationRevisions_Orgs_TenantId_OrgId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."OperationRevisions"
+    ADD CONSTRAINT "FK_OperationRevisions_Orgs_TenantId_OrgId" FOREIGN KEY ("TenantId", "OrgId") REFERENCES public."Orgs"("TenantId", "Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: OperationTasks FK_OperationTasks_Associations_TenantId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."OperationTasks"
+    ADD CONSTRAINT "FK_OperationTasks_Associations_TenantId" FOREIGN KEY ("TenantId") REFERENCES public."Associations"("Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: OperationTasks FK_OperationTasks_Orgs_TenantId_OrgId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."OperationTasks"
+    ADD CONSTRAINT "FK_OperationTasks_Orgs_TenantId_OrgId" FOREIGN KEY ("TenantId", "OrgId") REFERENCES public."Orgs"("TenantId", "Id") ON DELETE RESTRICT;
+
+
+--
 -- Name: OrganizationHistory FK_OrganizationHistory_Associations_TenantId; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -4388,6 +8744,86 @@ ALTER TABLE ONLY public."Persons"
 
 
 --
+-- Name: ProjectActivities FK_ProjectActivities_Associations_TenantId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."ProjectActivities"
+    ADD CONSTRAINT "FK_ProjectActivities_Associations_TenantId" FOREIGN KEY ("TenantId") REFERENCES public."Associations"("Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: ProjectActivities FK_ProjectActivities_Orgs_TenantId_OrgId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."ProjectActivities"
+    ADD CONSTRAINT "FK_ProjectActivities_Orgs_TenantId_OrgId" FOREIGN KEY ("TenantId", "OrgId") REFERENCES public."Orgs"("TenantId", "Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: ProjectActivities FK_ProjectActivities_ServiceProjects_TenantId_ProjectId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."ProjectActivities"
+    ADD CONSTRAINT "FK_ProjectActivities_ServiceProjects_TenantId_ProjectId" FOREIGN KEY ("TenantId", "ProjectId") REFERENCES public."ServiceProjects"("TenantId", "Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: ProjectImpacts FK_ProjectImpacts_Associations_TenantId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."ProjectImpacts"
+    ADD CONSTRAINT "FK_ProjectImpacts_Associations_TenantId" FOREIGN KEY ("TenantId") REFERENCES public."Associations"("Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: ProjectImpacts FK_ProjectImpacts_ImpactMetrics_TenantId_MetricId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."ProjectImpacts"
+    ADD CONSTRAINT "FK_ProjectImpacts_ImpactMetrics_TenantId_MetricId" FOREIGN KEY ("TenantId", "MetricId") REFERENCES public."ImpactMetrics"("TenantId", "Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: ProjectImpacts FK_ProjectImpacts_Orgs_TenantId_OrgId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."ProjectImpacts"
+    ADD CONSTRAINT "FK_ProjectImpacts_Orgs_TenantId_OrgId" FOREIGN KEY ("TenantId", "OrgId") REFERENCES public."Orgs"("TenantId", "Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: ProjectImpacts FK_ProjectImpacts_ServiceProjects_TenantId_ProjectId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."ProjectImpacts"
+    ADD CONSTRAINT "FK_ProjectImpacts_ServiceProjects_TenantId_ProjectId" FOREIGN KEY ("TenantId", "ProjectId") REFERENCES public."ServiceProjects"("TenantId", "Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: ProjectOrganizations FK_ProjectOrganizations_Associations_TenantId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."ProjectOrganizations"
+    ADD CONSTRAINT "FK_ProjectOrganizations_Associations_TenantId" FOREIGN KEY ("TenantId") REFERENCES public."Associations"("Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: ProjectOrganizations FK_ProjectOrganizations_Orgs_TenantId_OrgId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."ProjectOrganizations"
+    ADD CONSTRAINT "FK_ProjectOrganizations_Orgs_TenantId_OrgId" FOREIGN KEY ("TenantId", "OrgId") REFERENCES public."Orgs"("TenantId", "Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: ProjectOrganizations FK_ProjectOrganizations_ServiceProjects_TenantId_ProjectId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."ProjectOrganizations"
+    ADD CONSTRAINT "FK_ProjectOrganizations_ServiceProjects_TenantId_ProjectId" FOREIGN KEY ("TenantId", "ProjectId") REFERENCES public."ServiceProjects"("TenantId", "Id") ON DELETE RESTRICT;
+
+
+--
 -- Name: RoleAssignmentHistory FK_RoleAssignmentHistory_Associations_TenantId; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -4436,6 +8872,22 @@ ALTER TABLE ONLY public."Roles"
 
 
 --
+-- Name: ServiceProjects FK_ServiceProjects_Associations_TenantId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."ServiceProjects"
+    ADD CONSTRAINT "FK_ServiceProjects_Associations_TenantId" FOREIGN KEY ("TenantId") REFERENCES public."Associations"("Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: ServiceProjects FK_ServiceProjects_Orgs_TenantId_OrgId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."ServiceProjects"
+    ADD CONSTRAINT "FK_ServiceProjects_Orgs_TenantId_OrgId" FOREIGN KEY ("TenantId", "OrgId") REFERENCES public."Orgs"("TenantId", "Id") ON DELETE RESTRICT;
+
+
+--
 -- Name: Sessions FK_Sessions_UserProfiles_UserId; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -4476,8 +8928,136 @@ ALTER TABLE ONLY public."UserProfiles"
 
 
 --
+-- Name: VolunteerAssignments FK_VolunteerAssignments_Associations_TenantId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."VolunteerAssignments"
+    ADD CONSTRAINT "FK_VolunteerAssignments_Associations_TenantId" FOREIGN KEY ("TenantId") REFERENCES public."Associations"("Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: VolunteerAssignments FK_VolunteerAssignments_Orgs_TenantId_OrgId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."VolunteerAssignments"
+    ADD CONSTRAINT "FK_VolunteerAssignments_Orgs_TenantId_OrgId" FOREIGN KEY ("TenantId", "OrgId") REFERENCES public."Orgs"("TenantId", "Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: VolunteerAssignments FK_VolunteerAssignments_Persons_PersonId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."VolunteerAssignments"
+    ADD CONSTRAINT "FK_VolunteerAssignments_Persons_PersonId" FOREIGN KEY ("PersonId") REFERENCES public."Persons"("Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: VolunteerAssignments FK_VolunteerAssignments_VolunteerShifts_TenantId_ShiftId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."VolunteerAssignments"
+    ADD CONSTRAINT "FK_VolunteerAssignments_VolunteerShifts_TenantId_ShiftId" FOREIGN KEY ("TenantId", "ShiftId") REFERENCES public."VolunteerShifts"("TenantId", "Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: VolunteerHours FK_VolunteerHours_Associations_TenantId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."VolunteerHours"
+    ADD CONSTRAINT "FK_VolunteerHours_Associations_TenantId" FOREIGN KEY ("TenantId") REFERENCES public."Associations"("Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: VolunteerHours FK_VolunteerHours_Orgs_TenantId_OrgId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."VolunteerHours"
+    ADD CONSTRAINT "FK_VolunteerHours_Orgs_TenantId_OrgId" FOREIGN KEY ("TenantId", "OrgId") REFERENCES public."Orgs"("TenantId", "Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: VolunteerHours FK_VolunteerHours_Persons_PersonId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."VolunteerHours"
+    ADD CONSTRAINT "FK_VolunteerHours_Persons_PersonId" FOREIGN KEY ("PersonId") REFERENCES public."Persons"("Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: VolunteerHours FK_VolunteerHours_ServiceProjects_TenantId_ProjectId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."VolunteerHours"
+    ADD CONSTRAINT "FK_VolunteerHours_ServiceProjects_TenantId_ProjectId" FOREIGN KEY ("TenantId", "ProjectId") REFERENCES public."ServiceProjects"("TenantId", "Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: VolunteerHours FK_VolunteerHours_VolunteerAssignments_TenantId_AssignmentId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."VolunteerHours"
+    ADD CONSTRAINT "FK_VolunteerHours_VolunteerAssignments_TenantId_AssignmentId" FOREIGN KEY ("TenantId", "AssignmentId") REFERENCES public."VolunteerAssignments"("TenantId", "Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: VolunteerProfiles FK_VolunteerProfiles_Associations_TenantId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."VolunteerProfiles"
+    ADD CONSTRAINT "FK_VolunteerProfiles_Associations_TenantId" FOREIGN KEY ("TenantId") REFERENCES public."Associations"("Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: VolunteerProfiles FK_VolunteerProfiles_Orgs_TenantId_OrgId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."VolunteerProfiles"
+    ADD CONSTRAINT "FK_VolunteerProfiles_Orgs_TenantId_OrgId" FOREIGN KEY ("TenantId", "OrgId") REFERENCES public."Orgs"("TenantId", "Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: VolunteerProfiles FK_VolunteerProfiles_Persons_PersonId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."VolunteerProfiles"
+    ADD CONSTRAINT "FK_VolunteerProfiles_Persons_PersonId" FOREIGN KEY ("PersonId") REFERENCES public."Persons"("Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: VolunteerShifts FK_VolunteerShifts_Associations_TenantId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."VolunteerShifts"
+    ADD CONSTRAINT "FK_VolunteerShifts_Associations_TenantId" FOREIGN KEY ("TenantId") REFERENCES public."Associations"("Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: VolunteerShifts FK_VolunteerShifts_Orgs_TenantId_OrgId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."VolunteerShifts"
+    ADD CONSTRAINT "FK_VolunteerShifts_Orgs_TenantId_OrgId" FOREIGN KEY ("TenantId", "OrgId") REFERENCES public."Orgs"("TenantId", "Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: VolunteerShifts FK_VolunteerShifts_ProjectActivities_TenantId_ActivityId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."VolunteerShifts"
+    ADD CONSTRAINT "FK_VolunteerShifts_ProjectActivities_TenantId_ActivityId" FOREIGN KEY ("TenantId", "ActivityId") REFERENCES public."ProjectActivities"("TenantId", "Id") ON DELETE RESTRICT;
+
+
+--
+-- Name: VolunteerShifts FK_VolunteerShifts_ServiceProjects_TenantId_ProjectId; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public."VolunteerShifts"
+    ADD CONSTRAINT "FK_VolunteerShifts_ServiceProjects_TenantId_ProjectId" FOREIGN KEY ("TenantId", "ProjectId") REFERENCES public."ServiceProjects"("TenantId", "Id") ON DELETE RESTRICT;
+
+
+--
 -- PostgreSQL database dump complete
 --
 
-\unrestrict yzOab4FQeotcaXOCL30ObxiGuXwnsyTY02ez9J8Xm3jXFk3kfzTKIMPUCcaIW2d
+\unrestrict Ixnd9FHFPWgSBcHYI0zZwsOwJzRTuaL6biXJ1Ikfp0XjF1Sao93HtX4vuCLdaFE
 

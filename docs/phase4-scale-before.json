@@ -1,0 +1,68 @@
+{
+  "counts": {
+    "Persons": 101035,
+    "Memberships": 206038,
+    "Orgs": 10030,
+    "Events": 3,
+    "EventInvitations": 141301,
+    "EventRegistrations": 10100,
+    "EventCheckins": 100
+  },
+  "invitation_batch": {
+    "recipients": 50000,
+    "milliseconds": 10836.61,
+    "recipients_per_second": 4613.99,
+    "idempotent_retry_ms": 174.59,
+    "duplicates": 0,
+    "samples": 1
+  },
+  "registration_load": {
+    "concurrent_workers": 20,
+    "confirmed": 50,
+    "waitlisted": 50,
+    "samples": 100,
+    "p50_ms": 134.2,
+    "p95_ms": 529.58,
+    "p99_ms": 632.43,
+    "errors": 0,
+    "error_rate": 0.0
+  },
+  "checkin_load": {
+    "devices": 20,
+    "distinct_passes": 100,
+    "duplicate_replays_rejected": 20,
+    "samples": 100,
+    "p50_ms": 70.46,
+    "p95_ms": 183.08,
+    "p99_ms": 209.42,
+    "errors": 0,
+    "error_rate": 0.0
+  },
+  "api": {
+    "/events?size=30": {
+      "samples": 50,
+      "p50_ms": 37.97,
+      "p95_ms": 65.37,
+      "p99_ms": 67.56,
+      "errors": 0,
+      "error_rate": 0.0
+    },
+    "/events/{convention}/registrations": {
+      "samples": 50,
+      "p50_ms": 4.53,
+      "p95_ms": 5.77,
+      "p99_ms": 6.67,
+      "errors": 0,
+      "error_rate": 0.0
+    },
+    "/events/{convention}/analytics": {
+      "samples": 50,
+      "p50_ms": 177.65,
+      "p95_ms": 191.6,
+      "p99_ms": 219.75,
+      "errors": 0,
+      "error_rate": 0.0
+    }
+  },
+  "conditions": "Isolated PostgreSQL 17.6 synthetic clone with 100k+ people and 10k+ clubs. 10,000 confirmed convention registrations. Actual API 50,000 invitation fan-out, 100 guest registrations through 20 threads, 100 distinct check-ins through 20 threads and 20 duplicate replays. Sequential reads: 50 warm samples. Event lifecycle setup via explicit benchmark SQL; approval correctness is independently API-tested. No provider delivery or production capacity claim. Queued recipients are persisted, not claimed sent."
+}

@@ -27,7 +27,8 @@ class SMTP(socketserver.StreamRequestHandler):
    else:reply=b'250 OK\r\n'
    self.wfile.write(reply);self.wfile.flush()
 server=socketserver.ThreadingTCPServer(('127.0.0.1',2526),SMTP);threading.Thread(target=server.serve_forever,daemon=True).start()
-env={**os.environ,'ASPNETCORE_ENVIRONMENT':'Development','ConnectionStrings__Database':'Host=127.0.0.1;Port=55432;Database=clubs_test;Username=clubs','ASPNETCORE_URLS':'http://127.0.0.1:5082','Smtp__Host':'127.0.0.1','Smtp__Port':'2526','Smtp__From':'noreply@example.test','Smtp__EnableSsl':'false','PublicOrigin':'http://127.0.0.1:5174'}
+transport_db=os.environ.get('CLUBS_SMTP_DATABASE','clubs_test')
+env={**os.environ,'ASPNETCORE_ENVIRONMENT':'Development','ConnectionStrings__Database':'Host=127.0.0.1;Port=55432;Database='+transport_db+';Username=clubs','ASPNETCORE_URLS':'http://127.0.0.1:5082','Smtp__Host':'127.0.0.1','Smtp__Port':'2526','Smtp__From':'noreply@example.test','Smtp__EnableSsl':'false','PublicOrigin':'http://127.0.0.1:5174'}
 process=subprocess.Popen(['dotnet','server/bin/Debug/net10.0/Clubs.Api.dll'],env=env,stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
 try:
  for _ in range(50):
@@ -39,7 +40,8 @@ try:
  reject_recipient=email
  data={'name':'SMTP Integration','email':email,'phone':'+910000000000','password':password,'confirmation':password,'agreed':True}
  req=urllib.request.Request('http://127.0.0.1:5082/api/v1/auth/register',data=json.dumps(data).encode(),headers={'Content-Type':'application/json','X-CSRF':csrf},method='POST');assert client.open(req).status==202
- from support import sql
+ from support import sql as raw_sql
+ def sql(query):return raw_sql(query,transport_db)
  deadline=time.monotonic()+45
  observed=False
  while time.monotonic()<deadline:
@@ -75,4 +77,34 @@ try:
  assert any(recipient.encode() in m and b'/join?token=' in (email_parser.message_from_bytes(m).get_payload(decode=True) or b'') for m in messages)
  assert sql(f'SELECT count(*) FROM "MailDeliveryAttempts" a JOIN "Mails" m ON m."Id"=a."MailId" WHERE m."Recipient"=\'{recipient}\'')=='2'
  print('PASS membership invitation notification failure, backoff, retry and actual SMTP body delivery')
+ # Event links, retry/backoff and confirmed digital-pass notification use the same transport.
+ types=officer.req('/event-types')[1];now=__import__('datetime').datetime.now(__import__('datetime').timezone.utc)
+ def at(h):return (now+__import__('datetime').timedelta(hours=h)).isoformat()
+ status,event=officer.req('/events','POST',{'orgId':club,'typeId':types[0]['id'],'title':'SMTP event integration','startsAt':at(-1),'endsAt':at(5),'registrationStartsAt':at(-24),'registrationEndsAt':at(4),'venue':'Transport test hall','capacity':10,'visibility':'Public','allowGuests':True});assert status==200,(status,event)
+ status,event=officer.req('/events/'+event['id']+'/status','POST',{'action':'Submit','version':event['version']});assert status==200
+ reviewer=support.Client();reviewer.login('president@example.test');reviewer.activate(next(w for w in reviewer.req('/workspaces')[1] if w['role']=='Club President'))
+ request=officer.req('/governance/requests/'+event['approvalRequestId'])[1]['request'];status,decision=reviewer.req('/governance/requests/'+request['id']+'/decisions','POST',{'decision':'Approve','comment':'Independent SMTP integration review','version':request['version']});assert status==200,(status,decision)
+ event=officer.req('/events/'+event['id'])[1]['eventInfo'];status,event=officer.req('/events/'+event['id']+'/status','POST',{'action':'Publish','version':event['version']});assert status==200
+ recipient='event-'+secrets.token_hex(8)+'@example.test';reject_recipient=recipient;rejections=0
+ status,b=officer.req('/events/'+event['id']+'/guest-link','POST',{'name':'SMTP consenting guest','email':recipient,'consent':True});assert status==200
+ deadline=time.monotonic()+45;observed=False
+ while time.monotonic()<deadline:
+  if sql(f'SELECT count(*) FROM "Mails" WHERE "Recipient"=\'{recipient}\' AND "Kind"=\'event.invitation\' AND "Attempts">0 AND "NextAttemptAt">now() AND "SentAt" IS NULL')=='1':observed=True;break
+  time.sleep(.2)
+ assert observed,'Event invitation failure/backoff not observed'
+ sql(f'UPDATE "Mails" SET "NextAttemptAt"=now() WHERE "Recipient"=\'{recipient}\'')
+ deadline=time.monotonic()+45
+ while time.monotonic()<deadline and not any(recipient.encode() in m for m in messages):time.sleep(.25)
+ assert any(recipient.encode() in m and b'/event-invitation?token=' in (email_parser.message_from_bytes(m).get_payload(decode=True) or b'') for m in messages)
+ assert sql(f'SELECT count(*) FROM "MailDeliveryAttempts" a JOIN "Mails" m ON m."Id"=a."MailId" WHERE m."Recipient"=\'{recipient}\'')=='2'
+ print('PASS event invitation failure, backoff, retry and private-link SMTP delivery')
+ import re
+ payload=next(email_parser.message_from_bytes(m).get_payload(decode=True) or b'' for m in messages if recipient.encode() in m)
+ token=re.search(rb'/event-invitation\?token=([A-F0-9]{64})',payload).group(1).decode();guest=support.Client();status,reg=guest.req('/events/'+event['id']+'/registrations','POST',{'token':token});assert status==200 and reg['status']=='Confirmed'
+ deadline=time.monotonic()+45
+ while time.monotonic()<deadline and not any(recipient.encode() in m and b'Registration confirmed' in (email_parser.message_from_bytes(m).get_payload(decode=True) or b'') for m in messages):time.sleep(.25)
+ assert any(recipient.encode() in m and b'Registration confirmed' in (email_parser.message_from_bytes(m).get_payload(decode=True) or b'') for m in messages)
+ import pathlib
+ pathlib.Path('test-results/phase4-smtp.json').write_text(json.dumps({'verification_retry_and_delivery':True,'membership_invitation_retry_and_delivery':True,'event_invitation_retry_and_delivery':True,'registration_and_pass_link_delivery':True,'database':transport_db,'conditions':'Real local SMTP protocol sink; first recipient attempt deliberately rejected, persisted backoff observed and test clock made retry due. No external provider delivery claim.'},indent=2))
+ print('PASS event registration confirmation and digital-pass access link delivered over SMTP')
 finally:process.terminate();process.wait(timeout=10);server.shutdown();server.server_close()

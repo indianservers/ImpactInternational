@@ -1,0 +1,8 @@
+PASS spring quiet hours follow DST
+PASS nonexistent quiet end advances to valid local time
+PASS ambiguous quiet end uses later occurrence
+PASS recurrence preserves local hour over spring DST
+PASS recurrence preserves local hour over autumn DST
+PASS half-hour zone quiet hours
+PASS disabled quiet hours leave schedule unchanged
+7 time-zone checks passed

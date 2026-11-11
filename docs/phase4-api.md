@@ -1,0 +1,65 @@
+# Phase 4 API inventory
+
+Generated from the running ASP.NET Core OpenAPI document. All paths are rooted at `/api/v1`. Cookie authentication, workspace authorization and X-CSRF apply unless the public or guest-token flow explicitly allows anonymous access. No endpoint grants authority based only on a client organization identifier.
+
+- `DELETE /api/v1/events/{id}/sessions/{sessionId}`
+- `DELETE /api/v1/events/{id}/team/{staffId}`
+- `GET /api/v1/event-filters`
+- `GET /api/v1/event-options`
+- `GET /api/v1/event-organizations`
+- `GET /api/v1/event-people`
+- `GET /api/v1/event-types`
+- `GET /api/v1/events`
+- `GET /api/v1/events-dashboard`
+- `GET /api/v1/events/{id}`
+- `GET /api/v1/events/{id}/activity`
+- `GET /api/v1/events/{id}/analytics`
+- `GET /api/v1/events/{id}/attendance/export`
+- `GET /api/v1/events/{id}/audience`
+- `GET /api/v1/events/{id}/calendar.ics`
+- `GET /api/v1/events/{id}/checkins`
+- `GET /api/v1/events/{id}/documents`
+- `GET /api/v1/events/{id}/documents/{documentId}`
+- `GET /api/v1/events/{id}/feedback`
+- `GET /api/v1/events/{id}/feedback-form`
+- `GET /api/v1/events/{id}/feedback/export`
+- `GET /api/v1/events/{id}/invitations`
+- `GET /api/v1/events/{id}/registrations`
+- `GET /api/v1/events/{id}/rsvps`
+- `GET /api/v1/events/{id}/team`
+- `GET /api/v1/my/event-duties`
+- `GET /api/v1/my/events`
+- `GET /api/v1/public-events/{id}`
+- `POST /api/v1/event-filters`
+- `POST /api/v1/event-invitations/redeem`
+- `POST /api/v1/event-types`
+- `POST /api/v1/events`
+- `POST /api/v1/events/{id}/amend`
+- `POST /api/v1/events/{id}/certificates/{registrationId}`
+- `POST /api/v1/events/{id}/checkins`
+- `POST /api/v1/events/{id}/checkins/verify`
+- `POST /api/v1/events/{id}/checkins/{checkinId}/correct`
+- `POST /api/v1/events/{id}/documents`
+- `POST /api/v1/events/{id}/duplicate`
+- `POST /api/v1/events/{id}/feedback/{registrationId}`
+- `POST /api/v1/events/{id}/guest-link`
+- `POST /api/v1/events/{id}/invitations`
+- `POST /api/v1/events/{id}/passes/{registrationId}/{format}`
+- `POST /api/v1/events/{id}/registrations`
+- `POST /api/v1/events/{id}/registrations/{registrationId}/accept-offer`
+- `POST /api/v1/events/{id}/registrations/{registrationId}/cancel`
+- `POST /api/v1/events/{id}/registrations/{registrationId}/sessions`
+- `POST /api/v1/events/{id}/rsvps`
+- `POST /api/v1/events/{id}/sessions`
+- `POST /api/v1/events/{id}/status`
+- `POST /api/v1/events/{id}/team`
+- `POST /api/v1/events/{id}/team/{staffId}/duty`
+- `POST /api/v1/events/{id}/tickets/{registrationId}`
+- `POST /api/v1/events/{id}/tickets/{registrationId}/reissue`
+- `POST /api/v1/events/{id}/tickets/{registrationId}/revoke`
+- `POST /api/v1/events/{id}/volunteer`
+- `PUT /api/v1/events/{id}`
+- `PUT /api/v1/events/{id}/audience`
+- `PUT /api/v1/events/{id}/feedback-form`
+
+See [OpenAPI](openapi.json) for request and response schemas. Guest invitation secrets and ticket tokens are bearer credentials: do not put them in analytics, logs or shared links. Invitation secrets support response/registration/feedback; opaque tickets support admission only.

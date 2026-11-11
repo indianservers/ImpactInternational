@@ -1,0 +1,61 @@
+{
+  "counts": {
+    "Persons": 101035,
+    "Orgs": 10030,
+    "Conversations": 5001,
+    "ConversationParticipants": 55002,
+    "CommunicationMessages": 50008,
+    "CommunicationRecipients": 100000,
+    "Mails": 729
+  },
+  "campaigns": [
+    {
+      "recipients": 50000,
+      "snapshot_ms": 21376.06
+    },
+    {
+      "recipients": 50000,
+      "snapshot_ms": 21373.29
+    }
+  ],
+  "simultaneous_campaigns": 2,
+  "restart": {
+    "outbox_before": 0,
+    "outbox_after": 0,
+    "recipient_jobs_queued": 100000,
+    "duplicate_messages": 0
+  },
+  "concurrent_inbox": {
+    "users": 10,
+    "workers": 10,
+    "samples": 100,
+    "p50_ms": 82.32,
+    "p95_ms": 635.13,
+    "p99_ms": 640.42,
+    "errors": 0
+  },
+  "api": {
+    "/conversations": {
+      "samples": 50,
+      "p50_ms": 52.42,
+      "p95_ms": 65.09,
+      "p99_ms": 68.38,
+      "errors": 0
+    },
+    "/conversations/{history}/messages": {
+      "samples": 50,
+      "p50_ms": 39.85,
+      "p95_ms": 47.77,
+      "p99_ms": 49.36,
+      "errors": 0
+    },
+    "/analytics": {
+      "samples": 50,
+      "p50_ms": 24.03,
+      "p95_ms": 33.79,
+      "p99_ms": 37.89,
+      "errors": 0
+    }
+  },
+  "conditions": "Isolated PostgreSQL 17.6 clone; 100k+ people/10k+ organizations. 5,000 additional conversations, 50,000-message history, ten fictional authenticated inbox operators. Two 50,000-recipient snapshots submitted concurrently through real API; approval state is explicit benchmark SQL only. Durable worker is stopped/restarted during fan-out; 100,000 recipient jobs resume without duplicate messages. Most synthetic recipients lack accounts and are recorded excluded, not delivered. Inbox concurrency: 100 requests, ten users/threads during processing. Sequential APIs: 50 warm samples after one warmup. Local shared machine; no external provider or production throughput claim."
+}

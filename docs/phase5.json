@@ -1,0 +1,170 @@
+[
+  {
+    "test": "authorized member opens communication center",
+    "passed": true
+  },
+  {
+    "test": "member cannot configure providers",
+    "passed": true
+  },
+  {
+    "test": "member-to-officer conversation persisted",
+    "passed": true
+  },
+  {
+    "test": "senior officer cannot browse unrelated private conversation",
+    "passed": true
+  },
+  {
+    "test": "explicit officer participant can open conversation",
+    "passed": true
+  },
+  {
+    "test": "message persisted with actual sender",
+    "passed": true
+  },
+  {
+    "test": "message idempotency suppresses normal retry",
+    "passed": true
+  },
+  {
+    "test": "unread count increments only for recipient",
+    "passed": true
+  },
+  {
+    "test": "read receipt and mute persist",
+    "passed": true
+  },
+  {
+    "test": "member cannot post internal note",
+    "passed": true
+  },
+  {
+    "test": "internal note hidden from member history",
+    "passed": true
+  },
+  {
+    "test": "member cannot reply to hidden internal note",
+    "passed": true
+  },
+  {
+    "test": "safe rendering rejects scripts",
+    "passed": true
+  },
+  {
+    "test": "inbox assignment priority and tags persist",
+    "passed": true
+  },
+  {
+    "test": "conversation optimistic concurrency enforced",
+    "passed": true
+  },
+  {
+    "test": "attachment signature validation",
+    "passed": true
+  },
+  {
+    "test": "attachment stored as authorized object",
+    "passed": true
+  },
+  {
+    "test": "participant downloads attachment",
+    "passed": true
+  },
+  {
+    "test": "unrelated senior denied attachment",
+    "passed": true
+  },
+  {
+    "test": "invalid template variables rejected",
+    "passed": true
+  },
+  {
+    "test": "template version history preserved",
+    "passed": true
+  },
+  {
+    "test": "nested overlapping audience deduplicates PersonId",
+    "passed": true
+  },
+  {
+    "test": "audience preview does not expose contact methods",
+    "passed": true
+  },
+  {
+    "test": "member cannot originate national broadcasts",
+    "passed": true
+  },
+  {
+    "test": "unapproved campaign cannot schedule",
+    "passed": true
+  },
+  {
+    "test": "broadcast requester cannot self-approve",
+    "passed": true
+  },
+  {
+    "test": "shared approval engine authorizes campaign",
+    "passed": true
+  },
+  {
+    "test": "approved campaign cannot materially change",
+    "passed": true
+  },
+  {
+    "test": "approval freezes deduplicated recipient snapshot",
+    "passed": true
+  },
+  {
+    "test": "durable in-app campaign completed",
+    "passed": true
+  },
+  {
+    "test": "in-app recipient receives personalized persisted message",
+    "passed": true
+  },
+  {
+    "test": "delivery analytics reports actual delivered status",
+    "passed": true
+  },
+  {
+    "test": "broadcast requester cannot self-approve",
+    "passed": true
+  },
+  {
+    "test": "announcement acknowledgment idempotent",
+    "passed": true
+  },
+  {
+    "test": "broadcast requester cannot self-approve",
+    "passed": true
+  },
+  {
+    "test": "scheduled campaign cancellation persists",
+    "passed": true
+  },
+  {
+    "test": "broadcast requester cannot self-approve",
+    "passed": true
+  },
+  {
+    "test": "campaign rechecks promotional consent at delivery",
+    "passed": true
+  },
+  {
+    "test": "automation cannot bypass approval with active input",
+    "passed": true
+  },
+  {
+    "test": "automation uses independent shared approval",
+    "passed": true
+  },
+  {
+    "test": "cross-tenant campaign reports denied",
+    "passed": true
+  },
+  {
+    "test": "cross-tenant private conversation denied",
+    "passed": true
+  }
+]
