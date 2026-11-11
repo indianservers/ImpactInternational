@@ -118,7 +118,18 @@ export default function DataGrid<T extends { id: string }>({
           ))}
         </div>
       )}
-      <div className="table-scroll data-grid">
+      <div className="mobile-records" aria-label="Records">
+        {rows.map(row => <article className="mobile-record" key={row.id}>
+          <header>
+            {onSelection && <label className="checkbox"><input type="checkbox" aria-label={"Select record " + row.id} checked={selected?.has(row.id) || false} onChange={e => { const next = new Set(selected); e.target.checked ? next.add(row.id) : next.delete(row.id); onSelection(next); }} />Select</label>}
+            {onOpen && <button className="secondary" onClick={() => onOpen(row)}>Open record</button>}
+          </header>
+          <dl>{visible.slice(0, 4).map(c => <div key={c.key}><dt>{c.label}</dt><dd>{c.render(row)}</dd></div>)}</dl>
+          {visible.length > 4 && <details><summary>More details & actions</summary><dl>{visible.slice(4).map(c => <div key={c.key}><dt>{c.label}</dt><dd>{c.render(row)}</dd></div>)}</dl></details>}
+        </article>)}
+        {!rows.length && <div className="empty">{empty}</div>}
+      </div>
+      <div className="table-scroll data-grid desktop-records">
         <table
           style={{
             tableLayout: "fixed",

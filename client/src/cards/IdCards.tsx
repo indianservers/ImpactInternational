@@ -1,5 +1,6 @@
-import { useState } from "react";
-import { Link, NavLink, Route, Routes, useParams } from "react-router-dom";
+import ModuleNavigation from "../ModuleNavigation";
+import { useState, useEffect, useRef } from "react";
+import { Link, Route, Routes, useParams } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   CreditCard,
@@ -82,9 +83,25 @@ function Panel({ title, children }: any) {
   );
 }
 function Modal({ title, close, children }: any) {
+  const dialog=useRef<HTMLElement>(null);
+  const closeRef=useRef(close);
+  useEffect(()=>{closeRef.current=close;},[close]);
+  useEffect(()=>{const previous=document.activeElement as HTMLElement|null;dialog.current?.focus();return ()=>previous?.focus();},[]);
   return (
     <div className="card-modal-backdrop">
       <section
+        ref={dialog}
+        tabIndex={-1}
+        onKeyDown={e=>{
+          if(e.key==='Escape'){e.stopPropagation();closeRef.current();}
+          if(e.key==='Tab'){
+            const nodes=Array.from(dialog.current?.querySelectorAll<HTMLElement>('button:not(:disabled),a[href],input:not(:disabled),textarea:not(:disabled),select:not(:disabled),[tabindex="0"]')||[]).filter(n=>n.getClientRects().length);
+            const first=nodes[0],last=nodes[nodes.length-1];
+            if(!first){e.preventDefault();return;}
+            if(e.shiftKey&&(document.activeElement===first||document.activeElement===dialog.current)){e.preventDefault();last.focus();}
+            else if(!e.shiftKey&&(document.activeElement===last||document.activeElement===dialog.current)){e.preventDefault();first.focus();}
+          }
+        }}
         role="dialog"
         aria-modal="true"
         aria-label={title}
@@ -234,22 +251,7 @@ export default function IdCards() {
   const { w } = useWorkspace();
   return (
     <div className="id-cards">
-      <nav className="card-module-nav">
-        {[
-          ["", "Overview", "members.cards"],
-          ["templates", "Templates", "cards.design"],
-          ["issuances", "Issued cards", "cards.issue"],
-          ["bulk", "Bulk generation", "cards.bulk"],
-          ["print", "Print studio", "cards.design"],
-          ["settings", "Settings", "cards.settings"],
-        ]
-          .filter(([, , p]) => w?.permissions.includes(p))
-          .map(([path, label]) => (
-            <NavLink end to={root + (path ? "/" + path : "")} key={path}>
-              {label}
-            </NavLink>
-          ))}
-      </nav>
+      <ModuleNavigation root={root} label="ID cards" items={[["", "Overview", "members.cards"], ["templates", "Templates", "cards.design"], ["issuances", "Issued cards", "cards.issue"], ["bulk", "Bulk generation", "cards.bulk"], ["print", "Print studio", "cards.design"], ["settings", "Settings", "cards.settings"]]} groups={{"Cards": ["", "issuances", "bulk"], "Design & print": ["templates", "print"], "Settings": ["settings"]}} permissions={w?.permissions || []} />
       <Routes>
         <Route index element={<Dashboard />} />
         <Route path="templates" element={<Templates />} />
@@ -938,6 +940,8 @@ function Bulk() {
     [format, setFormat] = useState("Zip"),
     [reissue, setReissue] = useState(false),
     [reuseIssued, setReuseIssued] = useState(false),
+    [filters, setFilters] = useState({search:"",country:"",positionId:"",memberStatus:"",cardStatus:"",expiryFrom:"",expiryTo:""}),
+    [memberIds, setMemberIds] = useState(""),
     [preview, setPreview] = useState<Row>(),
     [selected, setSelected] = useState(""),
     [from, setFrom] = useState(""),
@@ -947,6 +951,11 @@ function Bulk() {
   const selection = {
     orgId: org || w?.orgId,
     categoryId: category || null,
+    ...filters,
+    positionId: filters.positionId || null,
+    expiryFrom: filters.expiryFrom ? new Date(filters.expiryFrom).toISOString() : null,
+    expiryTo: filters.expiryTo ? new Date(filters.expiryTo+"T23:59:59Z").toISOString() : null,
+    membershipIds: memberIds.trim() ? memberIds.trim().split(/[\s,;]+/) : null,
     reissue: reuseIssued ? false : reissue,
     joinedFrom: from ? new Date(from).toISOString() : null,
     joinedTo: to ? new Date(to + "T23:59:59Z").toISOString() : null,
@@ -959,7 +968,7 @@ function Bulk() {
       />
       <div className="card-two">
         <Panel title="1 · Select your community">
-          <label><input type="checkbox" checked={reuseIssued} onChange={e=>{setReuseIssued(e.target.checked);setPreview(undefined);}} /> Export existing issued cards without reissuing</label>
+          <label><input type="checkbox" checked={reuseIssued} onChange={e=>{setReuseIssued(e.target.checked);setTemplate("");setPreview(undefined);}} /> Export existing issued cards without reissuing</label>
           <div className="card-form">
             <Field label="Organization and its subtree">
               <select
@@ -976,6 +985,10 @@ function Bulk() {
                 ))}
               </select>
             </Field>
+            {([['search','Name or member number'],['country','Country'],['expiryFrom','Card expiry from'],['expiryTo','Card expiry through']] as const).map(([key,label])=><Field key={key} label={label}><input type={key.startsWith('expiry')?'date':'text'} maxLength={100} value={filters[key]} onChange={e=>{setFilters({...filters,[key]:e.target.value});setPreview(undefined);}} /></Field>)}
+            <Field label="Leadership position"><select value={filters.positionId} onChange={e=>{setFilters({...filters,positionId:e.target.value});setPreview(undefined);}}><option value="">All positions</option>{options.data?.positions.map((p:Row)=><option key={p.id} value={p.id}>{p.name}</option>)}</select></Field>
+            {([['memberStatus','Membership status',['Active','Suspended','Inactive','Resigned','Terminated','Expired','Deceased']],['cardStatus','Card status',['None','Issued','Expired','Revoked','Pending']]] as const).map(([key,label,values])=><Field key={key} label={label}><select value={filters[key]} onChange={e=>{setFilters({...filters,[key]:e.target.value});setPreview(undefined);}}><option value="">All statuses</option>{values.map(v=><option key={v}>{v}</option>)}</select></Field>)}
+            <Field label="Specific membership IDs (optional)"><textarea value={memberIds} onChange={e=>{setMemberIds(e.target.value);setPreview(undefined);}} placeholder="Paste membership UUIDs separated by commas or lines" /></Field>
             <Field label="Membership category">
               <select
                 value={category}
@@ -1018,6 +1031,7 @@ function Bulk() {
               <input
                 type="checkbox"
                 checked={reissue}
+                disabled={reuseIssued}
                 onChange={(e) => {
                   setReissue(e.target.checked);
                   setPreview(undefined);
@@ -1062,12 +1076,10 @@ function Bulk() {
               >
                 <option value="">Select published template</option>
                 {templates.data
-                  ?.filter((t: Row) => t.active && t.published)
-                  .map((t: Row) => (
-                    <option value={t.published.id} key={t.id}>
-                      {t.name} · v{t.published.number}
-                    </option>
-                  ))}
+                  ?.filter((t: Row) => (reuseIssued || t.active) && t.published)
+                  .flatMap((t: Row) => (reuseIssued ? t.versions || [t.published] : [t.published]).map((v:Row)=>(
+                    <option value={v.id} key={v.id}>{t.name} · v{v.number}</option>
+                  )))}
               </select>
             </Field>
             <Field label="Output format">

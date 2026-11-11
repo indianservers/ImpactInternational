@@ -10,7 +10,7 @@ class Fake(BaseHTTPRequestHandler):
   calls.append(json.loads(self.rfile.read(int(self.headers['Content-Length']))));self.reply({'unexpected':[]} if invalid else {'output':[{'type':'function_call','name':tool,'arguments':arguments}]})
  def do_GET(self):self.reply({'Answer':[{'type':16,'data':'"'+txt+'"'}]})
 server=ThreadingHTTPServer(('127.0.0.1',5086),Fake);threading.Thread(target=server.serve_forever,daemon=True).start()
-env={**os.environ,'ASPNETCORE_ENVIRONMENT':'Development','ConnectionStrings__Database':'Host=127.0.0.1;Port=55432;Database=clubs_test;Username=clubs','Logging__LogLevel__Default':'Warning','Intelligence__OpenAI__ApiKey':'local-test-secret','Intelligence__OpenAI__Model':'local-contract-test','Intelligence__OpenAI__TestEndpoint':'http://127.0.0.1:5086/responses','Domains__TestDnsEndpoint':'http://127.0.0.1:5086/dns','PublicOrigin':'https://primary.example.org'}
+env={**os.environ,'ASPNETCORE_ENVIRONMENT':'Development','ConnectionStrings__Database':f"Host=127.0.0.1;Port=55432;Database={os.environ.get('CLUBS_TEST_DATABASE','clubs_test')};Username=clubs",'Logging__LogLevel__Default':'Warning','Intelligence__OpenAI__ApiKey':'local-test-secret','Intelligence__OpenAI__Model':'local-contract-test','Intelligence__OpenAI__TestEndpoint':'http://127.0.0.1:5086/responses','Domains__TestDnsEndpoint':'http://127.0.0.1:5086/dns','PublicOrigin':'https://primary.example.org'}
 log=open('.infra/phase8-provider-api.log','w');process=subprocess.Popen(['dotnet',os.environ.get('CLUBS_INTELLIGENCE_ASSEMBLY','server/bin/Debug/net10.0/Clubs.Api.dll'),'--urls','http://127.0.0.1:5084'],env=env,stdout=log,stderr=log)
 os.environ['CLUBS_TEST_URL']='http://127.0.0.1:5084'
 for _ in range(80):

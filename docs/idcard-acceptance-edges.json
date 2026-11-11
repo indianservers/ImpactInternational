@@ -1,0 +1,94 @@
+[
+  {
+    "test": "Owner lost-card request records attribution",
+    "passed": true
+  },
+  {
+    "test": "Current QR valid before eligibility change",
+    "passed": true
+  },
+  {
+    "test": "Expired membership QR immediately invalid",
+    "passed": true
+  },
+  {
+    "test": "Expired member excluded from bulk eligibility",
+    "passed": true
+  },
+  {
+    "test": "Restored eligibility revalidates unrevoked QR",
+    "passed": true
+  },
+  {
+    "test": "Duplicate official generation requires explicit replacement",
+    "passed": true
+  },
+  {
+    "test": "Existing-card export completes without changing identity or files",
+    "passed": true
+  },
+  {
+    "test": "Expired export download rejected",
+    "passed": true
+  },
+  {
+    "test": "Revocation immediately invalidates QR",
+    "passed": true
+  },
+  {
+    "test": "Revocation immediately blocks stale archive download",
+    "passed": true
+  },
+  {
+    "test": "Reviewed fresh issuance restores member download",
+    "passed": true
+  },
+  {
+    "test": "Template library exposes historical published versions",
+    "passed": true
+  },
+  {
+    "test": "Bulk filter country narrows selection",
+    "passed": true
+  },
+  {
+    "test": "Bulk filter memberStatus narrows selection",
+    "passed": true
+  },
+  {
+    "test": "Bulk filter cardStatus narrows selection",
+    "passed": true
+  },
+  {
+    "test": "Bulk filter search narrows selection",
+    "passed": true
+  },
+  {
+    "test": "Child manager cannot download parent vault artwork directly",
+    "passed": true
+  },
+  {
+    "test": "Published parent artwork preview accessible through scoped version",
+    "passed": true
+  },
+  {
+    "test": "Child designer saves inherited parent artwork",
+    "passed": true
+  },
+  {
+    "test": "Sibling template unavailable to club manager",
+    "passed": true
+  },
+  {
+    "test": "Archived template blocks already-approved generation",
+    "passed": true
+  },
+  {
+    "test": "Archived template cannot publish another version",
+    "passed": true
+  },
+  {
+    "test": "Empty version resolves tenant default template",
+    "passed": true
+  }
+]

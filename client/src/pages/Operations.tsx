@@ -1,7 +1,7 @@
+import ModuleNavigation from "../ModuleNavigation";
 import { useState, useEffect } from "react";
 import {
   Link,
-  NavLink,
   Routes,
   Route,
   useParams,
@@ -240,22 +240,7 @@ function OrganizationPicker({ name, initial }: any) {
 export default function Operations() {
   return (
     <div className="operations">
-      <nav className="op-topnav" aria-label="Operations navigation">
-        {[
-          ["", "Overview"],
-          ["meetings", "Meetings"],
-          ["tasks", "Tasks"],
-          ["projects", "Projects"],
-          ["volunteers", "Volunteers"],
-          ["impact", "Impact"],
-          ["documents", "Documents"],
-          ["certificates", "Certificates"],
-        ].map(([p, t]) => (
-          <NavLink key={p} end={!p} to={root + "/" + p}>
-            {t}
-          </NavLink>
-        ))}
-      </nav>
+      <ModuleNavigation root={root} label="Operations" items={[["", "Overview"], ["meetings", "Meetings"], ["tasks", "Tasks"], ["projects", "Projects"], ["volunteers", "Volunteers"], ["impact", "Impact"], ["documents", "Documents"], ["certificates", "Certificates"]]} groups={{"Overview & records": ["", "documents", "certificates"], "Plan & deliver": ["meetings", "tasks", "projects"], "People & impact": ["volunteers", "impact"]}} />
       <Routes>
         <Route index element={<Dashboard />} />
         <Route path="meetings" element={<Meetings />} />

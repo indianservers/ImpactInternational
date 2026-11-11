@@ -201,6 +201,21 @@ fieldset > .form-grid {
   gap: 8px;
   background: #fafbfc;
 }
+.organization-context { margin: 8px 12px 0; display: grid; gap: 4px; font-size: 12px; overflow-wrap: anywhere; }
+.organization-context strong { color: var(--text, #26354d); }
+.organization-context span { color: var(--muted, #69788e); font-size: 11px; }
+.section-navigation { margin-bottom: 22px; min-width: 0; }
+.section-navigation-heading { font-size: 12px; font-weight: 700; color: var(--muted, #69788e); margin-bottom: 8px; }
+.section-tabs { display: flex; gap: 5px; overflow-x: auto; max-width: 100%; padding: 4px 0 8px; border-bottom: 1px solid var(--line, #e5e9f0); }
+.section-tabs a { flex: 0 0 auto; padding: 9px 13px; border-radius: 7px; color: var(--muted, #69788e); text-decoration: none; font-size: 13px; font-weight: 600; }
+.section-tabs a:hover { background: var(--surface-soft, #f1f5fb); }
+.section-tabs a.active { background: var(--surface-soft, #eaf0fd); color: var(--accent, #315da8); box-shadow: inset 0 -2px var(--accent, #315da8); }
+.section-tabs a:focus-visible { outline: 2px solid var(--accent, #315da8); outline-offset: 2px; }
+.section-tools { display: flex; flex-wrap: wrap; gap: 6px; padding-top: 10px; }
+.section-tools a { padding: 6px 10px; border: 1px solid transparent; border-radius: 6px; color: var(--muted, #69788e); font-size: 12px; text-decoration: none; }
+.section-tools a.active { color: var(--accent, #315da8); border-color: var(--line, #d6e1f0); background: var(--surface-soft, #f1f5fb); font-weight: 700; }
+.section-tools a:hover { background: var(--surface-soft, #f1f5fb); }
+.section-tools a:focus-visible { outline: 2px solid var(--accent, #315da8); outline-offset: 2px; }
 .workspace-select select {
   font-size: 11px;
   font-weight: 600;

@@ -1,0 +1,8 @@
+{
+  "databaseRestored": true,
+  "privateCardObjectsCopied": 110,
+  "ownerPdfIdenticalAfterRestore": true,
+  "opaqueQrValidAfterRestore": true,
+  "isolatedDatabase": "clubs_idcards_recovery_968797f2",
+  "scope": "Local logical PostgreSQL restore plus card files, same host data-protection keyring; not off-host production certification"
+}

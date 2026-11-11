@@ -298,7 +298,7 @@ export default function Members({
           <Skeleton />
         ) : (
           metrics.data && (
-            <>
+            <details className="compact-summary"><summary>Membership overview · {metrics.data.totalMembers} people · {metrics.data.activeMembers} active</summary>
               <div className="member-kpis">
                 {[
                   [
@@ -366,7 +366,7 @@ export default function Members({
                 </span>
                 <Link to="/app/membership-insights">Explore insights →</Link>
               </div>
-            </>
+            </details>
           )
         ))}
       <ErrorBox error={error || q.error || metrics.error} />
@@ -522,7 +522,7 @@ export default function Members({
           </div>
         )}
         {!directory && (
-          <div className="saved-view-bar">
+          <details className="compact-summary member-tools"><summary>Saved views & export</summary><div className="saved-view-bar">
             <select
               aria-label="Saved member views"
               defaultValue=""
@@ -592,7 +592,7 @@ export default function Members({
                 </button>
               </>
             )}
-          </div>
+          </div></details>
         )}
         {q.isPending ? (
           <Skeleton />

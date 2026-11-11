@@ -1,0 +1,16 @@
+{
+  "conditions": "Real PostgreSQL synthetic scale fixture, 101035 people, loopback warm sequential requests, 50-row keyset pages; development workstation",
+  "keysetPages": {
+    "samples": 30,
+    "medianMs": 72.16,
+    "p95Ms": 110.41,
+    "maxMs": 173.1
+  },
+  "uniqueMemberships": 1500,
+  "publicVerification": {
+    "samples": 20,
+    "medianMs": 5.02,
+    "p95Ms": 12.77,
+    "maxMs": 64.26
+  }
+}

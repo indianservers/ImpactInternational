@@ -1,0 +1,57 @@
+{
+  "conditions": "Live IAB, local React/API, fictional member and club manager; mobile 390x844 and desktop 1440x1000",
+  "checks": [
+    {
+      "test": "Mobile member page has no horizontal overflow and loads 1012px issued artwork",
+      "passed": true
+    },
+    {
+      "test": "Front/back flip changes the protected image side",
+      "passed": true
+    },
+    {
+      "test": "Mobile owner PDF download completes and opens as two exact-size pages",
+      "passed": true
+    },
+    {
+      "test": "Member correction request submits successfully",
+      "passed": true
+    },
+    {
+      "test": "Correction dialog traps focus and Escape closes it",
+      "passed": true
+    },
+    {
+      "test": "Child designer canvas displays the frozen parent logo",
+      "passed": true
+    },
+    {
+      "test": "Control+S saves from the template name field",
+      "passed": true
+    },
+    {
+      "test": "Layer buttons expose pressed and locked state",
+      "passed": true
+    },
+    {
+      "test": "Keyboard canvas Shift+Right moves x from 32 to 33mm; undo restores 32",
+      "passed": true
+    },
+    {
+      "test": "Editor buttons have visible text, aria-label or title names",
+      "passed": true
+    },
+    {
+      "test": "Existing-card mode lists historical v1 and v2 and disables replacement",
+      "passed": true
+    },
+    {
+      "test": "Country filter eligibility preview returns zero matching records",
+      "passed": true
+    },
+    {
+      "test": "Public mobile QR verifies current membership without horizontal overflow",
+      "passed": true
+    }
+  ]
+}

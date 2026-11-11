@@ -1,5 +1,6 @@
+import ModuleNavigation from "../ModuleNavigation";
 import { useState, useEffect } from "react";
-import { Link, NavLink, Routes, Route, useNavigate } from "react-router-dom";
+import { Link, Routes, Route, useNavigate } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   Sparkles,
@@ -151,23 +152,7 @@ export default function Intelligence() {
   const { w } = useWorkspace();
   return (
     <div className="operations intelligence">
-      <nav className="op-topnav">
-        {[
-          ["", "Overview", "intelligence.view"],
-          ["assistant", "Assistant", "intelligence.assistant"],
-          ["knowledge", "Knowledge", "intelligence.knowledge"],
-          ["workflows", "Workflows", "intelligence.automations"],
-          ["metrics", "Metric catalog", "intelligence.view"],
-          ["branding", "Brand & domains", "settings.manage"],
-          ["operations", "Release operations", "audit.view"],
-        ]
-          .filter(([, , p]) => w?.permissions.includes(p))
-          .map(([url, label]) => (
-            <NavLink end key={url} to={root + (url ? "/" + url : "")}>
-              {label}
-            </NavLink>
-          ))}
-      </nav>
+      <ModuleNavigation root={root} label="Intelligence" items={[["", "Overview", "intelligence.view"], ["assistant", "Assistant", "intelligence.assistant"], ["knowledge", "Knowledge", "intelligence.knowledge"], ["workflows", "Workflows", "intelligence.automations"], ["metrics", "Metric catalog", "intelligence.view"], ["branding", "Brand & domains", "settings.manage"], ["operations", "Release operations", "audit.view"]]} groups={{"Explore": ["", "assistant", "metrics"], "Knowledge & workflows": ["knowledge", "workflows"], "Administration": ["branding", "operations"]}} permissions={w?.permissions || []} />
       <Routes>
         <Route index element={<Overview />} />
         <Route path="assistant" element={<Assistant />} />

@@ -515,6 +515,7 @@ api.MapGet(
         var data = await (
             from x in a.Db.Assignments
             join o in a.Db.Orgs on x.OrgId equals o.Id
+            join l in a.Db.Levels on o.LevelId equals l.Id
             join t in a.Db.Tenants on x.TenantId equals t.Id
             join r in a.Db.Roles on x.RoleId equals r.Id
             where x.UserId == u.Id && (boundTenant==null||x.TenantId==boundTenant)
@@ -524,6 +525,7 @@ api.MapGet(
                 x.OrgId,
                 x.TenantId,
                 Organization = o.Name,
+                OrganizationType = l.IsClub ? "Club" : o.ParentId == null ? "Headquarters" : l.Name,
                 Association = t.Name,
                 t.Color,
                 RoleEntity = r,
@@ -535,6 +537,7 @@ api.MapGet(
             x.OrgId,
             x.TenantId,
             x.Organization,
+            x.OrganizationType,
             x.Association,
             x.Color,
             Role = x.RoleEntity.Name,

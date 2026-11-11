@@ -225,3 +225,5 @@ Apply the additive intelligence migration (34 total) before starting. See [Phase
 ## Advanced ID Card Studio
 
 Open `/app/id-cards` for design, reviewed issuance, bulk jobs and print presets; `/app/my-id` shows official member cards. The module reuses membership, DigitalCards, certificate templates, governance, vault and tenant authorization. See [completion report](ID_CARD_MODULE_COMPLETION_REPORT.md) for verification and measured scale results. Apply migrations before starting the upgraded API. Combined PDFs support up to 1,000 cards; ZIP/image jobs support 10,000. Official output requires independent review.
+
+The ID Card Studio software acceptance follow-up exposes all bulk filters and historical export versions, verifies scoped inherited artwork, mobile/keyboard flows, PDF geometry, expiry/revocation, keyset latency and local restore. See [operations](ID_CARD_OPERATIONS.md) and [PDF review sample](output/pdf/Impact-International-ID-Cards-Review.pdf).

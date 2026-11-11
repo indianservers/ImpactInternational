@@ -7,7 +7,7 @@ def good(c,p,m='GET',d=None):
 admin=Client();assert admin.login('admin@example.test')[0]==200
 w=next(x for x in good(admin,'/workspaces') if x['association'].startswith('Global') and x['role']=='Association Super Admin');admin.activate(w)
 r=Client();assert r.login('secretary@example.test')[0]==200;r.activate(next(x for x in good(r,'/workspaces') if x['orgId']==w['orgId'] and x['role']=='Association Super Admin'))
-old='bbcaad71-81b3-445e-afa5-5b7ba01369ae';version=sql(f'''SELECT "TemplateVersionId" FROM "IdCardJobs" WHERE "Id"='{old}' ''',DB)
+old=os.environ.get('CLUBS_PRINT_SOURCE_JOB') or next(j['jobId'] for j in json.loads(pathlib.Path('docs/idcard-scale.json').read_text())['jobs'] if j['count']==1000);version=sql(f'''SELECT "TemplateVersionId" FROM "IdCardJobs" WHERE "Id"='{old}' ''',DB)
 ids=sql(f'''SELECT "MembershipId" FROM "IdCardJobItems" WHERE "JobId"='{old}' ORDER BY "Ordinal"''',DB).splitlines();assert len(ids)==1000
 query=f'''SELECT md5(string_agg(c."Id"::text||c."State"||c."Files",',' ORDER BY c."Id")) FROM "DigitalCards" c WHERE c."MembershipId" IN (SELECT "MembershipId" FROM "IdCardJobItems" WHERE "JobId"='{old}')'''
 before=sql(query,DB);start=time.perf_counter();job=good(admin,'/id-cards/bulk-jobs','POST',{'templateVersionId':version,'selection':{'orgId':w['orgId'],'membershipIds':ids},'format':'Print','reuseIssued':True});assert job['job']['total']==1000

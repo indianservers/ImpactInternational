@@ -272,7 +272,8 @@ export default function CardDesigner() {
   }
   useEffect(() => {
     function key(e: KeyboardEvent) {
-      if ((e.target as HTMLElement).closest("input,textarea,select")) return;
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "s") {e.preventDefault(); if(!busy) void save(); return;}
+      if ((e.target as HTMLElement).closest("input,textarea,select,button,a,[contenteditable=true]")) return;
       if ((e.ctrlKey || e.metaKey) && e.key === "z") {
         e.preventDefault();
         undo(e.shiftKey ? 1 : -1);
@@ -326,7 +327,7 @@ export default function CardDesigner() {
     }
     window.addEventListener("keydown", key);
     return () => window.removeEventListener("keydown", key);
-  }, [doc, selected, side, revision]);
+  }, [doc, selected, side, revision, busy, version, name]);
   async function save(copy = false) {
     if (!doc) return;
     setBusy(true);
@@ -755,6 +756,8 @@ export default function CardDesigner() {
                     "card-layer " + (selected.includes(e.id) ? "selected" : "")
                   }
                   key={e.id}
+                  aria-pressed={selected.includes(e.id)}
+                  aria-label={`Select layer ${e.binding || e.text || e.kind}${e.locked ? ', locked' : ''}`}
                   onClick={(event)=>setSelected(event.shiftKey?[...new Set([...selected,e.id])]:[e.id])}
                 >
                   <Layers size={13} />
@@ -769,7 +772,7 @@ export default function CardDesigner() {
             </>
           )}
         </aside>
-        <section className="card-canvas-area">
+        <section className="card-canvas-area" tabIndex={0} aria-label="Card canvas keyboard controls">
           <div className="card-canvas-tools">
             <button
               className={!pan ? "active" : ""}
@@ -788,6 +791,7 @@ export default function CardDesigner() {
             <span />
             <button
               onClick={() => setSide("front")}
+              aria-pressed={side === "front"}
               className={side === "front" ? "active" : ""}
             >
               Front
@@ -795,6 +799,7 @@ export default function CardDesigner() {
             <button
               disabled={!doc.doubleSided}
               onClick={() => setSide("back")}
+              aria-pressed={side === "back"}
               className={side === "back" ? "active" : ""}
             >
               Back
@@ -1012,9 +1017,9 @@ export default function CardDesigner() {
                         el.kind === "Qr"
                           ? "/api/v1/id-cards/qr-preview"
                           : el.asset
-                            ? "/api/v1/documents/" +
-                              el.asset +
-                              "/download?preview=true"
+                            ? doc.parentVersionId && !assetLibrary.data?.some((a:Row)=>a.id===el.asset)
+                              ? `/api/v1/id-cards/versions/${doc.parentVersionId}/assets/${el.asset}`
+                              : "/api/v1/documents/" + el.asset + "/download?preview=true"
                             : member
                               ? "/api/v1/members/" + member + "/photo"
                               : "";

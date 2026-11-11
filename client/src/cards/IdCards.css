@@ -1164,3 +1164,6 @@
 .app-shell .id-cards .card-field-token{background:var(--card-soft)!important}
 
 .card-ruler{min-width:0}
+
+.id-cards :is(button,a,input,select,textarea):focus-visible{outline:3px solid #287d69;outline-offset:3px}
+.card-my-id{min-width:0;overflow-wrap:anywhere}.card-my-id img{max-width:100%;height:auto}.card-my-id .card-button-row{flex-wrap:wrap}

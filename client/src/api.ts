@@ -3,6 +3,7 @@ export type Workspace = {
   orgId: string;
   tenantId: string;
   organization: string;
+  organizationType: string;
   association: string;
   color?: string;
   role: string;

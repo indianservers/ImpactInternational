@@ -89,3 +89,5 @@ Specialized metric ratios/reports, every natural-language example, semantic/OCR 
 ## Post-phase enhancement — Advanced ID cards
 
 Implemented native front/back design, immutable templates and issued snapshots, reviewed issuance, private downloads, opaque QR verification, durable bulk jobs and physical duplex output. Measurements: `docs/idcard-scale.json`, `docs/idcard-print-scale.json`. Remaining operational acceptance work is documented in `ID_CARD_MODULE_COMPLETION_REPORT.md`.
+
+ID Card Studio follow-up: remaining software acceptance completed with 130 automated card checks, full 902-assertion Phase 1–8 regression rerun, 15 provider checks, live mobile/keyboard/inheritance checks, large-fixture keyset timings and isolated database/object recovery. Print acceptance is PDF review per user direction; physical printer certification and production deployment are outside that scope.

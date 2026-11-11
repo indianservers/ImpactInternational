@@ -2,8 +2,9 @@
 import sys,os,pathlib,subprocess,time,urllib.request,json,re
 suites=['integration','phase2','phase2_extended','phase2_imports','phase3','phase3_extended','phase3_security','phase4','phase4_extended','phase4_security','phase5','phase5_extended','phase5_security','phase6','phase6_extended','phase6_edges','phase6_scope','phase6_workflows','phase7','phase7_extended','phase7_security','phase7_sources','phase8']
 folder=pathlib.Path('.infra/idcard-regressions');folder.mkdir(exist_ok=True)
-assembly=os.environ.get('CLUBS_IDCARD_ASSEMBLY','.infra/idcard-runtime6/Clubs.Api.dll')
-env={**os.environ,'ASPNETCORE_ENVIRONMENT':'Development','CLUBS_TEST_URL':'http://127.0.0.1:5087','CLUBS_TEST_DATABASE':'clubs_idcards_regression','ConnectionStrings__Database':'Host=127.0.0.1;Port=55432;Database=clubs_idcards_regression;Username=clubs','Logging__LogLevel__Default':'Warning'}
+assembly=os.environ.get('CLUBS_IDCARD_ASSEMBLY','.infra/idcard-acceptance/Clubs.Api.dll')
+database=os.environ.get('CLUBS_REGRESSION_DATABASE','clubs_idcards_acceptance_regression')
+env={**os.environ,'ASPNETCORE_ENVIRONMENT':'Development','CLUBS_TEST_URL':'http://127.0.0.1:5087','CLUBS_TEST_DATABASE':database,'ConnectionStrings__Database':f'Host=127.0.0.1;Port=55432;Database={database};Username=clubs','Logging__LogLevel__Default':'Warning'}
 with (folder/'migration.log').open('w') as output:subprocess.run(['dotnet',assembly,'--migrate'],env=env,stdout=output,stderr=subprocess.STDOUT,check=True)
 results=json.loads(pathlib.Path("docs/idcard-regressions.json").read_text())["suites"] if pathlib.Path("docs/idcard-regressions.json").exists() else []
 start=sys.argv[1] if len(sys.argv)>1 else suites[0]

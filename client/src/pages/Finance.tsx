@@ -1,7 +1,7 @@
+import ModuleNavigation from "../ModuleNavigation";
 import { createContext, useContext, useState, useEffect } from "react";
 import {
   Link,
-  NavLink,
   Route,
   Routes,
   useParams,
@@ -309,28 +309,7 @@ export default function Finance() {
             </button>
           )}
         </div>
-        <nav className="op-topnav">
-          {[
-            ["", "Overview"],
-            ["invoices", "Invoices"],
-            ["dues", "Membership dues"],
-            ["payments", "Payments"],
-            ["reconciliation", "Reconciliation"],
-            ["accounts", "Accounting"],
-            ["budgets", "Budgets"],
-            ["expenses", "Expenses"],
-            ["funding", "Donations & sponsors"],
-            ["sources", "Events & projects"],
-            ["allocations", "Inter-entity"],
-            ["reports", "Reports"],
-            ["settings", "Settings"],
-            ["member", "My finances"],
-          ].map(([url, label]) => (
-            <NavLink key={url} end to={root + (url ? "/" + url : "")}>
-              {label}
-            </NavLink>
-          ))}
-        </nav>
+        <ModuleNavigation root={root} label="Finance" items={[["", "Overview"], ["invoices", "Invoices"], ["dues", "Membership dues"], ["payments", "Payments"], ["reconciliation", "Reconciliation"], ["accounts", "Accounting"], ["budgets", "Budgets"], ["expenses", "Expenses"], ["funding", "Donations & sponsors"], ["sources", "Events & projects"], ["allocations", "Inter-entity"], ["reports", "Reports"], ["settings", "Settings"], ["member", "My finances"]]} groups={{"Overview": ["", "reports", "member"], "Billing": ["invoices", "dues", "payments", "expenses", "funding", "sources", "allocations"], "Books & settings": ["accounts", "reconciliation", "budgets", "settings"]}} />
         <ErrorBox error={q.error ?? a.error} />
         <Routes>
           <Route path="member" element={<MemberFinance />} />

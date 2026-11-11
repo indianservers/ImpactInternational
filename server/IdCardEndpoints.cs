@@ -74,6 +74,7 @@ public static partial class IdCardEndpoints
                         t.Version,
                         t.Active,
                         t.Layout,
+                        versions = s.Db.IdCardTemplateVersions.Where(v => v.TemplateId == t.Id).OrderByDescending(v => v.Number).Take(200).Select(v=>new {v.Id,v.Number,v.At}).ToArray(),
                         published = s
                             .Db.IdCardTemplateVersions.Where(v => v.TemplateId == t.Id)
                             .OrderByDescending(v => v.Number)

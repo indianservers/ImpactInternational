@@ -1,0 +1,66 @@
+[
+  {
+    "test": "A3 actual PDF page dimensions",
+    "passed": true
+  },
+  {
+    "test": "A3 actual member text",
+    "passed": true
+  },
+  {
+    "test": "A3 duplex QR decodes at calibrated physical placement",
+    "passed": true
+  },
+  {
+    "test": "A3 QR matches printed front identity",
+    "passed": true
+  },
+  {
+    "test": "A3-landscape actual PDF page dimensions",
+    "passed": true
+  },
+  {
+    "test": "A3-landscape actual member text",
+    "passed": true
+  },
+  {
+    "test": "A3-landscape duplex QR decodes at calibrated physical placement",
+    "passed": true
+  },
+  {
+    "test": "A3-landscape QR matches printed front identity",
+    "passed": true
+  },
+  {
+    "test": "custom actual PDF page dimensions",
+    "passed": true
+  },
+  {
+    "test": "custom actual member text",
+    "passed": true
+  },
+  {
+    "test": "custom duplex QR decodes at calibrated physical placement",
+    "passed": true
+  },
+  {
+    "test": "custom QR matches printed front identity",
+    "passed": true
+  },
+  {
+    "test": "A4-short actual PDF page dimensions",
+    "passed": true
+  },
+  {
+    "test": "A4-short actual member text",
+    "passed": true
+  },
+  {
+    "test": "A4-short duplex QR decodes at calibrated physical placement",
+    "passed": true
+  },
+  {
+    "test": "A4-short QR matches printed front identity",
+    "passed": true
+  }
+]

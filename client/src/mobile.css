@@ -1,0 +1,95 @@
+/* Phone defaults; larger screens progressively reveal the desktop layout. */
+.mobile-bottom-nav, .navigation-backdrop, .mobile-sidebar-close { display: none; }
+.module-navigation { margin-bottom: 18px; min-width: 0; }
+.tool-picker { display: flex; gap: 10px; align-items: center; margin: 10px 0 0; font-size: 12px; }
+.tool-picker select { flex: 1; min-width: 0; max-width: 380px; }
+.tool-picker > span { font-weight: 600; }
+.mobile-records { display: none; }
+.compact-summary { margin-bottom: 14px; border: 1px solid var(--line); border-radius: 8px; padding: 0 12px; }
+.compact-summary > summary { min-height: 44px; padding: 12px 0; cursor: pointer; font-size: 13px; font-weight: 600; }
+.compact-summary.member-tools { margin: 8px 12px; }
+.app-shell .comm-workspace { display: block; }
+.app-shell .comm-nav { width: 100%; padding: 0; border: 0; background: transparent; }
+.app-shell .comm-nav .module-navigation { padding: 0 12px; }
+.app-shell .comm-nav .section-tabs { display: flex; flex-direction: row; }
+
+@media (max-width: 760px) {
+  html { scroll-padding-bottom: 90px; }
+  body { margin: 0; }
+  .app-shell, .app-shell .main-column, .app-shell main { min-width: 0; max-width: 100%; }
+  .app-shell .main-column { width: 100%; margin-left: 0; padding-bottom: calc(74px + env(safe-area-inset-bottom)); }
+  .app-shell main { padding: 16px 12px; }
+  .app-shell .topbar { position: sticky; top: 0; z-index: 25; height: 60px; padding: 0 10px; background: var(--surface, white); }
+  .app-shell .top-crumb { font-size: 0; gap: 0; overflow: hidden; }
+  .app-shell .top-crumb > span { display: none; }
+  .app-shell .top-crumb b { font-size: 12px; max-width: 100%; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; }
+  .app-shell .top-actions { gap: 0; }
+  .app-shell .top-actions > .icon-button { display: none; }
+  .app-shell .sidebar { width: min(320px, 88vw); z-index: 60; padding: 18px 16px; }
+  .app-shell .sidebar:not(.open) { visibility: hidden; }
+  .app-shell .sidebar.open { visibility: visible; }
+  .app-shell .sidebar .help-card { display: none; }
+  .app-shell .sidebar nav a { min-height: 48px; }
+  .app-shell .workspace-select select { width: 100%; min-width: 0; font-size: 14px; }
+  .app-shell .workspace-select { min-height: 48px; }
+  .app-shell .mobile-sidebar-close { display: inline-flex; margin-left: auto; margin-bottom: 8px; }
+  .app-shell .navigation-backdrop { display: block; position: fixed; inset: 0; z-index: 55; border: 0; border-radius: 0; background: #101c2d88; }
+  .app-shell .mobile-bottom-nav { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); position: fixed; inset: auto 0 0; z-index: 40; border-top: 1px solid var(--line, #e5e9f0); padding: 5px 4px calc(5px + env(safe-area-inset-bottom)); background: var(--surface, white); }
+  .app-shell .mobile-bottom-nav a, .app-shell .mobile-bottom-nav button { display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 4px; min-height: 54px; padding: 5px 2px; border: 0; border-radius: 7px; color: var(--muted, #69788e); background: transparent; font-size: 10px; font-weight: 600; text-decoration: none; }
+  .app-shell .mobile-bottom-nav .active { color: var(--accent, #315da8); background: var(--surface-soft, #f1f5fb); }
+  .app-shell :is(button, .button, input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=color]):not([type=hidden]), select, textarea) { min-height: 44px; }
+  .app-shell :is(input, select, textarea) { font-size: 16px; max-width: 100%; }
+  .app-shell input:is([type=checkbox], [type=radio]) { width: 20px; height: 20px; flex: 0 0 auto; }
+  .app-shell .page-header { display: flex; flex-direction: column; align-items: stretch; gap: 12px; margin-bottom: 18px; }
+  .app-shell .page-header h1 { font-size: 24px; line-height: 1.2; overflow-wrap: anywhere; }
+  .app-shell .page-header p { font-size: 13px; margin-bottom: 0; }
+  .app-shell .page-header > :is(button, a.button) { width: 100%; justify-content: center; }
+  .app-shell .header-actions { width: 100%; }
+  .app-shell .header-actions > :is(button, a) { flex: 1 1 auto; justify-content: center; }
+  .app-shell .section-navigation { margin-bottom: 16px; }
+  .app-shell .section-tabs { display: flex; overflow-x: auto; scrollbar-width: thin; gap: 4px; }
+  .app-shell .section-tabs a { display: inline-flex; align-items: center; min-height: 44px; padding: 8px 10px; font-size: 12px; }
+  .app-shell .section-tools { display: none; }
+  .app-shell .tool-picker { display: grid; grid-template-columns: 1fr; gap: 5px; }
+  .app-shell .tool-picker select { width: 100%; max-width: none; }
+  .app-shell :is(.form-grid, .form-grid.three, .form-grid.two, .gov-lookup, .fin-grid, .op-grid, .profile-layout) { grid-template-columns: minmax(0, 1fr); }
+  .app-shell :is(.stats-grid, .member-kpis) { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+  .app-shell :is(.stat-card, .member-kpis .stat-card) { min-width: 0; padding: 12px; }
+  .app-shell .stat-card strong { font-size: 25px; }
+  .app-shell :is(.panel, .filter-bar) { min-width: 0; max-width: 100%; }
+  .app-shell :is(.filter-bar, .gov-filters, .fin-context, .grid-tools) { flex-wrap: wrap; gap: 8px; }
+  .app-shell :is(.filter-bar, .gov-filters) > :is(input, select, .search-field) { flex: 1 1 100%; min-width: 0; max-width: 100%; }
+  .app-shell .directory .filter-bar { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; padding: 10px; }
+  .app-shell .directory .filter-bar .search-field { grid-column: 1 / -1; }
+  .app-shell .directory .filter-bar > select { width: 100%; font-size: 14px; padding-left: 8px; }
+  .app-shell .directory .filter-bar .view-toggle button { padding: 8px; min-width: 34px; }
+  .app-shell :is(.table-scroll, .table-wrap, .data-grid) { max-width: 100%; overflow-x: auto; overscroll-behavior-x: contain; }
+  .app-shell .desktop-records { display: none; }
+  .app-shell .members-desktop-grid { display: block; }
+  .app-shell .member-card-grid.mobile-only { display: none; }
+  .app-shell .mobile-records { display: grid; gap: 10px; }
+  .app-shell .mobile-record { border: 1px solid var(--line); border-radius: 10px; padding: 12px; background: var(--surface); min-width: 0; }
+  .app-shell .mobile-record > header { display: flex; justify-content: space-between; gap: 12px; align-items: center; margin-bottom: 10px; }
+  .app-shell .mobile-record dl { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 10px; margin: 0; }
+  .app-shell .mobile-record dl > div { min-width: 0; overflow-wrap: anywhere; }
+  .app-shell .mobile-record dt { color: var(--muted); font-size: 11px; margin-bottom: 3px; }
+  .app-shell .mobile-record dd { margin: 0; font-size: 13px; }
+  .app-shell .mobile-record details { margin-top: 12px; border-top: 1px solid var(--line); padding-top: 8px; }
+  .app-shell .mobile-record summary { min-height: 44px; display: flex; align-items: center; cursor: pointer; font-size: 13px; }
+  .app-shell :is(.drawer, .modal) { width: 100%; max-width: 100%; max-height: 100dvh; border-radius: 0; }
+  .app-shell .drawer { height: 100dvh; }
+  .app-shell .modal-backdrop { padding: 0; }
+  .app-shell :is(.drawer-body, .gov-form, .modal) { padding: 16px; }
+  .app-shell .drawer-footer { position: sticky; bottom: 0; flex-wrap: wrap; padding-bottom: calc(12px + env(safe-area-inset-bottom)); background: var(--surface); }
+  .app-shell .drawer-footer button { flex: 1 1 auto; }
+  .app-shell footer { padding: 12px; }
+  .app-shell :is(.comm-content, .comm-workspace, .comm-inbox, .comm-thread) { min-width: 0; max-width: 100%; }
+  .auth-page { grid-template-columns: minmax(0, 1fr); }
+  .auth-page .auth-form { width: 100%; max-width: 100%; padding: 24px 16px; }
+  :is(.auth-page, .auth-wrap) :is(input, select, textarea) { font-size: 16px; min-height: 44px; }
+  .landing .landing-hero h1 { font-size: clamp(32px, 9vw, 48px); }
+}
+
+@media (min-width: 761px) {
+  .mobile-tool-picker { display: none; }
+}

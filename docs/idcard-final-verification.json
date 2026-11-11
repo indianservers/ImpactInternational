@@ -1,0 +1,42 @@
+{
+  "date": "2026-11-11",
+  "serverBuild": {
+    "passed": true,
+    "warnings": 0,
+    "errors": 0
+  },
+  "clientBuild": {
+    "passed": true
+  },
+  "clientLint": {
+    "passed": true,
+    "notes": "React advisory warnings remain; see completion report"
+  },
+  "cardChecks": {
+    "core": 50,
+    "extended": 30,
+    "edges": 23,
+    "qrPublishSecurity": 3,
+    "pdfAcceptance": 16,
+    "editorHelpers": 8,
+    "total": 130
+  },
+  "liveBrowserChecks": 13,
+  "phase1To8Regression": {
+    "suites": 23,
+    "assertions": 902,
+    "passed": true
+  },
+  "providerContractChecks": 15,
+  "pdfTarget": "PDF review only, per user direction",
+  "recovery": {
+    "databaseRestored": true,
+    "privateCardObjectsCopied": 110,
+    "ownerPdfIdenticalAfterRestore": true,
+    "opaqueQrValidAfterRestore": true,
+    "isolatedDatabase": "clubs_idcards_recovery_968797f2",
+    "scope": "Local logical PostgreSQL restore plus card files, same host data-protection keyring; not off-host production certification"
+  },
+  "navigationChecks": "Passed; preserved feature routes and permissions",
+  "historicalScaleEvidence": "docs/idcard-scale.json; actual 1k/10k generation and concurrent downloads remain valid; unchanged renderer/worker not regenerated for this follow-up"
+}

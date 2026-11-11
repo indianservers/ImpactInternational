@@ -3,12 +3,12 @@ import {
   Suspense,
   useState,
   useEffect,
+  useRef,
   createContext,
   useContext,
 } from "react";
 import {
   Link,
-  NavLink,
   Outlet,
   Route,
   Routes,
@@ -20,29 +20,15 @@ import {
   Globe2,
   Sun,
   Moon,
-  UserRound,
-  CreditCard,
-  ClipboardCheck,
-  ArrowRightLeft,
-  Upload,
-  SlidersHorizontal,
-  LayoutDashboard,
-  Network,
-  Building2,
-  ShieldCheck,
   Settings,
-  ScrollText,
   ArrowUpRight,
   Menu,
+  X,
   LogOut,
   ChevronDown,
-  CalendarDays,
-  Users,
-  Mail,
-  Briefcase,
-  Wallet,
-  ChartNoAxesCombined,
 } from "lucide-react";
+import "./mobile.css";
+import { navigationSections, canOpenTab, matchesTab, taskGroups } from "./navigation";
 import { TenantBrand } from "./TenantBrand";
 import { api, type Workspace } from "./api";
 const IdCards = lazy(() => import("./cards/IdCards"));
@@ -201,12 +187,34 @@ export function PageHeader({ eyebrow, title, description, children }: any) {
   );
 }
 function Shell() {
+  const sidebarRef = useRef<HTMLElement>(null);
   const qc = useQueryClient(),
     nav = useNavigate(),
     location = useLocation();
   const [open, setOpen] = useState(false),
     [active, setActive] = useState(""),
     [error, setError] = useState<unknown>();
+  useEffect(() => {
+    setOpen(false);
+    window.scrollTo({ top: 0 });
+  }, [location.pathname]);
+  useEffect(() => {
+    if (!open || !window.matchMedia("(max-width: 760px)").matches) return;
+    const previous = document.activeElement as HTMLElement | null;
+    const overflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const controls = () => Array.from(sidebarRef.current?.querySelectorAll<HTMLElement>('a[href], button, select, input, [tabindex="0"]') || []).filter(el => !el.hasAttribute("disabled"));
+    controls()[0]?.focus();
+    const keydown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setOpen(false);
+      if (event.key !== "Tab") return;
+      const all = controls(), first = all[0], last = all.at(-1);
+      if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last?.focus(); }
+      if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus(); }
+    };
+    document.addEventListener("keydown", keydown);
+    return () => { document.body.style.overflow = overflow; document.removeEventListener("keydown", keydown); previous?.focus(); };
+  }, [open]);
   const me = useQuery({ queryKey: ["me"], queryFn: () => api("/auth/me") });
   useEffect(() => {
     document.documentElement.dataset.theme = me.data?.theme || "light";
@@ -243,86 +251,15 @@ function Shell() {
       setError(e);
     }
   }
-  const menus = [
-    ["Event types", "/app/event-settings", CalendarDays, "events.configure"],
-    [
-      "Event intelligence",
-      "/app/event-intelligence",
-      CalendarDays,
-      "events.reports",
-    ],
-    [
-      "Global Intelligence",
-      "/app/intelligence",
-      ChartNoAxesCombined,
-      "intelligence.assistant",
-    ],
-    ["ID Card Studio", "/app/id-cards", CreditCard, "members.cards"],
-    ["Finance", "/app/finance", Wallet, "finance.self"],
-    ["Club Operations", "/app/operations", Briefcase, "operations.view"],
-    [
-      "Communication Center",
-      "/app/communications",
-      Mail,
-      "communications.view",
-    ],
-    ["Events & calendar", "/app/events", CalendarDays, "events.view"],
-    ["Dashboard", "/app", LayoutDashboard, "organization.view"],
-    ["Organizations", "/app/organizations", Network, "organization.view"],
-    [
-      (identity?.clubTerm || "Club") + " directory",
-      "/app/clubs",
-      Building2,
-      "clubs.view",
-    ],
-    ["Leadership", "/app/leadership", ShieldCheck, "leadership.view"],
-    [
-      "Leadership calendar",
-      "/app/leadership-calendar",
-      CalendarDays,
-      "leadership.view",
-    ],
-    ["Handovers", "/app/handovers", ArrowRightLeft, "leadership.view"],
-    ["Committees", "/app/committees", Users, "committees.view"],
-    [
-      "Governance approvals",
-      "/app/governance",
-      ClipboardCheck,
-      "governance.approve",
-    ],
-    ["Resolutions", "/app/resolutions", ScrollText, "governance.documents"],
-    [
-      "Governance documents",
-      "/app/governance-documents",
-      Briefcase,
-      "governance.documents",
-    ],
-    [
-      "Governance configuration",
-      "/app/governance-settings",
-      SlidersHorizontal,
-      "governance.configure",
-    ],
-    ["Members", "/app/members", Users, "members.view"],
-    ["Member directory", "/app/directory", UserRound, "directory.view"],
-    ["Applications", "/app/approvals", ClipboardCheck, "members.approve"],
-    [
-      "Membership operations",
-      "/app/transfers",
-      ArrowRightLeft,
-      "members.transfer.approve",
-    ],
-    ["Import members", "/app/imports", Upload, "members.import"],
-    [
-      "Membership settings",
-      "/app/membership-settings",
-      SlidersHorizontal,
-      "members.workflow.manage",
-    ],
-    ["Administration", "/app/administration", ShieldCheck, "roles.view"],
-    ["Audit trail", "/app/audit", ScrollText, "audit.view"],
-    ["Settings", "/app/settings", Settings, "settings.view"],
-  ] as const;
+  const visibleSections = navigationSections.map((section) => ({
+    ...section,
+    tabs: section.tabs.filter((tab) => canOpenTab(tab, w?.permissions || [], experience.data?.disabledFeatures || [])),
+  })).filter((section) => section.tabs.length > 0);
+  const activeSection = visibleSections.find((section) =>
+    section.tabs.some((tab) => matchesTab(location.pathname, tab.to)),
+  );
+  const groups = taskGroups(activeSection?.tabs || []);
+  const activeGroup = groups.find(group => group.tabs.some(tab => matchesTab(location.pathname, tab.to)));
   if (me.isPending) return <Skeleton />;
   if (me.error)
     return (
@@ -344,7 +281,9 @@ function Shell() {
           } as React.CSSProperties
         }
       >
-        <aside className={open ? "sidebar open" : "sidebar"}>
+        {open && <button className="navigation-backdrop icon-button" aria-label="Close navigation" onClick={() => setOpen(false)} />}
+        <aside id="organization-navigation" ref={sidebarRef} className={open ? "sidebar open" : "sidebar"}>
+          <button className="icon-button mobile-sidebar-close" aria-label="Close navigation menu" onClick={() => setOpen(false)}><X size={20} /></button>
           <Link to="/" className="brand">
             <span className="brand-icon">
               <Globe2 size={23} />
@@ -352,100 +291,37 @@ function Shell() {
             <TenantBrand identity={identity} />
             <span className="brand-dot" />
           </Link>
-          <div className="sidebar-label">YOUR WORKSPACE</div>
+          <div className="sidebar-label">YOUR ORGANIZATION</div>
           <div className="workspace-select">
             <span className="workspace-avatar">GC</span>
             <select
-              aria-label="Active workspace"
+              aria-label="Active organization"
               value={active || me.data?.workspaceId || ""}
               onChange={(e) => activate(e.target.value)}
             >
-              <option value="">Choose workspace</option>
+              <option value="">Choose organization</option>
               {workspaces.data?.map((x) => (
                 <option key={x.id} value={x.id}>
-                  {x.organization} · {x.role}
+                  {[x.organization, x.organizationType, x.role].filter(Boolean).join(" · ")}
                 </option>
               ))}
             </select>
             <ChevronDown size={14} />
           </div>
-          <div className="sidebar-label">WORKSPACE</div>
+          {w && <div className="organization-context"><strong>{w.organization}</strong><span>{[w.organizationType, w.role].filter(Boolean).join(" · ")}</span></div>}
+          <div className="sidebar-label">ORGANIZATION</div>
           <nav>
-            {menus
-              .filter(
-                (x) =>
-                  !(experience.data?.disabledFeatures || []).some((f: string) =>
-                    (
-                      ({
-                        assistant: ["intelligence.assistant"],
-                        knowledge: ["intelligence.knowledge"],
-                        workflows: ["intelligence.automations"],
-                        events: ["events."],
-                        operations: ["operations."],
-                        finance: ["finance."],
-                      })[f] || []
-                    ).some((prefix) => x[3].startsWith(prefix)),
-                  ),
-              )
-              .filter((x) =>
-                x[1] === "/app/governance"
-                  ? w?.permissions.some((p) =>
-                      [
-                        "governance.approve",
-                        "clubs.manage",
-                        "leadership.manage",
-                        "committees.manage",
-                        "governance.documents",
-                      ].includes(p),
-                    )
-                  : w?.permissions.includes(x[3]),
-              )
-              .map(([name, to, Icon]) => (
-                <NavLink
-                  end={to === "/app"}
-                  key={to}
-                  to={to}
-                  onClick={() => setOpen(false)}
-                >
-                  <Icon size={19} />
-                  {name}
-                </NavLink>
-              ))}
+            {visibleSections.map((section) => {
+              const Icon = section.icon;
+              const selected = activeSection?.id === section.id;
+              return <Link key={section.id} to={section.tabs[0].to}
+                className={selected ? "active" : undefined}
+                aria-current={selected ? "true" : undefined}
+                onClick={() => setOpen(false)}>
+                <Icon size={19} />{section.label}
+              </Link>;
+            })}
           </nav>
-          <div className="sidebar-label">MY COMMUNITY</div>
-          <nav>
-            <NavLink to="/app/my-id" onClick={() => setOpen(false)}>
-              <CreditCard size={18} /> My Digital ID
-            </NavLink>
-            <NavLink to="/app/my-membership" onClick={() => setOpen(false)}>
-              <CreditCard size={18} />
-              My membership
-            </NavLink>
-            <NavLink to="/app/apply" onClick={() => setOpen(false)}>
-              <ClipboardCheck size={18} />
-              Join a club
-            </NavLink>
-          </nav>
-          <Link className="panel-link" to="/app/my-events">
-            My invitations & event passes →
-          </Link>
-          <Link className="panel-link" to="/app/committees">
-            My committee workspaces →
-          </Link>
-          <details className="upcoming-details">
-            <summary className="sidebar-label upcoming-label">
-              GROWING TOGETHER <span>UPCOMING</span>
-            </summary>
-            <div className="upcoming">
-              {[[ChartNoAxesCombined, "Reports"]].map(([I, label]: any) => (
-                <div key={label}>
-                  <I size={18} />
-                  {label}
-                  <span>↗</span>
-                </div>
-              ))}
-            </div>
-          </details>
           <div className="sidebar-bottom">
             <div className="help-card">
               <span className="gold-dot" />
@@ -471,12 +347,14 @@ function Shell() {
             <button
               className="icon-button mobile-menu"
               aria-label="Toggle menu"
+              aria-expanded={open}
+              aria-controls="organization-navigation"
               onClick={() => setOpen(!open)}
             >
               <Menu />
             </button>
             <div className="top-crumb">
-              Workspace <span>/</span> <b>{w?.association || "Your account"}</b>
+              Organization <span>/</span> <b>{w ? [w.organization, w.organizationType].filter(Boolean).join(" · ") : "Your account"}</b>
             </div>
             <div className="top-actions">
               <Suspense fallback={null}>
@@ -484,7 +362,7 @@ function Shell() {
               </Suspense>
               <span className="environment">
                 <i />
-                Connected workspace
+                Connected organization
               </span>
               <Link
                 aria-label="Profile and security"
@@ -551,7 +429,7 @@ function Shell() {
                 <Globe2 size={48} />
                 <h1>Find your place. Make an impact.</h1>
                 <p>
-                  Select an authorized workspace in the sidebar to get started.
+                  Select an authorized organization in the sidebar to get started.
                 </p>
                 {workspaces.data?.length === 0 && (
                   <p>
@@ -575,10 +453,28 @@ function Shell() {
               </div>
             ) : (
               <Suspense fallback={<Skeleton />}>
+                {activeSection && <section className="section-navigation" aria-label={activeSection.label}>
+                  <div className="section-navigation-heading">{activeSection.label}</div>
+                  {groups.length > 1 && <nav aria-label={`${activeSection.label} tabs`} className="section-tabs">
+                    {groups.map(group => <Link key={group.id} to={group.tabs[0].to}
+                      className={activeGroup?.id === group.id ? "active" : undefined}
+                      aria-current={activeGroup?.id === group.id ? "true" : undefined}>{group.label}</Link>)}
+                  </nav>}
+                  {activeGroup && activeGroup.tabs.length > 1 && <nav aria-label={`${activeGroup.label} tools`} className="section-tools">
+                    {activeGroup.tabs.map(tab => <Link key={tab.to} to={tab.to}
+                      className={matchesTab(location.pathname, tab.to) ? "active" : undefined}
+                      aria-current={matchesTab(location.pathname, tab.to) ? "page" : undefined}>{tab.label}</Link>)}
+                  </nav>}
+                  {activeGroup && activeGroup.tabs.length > 1 && <label className="tool-picker mobile-tool-picker"><span>View</span><select aria-label={`${activeGroup.label} view`} value={activeGroup.tabs.find(tab => matchesTab(location.pathname, tab.to))?.to || activeGroup.tabs[0].to} onChange={e => nav(e.target.value)}>{activeGroup.tabs.map(tab => <option key={tab.to} value={tab.to}>{tab.label}</option>)}</select></label>}
+                </section>}
                 <Outlet key={w?.id} />
               </Suspense>
             )}
           </main>
+          <nav className="mobile-bottom-nav" aria-label="Main navigation">
+            {visibleSections.slice(0, 4).map(section => { const Icon = section.icon; return <Link key={section.id} to={section.tabs[0].to} className={activeSection?.id === section.id ? "active" : undefined} aria-current={activeSection?.id === section.id ? "page" : undefined}><Icon size={20} /><span>{section.label}</span></Link>; })}
+            <button onClick={() => setOpen(true)} aria-expanded={open} aria-controls="organization-navigation" className={visibleSections.slice(4).some(s => s.id === activeSection?.id) ? "secondary active" : "secondary"}><Menu size={20} /><span>More</span></button>
+          </nav>
           <footer>
             Impact International{" "}
             <span>Connected leadership. Meaningful impact.</span>
