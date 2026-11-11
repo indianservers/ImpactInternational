@@ -50,7 +50,11 @@ def action(b,act):return good(admin,'/campaigns/'+b['id']+'/status','POST',{'act
 def approve(b):
  b=action(b,'Submit');r=admin.req('/governance/requests/'+b['approvalRequestId'])[1]['request'];check('broadcast requester cannot self-approve',admin.req('/governance/requests/'+r['id']+'/decisions','POST',{'decision':'Approve','comment':'','version':r['version']})[0]==403);code,resp=review.req('/governance/requests/'+r['id']+'/decisions','POST',{'decision':'Approve','comment':'Independent communications review','version':r['version']});assert code==200,resp;return good(admin,'/campaigns/'+b['id'])['broadcast']
 b=create();check('unapproved campaign cannot schedule',admin.req('/communications/campaigns/'+b['id']+'/status','POST',{'action':'Schedule','version':b['version']})[0]==409);b=approve(b);check('shared approval engine authorizes campaign',b['status']=='Approved');check('approved campaign cannot materially change',admin.req('/communications/campaigns/'+b['id'],'PUT',{'orgId':club,'title':'Changed','body':'Replacement without authorization','version':b['version']})[0]==409)
-recipients=good(admin,'/campaigns/'+b['id']+'/recipients')['items'];check('approval freezes deduplicated recipient snapshot',len(recipients)==expected and len({r['id'] for r in recipients})==expected)
+recipients=[];cursor=None
+while True:
+ page=good(admin,'/campaigns/'+b['id']+'/recipients'+('?after='+cursor if cursor else ''));recipients.extend(page['items']);cursor=page['next']
+ if not cursor:break
+check('approval freezes deduplicated recipient snapshot',len(recipients)==expected and len({r['id'] for r in recipients})==expected)
 b=action(b,'Schedule');until(lambda:good(admin,'/campaigns/'+b['id'])['broadcast']['status'] in ['Completed','Partially Completed']);check('durable in-app campaign completed',True)
 check('in-app recipient receives personalized persisted message',any('Maya' in n['body'] for n in good(member,'/notifications')))
 check('delivery analytics reports actual delivered status',any(x['deliveryStatus']=='Delivered' for x in good(admin,'/analytics')['statuses']))

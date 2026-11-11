@@ -1,0 +1,8 @@
+{
+  "events": 80,
+  "concurrency": 8,
+  "p50_ms": 5.71,
+  "p95_ms": 7.15,
+  "errors": 0,
+  "conditions": "Local signed Stripe snapshot replay, real adapter HTTP retrieval against loopback fake, shared Windows/PostgreSQL. Repeated event delivery, not 80 distinct payments."
+}

@@ -239,6 +239,8 @@ public class CommunicationProviderEvent : ITenantRecord
 
 public class CommunicationAutomation : ITenantRecord
 {
+    public string Definition {get;set;} = "";
+
     public Guid? ApprovalRequestId { get; set; }
     public string Status { get; set; } = "Draft";
     public string ContentHash { get; set; } = "";
@@ -260,6 +262,16 @@ public class CommunicationAutomation : ITenantRecord
 
 public class CommunicationExecution : ITenantRecord
 {
+    public string Trace {get;set;} = "[]";
+    public long RuleVersion {get;set;}
+    public string DefinitionSnapshot {get;set;} = "";
+    public int Step {get;set;}
+    public DateTimeOffset NextAttemptAt {get;set;}=DateTimeOffset.UtcNow;
+    public int Attempts {get;set;}
+    public string Error {get;set;} = "";
+    public Guid? GeneratedResourceId {get;set;}
+    public Guid? OrgId {get;set;}
+
     public Guid Id { get; set; } = Guid.NewGuid();
     public Guid TenantId { get; set; }
     public Guid AutomationId { get; set; }

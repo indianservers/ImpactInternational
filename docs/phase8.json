@@ -1,0 +1,218 @@
+[
+  {
+    "test": "catalog supplies formulas and privacy",
+    "passed": true
+  },
+  {
+    "test": "affiliations and people are separate",
+    "passed": true
+  },
+  {
+    "test": "stock vs flow policy disclosed",
+    "passed": true
+  },
+  {
+    "test": "member cannot access officer metrics",
+    "passed": true
+  },
+  {
+    "test": "child drilldown scopes correctly",
+    "passed": true
+  },
+  {
+    "test": "invalid time interval rejected",
+    "passed": true
+  },
+  {
+    "test": "CSV export works",
+    "passed": true
+  },
+  {
+    "test": "literal wildcard does not enumerate records",
+    "passed": true
+  },
+  {
+    "test": "short query rejected",
+    "passed": true
+  },
+  {
+    "test": "authorized member search returns bounded results",
+    "passed": true
+  },
+  {
+    "test": "search does not expose contact details",
+    "passed": true
+  },
+  {
+    "test": "read-only tool my_membership",
+    "passed": true
+  },
+  {
+    "test": "read-only tool my_certificates",
+    "passed": true
+  },
+  {
+    "test": "read-only tool upcoming_events",
+    "passed": true
+  },
+  {
+    "test": "read-only tool finance_summary",
+    "passed": true
+  },
+  {
+    "test": "assistant rejects mutation request",
+    "passed": true
+  },
+  {
+    "test": "assistant rejects unknown tool",
+    "passed": true
+  },
+  {
+    "test": "remote AI cannot run without tenant opt-in",
+    "passed": true
+  },
+  {
+    "test": "audit stores hash instead of question",
+    "passed": true
+  },
+  {
+    "test": "real PDF upload",
+    "passed": true
+  },
+  {
+    "test": "real PDF extraction indexed",
+    "passed": true
+  },
+  {
+    "test": "authorized knowledge source has page and hash",
+    "passed": true
+  },
+  {
+    "test": "private source absent for member",
+    "passed": true
+  },
+  {
+    "test": "private document absent from universal search",
+    "passed": true
+  },
+  {
+    "test": "private index metadata inaccessible",
+    "passed": true
+  },
+  {
+    "test": "unapproved knowledge not described as approved",
+    "passed": true
+  },
+  {
+    "test": "draft edits increment version",
+    "passed": true
+  },
+  {
+    "test": "stale draft edit rejected",
+    "passed": true
+  },
+  {
+    "test": "workflow created inactive draft",
+    "passed": true
+  },
+  {
+    "test": "dry run has zero side effects",
+    "passed": true
+  },
+  {
+    "test": "unreviewable workflow action rejected",
+    "passed": true
+  },
+  {
+    "test": "ordinary member cannot create workflow",
+    "passed": true
+  },
+  {
+    "test": "liveness and readiness respond",
+    "passed": true
+  },
+  {
+    "test": "diagnostics do not claim production readiness",
+    "passed": true
+  },
+  {
+    "test": "unsafe domain rejected",
+    "passed": true
+  },
+  {
+    "test": "domain URL rejected",
+    "passed": true
+  },
+  {
+    "test": "domain begins pending ownership",
+    "passed": true
+  },
+  {
+    "test": "pending domain cannot activate",
+    "passed": true
+  },
+  {
+    "test": "cross tenant knowledge index denied",
+    "passed": true
+  },
+  {
+    "test": "requester cannot approve own workflow",
+    "passed": true
+  },
+  {
+    "test": "approved worker executes durable task action",
+    "passed": true
+  },
+  {
+    "test": "execution stores immutable definition and trace",
+    "passed": true
+  },
+  {
+    "test": "revision is a fresh inactive draft",
+    "passed": true
+  },
+  {
+    "test": "reviewed workflow cannot be edited through API",
+    "passed": true
+  },
+  {
+    "test": "cancellation disables future execution",
+    "passed": true
+  },
+  {
+    "test": "private index omitted for another document administrator",
+    "passed": true
+  },
+  {
+    "test": "knowledge content is never returned in index listing",
+    "passed": true
+  },
+  {
+    "test": "expired knowledge immediately excluded",
+    "passed": true
+  },
+  {
+    "test": "expired index metadata immediately excluded",
+    "passed": true
+  },
+  {
+    "test": "club stock metric reconciles to independent SQL",
+    "passed": true
+  },
+  {
+    "test": "database prevents reviewed workflow content edits",
+    "passed": true
+  },
+  {
+    "test": "database prevents execution snapshot rewrite",
+    "passed": true
+  },
+  {
+    "test": "multiple task producers blocked against loops",
+    "passed": true
+  },
+  {
+    "test": "delay bounded to seven days",
+    "passed": true
+  }
+]

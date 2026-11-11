@@ -1,0 +1,86 @@
+[
+  {
+    "test": "hierarchy super admin cannot read ungranted books",
+    "passed": true
+  },
+  {
+    "test": "ungranted entity absent from directory",
+    "passed": true
+  },
+  {
+    "test": "explicit reader can read entity",
+    "passed": true
+  },
+  {
+    "test": "reader cannot create financial entries",
+    "passed": true
+  },
+  {
+    "test": "reader cannot expand own entity authority",
+    "passed": true
+  },
+  {
+    "test": "entity grant revocation persists",
+    "passed": true
+  },
+  {
+    "test": "invoice request retry idempotent",
+    "passed": true
+  },
+  {
+    "test": "invoice key cannot change request details",
+    "passed": true
+  },
+  {
+    "test": "null financial nested fields rejected",
+    "passed": true
+  },
+  {
+    "test": "null collection rejected",
+    "passed": true
+  },
+  {
+    "test": "wrong native payment currency rejected",
+    "passed": true
+  },
+  {
+    "test": "gateway alias cannot bind another entity",
+    "passed": true
+  },
+  {
+    "test": "database rejects manually inflated paid balance",
+    "passed": true
+  },
+  {
+    "test": "database prevents issued line replacement",
+    "passed": true
+  },
+  {
+    "test": "manual journal same key different totals rejected",
+    "passed": true
+  },
+  {
+    "test": "privileged payer cannot verify own collection",
+    "passed": true
+  },
+  {
+    "test": "decimal historical reporting conversion",
+    "passed": true
+  },
+  {
+    "test": "conversion keeps native journal currency",
+    "passed": true
+  },
+  {
+    "test": "finance reuses delivered in-app outbox",
+    "passed": true
+  },
+  {
+    "test": "unlinked people never enqueue null user in-app notifications",
+    "passed": true
+  },
+  {
+    "test": "repeated partial credit handles zero line and exact tax",
+    "passed": true
+  }
+]

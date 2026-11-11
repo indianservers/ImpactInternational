@@ -1,0 +1,62 @@
+[
+  {
+    "test": "tenant terminology configured",
+    "passed": true
+  },
+  {
+    "test": "branding optimistic concurrency",
+    "passed": true
+  },
+  {
+    "test": "unsafe asset URL rejected",
+    "passed": true
+  },
+  {
+    "test": "provider selects locally authorized tool",
+    "passed": true
+  },
+  {
+    "test": "strict non-stored routing request",
+    "passed": true
+  },
+  {
+    "test": "request contains question but no retrieved facts",
+    "passed": true
+  },
+  {
+    "test": "per request acknowledgment required",
+    "passed": true
+  },
+  {
+    "test": "unknown provider tool rejected",
+    "passed": true
+  },
+  {
+    "test": "provider arguments cannot select foreign tenant",
+    "passed": true
+  },
+  {
+    "test": "malformed provider response fails closed",
+    "passed": true
+  },
+  {
+    "test": "primary application hostname protected",
+    "passed": true
+  },
+  {
+    "test": "incorrect TXT cannot verify ownership",
+    "passed": true
+  },
+  {
+    "test": "exact TXT verifies ownership only",
+    "passed": true
+  },
+  {
+    "test": "verified domain still needs ingress provisioning",
+    "passed": true
+  },
+  {
+    "test": "feature policy enforced at API",
+    "passed": true
+  }
+]

@@ -435,7 +435,7 @@ public class EventService(
 
     public async Task Confirm(ClubEvent e, EventRegistration r)
     {
-        Check(!e.Paid, "Paid booking is disabled.", 409);
+        if(e.Paid&&!await Db.FinanceInvoices.AnyAsync(i=>i.RegistrationId==r.Id&&i.State=="Issued"&&i.Total>0&&i.Paid>=i.Total-i.Credited)){r.Status="Pending Payment";r.Version++;return;}
         var used =
             await Db
                 .EventRegistrations.Where(x =>
@@ -491,6 +491,7 @@ public class EventService(
             }
             else
             {
+                if(e.Paid&&!await Db.FinanceInvoices.AnyAsync(i=>i.RegistrationId==r.Id&&i.State=="Issued"&&i.Paid>=i.Total-i.Credited)){r.Status="Pending Payment";r.Version++;continue;}
                 r.Status = "Confirmed";
                 await Issue(e, r);
                 await Notify(e, r, "A waitlist seat has been allocated. Your pass is ready.");
@@ -521,7 +522,7 @@ public class EventService(
     public async Task<EventRegistration> Register(ClubEvent e, EventRegistrationInput input)
     {
         Check(Window(e) == "Open" && e.RegistrationEnabled, "Registration is closed.", 409);
-        Check(!e.Paid, "Paid booking is not available.", 409);
+        Check(!e.Paid || (!e.RegistrationApproval&&e.MaxCompanions==0&&await Db.FinanceEventPrices.AnyAsync(p=>p.EventId==e.Id)), "Configure finance pricing before paid registration.",409);
         EventInvitation? invite = null;
         Guid? person = null;
         string name,
@@ -624,6 +625,7 @@ public class EventService(
             if (input.Category == "General")
                 r.Category = "Guest";
         }
+        if(e.Paid){Check(person!=null,"Paid guest checkout currently requires a signed-in person account.",409);r.Category=r.MembershipId==null?"Guest":"Member";Check(await Db.FinanceEventPrices.AnyAsync(x=>x.EventId==e.Id&&x.Category==r.Category),"No finance price is configured for your verified participant category.",409);}
         Db.EventRegistrations.Add(r);
         await Db.SaveChangesAsync();
         if (e.RegistrationApproval)

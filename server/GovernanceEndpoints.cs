@@ -540,6 +540,8 @@ public static class GovernanceEndpoints
                     "governance.documents"
                 );
                 var r = await Request(id, s, w);
+                if(r.Kind.StartsWith("Finance")){var reference=GovernanceService.Unpack<FinanceReview>(r.Payload);await new FinanceService(s.A,s,new NotificationService(s.Db)).Entity(reference.EntityId);}
+
                 var stage = await s
                     .Db.MembershipApprovalStages.Include(x => x.Roles)
                     .SingleOrDefaultAsync(x =>
@@ -547,6 +549,7 @@ public static class GovernanceEndpoints
                     );
                 return new
                 {
+                    finance = r.Kind=="FinanceExpense" ? (object?)await s.Db.FinanceExpenses.SingleOrDefaultAsync(x=>x.RequestId==r.Id) : r.Kind=="FinanceBudget" ? await s.Db.FinanceBudgets.SingleOrDefaultAsync(x=>x.RequestId==r.Id) : null,
                     communication = await CommunicationReview(r, s.Db),
                     operation = await new OperationsService(
                         s.A,
@@ -626,6 +629,8 @@ public static class GovernanceEndpoints
                 );
                 await using var tx = await s.A.Mutation(w);
                 var r = await Request(id, s, w);
+                if(r.Kind.StartsWith("Finance")){var reference=GovernanceService.Unpack<FinanceReview>(r.Payload);await new FinanceService(s.A,s,new NotificationService(s.Db)).Entity(reference.EntityId);}
+
                 Check(r.Version == input.Version, "Request changed.", 409);
                 await RequiredPermission(r, s, w);
                 await s.Submit(r, w);
@@ -658,6 +663,8 @@ public static class GovernanceEndpoints
                 );
                 await using var tx = await s.A.Mutation(w);
                 var r = await Request(id, s, w);
+                if(r.Kind.StartsWith("Finance")){var reference=GovernanceService.Unpack<FinanceReview>(r.Payload);await new FinanceService(s.A,s,new NotificationService(s.Db)).Entity(reference.EntityId);}
+
                 await RequiredPermission(r, s, w);
                 Check(
                     r.CreatorId == w.UserId
@@ -736,6 +743,8 @@ public static class GovernanceEndpoints
                 );
                 await using var tx = await s.A.Mutation(w);
                 var r = await Request(id, s, w);
+                if(r.Kind.StartsWith("Finance")){var reference=GovernanceService.Unpack<FinanceReview>(r.Payload);await new FinanceService(s.A,s,new NotificationService(s.Db)).Entity(reference.EntityId);}
+
                 Check(
                     r.Version == input.Version
                         && new[]
@@ -754,6 +763,7 @@ public static class GovernanceEndpoints
                     "Only the requester or governance administrator can cancel.",
                     403
                 );
+                Check(!r.Kind.StartsWith("Finance"),"Submitted financial proposals require an explicit review decision.",409);
                 r.Status = r.CreatorId == w.UserId ? "Withdrawn" : "Cancelled";
                 r.Version++;
                 if (r.Kind == "OfficerAppointment" && r.AppointmentId != null)
@@ -776,6 +786,8 @@ public static class GovernanceEndpoints
                 var w = await s.A.Workspace("governance.approve");
                 await using var tx = await s.A.Mutation(w);
                 var r = await Request(id, s, w);
+                if(r.Kind.StartsWith("Finance")){var reference=GovernanceService.Unpack<FinanceReview>(r.Payload);await new FinanceService(s.A,s,new NotificationService(s.Db)).Entity(reference.EntityId);}
+
                 Check(
                     r.Version == input.Version
                         && new[] { "Submitted", "Under Review" }.Contains(r.Status),
@@ -839,6 +851,12 @@ public static class GovernanceEndpoints
                     );
                     await s.End(p, "Cancelled", "Appointment rejected: " + input.Comment, w.UserId);
                 }
+                if(r.Kind.StartsWith("Finance") && input.Decision is "Reject" or "RequestChanges") {
+ var reference=GovernanceService.Unpack<FinanceReview>(r.Payload);
+ await new FinanceService(s.A,s,new NotificationService(s.Db)).Entity(reference.EntityId,"finance.approve");
+ if(r.Kind=="FinanceExpense"){var c=await s.Db.FinanceExpenses.SingleAsync(x=>x.Id==reference.Id&&x.RequestId==r.Id);c.Status="Rejected";c.Version++;}
+ else{var b=await s.Db.FinanceBudgets.SingleAsync(x=>x.Id==reference.Id&&x.RequestId==r.Id);b.Status="Rejected";b.Version++;}
+ }
                 if (
                     r.Kind.StartsWith("Operation") && input.Decision is "Reject" or "RequestChanges"
                 )

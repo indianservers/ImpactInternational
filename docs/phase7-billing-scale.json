@@ -1,0 +1,9 @@
+{
+  "members": 1009,
+  "issuedInvoices": 1009,
+  "jobState": "Completed",
+  "elapsed_seconds_including_idle_pickup": 28.127,
+  "first_progress_seconds": 15.289,
+  "conditions": "Actual queued API assessment/numbering/journal posting with EF, PostgreSQL safeguards and 50-member durable chunks. Local shared Windows/PostgreSQL 17.6, .NET 10 Debug; no live collection/provider. The separate 100k fixture is SQL generated.",
+  "repeatSafe": true
+}

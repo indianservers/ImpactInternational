@@ -57,6 +57,11 @@ public static class MembershipSetup
             add = add.Concat(["events.view"]).ToArray();
         if (role.Name is "Club Secretary" or "Club President" or "Club Manager")
             add = add.Concat(OperationsService.Permissions).ToArray();
+        add = add.Concat(new[]{"finance.self"}).ToArray();
+        if(role.Name=="Club Treasurer") add=add.Concat(FinanceService.Permissions).Concat(new[]{"governance.approve","governance.documents","operations.view","operations.documents"}).ToArray();
+        if (role.Name is "Club President" or "Club Secretary" or "Club Manager") add=add.Concat(new[]{"finance.view"}).ToArray();
+        add=add.Concat(new[]{"intelligence.assistant","intelligence.knowledge"}).ToArray();
+        if(role.Name is "Association Super Admin" or "Club President" or "Club Secretary" or "Club Treasurer" or "Club Manager")add=add.Concat(new[]{"intelligence.view","intelligence.automations"}).ToArray();
         role.Permissions = role.Permissions.Concat(add).Distinct().ToArray();
     }
 

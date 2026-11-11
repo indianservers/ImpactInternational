@@ -1,0 +1,37 @@
+{
+  "conditions": "Local shared Windows workstation, PostgreSQL 17.6 loopback, .NET 10 Debug, warm sequential HTTP reads, no production SLO claim",
+  "fixturePolicy": "SQL-generated balanced invoice/journal fixtures with database triggers enabled. API financial correctness tested separately. No live payment or bank connection.",
+  "counts": {
+    "Persons": 101035,
+    "FinanceInvoices": 101009,
+    "FinanceJournals": 101009,
+    "FinanceJournalLines": 202018
+  },
+  "fixture_seconds": null,
+  "measurements": {
+    "invoice_page": {
+      "requests": 30,
+      "p50_ms": 14.48,
+      "p95_ms": 28.84,
+      "errors": 0
+    },
+    "trial_balance": {
+      "requests": 30,
+      "p50_ms": 281.29,
+      "p95_ms": 308.02,
+      "errors": 0
+    },
+    "general_ledger": {
+      "requests": 30,
+      "p50_ms": 253.43,
+      "p95_ms": 273.87,
+      "errors": 0
+    },
+    "dashboard": {
+      "requests": 30,
+      "p50_ms": 142.96,
+      "p95_ms": 168.39,
+      "errors": 0
+    }
+  }
+}

@@ -195,6 +195,7 @@ public class GovernanceService(
         "EventRegistration",
         "CommunicationBroadcast",
         "CommunicationAutomation",
+        "FinanceExpense", "FinanceBudget",
         "OperationImpactCorrection",
         "OperationProject",
         "OperationAgenda",
@@ -287,6 +288,7 @@ public class GovernanceService(
         var q = Db.GovernanceRequests.Where(x =>
             x.TenantId == w.TenantId && A.VisibleIds(w).Contains(x.OrgId)
         );
+        q=q.Where(r=>!r.Kind.StartsWith("Finance") || Db.FinanceExpenses.Any(e=>e.RequestId==r.Id&&Db.FinanceGrants.Any(g=>g.EntityId==e.EntityId&&g.UserId==w.UserId)) || Db.FinanceBudgets.Any(b=>b.RequestId==r.Id&&Db.FinanceGrants.Any(g=>g.EntityId==b.EntityId&&g.UserId==w.UserId)));
         var grants = await A.Grants(w);
         if (
             !grants.Any(p =>
@@ -360,6 +362,7 @@ public class GovernanceService(
 
     public async Task ReviseLinked(GovernanceRequest r, string payload, Assignment w)
     {
+        Check(!r.Kind.StartsWith("Finance"),"Financial review snapshots cannot be rewritten. Create a new corrected proposal.",409);
         if (r.Kind == "OfficerAppointment")
         {
             var input = Unpack<AppointmentInput>(payload);
@@ -918,6 +921,7 @@ public class GovernanceService(
 
     public async Task Apply(GovernanceRequest r, Assignment w)
     {
+        if(r.Kind.StartsWith("Finance")){await new FinanceService(A,this,notifications).Apply(r,w);return;}
         if (r.Kind.StartsWith("Operation"))
         {
             await new OperationsService(A, this, notifications).Apply(r, w);
@@ -937,6 +941,7 @@ public class GovernanceService(
                 "Automation changed.",
                 409
             );
+            if(rule.Definition!=""){var d=Unpack<IntelligenceWorkflowDefinition>(rule.Definition);IntelligenceWorkflows.Validate(d);Check(rule.ContentHash==IntelligenceWorkflows.Digest(rule),"Workflow snapshot changed.",409);await IntelligenceWorkflows.Authority(A,w,d,rule.OrgId);await Db.Database.ExecuteSqlRawAsync("SELECT pg_advisory_xact_lock(511105)");}
             Check(
                 await Db.CommunicationTemplates.AnyAsync(t =>
                     t.Id == rule.TemplateId && t.Version == rule.TemplateVersion && t.Active

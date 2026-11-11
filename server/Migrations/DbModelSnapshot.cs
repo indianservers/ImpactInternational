@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
+using NpgsqlTypes;
 
 #nullable disable
 
@@ -879,6 +880,10 @@ namespace Clubs.Api.Migrations
                     b.Property<int>("DailyLimit")
                         .HasColumnType("integer");
 
+                    b.Property<string>("Definition")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<int>("DelayMinutes")
                         .HasColumnType("integer");
 
@@ -1057,11 +1062,34 @@ namespace Clubs.Api.Migrations
                     b.Property<DateTimeOffset>("At")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<int>("Attempts")
+                        .HasColumnType("integer");
+
                     b.Property<Guid>("AutomationId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("DefinitionSnapshot")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Error")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid?>("GeneratedResourceId")
                         .HasColumnType("uuid");
 
                     b.Property<Guid?>("MailId")
                         .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset>("NextAttemptAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("OrgId")
+                        .HasColumnType("uuid");
+
+                    b.Property<long>("RuleVersion")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("SourceKey")
                         .IsRequired()
@@ -1071,8 +1099,15 @@ namespace Clubs.Api.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<int>("Step")
+                        .HasColumnType("integer");
+
                     b.Property<Guid>("TenantId")
                         .HasColumnType("uuid");
+
+                    b.Property<string>("Trace")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
@@ -1082,6 +1117,8 @@ namespace Clubs.Api.Migrations
                         .IsUnique();
 
                     b.HasIndex("TenantId", "AutomationId");
+
+                    b.HasIndex("TenantId", "OrgId");
 
                     b.ToTable("CommunicationExecutions");
                 });
@@ -1736,6 +1773,91 @@ namespace Clubs.Api.Migrations
                     b.HasIndex("TenantId", "OrgId", "UpdatedAt");
 
                     b.ToTable("DocumentVersions");
+                });
+
+            modelBuilder.Entity("Clubs.DuesPlan", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<bool>("AutoBill")
+                        .HasColumnType("boolean");
+
+                    b.Property<Guid>("BillingOrgId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("CategoryId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("ChargeCode")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Components")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("CreatorId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateOnly>("EffectiveFrom")
+                        .HasColumnType("date");
+
+                    b.Property<DateOnly>("EffectiveTo")
+                        .HasColumnType("date");
+
+                    b.Property<Guid>("EntityId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("GraceDays")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Months")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateOnly>("NextBillOn")
+                        .HasColumnType("date");
+
+                    b.Property<bool>("Once")
+                        .HasColumnType("boolean");
+
+                    b.Property<Guid>("OrgId")
+                        .HasColumnType("uuid");
+
+                    b.Property<bool>("Prorate")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Purpose")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid");
+
+                    b.Property<long>("Version")
+                        .IsConcurrencyToken()
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasAlternateKey("TenantId", "Id");
+
+                    b.HasIndex("EntityId", "Id");
+
+                    b.HasIndex("TenantId", "BillingOrgId");
+
+                    b.HasIndex("TenantId", "CategoryId");
+
+                    b.HasIndex("TenantId", "OrgId");
+
+                    b.HasIndex("EntityId", "AutoBill", "NextBillOn");
+
+                    b.ToTable("DuesPlans");
                 });
 
             modelBuilder.Entity("Clubs.EventAudience", b =>
@@ -2469,6 +2591,1768 @@ namespace Clubs.Api.Migrations
                     b.ToTable("EventTypes");
                 });
 
+            modelBuilder.Entity("Clubs.FinanceAccount", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<bool>("Active")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("EntityId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Kind")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("OrgId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid");
+
+                    b.Property<long>("Version")
+                        .IsConcurrencyToken()
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasAlternateKey("TenantId", "Id");
+
+                    b.HasIndex("EntityId", "Code")
+                        .IsUnique();
+
+                    b.HasIndex("EntityId", "Id");
+
+                    b.HasIndex("TenantId", "OrgId");
+
+                    b.ToTable("FinanceAccounts");
+                });
+
+            modelBuilder.Entity("Clubs.FinanceAllocation", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("numeric(24,8)");
+
+                    b.Property<Guid>("EntityId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("InvoiceId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Key")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("OrgId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("PaymentId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid");
+
+                    b.Property<long>("Version")
+                        .IsConcurrencyToken()
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasAlternateKey("TenantId", "Id");
+
+                    b.HasAlternateKey("TenantId", "EntityId", "Id");
+
+                    b.HasIndex("InvoiceId");
+
+                    b.HasIndex("PaymentId");
+
+                    b.HasIndex("EntityId", "Id");
+
+                    b.HasIndex("EntityId", "Key")
+                        .IsUnique();
+
+                    b.HasIndex("TenantId", "OrgId");
+
+                    b.HasIndex("TenantId", "EntityId", "InvoiceId");
+
+                    b.HasIndex("TenantId", "EntityId", "PaymentId");
+
+                    b.ToTable("FinanceAllocations");
+                });
+
+            modelBuilder.Entity("Clubs.FinanceAudit", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Action")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("ActorId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset>("At")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Detail")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("EntityId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("OrgId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid");
+
+                    b.Property<long>("Version")
+                        .IsConcurrencyToken()
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasAlternateKey("TenantId", "Id");
+
+                    b.HasAlternateKey("TenantId", "EntityId", "Id");
+
+                    b.HasIndex("EntityId", "Id");
+
+                    b.HasIndex("TenantId", "OrgId");
+
+                    b.ToTable("FinanceAudits");
+                });
+
+            modelBuilder.Entity("Clubs.FinanceBank", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("AccountCode")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("EntityId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("MaskedNumber")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("OrgId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("ProtectedDetails")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid");
+
+                    b.Property<long>("Version")
+                        .IsConcurrencyToken()
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasAlternateKey("TenantId", "Id");
+
+                    b.HasIndex("EntityId", "Id");
+
+                    b.HasIndex("TenantId", "OrgId");
+
+                    b.ToTable("FinanceBanks");
+                });
+
+            modelBuilder.Entity("Clubs.FinanceBankTransaction", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("numeric(24,8)");
+
+                    b.Property<Guid>("BankAccountId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateOnly>("Date")
+                        .HasColumnType("date");
+
+                    b.Property<Guid>("EntityId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("ImportKey")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("OrgId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("PaymentId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Reference")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid");
+
+                    b.Property<long>("Version")
+                        .IsConcurrencyToken()
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasAlternateKey("TenantId", "Id");
+
+                    b.HasAlternateKey("TenantId", "EntityId", "Id");
+
+                    b.HasIndex("EntityId", "Id");
+
+                    b.HasIndex("EntityId", "ImportKey")
+                        .IsUnique();
+
+                    b.HasIndex("TenantId", "OrgId");
+
+                    b.HasIndex("TenantId", "EntityId", "BankAccountId");
+
+                    b.HasIndex("TenantId", "EntityId", "PaymentId");
+
+                    b.ToTable("FinanceBankTransactions");
+                });
+
+            modelBuilder.Entity("Clubs.FinanceBudget", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("numeric(24,8)");
+
+                    b.Property<Guid>("CreatorId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateOnly>("EndsOn")
+                        .HasColumnType("date");
+
+                    b.Property<Guid>("EntityId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("EventId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Kind")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Lines")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("OrgId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("ProjectId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("ReplacesId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("RequestId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("Revision")
+                        .HasColumnType("integer");
+
+                    b.Property<DateOnly>("StartsOn")
+                        .HasColumnType("date");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid");
+
+                    b.Property<long>("Version")
+                        .IsConcurrencyToken()
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasAlternateKey("TenantId", "Id");
+
+                    b.HasIndex("EntityId", "Id");
+
+                    b.HasIndex("TenantId", "EventId");
+
+                    b.HasIndex("TenantId", "OrgId");
+
+                    b.HasIndex("TenantId", "ProjectId");
+
+                    b.HasIndex("TenantId", "RequestId");
+
+                    b.HasIndex("TenantId", "EntityId", "ReplacesId");
+
+                    b.ToTable("FinanceBudgets");
+                });
+
+            modelBuilder.Entity("Clubs.FinanceCredit", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("numeric(24,8)");
+
+                    b.Property<Guid>("CreatorId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateOnly>("Date")
+                        .HasColumnType("date");
+
+                    b.Property<Guid>("EntityId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("InvoiceId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Key")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("OrgId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Reason")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid");
+
+                    b.Property<long>("Version")
+                        .IsConcurrencyToken()
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasAlternateKey("TenantId", "Id");
+
+                    b.HasAlternateKey("TenantId", "EntityId", "Id");
+
+                    b.HasIndex("EntityId", "Id");
+
+                    b.HasIndex("EntityId", "Key")
+                        .IsUnique();
+
+                    b.HasIndex("TenantId", "OrgId");
+
+                    b.HasIndex("TenantId", "EntityId", "InvoiceId");
+
+                    b.ToTable("FinanceCredits");
+                });
+
+            modelBuilder.Entity("Clubs.FinanceEntitlement", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("numeric(24,8)");
+
+                    b.Property<Guid>("BeneficiaryEntityId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("EntityId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("InvoiceId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("OrgId")
+                        .HasColumnType("uuid");
+
+                    b.Property<decimal>("Settled")
+                        .HasColumnType("numeric(24,8)");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid");
+
+                    b.Property<long>("Version")
+                        .IsConcurrencyToken()
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasAlternateKey("TenantId", "Id");
+
+                    b.HasIndex("EntityId", "Id");
+
+                    b.HasIndex("TenantId", "OrgId");
+
+                    b.HasIndex("EntityId", "InvoiceId", "BeneficiaryEntityId")
+                        .IsUnique();
+
+                    b.HasIndex("TenantId", "EntityId", "InvoiceId");
+
+                    b.ToTable("FinanceEntitlements");
+                });
+
+            modelBuilder.Entity("Clubs.FinanceEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("AccountingMethod")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<bool>("Active")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("CollectionAuthority")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Country")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Currency")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("Decimals")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid>("EntityId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("FiscalMonth")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("GatewayKey")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("InvoicePrefix")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<long>("InvoiceSequence")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("OrgId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("ReceiptPrefix")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<long>("ReceiptSequence")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("TaxRegistration")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid");
+
+                    b.Property<long>("Version")
+                        .IsConcurrencyToken()
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasAlternateKey("TenantId", "EntityId", "Id");
+
+                    b.HasIndex("EntityId", "Id");
+
+                    b.HasIndex("TenantId", "OrgId");
+
+                    b.ToTable("FinanceEntitys");
+                });
+
+            modelBuilder.Entity("Clubs.FinanceEventPrice", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("numeric(24,8)");
+
+                    b.Property<string>("Category")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("EntityId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("EventId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("OrgId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid");
+
+                    b.Property<long>("Version")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasAlternateKey("TenantId", "Id");
+
+                    b.HasIndex("EventId", "Category")
+                        .IsUnique();
+
+                    b.HasIndex("TenantId", "EntityId");
+
+                    b.HasIndex("TenantId", "EventId");
+
+                    b.ToTable("FinanceEventPrices");
+                });
+
+            modelBuilder.Entity("Clubs.FinanceExchangeRate", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Currency")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateOnly>("Date")
+                        .HasColumnType("date");
+
+                    b.Property<Guid>("EntityId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("OrgId")
+                        .HasColumnType("uuid");
+
+                    b.Property<decimal>("Rate")
+                        .HasColumnType("numeric(24,8)");
+
+                    b.Property<string>("Source")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid");
+
+                    b.Property<long>("Version")
+                        .IsConcurrencyToken()
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasAlternateKey("TenantId", "Id");
+
+                    b.HasAlternateKey("TenantId", "EntityId", "Id");
+
+                    b.HasIndex("EntityId", "Id");
+
+                    b.HasIndex("TenantId", "OrgId");
+
+                    b.ToTable("FinanceExchangeRates");
+                });
+
+            modelBuilder.Entity("Clubs.FinanceExpense", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("AccountCode")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("numeric(24,8)");
+
+                    b.Property<Guid?>("BudgetId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Category")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("CreatorId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateOnly>("Date")
+                        .HasColumnType("date");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("EntityId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("EventId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Evidence")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("EvidenceHash")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Lines")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("OrgId")
+                        .HasColumnType("uuid");
+
+                    b.Property<decimal>("Paid")
+                        .HasColumnType("numeric(24,8)");
+
+                    b.Property<string>("Payee")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("PersonId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("ProjectId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("RequestId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid");
+
+                    b.Property<long>("Version")
+                        .IsConcurrencyToken()
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasAlternateKey("TenantId", "Id");
+
+                    b.HasIndex("PersonId");
+
+                    b.HasIndex("EntityId", "Id");
+
+                    b.HasIndex("TenantId", "EventId");
+
+                    b.HasIndex("TenantId", "OrgId");
+
+                    b.HasIndex("TenantId", "ProjectId");
+
+                    b.HasIndex("TenantId", "RequestId");
+
+                    b.HasIndex("EntityId", "Status", "Date");
+
+                    b.HasIndex("TenantId", "EntityId", "BudgetId");
+
+                    b.ToTable("FinanceExpenses");
+                });
+
+            modelBuilder.Entity("Clubs.FinanceGrant", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("EntityId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("OrgId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Role")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<long>("Version")
+                        .IsConcurrencyToken()
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasAlternateKey("TenantId", "Id");
+
+                    b.HasAlternateKey("TenantId", "EntityId", "Id");
+
+                    b.HasIndex("EntityId", "Id");
+
+                    b.HasIndex("EntityId", "UserId")
+                        .IsUnique();
+
+                    b.HasIndex("TenantId", "OrgId");
+
+                    b.ToTable("FinanceGrants");
+                });
+
+            modelBuilder.Entity("Clubs.FinanceIntent", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("numeric(24,8)");
+
+                    b.Property<string>("CheckoutUrl")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("EntityId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("InvoiceId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Key")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("OrgId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("PaymentId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Provider")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("ProviderId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("State")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid");
+
+                    b.Property<long>("Version")
+                        .IsConcurrencyToken()
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasAlternateKey("TenantId", "Id");
+
+                    b.HasAlternateKey("TenantId", "EntityId", "Id");
+
+                    b.HasIndex("EntityId", "Id");
+
+                    b.HasIndex("EntityId", "Key")
+                        .IsUnique();
+
+                    b.HasIndex("EntityId", "ProviderId")
+                        .IsUnique()
+                        .HasFilter("\"ProviderId\" <> ''");
+
+                    b.HasIndex("TenantId", "OrgId");
+
+                    b.HasIndex("TenantId", "EntityId", "InvoiceId");
+
+                    b.HasIndex("TenantId", "EntityId", "PaymentId");
+
+                    b.ToTable("FinanceIntents");
+                });
+
+            modelBuilder.Entity("Clubs.FinanceInvoice", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("CreatorId")
+                        .HasColumnType("uuid");
+
+                    b.Property<decimal>("Credited")
+                        .HasColumnType("numeric(24,8)");
+
+                    b.Property<string>("Currency")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Customer")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("CustomerAddress")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateOnly>("Date")
+                        .HasColumnType("date");
+
+                    b.Property<DateOnly>("DueOn")
+                        .HasColumnType("date");
+
+                    b.Property<Guid>("EntityId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("EventId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("IdempotencyKey")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("IssuerSnapshot")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid?>("MembershipId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Notes")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Number")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("OrgId")
+                        .HasColumnType("uuid");
+
+                    b.Property<decimal>("Paid")
+                        .HasColumnType("numeric(24,8)");
+
+                    b.Property<DateOnly?>("PeriodEnd")
+                        .HasColumnType("date");
+
+                    b.Property<DateOnly?>("PeriodStart")
+                        .HasColumnType("date");
+
+                    b.Property<Guid?>("PersonId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("PlanId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("PledgeId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("ProjectId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Purpose")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid?>("RegistrationId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset?>("RemindedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("RequestHash")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("State")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<decimal>("Subtotal")
+                        .HasColumnType("numeric(24,8)");
+
+                    b.Property<decimal>("Tax")
+                        .HasColumnType("numeric(24,8)");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid");
+
+                    b.Property<decimal>("Total")
+                        .HasColumnType("numeric(24,8)");
+
+                    b.Property<long>("Version")
+                        .IsConcurrencyToken()
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasAlternateKey("TenantId", "Id");
+
+                    b.HasIndex("PersonId");
+
+                    b.HasIndex("EntityId", "Id");
+
+                    b.HasIndex("EntityId", "IdempotencyKey")
+                        .IsUnique();
+
+                    b.HasIndex("EntityId", "Number")
+                        .IsUnique()
+                        .HasFilter("\"Number\" <> ''");
+
+                    b.HasIndex("TenantId", "EventId");
+
+                    b.HasIndex("TenantId", "MembershipId");
+
+                    b.HasIndex("TenantId", "OrgId");
+
+                    b.HasIndex("TenantId", "ProjectId");
+
+                    b.HasIndex("TenantId", "RegistrationId");
+
+                    b.HasIndex("EntityId", "PersonId", "Date");
+
+                    b.HasIndex("TenantId", "EntityId", "PlanId");
+
+                    b.HasIndex("TenantId", "EntityId", "PledgeId");
+
+                    b.ToTable("FinanceInvoices");
+                });
+
+            modelBuilder.Entity("Clubs.FinanceInvoiceLine", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("AccountCode")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid?>("BeneficiaryEntityId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<decimal>("Discount")
+                        .HasColumnType("numeric(24,8)");
+
+                    b.Property<Guid>("EntityId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("InvoiceId")
+                        .HasColumnType("uuid");
+
+                    b.Property<decimal>("Net")
+                        .HasColumnType("numeric(24,8)");
+
+                    b.Property<Guid>("OrgId")
+                        .HasColumnType("uuid");
+
+                    b.Property<decimal>("Quantity")
+                        .HasColumnType("numeric(24,8)");
+
+                    b.Property<decimal>("Rate")
+                        .HasColumnType("numeric(24,8)");
+
+                    b.Property<decimal>("Tax")
+                        .HasColumnType("numeric(24,8)");
+
+                    b.Property<decimal>("TaxPercent")
+                        .HasColumnType("numeric(24,8)");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid");
+
+                    b.Property<decimal>("Total")
+                        .HasColumnType("numeric(24,8)");
+
+                    b.Property<long>("Version")
+                        .IsConcurrencyToken()
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasAlternateKey("TenantId", "Id");
+
+                    b.HasAlternateKey("TenantId", "EntityId", "Id");
+
+                    b.HasIndex("InvoiceId");
+
+                    b.HasIndex("EntityId", "Id");
+
+                    b.HasIndex("TenantId", "OrgId");
+
+                    b.HasIndex("TenantId", "EntityId", "InvoiceId");
+
+                    b.ToTable("FinanceInvoiceLines");
+                });
+
+            modelBuilder.Entity("Clubs.FinanceJob", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("AfterMembershipId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("Attempts")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("CreatorId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("EntityId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Error")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Kind")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("OrgId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateOnly>("PeriodEnd")
+                        .HasColumnType("date");
+
+                    b.Property<DateOnly>("PeriodStart")
+                        .HasColumnType("date");
+
+                    b.Property<Guid>("PlanId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("Processed")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid");
+
+                    b.Property<long>("Version")
+                        .IsConcurrencyToken()
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasAlternateKey("TenantId", "Id");
+
+                    b.HasAlternateKey("TenantId", "EntityId", "Id");
+
+                    b.HasIndex("EntityId", "Id");
+
+                    b.HasIndex("TenantId", "OrgId");
+
+                    b.HasIndex("EntityId", "Status", "CreatedAt");
+
+                    b.HasIndex("PlanId", "PeriodStart", "PeriodEnd")
+                        .IsUnique();
+
+                    b.HasIndex("TenantId", "EntityId", "PlanId");
+
+                    b.ToTable("FinanceJobs");
+                });
+
+            modelBuilder.Entity("Clubs.FinanceJournal", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("CreatorId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateOnly>("Date")
+                        .HasColumnType("date");
+
+                    b.Property<Guid>("EntityId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Narration")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("OrgId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("PeriodId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset>("PostedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("ReversesId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Source")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid");
+
+                    b.Property<long>("Version")
+                        .IsConcurrencyToken()
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasAlternateKey("TenantId", "Id");
+
+                    b.HasIndex("ReversesId")
+                        .IsUnique();
+
+                    b.HasIndex("EntityId", "Date");
+
+                    b.HasIndex("EntityId", "Id");
+
+                    b.HasIndex("EntityId", "Source")
+                        .IsUnique();
+
+                    b.HasIndex("TenantId", "OrgId");
+
+                    b.HasIndex("TenantId", "EntityId", "PeriodId");
+
+                    b.HasIndex("TenantId", "EntityId", "ReversesId");
+
+                    b.ToTable("FinanceJournals");
+                });
+
+            modelBuilder.Entity("Clubs.FinanceJournalLine", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("AccountId")
+                        .HasColumnType("uuid");
+
+                    b.Property<decimal>("Credit")
+                        .HasColumnType("numeric(24,8)");
+
+                    b.Property<decimal>("Debit")
+                        .HasColumnType("numeric(24,8)");
+
+                    b.Property<Guid>("EntityId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("EventId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("JournalId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("OrgId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("PersonId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("ProjectId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid");
+
+                    b.Property<long>("Version")
+                        .IsConcurrencyToken()
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasAlternateKey("TenantId", "Id");
+
+                    b.HasAlternateKey("TenantId", "EntityId", "Id");
+
+                    b.HasIndex("JournalId");
+
+                    b.HasIndex("PersonId");
+
+                    b.HasIndex("EntityId", "Id");
+
+                    b.HasIndex("TenantId", "EventId");
+
+                    b.HasIndex("TenantId", "OrgId");
+
+                    b.HasIndex("TenantId", "ProjectId");
+
+                    b.HasIndex("EntityId", "AccountId", "JournalId");
+
+                    b.HasIndex("TenantId", "EntityId", "AccountId");
+
+                    b.HasIndex("TenantId", "EntityId", "JournalId");
+
+                    b.ToTable("FinanceJournalLines");
+                });
+
+            modelBuilder.Entity("Clubs.FinanceOrganization", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Authority")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("EntityId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("OrgId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("ServedOrgId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid");
+
+                    b.Property<long>("Version")
+                        .IsConcurrencyToken()
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasAlternateKey("TenantId", "Id");
+
+                    b.HasAlternateKey("TenantId", "EntityId", "Id");
+
+                    b.HasIndex("EntityId", "Id");
+
+                    b.HasIndex("EntityId", "ServedOrgId")
+                        .IsUnique();
+
+                    b.HasIndex("TenantId", "OrgId");
+
+                    b.HasIndex("TenantId", "ServedOrgId");
+
+                    b.ToTable("FinanceOrganizations");
+                });
+
+            modelBuilder.Entity("Clubs.FinancePayment", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<decimal>("Allocated")
+                        .HasColumnType("numeric(24,8)");
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("numeric(24,8)");
+
+                    b.Property<Guid?>("BankAccountId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Currency")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateOnly>("Date")
+                        .HasColumnType("date");
+
+                    b.Property<Guid>("EntityId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Evidence")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<decimal>("Fee")
+                        .HasColumnType("numeric(24,8)");
+
+                    b.Property<string>("IdempotencyKey")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Method")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("OrgId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Payer")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid?>("PersonId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("ReceiptNumber")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("RecorderId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Reference")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<decimal>("Refunded")
+                        .HasColumnType("numeric(24,8)");
+
+                    b.Property<DateOnly?>("SettledOn")
+                        .HasColumnType("date");
+
+                    b.Property<string>("SettlementStatus")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("VerifierId")
+                        .HasColumnType("uuid");
+
+                    b.Property<long>("Version")
+                        .IsConcurrencyToken()
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasAlternateKey("TenantId", "Id");
+
+                    b.HasIndex("PersonId");
+
+                    b.HasIndex("EntityId", "Date");
+
+                    b.HasIndex("EntityId", "Id");
+
+                    b.HasIndex("EntityId", "IdempotencyKey")
+                        .IsUnique();
+
+                    b.HasIndex("EntityId", "ReceiptNumber")
+                        .IsUnique()
+                        .HasFilter("\"ReceiptNumber\" <> ''");
+
+                    b.HasIndex("EntityId", "Reference")
+                        .IsUnique();
+
+                    b.HasIndex("TenantId", "OrgId");
+
+                    b.HasIndex("TenantId", "EntityId", "BankAccountId");
+
+                    b.ToTable("FinancePayments");
+                });
+
+            modelBuilder.Entity("Clubs.FinancePeriod", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<bool>("Closed")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateOnly>("EndsOn")
+                        .HasColumnType("date");
+
+                    b.Property<Guid>("EntityId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("OrgId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateOnly>("StartsOn")
+                        .HasColumnType("date");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid");
+
+                    b.Property<long>("Version")
+                        .IsConcurrencyToken()
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasAlternateKey("TenantId", "Id");
+
+                    b.HasIndex("EntityId", "Id");
+
+                    b.HasIndex("TenantId", "OrgId");
+
+                    b.ToTable("FinancePeriods");
+                });
+
+            modelBuilder.Entity("Clubs.FinancePledge", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("numeric(24,8)");
+
+                    b.Property<string>("Contributor")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("CreatorId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateOnly>("Date")
+                        .HasColumnType("date");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("EntityId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("EventId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("InvoiceId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Kind")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("OrgId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("PersonId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("ProjectId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid");
+
+                    b.Property<long>("Version")
+                        .IsConcurrencyToken()
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasAlternateKey("TenantId", "Id");
+
+                    b.HasIndex("PersonId");
+
+                    b.HasIndex("EntityId", "Id");
+
+                    b.HasIndex("TenantId", "EventId");
+
+                    b.HasIndex("TenantId", "OrgId");
+
+                    b.HasIndex("TenantId", "ProjectId");
+
+                    b.ToTable("FinancePledges");
+                });
+
+            modelBuilder.Entity("Clubs.FinanceRefund", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("numeric(24,8)");
+
+                    b.Property<Guid>("CreatorId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateOnly>("Date")
+                        .HasColumnType("date");
+
+                    b.Property<Guid>("EntityId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("InvoiceId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Kind")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("OrgId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("PaymentId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Reason")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Reference")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid");
+
+                    b.Property<long>("Version")
+                        .IsConcurrencyToken()
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasAlternateKey("TenantId", "Id");
+
+                    b.HasAlternateKey("TenantId", "EntityId", "Id");
+
+                    b.HasIndex("InvoiceId");
+
+                    b.HasIndex("PaymentId");
+
+                    b.HasIndex("EntityId", "Id");
+
+                    b.HasIndex("EntityId", "Reference")
+                        .IsUnique();
+
+                    b.HasIndex("TenantId", "OrgId");
+
+                    b.HasIndex("TenantId", "EntityId", "InvoiceId");
+
+                    b.HasIndex("TenantId", "EntityId", "PaymentId");
+
+                    b.ToTable("FinanceRefunds");
+                });
+
+            modelBuilder.Entity("Clubs.FinanceReimbursement", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("numeric(24,8)");
+
+                    b.Property<Guid>("CreatorId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateOnly>("Date")
+                        .HasColumnType("date");
+
+                    b.Property<Guid>("EntityId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("ExpenseId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("OrgId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Reference")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid");
+
+                    b.Property<long>("Version")
+                        .IsConcurrencyToken()
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasAlternateKey("TenantId", "Id");
+
+                    b.HasAlternateKey("TenantId", "EntityId", "Id");
+
+                    b.HasIndex("EntityId", "Id");
+
+                    b.HasIndex("EntityId", "Reference")
+                        .IsUnique();
+
+                    b.HasIndex("TenantId", "OrgId");
+
+                    b.HasIndex("TenantId", "EntityId", "ExpenseId");
+
+                    b.ToTable("FinanceReimbursements");
+                });
+
+            modelBuilder.Entity("Clubs.FinanceTransfer", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("numeric(24,8)");
+
+                    b.Property<Guid>("BeneficiaryEntityId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("CreatorId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateOnly>("Date")
+                        .HasColumnType("date");
+
+                    b.Property<Guid>("EntitlementId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("EntityId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("OrgId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Reference")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid");
+
+                    b.Property<long>("Version")
+                        .IsConcurrencyToken()
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasAlternateKey("TenantId", "Id");
+
+                    b.HasAlternateKey("TenantId", "EntityId", "Id");
+
+                    b.HasIndex("EntityId", "Id");
+
+                    b.HasIndex("EntityId", "Reference")
+                        .IsUnique();
+
+                    b.HasIndex("TenantId", "OrgId");
+
+                    b.HasIndex("TenantId", "EntityId", "EntitlementId");
+
+                    b.ToTable("FinanceTransfers");
+                });
+
+            modelBuilder.Entity("Clubs.FinanceWebhook", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("EntityId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("OrgId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("PayloadHash")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("ProviderEventId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTimeOffset>("ReceivedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<long>("Version")
+                        .IsConcurrencyToken()
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasAlternateKey("TenantId", "Id");
+
+                    b.HasAlternateKey("TenantId", "EntityId", "Id");
+
+                    b.HasIndex("EntityId", "Id");
+
+                    b.HasIndex("EntityId", "ProviderEventId")
+                        .IsUnique();
+
+                    b.HasIndex("TenantId", "OrgId");
+
+                    b.ToTable("FinanceWebhooks");
+                });
+
             modelBuilder.Entity("Clubs.GovernanceDelegation", b =>
                 {
                     b.Property<Guid>("Id")
@@ -2848,6 +4732,48 @@ namespace Clubs.Api.Migrations
                     b.ToTable("ImpactMetrics");
                 });
 
+            modelBuilder.Entity("Clubs.IntelligenceAudit", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Action")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTimeOffset>("At")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("OrgId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("QueryHash")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("Results")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Tool")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasAlternateKey("TenantId", "Id");
+
+                    b.HasIndex("TenantId", "OrgId", "At");
+
+                    b.ToTable("IntelligenceAudits");
+                });
+
             modelBuilder.Entity("Clubs.IssuedCertificate", b =>
                 {
                     b.Property<Guid>("Id")
@@ -2943,6 +4869,60 @@ namespace Clubs.Api.Migrations
                     b.HasIndex("TenantId", "TemplateId", "PersonId", "SourceId", "SourceType", "TemplateVersion");
 
                     b.ToTable("IssuedCertificates");
+                });
+
+            modelBuilder.Entity("Clubs.KnowledgePassage", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("DocumentId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("DocumentVersion")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTimeOffset>("IndexedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("IndexedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("Page")
+                        .HasColumnType("integer");
+
+                    b.Property<NpgsqlTsVector>("SearchVector")
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("tsvector")
+                        .HasComputedColumnSql("to_tsvector('simple', \"Text\")", true);
+
+                    b.Property<string>("SourceHash")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Text")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasAlternateKey("TenantId", "Id");
+
+                    b.HasIndex("SearchVector");
+
+                    NpgsqlIndexBuilderExtensions.HasMethod(b.HasIndex("SearchVector"), "GIN");
+
+                    b.HasIndex("DocumentId", "DocumentVersion", "Page")
+                        .IsUnique();
+
+                    b.HasIndex("TenantId", "DocumentId", "DocumentVersion");
+
+                    b.ToTable("KnowledgePassages");
                 });
 
             modelBuilder.Entity("Clubs.LeadershipHandover", b =>
@@ -5180,6 +7160,50 @@ namespace Clubs.Api.Migrations
                         },
                         new
                         {
+                            Id = "intelligence.view"
+                        },
+                        new
+                        {
+                            Id = "intelligence.assistant"
+                        },
+                        new
+                        {
+                            Id = "intelligence.knowledge"
+                        },
+                        new
+                        {
+                            Id = "intelligence.automations"
+                        },
+                        new
+                        {
+                            Id = "finance.view"
+                        },
+                        new
+                        {
+                            Id = "finance.manage"
+                        },
+                        new
+                        {
+                            Id = "finance.configure"
+                        },
+                        new
+                        {
+                            Id = "finance.reconcile"
+                        },
+                        new
+                        {
+                            Id = "finance.post"
+                        },
+                        new
+                        {
+                            Id = "finance.approve"
+                        },
+                        new
+                        {
+                            Id = "finance.self"
+                        },
+                        new
+                        {
                             Id = "operations.view"
                         },
                         new
@@ -5936,6 +7960,119 @@ namespace Clubs.Api.Migrations
                         });
                 });
 
+            modelBuilder.Entity("Clubs.TenantBranding", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Accent")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("AiPolicy")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("ClubTerm")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("DisabledFeatures")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("DisplayName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("DistrictTerm")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Favicon")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Languages")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Logo")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<bool>("RemoteAiEnabled")
+                        .HasColumnType("boolean");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid");
+
+                    b.Property<long>("Version")
+                        .IsConcurrencyToken()
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("Welcome")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasAlternateKey("TenantId", "Id");
+
+                    b.HasIndex("TenantId")
+                        .IsUnique();
+
+                    b.ToTable("TenantBrandings");
+                });
+
+            modelBuilder.Entity("Clubs.TenantDomain", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Challenge")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("CreatorId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Host")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTimeOffset?>("LastCheckedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset?>("VerifiedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<long>("Version")
+                        .IsConcurrencyToken()
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasAlternateKey("TenantId", "Id");
+
+                    b.HasIndex("Host")
+                        .IsUnique();
+
+                    b.ToTable("TenantDomains");
+                });
+
             modelBuilder.Entity("Clubs.TenantSetting", b =>
                 {
                     b.Property<Guid>("Id")
@@ -6666,6 +8803,12 @@ namespace Clubs.Api.Migrations
                         .HasPrincipalKey("TenantId", "Id")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.HasOne("Clubs.Org", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "OrgId")
+                        .HasPrincipalKey("TenantId", "Id")
+                        .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("Clubs.CommunicationMessage", b =>
@@ -6890,6 +9033,42 @@ namespace Clubs.Api.Migrations
                     b.HasOne("Clubs.GovernanceDocument", null)
                         .WithMany()
                         .HasForeignKey("TenantId", "DocumentId")
+                        .HasPrincipalKey("TenantId", "Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Clubs.Org", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "OrgId")
+                        .HasPrincipalKey("TenantId", "Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Clubs.DuesPlan", b =>
+                {
+                    b.HasOne("Clubs.Tenant", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Clubs.Org", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "BillingOrgId")
+                        .HasPrincipalKey("TenantId", "Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Clubs.MembershipCategory", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "CategoryId")
+                        .HasPrincipalKey("TenantId", "Id")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Clubs.FinanceEntity", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "EntityId")
                         .HasPrincipalKey("TenantId", "Id")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
@@ -7250,6 +9429,889 @@ namespace Clubs.Api.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Clubs.FinanceAccount", b =>
+                {
+                    b.HasOne("Clubs.Tenant", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Clubs.FinanceEntity", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "EntityId")
+                        .HasPrincipalKey("TenantId", "Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Clubs.Org", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "OrgId")
+                        .HasPrincipalKey("TenantId", "Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Clubs.FinanceAllocation", b =>
+                {
+                    b.HasOne("Clubs.Tenant", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Clubs.FinanceEntity", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "EntityId")
+                        .HasPrincipalKey("TenantId", "Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Clubs.Org", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "OrgId")
+                        .HasPrincipalKey("TenantId", "Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Clubs.FinanceInvoice", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "EntityId", "InvoiceId")
+                        .HasPrincipalKey("TenantId", "EntityId", "Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Clubs.FinancePayment", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "EntityId", "PaymentId")
+                        .HasPrincipalKey("TenantId", "EntityId", "Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Clubs.FinanceAudit", b =>
+                {
+                    b.HasOne("Clubs.Tenant", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Clubs.FinanceEntity", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "EntityId")
+                        .HasPrincipalKey("TenantId", "Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Clubs.Org", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "OrgId")
+                        .HasPrincipalKey("TenantId", "Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Clubs.FinanceBank", b =>
+                {
+                    b.HasOne("Clubs.Tenant", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Clubs.FinanceEntity", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "EntityId")
+                        .HasPrincipalKey("TenantId", "Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Clubs.Org", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "OrgId")
+                        .HasPrincipalKey("TenantId", "Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Clubs.FinanceBankTransaction", b =>
+                {
+                    b.HasOne("Clubs.Tenant", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Clubs.FinanceEntity", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "EntityId")
+                        .HasPrincipalKey("TenantId", "Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Clubs.Org", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "OrgId")
+                        .HasPrincipalKey("TenantId", "Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Clubs.FinanceBank", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "EntityId", "BankAccountId")
+                        .HasPrincipalKey("TenantId", "EntityId", "Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Clubs.FinancePayment", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "EntityId", "PaymentId")
+                        .HasPrincipalKey("TenantId", "EntityId", "Id")
+                        .OnDelete(DeleteBehavior.Restrict);
+                });
+
+            modelBuilder.Entity("Clubs.FinanceBudget", b =>
+                {
+                    b.HasOne("Clubs.Tenant", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Clubs.FinanceEntity", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "EntityId")
+                        .HasPrincipalKey("TenantId", "Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Clubs.ClubEvent", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "EventId")
+                        .HasPrincipalKey("TenantId", "Id")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Clubs.Org", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "OrgId")
+                        .HasPrincipalKey("TenantId", "Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Clubs.ServiceProject", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "ProjectId")
+                        .HasPrincipalKey("TenantId", "Id")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Clubs.GovernanceRequest", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "RequestId")
+                        .HasPrincipalKey("TenantId", "Id")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Clubs.FinanceBudget", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "EntityId", "ReplacesId")
+                        .HasPrincipalKey("TenantId", "EntityId", "Id")
+                        .OnDelete(DeleteBehavior.Restrict);
+                });
+
+            modelBuilder.Entity("Clubs.FinanceCredit", b =>
+                {
+                    b.HasOne("Clubs.Tenant", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Clubs.FinanceEntity", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "EntityId")
+                        .HasPrincipalKey("TenantId", "Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Clubs.Org", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "OrgId")
+                        .HasPrincipalKey("TenantId", "Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Clubs.FinanceInvoice", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "EntityId", "InvoiceId")
+                        .HasPrincipalKey("TenantId", "EntityId", "Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Clubs.FinanceEntitlement", b =>
+                {
+                    b.HasOne("Clubs.Tenant", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Clubs.FinanceEntity", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "EntityId")
+                        .HasPrincipalKey("TenantId", "Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Clubs.Org", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "OrgId")
+                        .HasPrincipalKey("TenantId", "Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Clubs.FinanceInvoice", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "EntityId", "InvoiceId")
+                        .HasPrincipalKey("TenantId", "EntityId", "Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Clubs.FinanceEntity", b =>
+                {
+                    b.HasOne("Clubs.Tenant", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Clubs.Org", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "OrgId")
+                        .HasPrincipalKey("TenantId", "Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Clubs.FinanceEventPrice", b =>
+                {
+                    b.HasOne("Clubs.Tenant", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Clubs.FinanceEntity", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "EntityId")
+                        .HasPrincipalKey("TenantId", "Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Clubs.ClubEvent", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "EventId")
+                        .HasPrincipalKey("TenantId", "Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Clubs.FinanceExchangeRate", b =>
+                {
+                    b.HasOne("Clubs.Tenant", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Clubs.FinanceEntity", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "EntityId")
+                        .HasPrincipalKey("TenantId", "Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Clubs.Org", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "OrgId")
+                        .HasPrincipalKey("TenantId", "Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Clubs.FinanceExpense", b =>
+                {
+                    b.HasOne("Clubs.Person", null)
+                        .WithMany()
+                        .HasForeignKey("PersonId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Clubs.Tenant", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Clubs.FinanceEntity", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "EntityId")
+                        .HasPrincipalKey("TenantId", "Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Clubs.ClubEvent", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "EventId")
+                        .HasPrincipalKey("TenantId", "Id")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Clubs.Org", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "OrgId")
+                        .HasPrincipalKey("TenantId", "Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Clubs.ServiceProject", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "ProjectId")
+                        .HasPrincipalKey("TenantId", "Id")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Clubs.GovernanceRequest", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "RequestId")
+                        .HasPrincipalKey("TenantId", "Id")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Clubs.FinanceBudget", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "EntityId", "BudgetId")
+                        .HasPrincipalKey("TenantId", "EntityId", "Id")
+                        .OnDelete(DeleteBehavior.Restrict);
+                });
+
+            modelBuilder.Entity("Clubs.FinanceGrant", b =>
+                {
+                    b.HasOne("Clubs.Tenant", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Clubs.FinanceEntity", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "EntityId")
+                        .HasPrincipalKey("TenantId", "Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Clubs.Org", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "OrgId")
+                        .HasPrincipalKey("TenantId", "Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Clubs.FinanceIntent", b =>
+                {
+                    b.HasOne("Clubs.Tenant", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Clubs.FinanceEntity", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "EntityId")
+                        .HasPrincipalKey("TenantId", "Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Clubs.Org", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "OrgId")
+                        .HasPrincipalKey("TenantId", "Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Clubs.FinanceInvoice", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "EntityId", "InvoiceId")
+                        .HasPrincipalKey("TenantId", "EntityId", "Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Clubs.FinancePayment", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "EntityId", "PaymentId")
+                        .HasPrincipalKey("TenantId", "EntityId", "Id")
+                        .OnDelete(DeleteBehavior.Restrict);
+                });
+
+            modelBuilder.Entity("Clubs.FinanceInvoice", b =>
+                {
+                    b.HasOne("Clubs.Person", null)
+                        .WithMany()
+                        .HasForeignKey("PersonId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Clubs.Tenant", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Clubs.FinanceEntity", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "EntityId")
+                        .HasPrincipalKey("TenantId", "Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Clubs.ClubEvent", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "EventId")
+                        .HasPrincipalKey("TenantId", "Id")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Clubs.Membership", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "MembershipId")
+                        .HasPrincipalKey("TenantId", "Id")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Clubs.Org", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "OrgId")
+                        .HasPrincipalKey("TenantId", "Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Clubs.ServiceProject", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "ProjectId")
+                        .HasPrincipalKey("TenantId", "Id")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Clubs.EventRegistration", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "RegistrationId")
+                        .HasPrincipalKey("TenantId", "Id")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Clubs.DuesPlan", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "EntityId", "PlanId")
+                        .HasPrincipalKey("TenantId", "EntityId", "Id")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Clubs.FinancePledge", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "EntityId", "PledgeId")
+                        .HasPrincipalKey("TenantId", "EntityId", "Id")
+                        .OnDelete(DeleteBehavior.Restrict);
+                });
+
+            modelBuilder.Entity("Clubs.FinanceInvoiceLine", b =>
+                {
+                    b.HasOne("Clubs.Tenant", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Clubs.FinanceEntity", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "EntityId")
+                        .HasPrincipalKey("TenantId", "Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Clubs.Org", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "OrgId")
+                        .HasPrincipalKey("TenantId", "Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Clubs.FinanceInvoice", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "EntityId", "InvoiceId")
+                        .HasPrincipalKey("TenantId", "EntityId", "Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Clubs.FinanceJob", b =>
+                {
+                    b.HasOne("Clubs.Tenant", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Clubs.FinanceEntity", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "EntityId")
+                        .HasPrincipalKey("TenantId", "Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Clubs.Org", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "OrgId")
+                        .HasPrincipalKey("TenantId", "Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Clubs.DuesPlan", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "EntityId", "PlanId")
+                        .HasPrincipalKey("TenantId", "EntityId", "Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Clubs.FinanceJournal", b =>
+                {
+                    b.HasOne("Clubs.Tenant", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Clubs.FinanceEntity", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "EntityId")
+                        .HasPrincipalKey("TenantId", "Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Clubs.Org", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "OrgId")
+                        .HasPrincipalKey("TenantId", "Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Clubs.FinancePeriod", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "EntityId", "PeriodId")
+                        .HasPrincipalKey("TenantId", "EntityId", "Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Clubs.FinanceJournal", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "EntityId", "ReversesId")
+                        .HasPrincipalKey("TenantId", "EntityId", "Id")
+                        .OnDelete(DeleteBehavior.Restrict);
+                });
+
+            modelBuilder.Entity("Clubs.FinanceJournalLine", b =>
+                {
+                    b.HasOne("Clubs.Person", null)
+                        .WithMany()
+                        .HasForeignKey("PersonId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Clubs.Tenant", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Clubs.FinanceEntity", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "EntityId")
+                        .HasPrincipalKey("TenantId", "Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Clubs.ClubEvent", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "EventId")
+                        .HasPrincipalKey("TenantId", "Id")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Clubs.Org", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "OrgId")
+                        .HasPrincipalKey("TenantId", "Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Clubs.ServiceProject", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "ProjectId")
+                        .HasPrincipalKey("TenantId", "Id")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Clubs.FinanceAccount", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "EntityId", "AccountId")
+                        .HasPrincipalKey("TenantId", "EntityId", "Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Clubs.FinanceJournal", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "EntityId", "JournalId")
+                        .HasPrincipalKey("TenantId", "EntityId", "Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Clubs.FinanceOrganization", b =>
+                {
+                    b.HasOne("Clubs.Tenant", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Clubs.FinanceEntity", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "EntityId")
+                        .HasPrincipalKey("TenantId", "Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Clubs.Org", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "OrgId")
+                        .HasPrincipalKey("TenantId", "Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Clubs.Org", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "ServedOrgId")
+                        .HasPrincipalKey("TenantId", "Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Clubs.FinancePayment", b =>
+                {
+                    b.HasOne("Clubs.Person", null)
+                        .WithMany()
+                        .HasForeignKey("PersonId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Clubs.Tenant", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Clubs.FinanceEntity", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "EntityId")
+                        .HasPrincipalKey("TenantId", "Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Clubs.Org", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "OrgId")
+                        .HasPrincipalKey("TenantId", "Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Clubs.FinanceBank", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "EntityId", "BankAccountId")
+                        .HasPrincipalKey("TenantId", "EntityId", "Id")
+                        .OnDelete(DeleteBehavior.Restrict);
+                });
+
+            modelBuilder.Entity("Clubs.FinancePeriod", b =>
+                {
+                    b.HasOne("Clubs.Tenant", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Clubs.FinanceEntity", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "EntityId")
+                        .HasPrincipalKey("TenantId", "Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Clubs.Org", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "OrgId")
+                        .HasPrincipalKey("TenantId", "Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Clubs.FinancePledge", b =>
+                {
+                    b.HasOne("Clubs.Person", null)
+                        .WithMany()
+                        .HasForeignKey("PersonId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Clubs.Tenant", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Clubs.FinanceEntity", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "EntityId")
+                        .HasPrincipalKey("TenantId", "Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Clubs.ClubEvent", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "EventId")
+                        .HasPrincipalKey("TenantId", "Id")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Clubs.Org", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "OrgId")
+                        .HasPrincipalKey("TenantId", "Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Clubs.ServiceProject", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "ProjectId")
+                        .HasPrincipalKey("TenantId", "Id")
+                        .OnDelete(DeleteBehavior.Restrict);
+                });
+
+            modelBuilder.Entity("Clubs.FinanceRefund", b =>
+                {
+                    b.HasOne("Clubs.Tenant", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Clubs.FinanceEntity", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "EntityId")
+                        .HasPrincipalKey("TenantId", "Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Clubs.Org", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "OrgId")
+                        .HasPrincipalKey("TenantId", "Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Clubs.FinanceInvoice", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "EntityId", "InvoiceId")
+                        .HasPrincipalKey("TenantId", "EntityId", "Id")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Clubs.FinancePayment", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "EntityId", "PaymentId")
+                        .HasPrincipalKey("TenantId", "EntityId", "Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Clubs.FinanceReimbursement", b =>
+                {
+                    b.HasOne("Clubs.Tenant", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Clubs.FinanceEntity", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "EntityId")
+                        .HasPrincipalKey("TenantId", "Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Clubs.Org", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "OrgId")
+                        .HasPrincipalKey("TenantId", "Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Clubs.FinanceExpense", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "EntityId", "ExpenseId")
+                        .HasPrincipalKey("TenantId", "EntityId", "Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Clubs.FinanceTransfer", b =>
+                {
+                    b.HasOne("Clubs.Tenant", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Clubs.FinanceEntity", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "EntityId")
+                        .HasPrincipalKey("TenantId", "Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Clubs.Org", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "OrgId")
+                        .HasPrincipalKey("TenantId", "Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Clubs.FinanceEntitlement", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "EntityId", "EntitlementId")
+                        .HasPrincipalKey("TenantId", "EntityId", "Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Clubs.FinanceWebhook", b =>
+                {
+                    b.HasOne("Clubs.Tenant", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Clubs.FinanceEntity", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "EntityId")
+                        .HasPrincipalKey("TenantId", "Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Clubs.Org", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "OrgId")
+                        .HasPrincipalKey("TenantId", "Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Clubs.GovernanceDelegation", b =>
                 {
                     b.HasOne("Clubs.Tenant", null)
@@ -7407,6 +10469,15 @@ namespace Clubs.Api.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Clubs.IntelligenceAudit", b =>
+                {
+                    b.HasOne("Clubs.Tenant", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Clubs.IssuedCertificate", b =>
                 {
                     b.HasOne("Clubs.Person", null)
@@ -7431,6 +10502,22 @@ namespace Clubs.Api.Migrations
                     b.HasOne("Clubs.CertificateTemplate", null)
                         .WithMany()
                         .HasForeignKey("TenantId", "TemplateId")
+                        .HasPrincipalKey("TenantId", "Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Clubs.KnowledgePassage", b =>
+                {
+                    b.HasOne("Clubs.Tenant", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Clubs.GovernanceDocument", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "DocumentId")
                         .HasPrincipalKey("TenantId", "Id")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
@@ -8413,6 +11500,24 @@ namespace Clubs.Api.Migrations
                         .WithOne()
                         .HasForeignKey("Clubs.Tenant", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Clubs.TenantBranding", b =>
+                {
+                    b.HasOne("Clubs.Tenant", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Clubs.TenantDomain", b =>
+                {
+                    b.HasOne("Clubs.Tenant", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });
 

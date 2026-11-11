@@ -178,7 +178,7 @@ public static partial class EventEndpoints
                 return Results.File(
                     EventPdf.Build(
                         [
-                            "CLUBSPHERE / EVENT PASS",
+                            "IMPACT INTERNATIONAL / EVENT PASS",
                             e.Title,
                             r.Name,
                             e.StartsAt.ToString("u") + " - " + e.EndsAt.ToString("u"),
@@ -213,7 +213,7 @@ public static partial class EventEndpoints
                 );
                 return Results.File(
                     EventPdf.Build([
-                        "CLUBSPHERE",
+                        "IMPACT INTERNATIONAL",
                         "CERTIFICATE OF PARTICIPATION",
                         r.Name,
                         "Participated in",

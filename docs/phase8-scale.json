@@ -1,0 +1,37 @@
+{
+  "conditions": "Development loopback HTTP; warm sequential requests, 10 samples/case, conservative nearest-rank p95=max for n=10. Shared workstation; no concurrent-user or distributed SLO claim. Existing synthetic fixtures retained.",
+  "counts": {
+    "Persons": 101035,
+    "Memberships": 206038,
+    "FinanceInvoices": 101009,
+    "ClubMeetings": 20001,
+    "OperationTasks": 50000,
+    "ServiceProjects": 3001
+  },
+  "cases": {
+    "global_dashboard": {
+      "samples": 10,
+      "medianMs": 3370.1,
+      "p95Ms": 3703.69,
+      "responseBytes": 9875
+    },
+    "member_search": {
+      "samples": 10,
+      "medianMs": 99.99,
+      "p95Ms": 119.58,
+      "responseBytes": 489
+    },
+    "task_search": {
+      "samples": 10,
+      "medianMs": 307.27,
+      "p95Ms": 335.25,
+      "responseBytes": 3347
+    },
+    "all_source_search": {
+      "samples": 10,
+      "medianMs": 2138.54,
+      "p95Ms": 2536.49,
+      "responseBytes": 18214
+    }
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "freshDatabase": "clubs_phase8_fresh_f598aa90",
+  "freshMigrations": 34,
+  "privateObjectsCopiedAndHashVerified": 82,
+  "copiedKeyRingDecryptsRestoredBank": true,
+  "database": "clubs_phase8_restore_2b1be611",
+  "dumpSha256": "b97c26fe4a64b7c03fefafd3c8114a1e57f05efc2c047122fbbd7a0c20d71def",
+  "bytes": 22655995,
+  "counts": {
+    "Persons": {
+      "source": "24565",
+      "restored": "24565"
+    },
+    "Memberships": {
+      "source": "24624",
+      "restored": "24624"
+    },
+    "FinanceInvoices": {
+      "source": "71",
+      "restored": "71"
+    },
+    "FinanceJournals": {
+      "source": "232",
+      "restored": "232"
+    },
+    "KnowledgePassages": {
+      "source": "3",
+      "restored": "3"
+    },
+    "CommunicationExecutions": {
+      "source": "180",
+      "restored": "180"
+    }
+  },
+  "migrationsAfterReapply": 34,
+  "phase8RollbackReapply": true,
+  "seconds": 28.09,
+  "limitations": [
+    "Same host database drill only",
+    "Copied objects and keys checked locally; off-host recovery and OS-bound key portability remain unverified",
+    "No production RPO/RTO claim"
+  ]
+}

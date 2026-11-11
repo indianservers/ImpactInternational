@@ -11,7 +11,7 @@ export default function RequestOrganization() {
     <div className="auth-wrap">
       <Link className="brand" to="/">
         <Globe2 />
-        ClubSphere
+        Impact International
       </Link>
       <h1 style={{ marginTop: 40 }}>Bring your community together.</h1>
       <p>

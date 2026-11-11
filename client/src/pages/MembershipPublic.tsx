@@ -21,7 +21,7 @@ export function JoinInvitation() {
       <section className="panel">
         <Link className="brand" to="/">
           <Globe2 />
-          ClubSphere
+          Impact International
         </Link>
         <div className="verification-icon">
           <ShieldCheck size={42} />
@@ -108,7 +108,7 @@ export function VerifyMembershipCard() {
       <section className="panel">
         <Link className="brand" to="/">
           <Globe2 />
-          ClubSphere
+          Impact International
         </Link>
         {q.isPending && token.length === 64 ? (
           <Skeleton />

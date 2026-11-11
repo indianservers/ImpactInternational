@@ -317,7 +317,7 @@ public class MailWorker(
                             recipient,
                             !string.IsNullOrEmpty(mail.Subject)
                                 ? mail.Subject
-                                : "ClubSphere: "
+                                : "Impact International: "
                                     + (
                                         mail.Kind == "verify"
                                             ? "verify your email"

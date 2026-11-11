@@ -31,8 +31,8 @@ public static class EventPdf
     {
         using var document = new PdfDocument();
         document.Info.Title =
-            qr == null ? "ClubSphere participation certificate" : "ClubSphere event pass";
-        document.Info.Creator = "ClubSphere";
+            qr == null ? "Impact International participation certificate" : "Impact International event pass";
+        document.Info.Creator = "Impact International";
         var page = document.AddPage();
         page.Size = PdfSharp.PageSize.A4;
         var gfx = XGraphics.FromPdfPage(page);
@@ -87,7 +87,7 @@ public static class EventPdf
             page.Size = PdfSharp.PageSize.A4;
             gfx = XGraphics.FromPdfPage(page);
             Header();
-            gfx.DrawString("CLUBSPHERE / EVENT RECORD - CONTINUED", small, ink, new XPoint(44, 70));
+            gfx.DrawString("IMPACT INTERNATIONAL / EVENT RECORD - CONTINUED", small, ink, new XPoint(44, 70));
             y = 160;
         }
         void DrawLine(string line, XFont font, double gap)

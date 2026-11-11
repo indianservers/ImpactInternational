@@ -1,0 +1,7 @@
+{
+  "freshMigrations": 33,
+  "rollbackTarget": "20261111021932_OperationsIndexes",
+  "rollbackAndReapply": true,
+  "database": "isolated empty clubs_finance_fresh",
+  "productionRollbackClaim": false
+}

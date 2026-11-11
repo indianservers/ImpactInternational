@@ -1,0 +1,206 @@
+[
+  {
+    "test": "entity separate from organization",
+    "passed": true
+  },
+  {
+    "test": "double-entry chart initialized",
+    "passed": true
+  },
+  {
+    "test": "entity access requires explicit grant",
+    "passed": true
+  },
+  {
+    "test": "decimal invoice math",
+    "passed": true
+  },
+  {
+    "test": "extra currency decimals rejected",
+    "passed": true
+  },
+  {
+    "test": "number assigned on issuance",
+    "passed": true
+  },
+  {
+    "test": "issued invoice unpaid",
+    "passed": true
+  },
+  {
+    "test": "member own invoice readable",
+    "passed": true
+  },
+  {
+    "test": "member self portal accurate",
+    "passed": true
+  },
+  {
+    "test": "member cannot issue credit",
+    "passed": true
+  },
+  {
+    "test": "provider not configured denies checkout",
+    "passed": true
+  },
+  {
+    "test": "issued invoice cannot cancel",
+    "passed": true
+  },
+  {
+    "test": "invoice PDF real",
+    "passed": true
+  },
+  {
+    "test": "manual payment is pending",
+    "passed": true
+  },
+  {
+    "test": "unverified receipt denied",
+    "passed": true
+  },
+  {
+    "test": "self verification denied",
+    "passed": true
+  },
+  {
+    "test": "independent verification creates receipt",
+    "passed": true
+  },
+  {
+    "test": "allocation retry idempotent",
+    "passed": true
+  },
+  {
+    "test": "partial payment separate balance",
+    "passed": true
+  },
+  {
+    "test": "full payment balance zero",
+    "passed": true
+  },
+  {
+    "test": "overpayment retained as unapplied",
+    "passed": true
+  },
+  {
+    "test": "over allocation rejected",
+    "passed": true
+  },
+  {
+    "test": "bank details protected",
+    "passed": true
+  },
+  {
+    "test": "cash bank only after settlement",
+    "passed": true
+  },
+  {
+    "test": "statement import",
+    "passed": true
+  },
+  {
+    "test": "duplicate statement import safe",
+    "passed": true
+  },
+  {
+    "test": "statement matched without duplicate cash",
+    "passed": true
+  },
+  {
+    "test": "refund reopens invoice balance",
+    "passed": true
+  },
+  {
+    "test": "credit preserves issued total",
+    "passed": true
+  },
+  {
+    "test": "credit clears returned receivable",
+    "passed": true
+  },
+  {
+    "test": "chargeback correction journal recorded",
+    "passed": true
+  },
+  {
+    "test": "verified receipt generated from actual record",
+    "passed": true
+  },
+  {
+    "test": "unbalanced journal rejected",
+    "passed": true
+  },
+  {
+    "test": "journal reversal is separate entry",
+    "passed": true
+  },
+  {
+    "test": "database blocks posted journal edit",
+    "passed": true
+  },
+  {
+    "test": "database blocks issued invoice edit",
+    "passed": true
+  },
+  {
+    "test": "closed period rejects posting",
+    "passed": true
+  },
+  {
+    "test": "period reopen audited",
+    "passed": true
+  },
+  {
+    "test": "annual dues generated",
+    "passed": true
+  },
+  {
+    "test": "duplicate assessment returns same invoice",
+    "passed": true
+  },
+  {
+    "test": "life joining fee bills once",
+    "passed": true
+  },
+  {
+    "test": "fully approved waiver creates no fake invoice",
+    "passed": true
+  },
+  {
+    "test": "waiver retry cannot silently bill",
+    "passed": true
+  },
+  {
+    "test": "new schedule leaves historical invoice frozen",
+    "passed": true
+  },
+  {
+    "test": "trial balance reconciles",
+    "passed": true
+  },
+  {
+    "test": "balance sheet reconciles",
+    "passed": true
+  },
+  {
+    "test": "income statement from posted records",
+    "passed": true
+  },
+  {
+    "test": "safe CSV export",
+    "passed": true
+  },
+  {
+    "test": "real report PDF",
+    "passed": true
+  },
+  {
+    "test": "member denied entity reports",
+    "passed": true
+  },
+  {
+    "test": "cross tenant invoice denied",
+    "passed": true
+  }
+]

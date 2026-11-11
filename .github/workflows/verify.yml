@@ -1,4 +1,4 @@
-name: Phase 1 verification
+name: Phases 1-8 verification
 on: [push, pull_request]
 jobs:
   verify:
@@ -35,15 +35,21 @@ jobs:
           echo "CLUBS_SEED_PASSWORD=$password" >> "$GITHUB_ENV"
       - run: npm --prefix client ci
       - run: npm run build
-      - run: dotnet run --project server --no-build --no-launch-profile -- --migrate --seed
+      - run: dotnet run --project server --no-build --no-launch-profile -- --migrate --seed --seed-phase2 --seed-phase3 --seed-phase4
+      - run: pip install -r tests/requirements.txt
       - name: API integration checks
         shell: bash
         run: |
-          dotnet run --project server --no-build --no-launch-profile --urls http://127.0.0.1:5081 > /tmp/clubs-test-api.log 2>&1 &
-          api_pid=$!
-          trap 'kill "$api_pid"' EXIT
-          for attempt in $(seq 1 30); do curl -sf http://127.0.0.1:5081/health && break || sleep 1; done
-          python tests/integration.py
+          for suite in integration phase2 phase2_extended phase2_imports phase3 phase3_extended phase3_security phase4 phase4_extended phase4_security phase5 phase5_extended phase5_security phase6 phase6_extended phase6_edges phase6_scope phase6_workflows phase7 phase7_extended phase7_security phase7_sources phase8; do
+            dotnet server/bin/Debug/net10.0/Clubs.Api.dll --urls http://127.0.0.1:5081 > /tmp/clubs-test-api.log 2>&1 &
+            api_pid=$!
+            trap 'kill "$api_pid" 2>/dev/null || true' EXIT
+            for attempt in $(seq 1 30); do curl -sf http://127.0.0.1:5081/health && break || sleep 1; done
+            python "tests/$suite.py"
+            kill "$api_pid"
+            wait "$api_pid" || true
+          done
+      - run: python tests/phase8_providers.py
       - run: python tests/benchmark.py
       - run: python tests/smtp.py
       - uses: actions/upload-artifact@v4

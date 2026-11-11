@@ -1,0 +1,116 @@
+{
+  "suites": [
+    {
+      "suite": "integration",
+      "assertions": 60,
+      "passed": true
+    },
+    {
+      "suite": "phase2",
+      "assertions": 127,
+      "passed": true
+    },
+    {
+      "suite": "phase2_extended",
+      "assertions": 11,
+      "passed": true
+    },
+    {
+      "suite": "phase2_imports",
+      "assertions": 53,
+      "passed": true
+    },
+    {
+      "suite": "phase3",
+      "assertions": 126,
+      "passed": true
+    },
+    {
+      "suite": "phase3_extended",
+      "assertions": 15,
+      "passed": true
+    },
+    {
+      "suite": "phase3_security",
+      "assertions": 20,
+      "passed": true
+    },
+    {
+      "suite": "phase4",
+      "assertions": 55,
+      "passed": true
+    },
+    {
+      "suite": "phase4_extended",
+      "assertions": 29,
+      "passed": true
+    },
+    {
+      "suite": "phase4_security",
+      "assertions": 28,
+      "passed": true
+    },
+    {
+      "suite": "phase5",
+      "assertions": 42,
+      "passed": true
+    },
+    {
+      "suite": "phase5_extended",
+      "assertions": 14,
+      "passed": true
+    },
+    {
+      "suite": "phase5_security",
+      "assertions": 22,
+      "passed": true
+    },
+    {
+      "suite": "phase6",
+      "assertions": 62,
+      "passed": true
+    },
+    {
+      "suite": "phase6_extended",
+      "assertions": 28,
+      "passed": true
+    },
+    {
+      "suite": "phase6_edges",
+      "assertions": 10,
+      "passed": true
+    },
+    {
+      "suite": "phase6_scope",
+      "assertions": 21,
+      "passed": true
+    },
+    {
+      "suite": "phase6_workflows",
+      "assertions": 14,
+      "passed": true
+    },
+    {
+      "suite": "phase7",
+      "assertions": 51,
+      "passed": true
+    },
+    {
+      "suite": "phase7_extended",
+      "assertions": 29,
+      "passed": true
+    },
+    {
+      "suite": "phase7_security",
+      "assertions": 21,
+      "passed": true
+    },
+    {
+      "suite": "phase7_sources",
+      "assertions": 10,
+      "passed": true
+    }
+  ],
+  "assertions": 848,
+  "allPassed": true
+}

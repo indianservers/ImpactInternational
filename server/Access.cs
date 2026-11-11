@@ -13,6 +13,7 @@ public class ApiError(int status, string message) : Exception(message)
 public class Access(Db db, IHttpContextAccessor ctx)
 {
     public Db Db => db;
+    public Guid? BoundTenant=>ctx.HttpContext?.Items["tenant-domain"] as Guid?;
     public static readonly string[] All =
     [
         "organization.view",
@@ -66,6 +67,8 @@ public class Access(Db db, IHttpContextAccessor ctx)
         "communications.inbox",
         "communications.reports",
         "communications.configure",
+        "intelligence.view", "intelligence.assistant", "intelligence.knowledge", "intelligence.automations",
+        "finance.view", "finance.manage", "finance.configure", "finance.reconcile", "finance.post", "finance.approve", "finance.self",
         "operations.view", "operations.manage", "operations.verify", "operations.documents", "operations.certificates",
     ];
 
@@ -126,6 +129,7 @@ public class Access(Db db, IHttpContextAccessor ctx)
             "This membership no longer grants an active workspace.",
             403
         );
+        Check(BoundTenant==null||BoundTenant==w.TenantId,"Switch to this domain's authorized association workspace.",403);
         var grants = await Grants(w);
         Check(
             w.AppointmentId == null
@@ -148,11 +152,7 @@ public class Access(Db db, IHttpContextAccessor ctx)
         return w;
     }
 
-    public Task<string[]> Grants(Assignment w) =>
-        db
-            .RolePermissions.Where(x => x.RoleId == w.RoleId)
-            .Select(x => x.PermissionId)
-            .ToArrayAsync();
+    public async Task<string[]> Grants(Assignment w){var grants=await db.RolePermissions.Where(x=>x.RoleId==w.RoleId).Select(x=>x.PermissionId).ToArrayAsync();var disabled=await db.TenantBrandings.Where(b=>b.TenantId==w.TenantId).Select(b=>b.DisabledFeatures).SingleOrDefaultAsync();if(disabled==null||disabled=="[]")return grants;var features=GovernanceService.Unpack<string[]>(disabled);var prefixes=features.Where(TenantExperience.PermissionPrefixes.ContainsKey).SelectMany(f=>TenantExperience.PermissionPrefixes[f]).ToArray();return grants.Where(p=>!prefixes.Any(prefix=>p.StartsWith(prefix,StringComparison.Ordinal))).ToArray();}
 
 #pragma warning disable EF1002 // Only canonical typed GUID literals enter this SQL; see below.
     public IQueryable<Org> Tree(Guid tenant, Guid root) =>

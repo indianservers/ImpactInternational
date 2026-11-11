@@ -39,6 +39,16 @@ b.Services.AddScoped<NotificationService>();
 b.Services.AddScoped<GovernanceService>();
 b.Services.AddScoped<EventService>();
 b.Services.AddScoped<OperationsService>();
+b.Services.AddScoped<FinanceService>();
+b.Services.AddScoped<IntelligenceService>();b.Services.AddScoped<IntelligenceKnowledge>();b.Services.AddScoped<IntelligenceAssistant>();b.Services.AddScoped<TenantExperience>();
+b.Services.AddHttpClient("intelligence-model",c=>c.Timeout=TimeSpan.FromSeconds(15)).ConfigurePrimaryHttpMessageHandler(()=>new HttpClientHandler{AllowAutoRedirect=false});
+b.Services.AddHttpClient("domain-dns",c=>c.Timeout=TimeSpan.FromSeconds(10)).ConfigurePrimaryHttpMessageHandler(()=>new HttpClientHandler{AllowAutoRedirect=false});
+b.Services.AddRateLimiter(o=>o.AddPolicy("intelligence",c=>RateLimitPartition.GetFixedWindowLimiter(c.Connection.RemoteIpAddress?.ToString()??"unknown",_=>new(){PermitLimit=120,Window=TimeSpan.FromMinutes(1)})));
+
+b.Services.AddScoped<FinanceGateway>();
+b.Services.AddHttpClient("finance",c=>c.Timeout=TimeSpan.FromSeconds(20)).ConfigurePrimaryHttpMessageHandler(()=>new HttpClientHandler{AllowAutoRedirect=false});
+b.Services.AddHostedService<FinanceWorker>();
+b.Services.ConfigureHttpJsonOptions(o=>o.SerializerOptions.NumberHandling=System.Text.Json.Serialization.JsonNumberHandling.AllowReadingFromString);
 b.Services.AddHostedService<OperationsWorker>();
 b.Services.AddScoped<CommunicationService>();
 b.Services.AddSingleton<CommunicationStorage>();
@@ -120,10 +130,11 @@ app.Use(
                 c.Request.Path.StartsWithSegments("/api")
                 && !HttpMethods.IsGet(c.Request.Method)
                 && !c.Request.Path.StartsWithSegments("/api/v1/communications/webhooks")
+                && !c.Request.Path.StartsWithSegments("/api/v1/finance/webhooks")
                 && c.Request.Path != "/api/v1/communications/unsubscribe"
             )
                 await c.RequestServices.GetRequiredService<IAntiforgery>().ValidateRequestAsync(c);
-            await next();
+            await TenantHostBinding.Bind(c,next);
         }
         catch (AntiforgeryValidationException)
         {
@@ -175,6 +186,7 @@ app.Use(
         }
         finally
         {
+            IntelligenceTelemetry.Record(c.Response.StatusCode);
             app.Logger.LogInformation(
                 "HTTP {Method} {Path} returned {Status} in {ElapsedMs} ms ({CorrelationId})",
                 c.Request.Method,
@@ -196,6 +208,9 @@ api.MapGovernance();
 api.MapEvents();
 api.MapCommunications();
 api.MapOperations();
+app.MapIntelligence();
+app.MapFinance();
+app.MapFinanceMembers();
 api.MapMembershipLifecycle();
 api.MapMemberMedia();
 api.MapMemberImports();
@@ -491,12 +506,13 @@ api.MapGet(
     async (Access a) =>
     {
         var u = await a.User();
+        var boundTenant=a.BoundTenant;
         var data = await (
             from x in a.Db.Assignments
             join o in a.Db.Orgs on x.OrgId equals o.Id
             join t in a.Db.Tenants on x.TenantId equals t.Id
             join r in a.Db.Roles on x.RoleId equals r.Id
-            where x.UserId == u.Id
+            where x.UserId == u.Id && (boundTenant==null||x.TenantId==boundTenant)
             select new
             {
                 x.Id,
@@ -527,7 +543,7 @@ api.MapPost(
     {
         var u = await a.User();
         Check(
-            await a.Db.Assignments.AnyAsync(x => x.Id == id && x.UserId == u.Id),
+            await a.Db.Assignments.AnyAsync(x => x.Id == id && x.UserId == u.Id && (a.BoundTenant==null||x.TenantId==a.BoundTenant)),
             "Workspace denied.",
             403
         );

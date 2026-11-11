@@ -533,6 +533,7 @@ public static partial class CommunicationEndpoints
                 );
                 Check(rule != null, "Rule unavailable.", 404);
                 await s.Scope(w, rule.OrgId);
+                Check(rule.Definition=="","Use the reviewed cross-module workflow designer.",409);
                 Check(rule.Status == "Draft", "Only drafts may be submitted.", 409);
                 await using var tx = await s.Db.Database.BeginTransactionAsync();
                 rule.ContentHash = Hash(
@@ -965,6 +966,7 @@ public static partial class CommunicationEndpoints
                 : await s.Db.CommunicationAutomations.SingleOrDefaultAsync(a =>
                     a.Id == id && a.TenantId == w.TenantId
                 ) ?? throw new ApiError(404, "Rule unavailable.");
+        Check(row.Definition=="","Use the cross-module workflow revision flow.",409);
         await s.Scope(w, row.OrgId);
         Check(id == null || row.Version == r.Version, "Rule changed.", 409);
         if (id == null)

@@ -1,3 +1,4 @@
+import {TenantBrand} from "../TenantBrand";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Globe2, Eye, EyeOff, ArrowRight } from "lucide-react";
@@ -59,7 +60,7 @@ export default function Auth({ mode }: { mode: string }) {
       <div className="auth-story">
         <Link className="brand" to="/">
           <Globe2 />
-          ClubSphere
+          <TenantBrand/>
         </Link>
         <div>
           <div className="eyebrow">CONNECTED BY PURPOSE</div>
@@ -81,7 +82,7 @@ export default function Auth({ mode }: { mode: string }) {
       </div>
       <div className="auth-form">
         <Link to="/" className="back-link">
-          ← Back to ClubSphere
+          ← Back to Impact International
         </Link>
         <div className="eyebrow">WELCOME TO YOUR COMMUNITY</div>
         <h1>
@@ -222,7 +223,7 @@ export default function Auth({ mode }: { mode: string }) {
         <p className="auth-bottom">
           {mode === "login" ? (
             <>
-              New to ClubSphere? <Link to="/signup">Create an account</Link>
+              New to Impact International? <Link to="/signup">Create an account</Link>
             </>
           ) : (
             <Link to="/login">Return to sign in</Link>

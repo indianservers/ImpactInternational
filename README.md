@@ -1,4 +1,4 @@
-# ClubSphere — Global Clubs Management, Phases 1–6
+# ClubSphere — Global Clubs Management, Phases 1–7
 
 React/TypeScript/Vite frontend, ASP.NET Core 10 API, EF Core/Npgsql and PostgreSQL. The repository was empty at the start of implementation. No SQLite, browser storage, or mock production API is used.
 
@@ -190,3 +190,34 @@ The suites use actual PostgreSQL and fictional identities. Extended tests requir
 `tests/phase6_scale.py` is restricted to the isolated existing `clubs_governance_scale` fixture. Its default is read-only measurement. `--fixture` explicitly adds large synthetic meeting/project/volunteer/document metadata fixtures; `--tasks` explicitly adds 50,000 completed task records. Do not repeat fixture preparation casually and never target operational data. `tests/phase6_certificate_scale.py` prepares 50 real certificate records from that synthetic verified-hour fixture, then explicitly sets issuance state by benchmark SQL to isolate PDF rendering. Correctness suites separately exercise actual independent approvals and two-recipient issuance. Both scale scripts own and stop their API on 5087. The document benchmark measures metadata, not 10,000 distinct complete file downloads.
 
 [Phase 6 completion report](PHASE6_COMPLETION_REPORT.md), [operations API inventory](docs/phase6-api.md), [OpenAPI](docs/openapi.json), [schema](docs/schema.sql) and [roadmap](EIGHT_PHASE_ROADMAP.md) describe implemented scope, test evidence, measurements and incomplete advanced functionality. The studio currently supports positioned text, A4 orientation and colored backgrounds/borders; full image/signature/font design is not complete. Planning estimates are not financial transactions or ledger entries.
+
+
+## Phase 7 finance
+
+Finance is available at `/app/finance` and the personal portal at `/app/finance/member`. Create a financial entity, open an accounting period and explicitly grant entity access before posting. Hierarchy roles do not automatically grant access to independent books. Existing Club Treasurer roles receive finance application permissions; an entity grant is still required.
+
+Run `dotnet run --project server --no-launch-profile -- --migrate` to apply four additive finance migrations (33 total). Back up the database and Data Protection keys together. Native money uses PostgreSQL NUMERIC/C# decimal; posted history is immutable and corrections use source documents/reversals. A completed transfer or reimbursement record is evidence of an external action, not an instruction to move money.
+
+Stripe is the only implemented checkout adapter. Configure an entity-bound server alias using the commented settings in `.env.example`, bind it in Financial settings, and complete external sandbox/merchant setup before collecting funds. Pay Now is unavailable without configuration. Signature verification and provider session checks, not browser redirects, authorize capture. Tests never call real payment providers.
+
+```powershell
+python tests/phase7.py
+python tests/phase7_extended.py
+python tests/phase7_sources.py
+python tests/phase7_security.py
+python tests/phase7_providers.py
+# Explicit isolated benchmark mutations only:
+python tests/phase7_scale.py --fixture
+python tests/phase7_billing_scale.py --run
+```
+
+Tests require the existing fictional Phase 1–6 fixtures and PostgreSQL test database. The provider suite starts its own API on 5084 and loopback HTTP fake on 5086; other integration suites use 5081. Scale fixtures are restricted to `clubs_governance_scale` and use 5087. `tests/phase7_demo.py` creates fictional showcase records through a Development API on 5080.
+
+[Phase 7 completion report](PHASE7_COMPLETION_REPORT.md), [API inventory](docs/phase7-api.md), [regression evidence](docs/phase7-regression-results.json) and [roadmap](EIGHT_PHASE_ROADMAP.md) identify implemented core workflows, measured results and advanced gaps. Formal consolidation, complete fee/tax policies, additional payment adapters, external sandbox certification and every detailed register/Excel export are not complete.
+
+
+## Phase 8 intelligence and release controls
+
+Open `/app/intelligence` for scoped metrics, a metric catalog, a read-only assistant, PDF knowledge retrieval, independently reviewed follow-up workflows, branding/domain controls and operator diagnostics. Ctrl-K opens authorized cross-module search. Existing source permissions and explicit finance entity grants still apply. Optional OpenAI routing is server-configured and tenant-opt-in; local tools require no model credentials.
+
+Apply the additive intelligence migration (34 total) before starting. See [Phase 8 report](PHASE8_COMPLETION_REPORT.md), [API inventory](docs/phase8-api.md), [initial audit](PHASE8_INITIAL_AUDIT.md), [regressions](docs/phase8-regressions.json), [scale measurements](docs/phase8-scale.json) and [recovery drill](docs/phase8-recovery.json). 54 new integration and 15 provider-contract checks pass; 848 selected prior-phase assertions pass. Production readiness remains blocked by the explicit gaps in the report, including MFA, off-host recovery, provider certification and deployment/TLS verification. The complete aspirational eight-phase scope is not marked finished.

@@ -226,12 +226,14 @@ public class CommunicationWorker(
                 }
                 await s.Db.SaveChangesAsync(stop);
                 await Automations(s, stop);
+                await IntelligenceWorkflows.Process(s,stop);
+                await IntelligenceKnowledge.Purge(s.Db,stop);
                 await DeliverInApp(s, stop);
                 await tx.CommitAsync(stop);
             }
             catch (Exception e) when (e is not OperationCanceledException)
             {
-                log.LogError("Communication queue failed ({Type})", e.GetType().Name);
+                log.LogError(e,"Communication queue failed ({Type})", e.GetType().Name);
             }
             await Task.Delay(work ? 100 : 1500, stop);
         }
@@ -258,6 +260,7 @@ public class CommunicationWorker(
         var authority = new Dictionary<(Guid?, Guid, string), bool>();
         foreach (var m in jobs)
         {
+            if(m.UserId==null||m.OrgId==null){m.Suppressed=true;m.DeliveryStatus="Suppressed";m.LastError="In-app recipient or organization unavailable.";continue;}
             var key = (
                 m.SenderAssignmentId,
                 m.OrgId!.Value,
@@ -272,6 +275,10 @@ public class CommunicationWorker(
                 );
                 authority[key] = allowed;
             }
+            if(m.Kind.StartsWith("finance.")){
+ allowed=false;
+ if(Guid.TryParse(m.Kind[8..],out var financialEntity)&&m.SenderAssignmentId!=null){var sender=await s.Db.Assignments.SingleOrDefaultAsync(x=>x.Id==m.SenderAssignmentId&&x.UserId==m.SenderId);allowed=sender!=null&&await s.A.Effective(sender)&&await s.Db.RolePermissions.AnyAsync(p=>p.RoleId==sender.RoleId&&p.PermissionId=="finance.manage")&&await s.Db.FinanceGrants.AnyAsync(g=>g.EntityId==financialEntity&&g.UserId==sender.UserId&&new[]{"Owner","Treasurer","Billing"}.Contains(g.Role))&&await s.Db.FinanceEntitys.AnyAsync(e=>e.Id==financialEntity&&e.TenantId==m.TenantId&&e.OrgId==m.OrgId&&e.Active);}
+ }
             prefs.TryGetValue(m.UserId!.Value, out var pref);
             if (
                 !allowed
@@ -310,7 +317,7 @@ public class CommunicationWorker(
     private static async Task Automations(CommunicationService s, CancellationToken stop)
     {
         var rules = await s
-            .Db.CommunicationAutomations.Where(r => r.Active && r.Status == "Approved")
+            .Db.CommunicationAutomations.Where(r => r.Definition=="" && r.Active && r.Status == "Approved")
             .OrderBy(r => r.Id)
             .Take(100)
             .ToListAsync(stop);

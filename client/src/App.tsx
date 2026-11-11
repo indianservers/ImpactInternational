@@ -43,6 +43,7 @@ import {
   Wallet,
   ChartNoAxesCombined,
 } from "lucide-react";
+import { TenantBrand } from "./TenantBrand";
 import { api, type Workspace } from "./api";
 const RequestOrganization = lazy(() => import("./pages/RequestOrganization"));
 const Dashboard = lazy(() => import("./pages/Dashboard"));
@@ -73,32 +74,87 @@ const VerifyMembershipCard = lazy(() =>
   })),
 );
 const ClubDirectory = lazy(() => import("./pages/GovernanceClubs"));
-const ClubWorkspace = lazy(() => import("./pages/GovernanceClubs").then(m=>({default:m.ClubWorkspace})));
-const GovernanceDashboard = lazy(() => import("./pages/GovernanceClubs").then(m=>({default:m.GovernanceDashboard})));
+const ClubWorkspace = lazy(() =>
+  import("./pages/GovernanceClubs").then((m) => ({ default: m.ClubWorkspace })),
+);
+const GovernanceDashboard = lazy(() =>
+  import("./pages/GovernanceClubs").then((m) => ({
+    default: m.GovernanceDashboard,
+  })),
+);
 const LeadershipDirectory = lazy(() => import("./pages/GovernanceLeadership"));
-const LeadershipCalendar = lazy(() => import("./pages/GovernanceLeadership").then(m=>({default:m.LeadershipCalendar})));
-const LeadershipHandovers = lazy(() => import("./pages/GovernanceLeadership").then(m=>({default:m.LeadershipHandovers})));
+const LeadershipCalendar = lazy(() =>
+  import("./pages/GovernanceLeadership").then((m) => ({
+    default: m.LeadershipCalendar,
+  })),
+);
+const LeadershipHandovers = lazy(() =>
+  import("./pages/GovernanceLeadership").then((m) => ({
+    default: m.LeadershipHandovers,
+  })),
+);
 const CommitteeDirectory = lazy(() => import("./pages/GovernanceCommittees"));
-const CommitteeWorkspace = lazy(() => import("./pages/GovernanceCommittees").then(m=>({default:m.CommitteeWorkspace})));
+const CommitteeWorkspace = lazy(() =>
+  import("./pages/GovernanceCommittees").then((m) => ({
+    default: m.CommitteeWorkspace,
+  })),
+);
 const GovernanceApprovals = lazy(() => import("./pages/GovernanceApprovals"));
 const GovernanceSettings = lazy(() => import("./pages/GovernanceSettings"));
 const GovernanceDocuments = lazy(() => import("./pages/GovernanceDocuments"));
-const GovernanceResolutions = lazy(() => import("./pages/GovernanceDocuments").then(m=>({default:m.GovernanceResolutions})));
-const Operations=lazy(()=>import('./pages/Operations'));
-const VerifyCertificate=lazy(()=>import('./pages/Operations').then(m=>({default:m.VerifyCertificate})));
-const Communications=lazy(()=>import('./pages/Communications'));
-const Events=lazy(()=>import('./pages/Events'));
-const EventWizard=lazy(()=>import('./pages/Events').then(m=>({default:m.EventWizard})));
-const EventWorkspace=lazy(()=>import('./pages/EventWorkspace'));
-const MyEvents=lazy(()=>import('./pages/EventParticipation').then(m=>({default:m.MyEvents})));
-const EventCheckin=lazy(()=>import('./pages/EventParticipation').then(m=>({default:m.EventCheckin})));
-const EventSettings=lazy(()=>import('./pages/EventParticipation').then(m=>({default:m.EventSettings})));
-const EventDashboard=lazy(()=>import('./pages/EventParticipation').then(m=>({default:m.EventDashboard})));
-const PublicEvent=lazy(()=>import('./pages/EventParticipation').then(m=>({default:m.PublicEvent})));
-const EventInvitation=lazy(()=>import('./pages/EventParticipation').then(m=>({default:m.EventInvitation})));
+const GovernanceResolutions = lazy(() =>
+  import("./pages/GovernanceDocuments").then((m) => ({
+    default: m.GovernanceResolutions,
+  })),
+);
+const Intelligence = lazy(() => import("./pages/Intelligence"));
+const SearchLauncher = lazy(() =>
+  import("./pages/Intelligence").then((m) => ({ default: m.SearchLauncher })),
+);
+const Finance = lazy(() => import("./pages/Finance"));
+const Operations = lazy(() => import("./pages/Operations"));
+const VerifyCertificate = lazy(() =>
+  import("./pages/Operations").then((m) => ({ default: m.VerifyCertificate })),
+);
+const Communications = lazy(() => import("./pages/Communications"));
+const Events = lazy(() => import("./pages/Events"));
+const EventWizard = lazy(() =>
+  import("./pages/Events").then((m) => ({ default: m.EventWizard })),
+);
+const EventWorkspace = lazy(() => import("./pages/EventWorkspace"));
+const MyEvents = lazy(() =>
+  import("./pages/EventParticipation").then((m) => ({ default: m.MyEvents })),
+);
+const EventCheckin = lazy(() =>
+  import("./pages/EventParticipation").then((m) => ({
+    default: m.EventCheckin,
+  })),
+);
+const EventSettings = lazy(() =>
+  import("./pages/EventParticipation").then((m) => ({
+    default: m.EventSettings,
+  })),
+);
+const EventDashboard = lazy(() =>
+  import("./pages/EventParticipation").then((m) => ({
+    default: m.EventDashboard,
+  })),
+);
+const PublicEvent = lazy(() =>
+  import("./pages/EventParticipation").then((m) => ({
+    default: m.PublicEvent,
+  })),
+);
+const EventInvitation = lazy(() =>
+  import("./pages/EventParticipation").then((m) => ({
+    default: m.EventInvitation,
+  })),
+);
 function WorkspaceHome() {
   const { w } = useWorkspace();
-  return w?.permissions.includes("governance.reports") ? <GovernanceDashboard/> : w?.permissions.includes("members.view") ? (
+  return w?.permissions.includes("governance.reports") ? (
+    <GovernanceDashboard />
+  ) : w?.permissions.includes("members.view") ? (
     <Dashboard />
   ) : (
     <MemberPortal />
@@ -159,6 +215,13 @@ function Shell() {
   const w = workspaces.data?.find(
     (x) => x.id === (active || me.data?.workspaceId),
   );
+  const experience = useQuery<any>({
+    queryKey: ["tenant-experience", w?.id],
+    queryFn: () => api("/intelligence/branding/current"),
+    enabled: !!w,
+    staleTime: 30000,
+  });
+  const identity = experience.data?.identity;
   async function activate(id: string) {
     try {
       await api("/workspaces/" + id + "/activate", "POST");
@@ -175,21 +238,63 @@ function Shell() {
   }
   const menus = [
     ["Event types", "/app/event-settings", CalendarDays, "events.configure"],
-    ["Event intelligence", "/app/event-intelligence", CalendarDays, "events.reports"],
+    [
+      "Event intelligence",
+      "/app/event-intelligence",
+      CalendarDays,
+      "events.reports",
+    ],
+    [
+      "Global Intelligence",
+      "/app/intelligence",
+      ChartNoAxesCombined,
+      "intelligence.assistant",
+    ],
+    ["Finance", "/app/finance", Wallet, "finance.self"],
     ["Club Operations", "/app/operations", Briefcase, "operations.view"],
-    ["Communication Center", "/app/communications", Mail, "communications.view"],
+    [
+      "Communication Center",
+      "/app/communications",
+      Mail,
+      "communications.view",
+    ],
     ["Events & calendar", "/app/events", CalendarDays, "events.view"],
     ["Dashboard", "/app", LayoutDashboard, "organization.view"],
     ["Organizations", "/app/organizations", Network, "organization.view"],
-    ["Club directory", "/app/clubs", Building2, "clubs.view"],
+    [
+      (identity?.clubTerm || "Club") + " directory",
+      "/app/clubs",
+      Building2,
+      "clubs.view",
+    ],
     ["Leadership", "/app/leadership", ShieldCheck, "leadership.view"],
-    ["Leadership calendar", "/app/leadership-calendar", CalendarDays, "leadership.view"],
+    [
+      "Leadership calendar",
+      "/app/leadership-calendar",
+      CalendarDays,
+      "leadership.view",
+    ],
     ["Handovers", "/app/handovers", ArrowRightLeft, "leadership.view"],
     ["Committees", "/app/committees", Users, "committees.view"],
-    ["Governance approvals", "/app/governance", ClipboardCheck, "governance.approve"],
+    [
+      "Governance approvals",
+      "/app/governance",
+      ClipboardCheck,
+      "governance.approve",
+    ],
     ["Resolutions", "/app/resolutions", ScrollText, "governance.documents"],
-    ["Governance documents", "/app/governance-documents", Briefcase, "governance.documents"],
-    ["Governance configuration", "/app/governance-settings", SlidersHorizontal, "governance.configure"],
+    [
+      "Governance documents",
+      "/app/governance-documents",
+      Briefcase,
+      "governance.documents",
+    ],
+    [
+      "Governance configuration",
+      "/app/governance-settings",
+      SlidersHorizontal,
+      "governance.configure",
+    ],
     ["Members", "/app/members", Users, "members.view"],
     ["Member directory", "/app/directory", UserRound, "directory.view"],
     ["Applications", "/app/approvals", ClipboardCheck, "members.approve"],
@@ -226,7 +331,9 @@ function Shell() {
       <div
         className="app-shell"
         style={
-          { "--brand-accent": w?.color || "#2563eb" } as React.CSSProperties
+          {
+            "--brand-accent": identity?.accent || w?.color || "#2563eb",
+          } as React.CSSProperties
         }
       >
         <aside className={open ? "sidebar open" : "sidebar"}>
@@ -234,7 +341,7 @@ function Shell() {
             <span className="brand-icon">
               <Globe2 size={23} />
             </span>
-            Club<span className="brand-light">Sphere</span>
+            <TenantBrand identity={identity} />
             <span className="brand-dot" />
           </Link>
           <div className="sidebar-label">YOUR WORKSPACE</div>
@@ -257,7 +364,34 @@ function Shell() {
           <div className="sidebar-label">WORKSPACE</div>
           <nav>
             {menus
-              .filter((x) => x[1] === "/app/governance" ? w?.permissions.some(p => ["governance.approve","clubs.manage","leadership.manage","committees.manage","governance.documents"].includes(p)) : w?.permissions.includes(x[3]))
+              .filter(
+                (x) =>
+                  !(experience.data?.disabledFeatures || []).some((f: string) =>
+                    (
+                      ({
+                        assistant: ["intelligence.assistant"],
+                        knowledge: ["intelligence.knowledge"],
+                        workflows: ["intelligence.automations"],
+                        events: ["events."],
+                        operations: ["operations."],
+                        finance: ["finance."],
+                      })[f] || []
+                    ).some((prefix) => x[3].startsWith(prefix)),
+                  ),
+              )
+              .filter((x) =>
+                x[1] === "/app/governance"
+                  ? w?.permissions.some((p) =>
+                      [
+                        "governance.approve",
+                        "clubs.manage",
+                        "leadership.manage",
+                        "committees.manage",
+                        "governance.documents",
+                      ].includes(p),
+                    )
+                  : w?.permissions.includes(x[3]),
+              )
               .map(([name, to, Icon]) => (
                 <NavLink
                   end={to === "/app"}
@@ -281,19 +415,18 @@ function Shell() {
               Join a club
             </NavLink>
           </nav>
-          <Link className="panel-link" to="/app/my-events">My invitations & event passes →</Link>
-          <Link className="panel-link" to="/app/committees">My committee workspaces →</Link>
+          <Link className="panel-link" to="/app/my-events">
+            My invitations & event passes →
+          </Link>
+          <Link className="panel-link" to="/app/committees">
+            My committee workspaces →
+          </Link>
           <details className="upcoming-details">
             <summary className="sidebar-label upcoming-label">
               GROWING TOGETHER <span>UPCOMING</span>
             </summary>
             <div className="upcoming">
-              {[
-
-
-                [Wallet, "Finance"],
-                [ChartNoAxesCombined, "Reports"],
-              ].map(([I, label]: any) => (
+              {[[ChartNoAxesCombined, "Reports"]].map(([I, label]: any) => (
                 <div key={label}>
                   <I size={18} />
                   {label}
@@ -335,6 +468,9 @@ function Shell() {
               Workspace <span>/</span> <b>{w?.association || "Your account"}</b>
             </div>
             <div className="top-actions">
+              <Suspense fallback={null}>
+                <SearchLauncher />
+              </Suspense>
               <span className="environment">
                 <i />
                 Connected workspace
@@ -432,8 +568,8 @@ function Shell() {
             )}
           </main>
           <footer>
-            ClubSphere <span>Connected leadership. Meaningful impact.</span>
-            <span>Connected community · Phase 06</span>
+            Impact International <span>Connected leadership. Meaningful impact.</span>
+            <span>Connected community · Phase 08</span>
           </footer>
         </div>
       </div>
@@ -482,7 +618,7 @@ function Landing() {
       <header>
         <Link className="brand" to="/">
           <Globe2 />
-          ClubSphere
+          Impact International
         </Link>
         <nav>
           <a href="#possibilities">Possibilities</a>
@@ -544,7 +680,7 @@ function Landing() {
         ))}
       </section>
       <footer>
-        © {new Date().getFullYear()} ClubSphere · Independent community
+        © {new Date().getFullYear()} Impact International · Independent community
         management platform
       </footer>
     </div>
@@ -554,9 +690,12 @@ export default function App() {
   return (
     <Suspense fallback={<Skeleton />}>
       <Routes>
-        <Route path="/verify/certificates/:token" element={<VerifyCertificate/>}/>
-        <Route path="/event/:id" element={<PublicEvent/>}/>
-        <Route path="/event-invitation" element={<EventInvitation/>}/>
+        <Route
+          path="/verify/certificates/:token"
+          element={<VerifyCertificate />}
+        />
+        <Route path="/event/:id" element={<PublicEvent />} />
+        <Route path="/event-invitation" element={<EventInvitation />} />
         <Route path="/" element={<Landing />} />
         <Route path="/join" element={<JoinInvitation />} />
         <Route path="/verify" element={<VerifyMembershipCard />} />
@@ -583,15 +722,17 @@ export default function App() {
           <Route path="membership-settings" element={<MembershipSettings />} />
           <Route path="transfers" element={<MembershipOperations />} />
           <Route path="organizations" element={<Organizations />} />
-          <Route path="operations/*" element={<Operations/>}/>
-          <Route path="communications/*" element={<Communications/>}/>
-          <Route path="events" element={<Events/>}/>
-          <Route path="events/new" element={<EventWizard/>}/>
-          <Route path="events/:id" element={<EventWorkspace/>}/>
-          <Route path="events/:id/checkin" element={<EventCheckin/>}/>
-          <Route path="my-events" element={<MyEvents/>}/>
-          <Route path="event-settings" element={<EventSettings/>}/>
-          <Route path="event-intelligence" element={<EventDashboard/>}/>
+          <Route path="intelligence/*" element={<Intelligence />} />
+          <Route path="finance/*" element={<Finance />} />
+          <Route path="operations/*" element={<Operations />} />
+          <Route path="communications/*" element={<Communications />} />
+          <Route path="events" element={<Events />} />
+          <Route path="events/new" element={<EventWizard />} />
+          <Route path="events/:id" element={<EventWorkspace />} />
+          <Route path="events/:id/checkin" element={<EventCheckin />} />
+          <Route path="my-events" element={<MyEvents />} />
+          <Route path="event-settings" element={<EventSettings />} />
+          <Route path="event-intelligence" element={<EventDashboard />} />
           <Route path="clubs" element={<ClubDirectory />} />
           <Route path="clubs/:id" element={<ClubWorkspace />} />
           <Route path="club-administration" element={<GovernanceDashboard />} />
@@ -602,7 +743,10 @@ export default function App() {
           <Route path="committees/:id" element={<CommitteeWorkspace />} />
           <Route path="governance" element={<GovernanceApprovals />} />
           <Route path="governance-settings" element={<GovernanceSettings />} />
-          <Route path="governance-documents" element={<GovernanceDocuments />} />
+          <Route
+            path="governance-documents"
+            element={<GovernanceDocuments />}
+          />
           <Route path="resolutions" element={<GovernanceResolutions />} />
           <Route path="foundation-overview" element={<Dashboard />} />
           <Route path="administration" element={<Administration />} />

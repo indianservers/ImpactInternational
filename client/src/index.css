@@ -1678,3 +1678,5 @@ tr:last-child td {
 .comm-virtual-row>.comm-message{margin-bottom:0;content-visibility:visible;contain-intrinsic-size:none}.comm-message-history{overflow-anchor:none}.comm-virtual-row .comm-date-divider{margin-bottom:12px}
 
 .comm-rule-alternatives{padding:15px;border-left:2px solid var(--line);margin:15px 0}.comm-rule-alternative{padding:12px;background:var(--bg);margin:10px 0;border-radius:8px}.comm-rule-alternative>strong{font-size:10px}.comm-notice-drafts{padding:15px;border:1px solid var(--line);border-radius:8px;margin:15px 0}.comm-notice-drafts summary{font-size:12px;cursor:pointer}.comm-notice-drafts button{display:block;margin-top:10px;text-align:left}
+
+.intel-brand-logo{width:28px;height:28px;object-fit:contain}.intel-brand-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:180px}

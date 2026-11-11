@@ -1,0 +1,74 @@
+[
+  {
+    "test": "server creates real provider protocol checkout",
+    "passed": true
+  },
+  {
+    "test": "provider idempotency intent reused",
+    "passed": true
+  },
+  {
+    "test": "refresh resumes active checkout without creating duplicate order",
+    "passed": true
+  },
+  {
+    "test": "browser redirect never marks invoice paid",
+    "passed": true
+  },
+  {
+    "test": "invalid webhook signature rejected",
+    "passed": true
+  },
+  {
+    "test": "stale signed webhook rejected",
+    "passed": true
+  },
+  {
+    "test": "unpaid provider session cannot capture",
+    "passed": true
+  },
+  {
+    "test": "provider amount manipulation rejected",
+    "passed": true
+  },
+  {
+    "test": "verified signature and provider confirmation capture",
+    "passed": true
+  },
+  {
+    "test": "invoice allocation exactly equals verified amount",
+    "passed": true
+  },
+  {
+    "test": "duplicate webhook harmless",
+    "passed": true
+  },
+  {
+    "test": "one payment and one collection journal",
+    "passed": true
+  },
+  {
+    "test": "out of order failure cannot downgrade paid",
+    "passed": true
+  },
+  {
+    "test": "same event ID different body rejected",
+    "passed": true
+  },
+  {
+    "test": "captured gateway funds remain clearing",
+    "passed": true
+  },
+  {
+    "test": "public callback contains no customer data",
+    "passed": true
+  },
+  {
+    "test": "concurrent signed webhook replay remains idempotent",
+    "passed": true
+  },
+  {
+    "test": "gateway books still balance",
+    "passed": true
+  }
+]

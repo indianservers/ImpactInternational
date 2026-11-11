@@ -650,7 +650,7 @@ public static partial class OperationsEndpoints
     )
     {
         using var pdf = new PdfDocument();
-        pdf.Info.Title = "ClubSphere certificate";
+        pdf.Info.Title = "Impact International certificate";
         var page = pdf.AddPage();
         page.Size = PdfSharp.PageSize.A4;
         page.Orientation =

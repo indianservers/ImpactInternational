@@ -1,0 +1,42 @@
+[
+  {
+    "test": "central finance enables paid event",
+    "passed": true
+  },
+  {
+    "test": "paid registration never fabricates confirmation",
+    "passed": true
+  },
+  {
+    "test": "unpaid paid-event pass denied",
+    "passed": true
+  },
+  {
+    "test": "paid booking uses central invoice",
+    "passed": true
+  },
+  {
+    "test": "unpaid event confirm remains pending",
+    "passed": true
+  },
+  {
+    "test": "verified manual alternative confirms booking",
+    "passed": true
+  },
+  {
+    "test": "partial refund removes paid confirmation",
+    "passed": true
+  },
+  {
+    "test": "project finance shares journal engine",
+    "passed": true
+  },
+  {
+    "test": "planning estimate remains separate from ledger",
+    "passed": true
+  },
+  {
+    "test": "source finance books reconcile",
+    "passed": true
+  }
+]

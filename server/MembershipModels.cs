@@ -461,6 +461,8 @@ public partial class Db
         ConfigureCommunications(b);
         ConfigureEvents(b);
         ConfigureOperations(b);
+        ConfigureFinance(b);
+        ConfigureIntelligence(b);
         ConfigureGovernance(b);
         ConfigureRoleHistory(b);
         b.Entity<NotificationTemplate>()

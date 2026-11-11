@@ -70,16 +70,18 @@ Implemented core workflows: scoped/confidential meetings and bounded local-time 
 
 Three additive migrations bring the total to 29, all applied from an empty database. See `PHASE6_COMPLETION_REPORT.md` for 135 new checks, prior-phase regressions, screenshots and measured 100k-person/20k-meeting/250k-hour fixtures. Advanced recurrence, full role-specific reports, rich minutes/resolutions, complete project planning/contribution editing, accredited training, rich document ACL/folder administration, malware scanning, full image/font certificate design and operational-grid paging remain incomplete. Production deployment, broad accessibility/device coverage and disaster recovery remain unverified. This entry marks core implementation, not every aspirational Phase 6 feature as finished.
 
-## Phase 7 — Finance and advanced governance
+## Phase 7 — Financial management (core implemented; advanced scope outstanding)
 
+Implemented one entity-scoped operational finance engine: immutable decimal invoices and credit notes, effective-dated/idempotent dues, independent payment verification, receipts, allocations, clearing/settlement and statement matching, balanced immutable journals, periods, explicit inter-entity positions/settlements, shared budget/expense review, reimbursements, pledges/donations/sponsorships, paid event and project sources, Stripe Checkout/signature/provider confirmation, member portal, reports and audit.
 
+Four additive migrations bring the total to 33, with an empty-database finance rollback/reapply check. 129 new finance checks and 737 prior-phase assertions passed. Measured fixtures include 101,009 invoices/202,018 journal lines, a real 1,009-member billing job and signed duplicate callback replay. See `PHASE7_COMPLETION_REPORT.md` for evidence and precise conditions.
 
-Add dues, invoices, receipts, payments, reconciliation and an immutable ledger. Reference Phase 6 project/participating-organization IDs and reviewed planning estimates, but never treat those estimates, verified social impact or certificate approval as booked expense or payment authorization. Use provider idempotency, explicit money/currency types, dedicated permissions and compliance review. Advanced elections require a separate designed voting protocol; existing appointment approvals do not imply secret ballots or election administration.
+Advanced fee matrices/installments, immediate activation catch-up, SaaS billing, external sandbox certification, additional adapters, automated refunds/settlements/disputes, full paid-event lifecycle, country tax engines, transaction FX/formal consolidation, complete register/Excel exports, dedicated hierarchy dashboards and advanced claims/budget policies remain unfinished. Core delivery does not mark every aspirational Phase 7 feature complete. Advanced elections remain a separate future voting protocol.
 
+## Phase 8 — Intelligence, automation and release controls (core implemented; production blocked)
 
+Implemented scoped global metrics/catalog/drill-down/export, six read-only assistant tools with optional server-side Responses routing, authorized version-aware PDF/FTS citations, visual/versioned/independently reviewed follow-ups in the existing communication engine, cross-module search, tenant identity/feature policy, DNS ownership onboarding and protected operational diagnostics. One additive migration brings the total to 34.
 
-## Phase 8 — Reporting, integrations and scale
+54 new integration checks and 15 loopback provider-contract checks pass, along with 848 assertions across 22 selected prior-phase suites. Fresh migrations, isolated restore/rollback/reapply, private-object hashes, same-host copied-key decryption and a 100k-person measurement run are documented. See `PHASE8_COMPLETION_REPORT.md` for evidence and bounds.
 
-
-
-Add permission-aware reporting projections, external integrations, exports, observability dashboards, disaster recovery, accessibility review and load testing. Measure member-scale workloads before adding Redis caches, closure tables or materialized aggregates. Keep tenant boundaries and normalized source tables intact.
+Specialized metric ratios/reports, every natural-language example, semantic/OCR retrieval, general workflow graphs, complete translation/terminology, predictive ML, large workflow-fleet fairness, full SaaS billing and automated domain infrastructure remain incomplete. MFA/SSO, off-host recovery, external certification, production ingress/container/failover and broad accessibility/load verification remain release blockers. Core delivery does not mean the complete eight-phase product or production readiness is finished.
