@@ -251,6 +251,26 @@ function Shell() {
       setError(e);
     }
   }
+  async function toggleTheme() {
+                  try {
+                    const theme = me.data.theme === "dark" ? "light" : "dark";
+                    await api("/users/profile", "PUT", {
+                      name: me.data.name,
+                      phone: me.data.phone,
+                      locale: me.data.locale || "en",
+                      timeZone: me.data.timeZone || "UTC",
+                      theme,
+                    });
+                    qc.setQueryData(["me"], { ...me.data, theme });
+                  } catch (e) {
+                    setError(e);
+                  }
+                }
+  async function signOut() {
+                  await api("/auth/logout", "POST");
+                  qc.clear();
+                  nav("/login");
+                }
   const visibleSections = navigationSections.map((section) => ({
     ...section,
     tabs: section.tabs.filter((tab) => canOpenTab(tab, w?.permissions || [], experience.data?.disabledFeatures || [])),
@@ -322,6 +342,7 @@ function Shell() {
               </Link>;
             })}
           </nav>
+          <div className="mobile-account-actions"><button className="secondary" onClick={toggleTheme}><Moon size={17} />{me.data.theme === "dark" ? "Light theme" : "Dark theme"}</button><button className="secondary" onClick={signOut}><LogOut size={17} />Sign out</button></div>
           <div className="sidebar-bottom">
             <div className="help-card">
               <span className="gold-dot" />
@@ -378,21 +399,7 @@ function Shell() {
                     ? "Switch to light theme"
                     : "Switch to dark theme"
                 }
-                onClick={async () => {
-                  try {
-                    const theme = me.data.theme === "dark" ? "light" : "dark";
-                    await api("/users/profile", "PUT", {
-                      name: me.data.name,
-                      phone: me.data.phone,
-                      locale: me.data.locale || "en",
-                      timeZone: me.data.timeZone || "UTC",
-                      theme,
-                    });
-                    qc.setQueryData(["me"], { ...me.data, theme });
-                  } catch (e) {
-                    setError(e);
-                  }
-                }}
+                onClick={toggleTheme}
               >
                 {me.data.theme === "dark" ? (
                   <Sun size={18} />
@@ -403,11 +410,7 @@ function Shell() {
               <button
                 className="icon-button"
                 aria-label="Sign out"
-                onClick={async () => {
-                  await api("/auth/logout", "POST");
-                  qc.clear();
-                  nav("/login");
-                }}
+                onClick={signOut}
               >
                 <LogOut size={18} />
               </button>

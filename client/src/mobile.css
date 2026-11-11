@@ -1,5 +1,5 @@
 /* Phone defaults; larger screens progressively reveal the desktop layout. */
-.mobile-bottom-nav, .navigation-backdrop, .mobile-sidebar-close { display: none; }
+.mobile-bottom-nav, .navigation-backdrop, .mobile-sidebar-close, .mobile-account-actions, .mobile-select-all { display: none; }
 .module-navigation { margin-bottom: 18px; min-width: 0; }
 .tool-picker { display: flex; gap: 10px; align-items: center; margin: 10px 0 0; font-size: 12px; }
 .tool-picker select { flex: 1; min-width: 0; max-width: 380px; }
@@ -33,6 +33,9 @@
   .app-shell .workspace-select select { width: 100%; min-width: 0; font-size: 14px; }
   .app-shell .workspace-select { min-height: 48px; }
   .app-shell .mobile-sidebar-close { display: inline-flex; margin-left: auto; margin-bottom: 8px; }
+  .app-shell .mobile-account-actions { display: flex; gap: 8px; margin-top: 16px; }
+  .app-shell .mobile-account-actions button { flex: 1; }
+  .app-shell .mobile-select-all { display: flex; align-items: center; gap: 6px; min-height: 44px; }
   .app-shell .navigation-backdrop { display: block; position: fixed; inset: 0; z-index: 55; border: 0; border-radius: 0; background: #101c2d88; }
   .app-shell .mobile-bottom-nav { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); position: fixed; inset: auto 0 0; z-index: 40; border-top: 1px solid var(--line, #e5e9f0); padding: 5px 4px calc(5px + env(safe-area-inset-bottom)); background: var(--surface, white); }
   .app-shell .mobile-bottom-nav a, .app-shell .mobile-bottom-nav button { display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 4px; min-height: 54px; padding: 5px 2px; border: 0; border-radius: 7px; color: var(--muted, #69788e); background: transparent; font-size: 10px; font-weight: 600; text-decoration: none; }

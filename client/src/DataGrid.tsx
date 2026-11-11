@@ -55,6 +55,7 @@ export default function DataGrid<T extends { id: string }>({
   return (
     <>
       <div className="grid-tools">
+        {onSelection && <label className="mobile-select-all checkbox"><input type="checkbox" aria-label="Select all mobile records on this page" checked={rows.length > 0 && rows.every(row => selected?.has(row.id))} disabled={!rows.length} onChange={e => { const next = new Set(selected); for (const row of rows) e.target.checked ? next.add(row.id) : next.delete(row.id); onSelection(next); }} />Select page</label>}
         <span>
           {selected && selected.size > 0 ? (
             <>
