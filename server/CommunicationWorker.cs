@@ -493,6 +493,7 @@ public class CommunicationWorker(
                         .Select(m => m.EventId)
                         .SingleOrDefaultAsync(stop);
                 string body;
+                string subject;
                 try
                 {
                     body = await s.Render(
@@ -505,6 +506,12 @@ public class CommunicationWorker(
                         },
                         template.Body
                     );
+                    subject = await s.Render(b, new()
+                    {
+                        Name = person.DisplayName,
+                        Club = club.Name,
+                        MemberNumber = member.Number,
+                    }, template.Subject);
                 }
                 catch (ApiError)
                 {
@@ -522,7 +529,7 @@ public class CommunicationWorker(
                     AccountId = rule.AccountId,
                     Channel = template.Channel,
                     Purpose = "Promotional",
-                    Subject = template.Subject,
+                    Subject = subject,
                     Body = body,
                     Kind = "communication.automation",
                     EventId = b.EventId,

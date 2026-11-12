@@ -39,7 +39,7 @@ export default function Audit() {
         {q.isPending ? (
           <Skeleton />
         ) : (
-          <div className="table-scroll">
+          <div className="table-scroll" tabIndex={0} role="region" aria-label="Audit records · scroll for more columns">
             <table>
               <thead>
                 <tr>

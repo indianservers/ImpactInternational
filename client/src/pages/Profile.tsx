@@ -1,8 +1,10 @@
+import SectionTabs from "../SectionTabs";
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { api } from "../api";
 import { PageHeader, ErrorBox, useWorkspace } from "../App";
 export default function Profile() {
+  const [section, setSection] = useState("Profile");
   const { me } = useWorkspace(),
     qc = useQueryClient();
   const [error, setError] = useState<unknown>(),
@@ -44,8 +46,9 @@ export default function Profile() {
           {message}
         </div>
       )}
-      <div className="dashboard-grid">
-        <section className="panel">
+      <SectionTabs id="account" label="Account settings" tabs={["Profile", "Password", "Sessions"]} value={section} onChange={setSection} />
+      <div className="account-panels">
+        <section className="panel" role="tabpanel" id="account-panel-0" aria-labelledby="account-tab-0" hidden={section !== "Profile"}>
           <h2>Your profile</h2>
           <form
             className="form-stack"
@@ -93,7 +96,7 @@ export default function Profile() {
             <button>Save profile</button>
           </form>
         </section>
-        <section className="panel">
+        <section className="panel" role="tabpanel" id="account-panel-1" aria-labelledby="account-tab-1" hidden={section !== "Password"}>
           <h2>Change password</h2>
           <form
             className="form-stack"
@@ -123,7 +126,7 @@ export default function Profile() {
           </form>
         </section>
       </div>
-      <section className="panel spaced">
+      <section className="panel spaced" role="tabpanel" id="account-panel-2" aria-labelledby="account-tab-2" hidden={section !== "Sessions"}>
         <h2>Active sessions</h2>
         <ErrorBox error={q.error} />
         {q.data?.map((s: any) => (

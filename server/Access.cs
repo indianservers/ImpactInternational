@@ -173,17 +173,21 @@ public class Access(Db db, IHttpContextAccessor ctx)
 
     public IQueryable<Org> Visible(Assignment w) => Tree(w.TenantId, w.OrgId);
 
-    // Same recursive scope, narrow projection for member queries over large subtrees.
+    // Keep the narrow recursive projection parameter-free, just like Tree above.
+    // EF/Npgsql can reuse raw-query parameter names for composed LINQ search
+    // values. Only canonical, strongly typed GUID literals enter this SQL.
+#pragma warning disable EF1002
     public IQueryable<Guid> VisibleIds(Assignment w) =>
-        db.Database.SqlQuery<Guid>(
+        db.Database.SqlQueryRaw<Guid>(
             $"""
             WITH RECURSIVE tree AS (
-              SELECT "Id","TenantId" FROM "Orgs" WHERE "TenantId"={w.TenantId} AND "Id"={w.OrgId}
+              SELECT "Id","TenantId" FROM "Orgs" WHERE "TenantId"='{w.TenantId:D}'::uuid AND "Id"='{w.OrgId:D}'::uuid
               UNION ALL SELECT o."Id",o."TenantId" FROM "Orgs" o JOIN tree t
                 ON o."ParentId"=t."Id" AND o."TenantId"=t."TenantId"
             ) SELECT "Id" AS "Value" FROM tree
             """
         );
+#pragma warning restore EF1002
 
     public async Task<Microsoft.EntityFrameworkCore.Storage.IDbContextTransaction> Mutation(
         Assignment w

@@ -18,6 +18,13 @@ public class Person
     public string SearchName { get; set; } = "";
     public DateOnly? BirthDate { get; set; }
     public string Gender { get; set; } = "";
+    public string MaritalStatus { get; set; } = "";
+    public string SpouseName { get; set; } = "";
+    public string EducationLevel { get; set; } = "";
+    public string Qualification { get; set; } = "";
+    public string Institution { get; set; } = "";
+    public string EmploymentStatus { get; set; } = "";
+    public string AdditionalInformation { get; set; } = "";
     public DateOnly? Anniversary { get; set; }
     public string Company { get; set; } = "";
     public string Designation { get; set; } = "";

@@ -415,7 +415,7 @@ export default function MemberImports() {
                         </p>
                       </div>
                     </div>
-                    <div className="table-scroll">
+                    <div className="table-scroll" tabIndex={0} role="region" aria-label="Import preview · scroll for more columns">
                       <table>
                         <thead>
                           <tr>

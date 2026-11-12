@@ -7540,6 +7540,10 @@ namespace Clubs.Api.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<string>("AdditionalInformation")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<DateOnly?>("Anniversary")
                         .HasColumnType("date");
 
@@ -7565,6 +7569,14 @@ namespace Clubs.Api.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<string>("EducationLevel")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("EmploymentStatus")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<string>("Gender")
                         .IsRequired()
                         .HasColumnType("text");
@@ -7573,7 +7585,15 @@ namespace Clubs.Api.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<string>("Institution")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<string>("LegalName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("MaritalStatus")
                         .IsRequired()
                         .HasColumnType("text");
 
@@ -7592,7 +7612,15 @@ namespace Clubs.Api.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<string>("Qualification")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<string>("SearchName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("SpouseName")
                         .IsRequired()
                         .HasColumnType("text");
 

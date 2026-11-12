@@ -52,6 +52,8 @@ public record AudiencePreviewInput(
     string Purpose = "Promotional"
 );
 
+public record GreetingInput(AutomationInput Rule, TemplateInput Template);
+
 public record AutomationInput(
     Guid OrgId,
     string Name,
@@ -512,6 +514,22 @@ public static partial class CommunicationEndpoints
                     .OrderBy(r => r.Name)
                     .Take(100)
                     .ToListAsync();
+            }
+        );
+        api.MapPost(
+            "/greetings",
+            async (GreetingInput r, CommunicationService s) =>
+            {
+                Check(r.Rule.Trigger is "Birthday" or "Anniversary", "Choose birthday or marriage anniversary.");
+                Check(r.Rule.OrgId == r.Template.OrgId, "Greeting and template must use the same organization.");
+                Check(r.Template.Channel is "InApp" or "Email", "Use in-app or email for a custom greeting.");
+                Check(!System.Text.RegularExpressions.Regex.IsMatch(r.Template.Body + r.Template.Subject,
+                    @"\{\{(event_name|event_date|event_location|rsvp_link)\}\}"), "Greeting messages cannot require an event.");
+                await using var tx = await s.Db.Database.BeginTransactionAsync();
+                var template = await SaveTemplate(null, r.Template with { Active = true }, s);
+                var rule = await SaveAutomation(null, r.Rule with { TemplateId = template.Id }, s);
+                await tx.CommitAsync();
+                return rule;
             }
         );
         api.MapPost(

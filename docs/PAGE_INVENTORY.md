@@ -154,4 +154,16 @@ These are grouped into Messages, Outreach and Manage; the selected view uses the
 
 ## Validation scope
 
-Build and navigation/route checks cover compilation and destination preservation. Phone browser checks are recorded in the delivery summary; this inventory does not imply every workflow has been manually tested.
+Build and navigation/route checks cover compilation, all 36 main destinations and all 35 tools in the four nested routed modules. Communications retains all 15 views in three task groups.
+
+Browser checks at 320px verified grouped navigation in Finance, ID Cards, Operations, Intelligence and Communications without horizontal page overflow. Tool switching reached Finance payments and communication Email. At 390px, populated member cards retained selection and all ten configured fields via expandable details; the Add Member drawer filled the viewport with 16px inputs at least 44px high. Desktop checks restored the table and hid phone navigation/cards. These are representative layout and navigation checks, not a complete regression of every business workflow.
+
+## Remaining-page mobile pass
+
+- Governance, leadership, committees, applications, imports, membership policy, member profiles, personal membership, event details/check-in, audit and organizational settings use narrow-screen grids, wrapping actions and local table scrolling.
+- Profile/security, access management and membership configuration use keyboard-accessible tabs. Panels remain mounted to preserve unfinished edits.
+- ID designer has Canvas, Elements and Properties phone views, a picker for all 11 element tools, initial fit-to-phone zoom, and access to layer properties. The desktop studio remains available above the phone breakpoint.
+- Account entry, public events, membership invitation and verification page families use readable inputs and phone-width containers. Invitation-card and landing-label overflow found at 320px was fixed.
+- Phone checks include loaded route headings, page widths, a real member profile, club details, event details/check-in and a real template designer. Profile draft preservation and keyboard tab switching were verified. Desktop dimensions were restored after testing.
+- Evidence: `mobile-followup-checks.json`; preview: `mobile-profile-tabs.jpg`.
+- The committee listing error found during the mobile pass was subsequently fixed in the shared hierarchy scope query; see `PAGE_ERROR_FIX_REPORT.md`. Token-only success flows were not exercised without valid invitation/verification links. No form submissions, password changes, publications or financial transactions were performed during layout testing.

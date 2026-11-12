@@ -1,3 +1,4 @@
+import SectionTabs from "../SectionTabs";
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { ShieldCheck, Plus, X } from "lucide-react";
@@ -11,6 +12,7 @@ import {
   Provision,
 } from "../App";
 export default function Administration() {
+  const [section, setSection] = useState("Roles");
   const { w, me } = useWorkspace(),
     qc = useQueryClient();
   const [form, setForm] = useState<any>(null),
@@ -79,7 +81,8 @@ export default function Administration() {
         )}
       </PageHeader>
       <ErrorBox error={roles.error || error} />
-      <section className="panel">
+      <SectionTabs id="access" label="Access management" tabs={me.platformAdmin ? ["Roles", "Assignments", "Registrations"] : ["Roles", "Assignments"]} value={section} onChange={setSection} />
+      <section className="panel" role="tabpanel" id="access-panel-0" aria-labelledby="access-tab-0" hidden={section !== "Roles"}>
         <div className="section-heading">
           <div>
             <h2>Permission matrix</h2>
@@ -93,7 +96,7 @@ export default function Administration() {
         {roles.isPending ? (
           <Skeleton />
         ) : (
-          <div className="table-scroll permission-matrix">
+          <div className="table-scroll permission-matrix" tabIndex={0} role="region" aria-label="Permission matrix · scroll for more columns">
             <table>
               <thead>
                 <tr>
@@ -142,7 +145,7 @@ export default function Administration() {
           </div>
         )}
       </section>
-      <section className="panel spaced">
+      <section className="panel spaced" role="tabpanel" id="access-panel-1" aria-labelledby="access-tab-1" hidden={section !== "Assignments"}>
         <div className="section-heading">
           <div>
             <h2>People & organizational scopes</h2>
@@ -162,7 +165,7 @@ export default function Administration() {
             </button>
           )}
         </div>
-        <div className="table-scroll">
+        <div className="table-scroll" tabIndex={0} role="region" aria-label="Permissions and assignments · scroll for more columns">
           <table>
             <thead>
               <tr>
@@ -214,7 +217,7 @@ export default function Administration() {
         </div>
       </section>
       {me.platformAdmin && (
-        <section className="panel spaced">
+        <section className="panel spaced" role="tabpanel" id="access-panel-2" aria-labelledby="access-tab-2" hidden={section !== "Registrations"}>
           <h2>Organization registration requests</h2>
           {requests.data?.map((r: any) => (
             <div className="context-row" key={r.id}>

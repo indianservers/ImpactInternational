@@ -194,6 +194,13 @@ export function PersonEditor({ person, onSave, onCancel, busy = false }: any) {
     displayName: person?.displayName || person?.name || "",
     birthDate: person?.birthDate || "",
     gender: person?.gender || "",
+    maritalStatus: person?.maritalStatus || "",
+    spouseName: person?.spouseName || "",
+    educationLevel: person?.educationLevel || "",
+    qualification: person?.qualification || "",
+    institution: person?.institution || "",
+    employmentStatus: person?.employmentStatus || "",
+    additionalInformation: person?.additionalInformation || "",
     anniversary: person?.anniversary || "",
     company: person?.professional?.company || "",
     designation: person?.professional?.designation || "",
@@ -265,7 +272,7 @@ export function PersonEditor({ person, onSave, onCancel, busy = false }: any) {
         role="tablist"
         aria-label="Profile editing sections"
       >
-        {["Personal", "Contact", "Professional"].map((t) => (
+        {["Personal", "Contact", "Education", "Professional"].map((t) => (
           <button
             type="button"
             role="tab"
@@ -285,7 +292,15 @@ export function PersonEditor({ person, onSave, onCancel, busy = false }: any) {
             {input("displayName", "Preferred display name", "text", true)}
             {input("birthDate", "Date of birth", "date")}
             {input("gender", "Gender (optional)")}
-            {input("anniversary", "Anniversary (optional)", "date")}
+            <label>
+              Marital status
+              <select value={form.maritalStatus} onChange={(e) => setForm({ ...form, maritalStatus: e.target.value })}>
+                <option value="">Choose marital status</option>
+                {["Single", "Married", "Widowed", "Divorced", "Separated", "Prefer not to say"].map((v) => <option key={v}>{v}</option>)}
+              </select>
+            </label>
+            {input("spouseName", "Spouse name (optional)")}
+            {input("anniversary", "Marriage anniversary (optional)", "date")}
             <label>
               Languages
               <input
@@ -305,7 +320,7 @@ export function PersonEditor({ person, onSave, onCancel, busy = false }: any) {
                   ["country", "Country"],
                   ["state", "State / province"],
                   ["city", "City"],
-                  ["postalCode", "Postal code"],
+                  ["postalCode", "PIN code / postal code"],
                   ["address", "Postal address"],
                 ].map(([k, l]) => (
                   <label key={k}>
@@ -459,6 +474,18 @@ export function PersonEditor({ person, onSave, onCancel, busy = false }: any) {
           )}
         </>
       )}
+      {tab === "Education" && (
+        <div className="form-grid">
+          {input("educationLevel", "Highest education level")}
+          {input("qualification", "Degree / qualification")}
+          {input("institution", "School / college / university")}
+        </div>
+      )}
+      {tab === "Personal" && (
+        <label>Additional information
+          <textarea maxLength={2000} rows={3} value={form.additionalInformation} onChange={(e) => setForm({ ...form, additionalInformation: e.target.value })} />
+        </label>
+      )}
       {tab === "Professional" && (
         <>
           <p>
@@ -467,6 +494,7 @@ export function PersonEditor({ person, onSave, onCancel, busy = false }: any) {
           </p>
           <div className="form-grid">
             {[
+              ["employmentStatus", "Employment status (employed, business, student, retired…)"],
               ["company", "Company / organization"],
               ["designation", "Designation"],
               ["businessCategory", "Business category"],
@@ -530,7 +558,7 @@ export function PrivacyEditor({ privacy, onSave, busy }: any) {
           "allowContactRequests",
           "Allow contact requests from directory members",
         ],
-        ["birthdayAnnouncements", "Birthday announcements (preference only)"],
+        ["birthdayAnnouncements", "Allow birthday greetings and announcements"],
         ["marketing", "Marketing communication (preference only)"],
         ["transactionalEmail", "Email me membership status notifications"],
       ].map(([k, l]) => (

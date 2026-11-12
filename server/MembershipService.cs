@@ -34,7 +34,14 @@ public record PersonInput(
     string[]? Expertise = null,
     string[]? Interests = null,
     string[]? Languages = null,
-    long Version = 1
+    long Version = 1,
+    string MaritalStatus = "",
+    string SpouseName = "",
+    string EducationLevel = "",
+    string Qualification = "",
+    string Institution = "",
+    string EmploymentStatus = "",
+    string AdditionalInformation = ""
 );
 
 public record MemberRow(
@@ -191,6 +198,13 @@ public class MembershipService(
             "Legal name is required (maximum 200 characters)."
         );
         Check((r.DisplayName?.Length ?? 0) <= 200, "Display name is too long.");
+        Check(new[] { "", "Single", "Married", "Widowed", "Divorced", "Separated", "Prefer not to say" }.Contains(r.MaritalStatus), "Invalid marital status.");
+        Check(new[] { r.SpouseName, r.EducationLevel, r.Qualification, r.Institution, r.EmploymentStatus }.All(v => v != null && v.Length <= 200), "Profile fields must be at most 200 characters.");
+        Check(r.AdditionalInformation != null && r.AdditionalInformation.Length <= 2000, "Additional information must be at most 2000 characters.");
+        Check(r.Anniversary == null || (r.Anniversary >= new DateOnly(1900, 1, 1) && r.Anniversary <= DateOnly.FromDateTime(DateTime.UtcNow) && (r.BirthDate == null || r.Anniversary >= r.BirthDate)), "Invalid marriage anniversary date.");
+        foreach (var a in r.Addresses ?? [])
+            Check(a.PostalCode != null && a.PostalCode.Length <= 20 && (a.Country.Trim().Equals("India", StringComparison.OrdinalIgnoreCase) == false || string.IsNullOrWhiteSpace(a.PostalCode) || System.Text.RegularExpressions.Regex.IsMatch(a.PostalCode, @"^[1-9][0-9]{5}$")), "Enter a valid six-digit Indian PIN code.");
+
         Check(
             r.BirthDate == null
                 || (
@@ -292,6 +306,13 @@ public class MembershipService(
         p.SearchName = (p.DisplayName + " " + p.LegalName).ToLowerInvariant();
         p.BirthDate = r.BirthDate;
         p.Gender = r.Gender;
+        p.MaritalStatus = r.MaritalStatus.Trim();
+        p.SpouseName = r.SpouseName.Trim();
+        p.EducationLevel = r.EducationLevel.Trim();
+        p.Qualification = r.Qualification.Trim();
+        p.Institution = r.Institution.Trim();
+        p.EmploymentStatus = r.EmploymentStatus.Trim();
+        p.AdditionalInformation = r.AdditionalInformation.Trim();
         p.Anniversary = r.Anniversary;
         p.Company = r.Company;
         p.Designation = r.Designation;
@@ -404,6 +425,13 @@ public class MembershipService(
             p.DisplayName,
             BirthDate = personal ? p.BirthDate : null,
             Gender = personal ? p.Gender : null,
+            MaritalStatus = personal ? p.MaritalStatus : null,
+            SpouseName = personal ? p.SpouseName : null,
+            EducationLevel = personal ? p.EducationLevel : null,
+            Qualification = personal ? p.Qualification : null,
+            Institution = personal ? p.Institution : null,
+            EmploymentStatus = personal ? p.EmploymentStatus : null,
+            AdditionalInformation = personal ? p.AdditionalInformation : null,
             Anniversary = personal ? p.Anniversary : null,
             Contacts = p
                 .Contacts.Where(c =>

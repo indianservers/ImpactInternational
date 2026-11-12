@@ -120,7 +120,7 @@ export default function MembershipApplications({
         {q.isPending ? (
           <Skeleton />
         ) : (
-          <div className="table-scroll">
+          <div className="table-scroll" tabIndex={0} role="region" aria-label="Membership applications · scroll for more columns">
             <table>
               <thead>
                 <tr>

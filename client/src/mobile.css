@@ -1,10 +1,16 @@
 /* Phone defaults; larger screens progressively reveal the desktop layout. */
 .mobile-bottom-nav, .navigation-backdrop, .mobile-sidebar-close, .mobile-account-actions, .mobile-select-all { display: none; }
+.app-shell .mobile-select-all { display: none; }
 .module-navigation { margin-bottom: 18px; min-width: 0; }
 .tool-picker { display: flex; gap: 10px; align-items: center; margin: 10px 0 0; font-size: 12px; }
 .tool-picker select { flex: 1; min-width: 0; max-width: 380px; }
 .tool-picker > span { font-weight: 600; }
 .mobile-records { display: none; }
+.app-shell [hidden] { display: none !important; }
+.screen-tabs { display: flex; gap: 6px; overflow-x: auto; padding: 4px 0 12px; margin-bottom: 12px; }
+.screen-tabs button { flex: 0 0 auto; min-height: 44px; }
+.screen-tabs .active { color: var(--accent); border-color: var(--accent); background: var(--surface-soft); }
+.designer-phone-tabs, .designer-resource-picker { display: none; }
 .compact-summary { margin-bottom: 14px; border: 1px solid var(--line); border-radius: 8px; padding: 0 12px; }
 .compact-summary > summary { min-height: 44px; padding: 12px 0; cursor: pointer; font-size: 13px; font-weight: 600; }
 .compact-summary.member-tools { margin: 8px 12px; }
@@ -73,6 +79,7 @@
   .app-shell .mobile-records { display: grid; gap: 10px; }
   .app-shell .mobile-record { border: 1px solid var(--line); border-radius: 10px; padding: 12px; background: var(--surface); min-width: 0; }
   .app-shell .mobile-record > header { display: flex; justify-content: space-between; gap: 12px; align-items: center; margin-bottom: 10px; }
+  .app-shell .mobile-record > header label { min-height: 44px; display: flex; align-items: center; gap: 6px; }
   .app-shell .mobile-record dl { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 10px; margin: 0; }
   .app-shell .mobile-record dl > div { min-width: 0; overflow-wrap: anywhere; }
   .app-shell .mobile-record dt { color: var(--muted); font-size: 11px; margin-bottom: 3px; }
@@ -91,6 +98,75 @@
   .auth-page .auth-form { width: 100%; max-width: 100%; padding: 24px 16px; }
   :is(.auth-page, .auth-wrap) :is(input, select, textarea) { font-size: 16px; min-height: 44px; }
   .landing .landing-hero h1 { font-size: clamp(32px, 9vw, 48px); }
+  /* Detail, governance and membership screens. All controls remain in the flow. */
+  .app-shell :is(.dashboard-grid, .portal-layout, .event-overview, .event-checkin-layout, .gov-health, .detail-grid, .advanced-filters, .permission-options, .profile-facts, .comm-insight-grid, .comm-preference-grid) { grid-template-columns: minmax(0, 1fr); }
+  .app-shell :is(.dashboard-grid, .portal-layout, .profile-layout, .event-overview, .event-checkin-layout) { gap: 14px; }
+  .app-shell :is(.dashboard-grid, .portal-layout, .profile-layout) > * { min-width: 0; }
+  .app-shell :is(.gov-club-cards, .event-card-grid, .quick-grid, .gov-health-weights) { grid-template-columns: minmax(0, 1fr); }
+  .app-shell :is(.panel, .card-panel, .form-stack, .stage-card) { overflow-wrap: anywhere; }
+  .app-shell :is(.context-row, .section-heading, .gov-actions, .affiliation-row, .document-row, .document-upload, .event-calendar-toolbar, .event-trend-row, .profile-banner, .card-section-title) { flex-wrap: wrap; gap: 10px; }
+  .app-shell :is(.section-heading, .context-row, .gov-actions, .affiliation-row) > :is(div, span, form) { min-width: 0; max-width: 100%; }
+  .app-shell :is(.context-row, .gov-actions, .section-heading) > :is(button, .button) { max-width: 100%; white-space: normal; }
+  .app-shell :is(.member-tabs, .profile-tabs, .op-tabs, .card-tool-tabs) { max-width: 100%; overflow-x: auto; flex-wrap: nowrap; }
+  .app-shell :is(.member-tabs, .profile-tabs, .op-tabs) > :is(button, a) { min-height: 44px; flex: 0 0 auto; font-size: 13px; }
+  .app-shell :is(.profile-aside, .portal-layout > aside) { position: static; width: auto; }
+  .app-shell .profile-banner { padding: 16px; }
+  .app-shell .workflow-stage-editor { display: flex; flex-direction: column; align-items: stretch; padding: 12px; gap: 12px; }
+  .app-shell .workflow-stage-editor > * { min-width: 0; max-width: 100%; }
+  .app-shell :is(.workflow-stage-editor, .stage-card) select[multiple] { min-height: 132px; }
+  .app-shell .action-stack { display: flex; flex-wrap: wrap; gap: 8px; }
+  .app-shell .level-list > div { flex-wrap: wrap; }
+  .app-shell .level-list input { width: 100%; }
+  .app-shell :is(.privacy-notice, .application-statement, .import-steps, .application-journey, .duplicate-review, .event-message-preview) { padding: 14px; overflow-wrap: anywhere; }
+  .app-shell :is(.import-steps, .application-journey) { display: flex; flex-wrap: wrap; gap: 12px; }
+  .app-shell .pagination { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; padding: 12px; }
+  .app-shell .pagination > div { display: flex; gap: 8px; }
+  .app-shell .permission-matrix { max-height: 60dvh; overflow: auto; }
+  .app-shell :is(.event-detail-hero, .event-discovery-hero) { padding: 20px 16px; }
+  .app-shell .event-detail-hero h1 { font-size: 26px; }
+  .app-shell .event-detail-tags { flex-wrap: wrap; }
+  .app-shell .event-wizard { min-width: 0; }
+  .app-shell .event-wizard > section { padding: 16px; min-width: 0; }
+  .app-shell .event-wizard > aside { max-width: 100%; }
+  .app-shell :is(.event-scanner, .event-pass) { padding: 16px; }
+  .app-shell .event-manual-result { flex-wrap: wrap; gap: 10px; }
+  .app-shell :is(.digital-identity, .digital-card-preview) { max-width: 100%; min-width: 0; }
+  .app-shell :is(.digital-card-preview img, .event-pass img, .card-my-id img, .profile-body img) { max-width: 100%; height: auto; }
+  .app-shell :is(.card-modal-backdrop, .search-overlay) { padding: 0; }
+  .app-shell :is(.card-modal, .search-dialog) { width: 100%; max-width: 100%; max-height: 100dvh; overflow: auto; padding: 16px; }
+  /* The studio is a phone editor, with one panel visible at a time. */
+  .app-shell .card-studio { width: 100%; max-width: 100%; overflow: visible; margin: 0; }
+  .app-shell .card-studio-toolbar { min-width: 0; flex-wrap: wrap; padding: 10px; gap: 6px; }
+  .app-shell .card-studio-toolbar input { width: 100%; flex: 1 1 65%; min-width: 0; }
+  .app-shell .card-save-status { flex: 1 1 100%; margin: 0; }
+  .app-shell .designer-phone-tabs { display: flex; gap: 6px; padding: 10px 0; }
+  .app-shell .designer-phone-tabs button { flex: 1; }
+  .app-shell .designer-phone-tabs .active { border: 2px solid var(--accent); font-weight: 700; }
+  .app-shell .card-studio-body { display: block; min-width: 0; height: auto; min-height: 0; }
+  .app-shell .card-tool-tabs { display: none; }
+  .app-shell :is(.card-resource-panel, .card-properties) { width: 100%; max-height: none; padding: 16px; overflow: visible; border-top: 1px solid var(--line); }
+  .app-shell .designer-resource-picker { display: grid; gap: 6px; margin-bottom: 16px; }
+  .app-shell .card-studio[data-mobile-panel=canvas] :is(.card-resource-panel, .card-properties),
+  .app-shell .card-studio[data-mobile-panel=elements] :is(.card-canvas-area, .card-properties),
+  .app-shell .card-studio[data-mobile-panel=properties] :is(.card-canvas-area, .card-resource-panel) { display: none; }
+  .app-shell .card-canvas-area { width: 100%; min-height: 340px; }
+  .app-shell .card-stage-scroll { max-width: 100%; min-height: 240px; max-height: 60dvh; overscroll-behavior: contain; }
+  .app-shell .card-canvas-footer { flex-wrap: wrap; gap: 10px; padding: 12px; }
+  .app-shell .card-properties .card-field-pair { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  /* Public entry, invitation and verification pages do not use the app shell. */
+  :is(.auth-wrap, .auth-page, .verification-page, .event-invitation-page, .card-public-verification, .landing) { min-width: 0; max-width: 100%; overflow-wrap: anywhere; }
+  :is(.auth-wrap, .verification-page, .event-invitation-page, .card-public-verification) { padding: 20px 16px; margin: 0 auto; }
+  :is(.auth-wrap, .auth-page, .verification-page, .event-invitation-page, .card-public-verification, .landing) :is(button, a.button, input:not([type=checkbox]):not([type=radio]), select, textarea) { min-height: 44px; }
+  :is(.auth-wrap, .auth-page, .verification-page, .event-invitation-page, .card-public-verification) :is(input, select, textarea) { font-size: 16px; min-width: 0; max-width: 100%; }
+  :is(.verification-page, .event-invitation-page) .panel { width: 100%; max-width: 100%; padding: 20px 16px; }
+  .verification-page > section.panel { width: 100%; min-width: 0; max-width: 100%; padding: 20px 16px; }
+  .verification-page > section.panel .brand { font-size: 20px; flex-wrap: wrap; }
+  :is(.auth-wrap, .event-invitation-page, .verification-page, .card-public-verification) h1 { font-size: 26px; }
+  :is(.event-invitation-page, .verification-page) img { max-width: 100%; height: auto; }
+  .landing > header { flex-wrap: wrap; gap: 14px; padding: 18px 16px; }
+  .landing header nav { flex-wrap: wrap; gap: 12px; }
+  .landing .landing-hero { padding: 36px 16px; }
+  .landing .orbit .orbit-tag { left: 50%; right: auto; transform: translateX(-50%); max-width: calc(100vw - 48px); white-space: normal; }
 }
 
 @media (min-width: 761px) {

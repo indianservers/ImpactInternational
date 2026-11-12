@@ -1,9 +1,11 @@
+import SectionTabs from "../SectionTabs";
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Plus, ArrowDown, ArrowUp, ShieldCheck } from "lucide-react";
 import { api } from "../api";
 import { PageHeader, Skeleton, ErrorBox, useWorkspace } from "../App";
 export default function MembershipSettings() {
+  const [section, setSection] = useState("Workflow");
   const { w } = useWorkspace(),
     qc = useQueryClient();
   const [stages, setStages] = useState<any[] | null>(null),
@@ -69,7 +71,8 @@ export default function MembershipSettings() {
           {message}
         </div>
       )}
-      <section className="panel">
+      <SectionTabs id="membership-config" label="Membership configuration" tabs={["Workflow", "Categories", "Transfers"]} value={section} onChange={setSection} />
+      <section className="panel" role="tabpanel" id="membership-config-panel-0" aria-labelledby="membership-config-tab-0" hidden={section !== "Workflow"}>
         <div className="section-heading">
           <div>
             <h2>Approval workflow</h2>
@@ -195,8 +198,8 @@ export default function MembershipSettings() {
           </div>
         </form>
       </section>
-      <div className="dashboard-grid spaced">
-        <section className="panel">
+      <div className="account-panels spaced">
+        <section className="panel" role="tabpanel" id="membership-config-panel-1" aria-labelledby="membership-config-tab-1" hidden={section !== "Categories"}>
           <h2>Membership categories</h2>
           {q.data?.categories.map((c: any) => (
             <div className="context-row" key={c.id}>
@@ -249,7 +252,7 @@ export default function MembershipSettings() {
             </button>
           </form>
         </section>
-        <section className="panel">
+        <section className="panel" role="tabpanel" id="membership-config-panel-2" aria-labelledby="membership-config-tab-2" hidden={section !== "Transfers"}>
           <h2>Affiliation & transfer policy</h2>
           {p && (
             <form

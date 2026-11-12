@@ -1,0 +1,1215 @@
+{
+  "base": "http://127.0.0.1:2233",
+  "checked": 239,
+  "passed": 239,
+  "results": [
+    {
+      "path": "/branding",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/my/id-card",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/my/finance",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/membership/catalog",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/membership/options",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/members",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/directory",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/membership/me",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/membership/notification-status",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/membership/views",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/membership/metrics",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/membership/config",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/membership/applications",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/membership/invitations",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/membership/link-requests",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/governance/organizations",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/governance/options",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/leadership/eligible?orgId=c6ebc906-9926-4835-be96-d73d984a126f",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/officer-positions",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/leadership-terms",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/officer-appointments",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/governance/requests",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/governance/delegations",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/clubs",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/administration/dashboard",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/leadership/me",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/committees",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/governance/documents",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/governance/resolutions",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/leadership-handovers",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/membership/transfers",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/membership/imports",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/auth/csrf",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/auth/me",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/auth/sessions",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/workspaces",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/dashboard",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/organizations",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/levels",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/roles",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/permissions",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/assignments",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/settings",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/audit-logs",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/registration-requests",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/event-organizations",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/event-options",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/event-people?orgId=c6ebc906-9926-4835-be96-d73d984a126f",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/event-types",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/events",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/my/events",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/my/invitations",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/my/registrations",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/my/event-duties",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/events-dashboard",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/event-filters",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/communications/people",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/communications/conversations",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/communications/audiences",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/communications/templates",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/communications/campaigns",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/communications/announcements",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/communications/schedules",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/communications/automations",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/communications/analytics",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/communications/audit",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/communications/team-inbox",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/communications/capabilities",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/communications/organizations",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/communications/options",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/communications/notifications",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/communications/accounts",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/communications/preferences",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/communications/policy",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/communications/delivery",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/meetings?from=2026-11-01T00%3A00%3A00Z&to=2026-12-01T00%3A00%3A00Z",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/tasks",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/projects",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/impact-metrics",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/volunteers",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/volunteers/opportunities",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/volunteers/assignments",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/volunteers/hours",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/documents",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/operations/certificate-sources?type=Project",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/certificate-templates",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/certificates",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/operations/options",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/operations/analytics",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/intelligence/metrics",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/intelligence/dashboard",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/intelligence/search?query=community",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/intelligence/knowledge?query=community",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/intelligence/knowledge/indexes",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/intelligence/branding/current",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/intelligence/branding",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/intelligence/workflows",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/intelligence/workflows/options",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/intelligence/operations",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/id-cards/options",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/id-cards/templates",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/id-cards/members",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/id-cards/issuances",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/id-cards/analytics",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/id-cards/policy",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/id-cards/qr-preview?value=layout-check",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/id-cards/assets",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/id-cards/bulk-jobs",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/id-cards/print-presets",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/finance/entities",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/committees?search=&page=1",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/committees?search=Service&page=1",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/committees?search=O%27Reilly&page=1",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/committees?search=%25_&page=1",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/members?search=&page=1",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/members?search=Service&page=1",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/members?search=O%27Reilly&page=1",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/members?search=%25_&page=1",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/clubs?search=&page=1",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/clubs?search=Service&page=1",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/clubs?search=O%27Reilly&page=1",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/clubs?search=%25_&page=1",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/officer-appointments?search=&page=1",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/officer-appointments?search=Service&page=1",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/officer-appointments?search=O%27Reilly&page=1",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/officer-appointments?search=%25_&page=1",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/governance/documents?search=&page=1",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/governance/documents?search=Service&page=1",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/governance/documents?search=O%27Reilly&page=1",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/governance/documents?search=%25_&page=1",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/governance/resolutions?search=&page=1",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/governance/resolutions?search=Service&page=1",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/governance/resolutions?search=O%27Reilly&page=1",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/governance/resolutions?search=%25_&page=1",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/projects?search=&page=1",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/projects?search=Service&page=1",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/projects?search=O%27Reilly&page=1",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/projects?search=%25_&page=1",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/tasks?search=&page=1",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/tasks?search=Service&page=1",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/tasks?search=O%27Reilly&page=1",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/tasks?search=%25_&page=1",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/documents?search=&page=1",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/documents?search=Service&page=1",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/documents?search=O%27Reilly&page=1",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/documents?search=%25_&page=1",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/volunteers?search=&page=1",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/volunteers?search=Service&page=1",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/volunteers?search=O%27Reilly&page=1",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/volunteers?search=%25_&page=1",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/id-cards/members?search=&page=1",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/id-cards/members?search=Service&page=1",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/id-cards/members?search=O%27Reilly&page=1",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/id-cards/members?search=%25_&page=1",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/operations/certificate-sources?type=Membership&search=Service",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/operations/certificate-sources?type=Project&search=Service",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/operations/certificate-sources?type=Event&search=Service",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/operations/certificate-sources?type=Leadership&search=Service",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/committees?mine=true&search=",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/members/023048b8-6963-4b15-a490-2ba98c45e349",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/membership/applications/5ff9bfbb-df87-48e7-8a80-6caac75dfb82",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/members/023048b8-6963-4b15-a490-2ba98c45e349/leadership",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/officer-appointments/af759d62-8bb3-4b81-8443-f2c5101aaeff",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/governance/requests/3dcc0c62-f5dd-4c12-9f28-773ebc5aae0a",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/clubs/9c9e95df-3665-433e-868c-16f4788b6a80",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/clubs/9c9e95df-3665-433e-868c-16f4788b6a80/history",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/clubs/9c9e95df-3665-433e-868c-16f4788b6a80/health",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/committees/7afdd94c-6fbd-4e2b-b8af-cbea125d74df",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/committees/7afdd94c-6fbd-4e2b-b8af-cbea125d74df/eligible",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/committees/7afdd94c-6fbd-4e2b-b8af-cbea125d74df/roles",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/leadership-handovers/fcb32fe6-20ff-4926-aab3-985c36ea8ca7",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/membership/imports/57fd27ee-dc79-4064-8cc4-aa28b68291a5",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/events/7d967627-7ec9-4793-8db5-75fc34448f81",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/events/7d967627-7ec9-4793-8db5-75fc34448f81/audience",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/events/7d967627-7ec9-4793-8db5-75fc34448f81/invitations",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/events/7d967627-7ec9-4793-8db5-75fc34448f81/rsvps",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/events/7d967627-7ec9-4793-8db5-75fc34448f81/registrations",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/events/7d967627-7ec9-4793-8db5-75fc34448f81/checkins",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/events/7d967627-7ec9-4793-8db5-75fc34448f81/activity",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/events/7d967627-7ec9-4793-8db5-75fc34448f81/team",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/events/7d967627-7ec9-4793-8db5-75fc34448f81/feedback-form",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/events/7d967627-7ec9-4793-8db5-75fc34448f81/feedback",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/events/7d967627-7ec9-4793-8db5-75fc34448f81/analytics",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/events/7d967627-7ec9-4793-8db5-75fc34448f81/documents",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/communications/automations/1c70aa64-572c-4f54-aad8-9e47099342cc/executions",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/meetings/42bcfe0a-5834-423c-9d66-8ee6af049ba6",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/meetings/42bcfe0a-5834-423c-9d66-8ee6af049ba6/minutes",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/meetings/42bcfe0a-5834-423c-9d66-8ee6af049ba6/attendance",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/tasks/0a90da1d-4198-4b58-a125-d6615a750065",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/projects/09e3f868-b428-452d-a819-6ca5264df9ba",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/projects/09e3f868-b428-452d-a819-6ca5264df9ba/impact",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/members/023048b8-6963-4b15-a490-2ba98c45e349/achievements",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/intelligence/workflows/91fe8ce2-8c67-43db-aeb5-eb8c8d0cfd3b/executions",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/id-cards/templates/32f9cd17-657f-4642-b980-15156f8c7fbe",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/id-cards/issuances/00014acd-7a3d-4d1c-b62b-23a6901f1734",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/id-cards/bulk-jobs/813aa506-0546-4b21-9652-25ea6754f84f",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/finance/entities/3e09546a-d833-4f80-a584-f99dcf5b9209/event-prices",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/finance/entities/3e09546a-d833-4f80-a584-f99dcf5b9209/settings",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/finance/entities/3e09546a-d833-4f80-a584-f99dcf5b9209/options",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/finance/entities/3e09546a-d833-4f80-a584-f99dcf5b9209/accounts",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/finance/entities/3e09546a-d833-4f80-a584-f99dcf5b9209/invoices",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/finance/entities/3e09546a-d833-4f80-a584-f99dcf5b9209/dues-plans",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/finance/entities/3e09546a-d833-4f80-a584-f99dcf5b9209/jobs",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/finance/entities/3e09546a-d833-4f80-a584-f99dcf5b9209/journals",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/finance/entities/3e09546a-d833-4f80-a584-f99dcf5b9209/payments",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/finance/entities/3e09546a-d833-4f80-a584-f99dcf5b9209/bank-accounts",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/finance/entities/3e09546a-d833-4f80-a584-f99dcf5b9209/reconciliation",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/finance/entities/3e09546a-d833-4f80-a584-f99dcf5b9209/reviews",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/finance/entities/3e09546a-d833-4f80-a584-f99dcf5b9209/expenses",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/finance/entities/3e09546a-d833-4f80-a584-f99dcf5b9209/budgets",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/finance/entities/3e09546a-d833-4f80-a584-f99dcf5b9209/pledges",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/finance/entities/3e09546a-d833-4f80-a584-f99dcf5b9209/inter-entity",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/finance/entities/3e09546a-d833-4f80-a584-f99dcf5b9209/dashboard",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/finance/entities/3e09546a-d833-4f80-a584-f99dcf5b9209/audit",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/finance/invoices/248bb71b-2f44-4f2c-9fd6-1eb2986a2ae7",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/finance/entities/acda8576-73a2-4515-99bd-f641e537ef99/event-prices",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/finance/entities/acda8576-73a2-4515-99bd-f641e537ef99/settings",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/finance/entities/acda8576-73a2-4515-99bd-f641e537ef99/options",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/finance/entities/acda8576-73a2-4515-99bd-f641e537ef99/accounts",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/finance/entities/acda8576-73a2-4515-99bd-f641e537ef99/invoices",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/finance/entities/acda8576-73a2-4515-99bd-f641e537ef99/dues-plans",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/finance/entities/acda8576-73a2-4515-99bd-f641e537ef99/jobs",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/finance/entities/acda8576-73a2-4515-99bd-f641e537ef99/journals",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/finance/entities/acda8576-73a2-4515-99bd-f641e537ef99/payments",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/finance/entities/acda8576-73a2-4515-99bd-f641e537ef99/bank-accounts",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/finance/entities/acda8576-73a2-4515-99bd-f641e537ef99/reconciliation",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/finance/entities/acda8576-73a2-4515-99bd-f641e537ef99/reviews",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/finance/entities/acda8576-73a2-4515-99bd-f641e537ef99/expenses",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/finance/entities/acda8576-73a2-4515-99bd-f641e537ef99/budgets",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/finance/entities/acda8576-73a2-4515-99bd-f641e537ef99/pledges",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/finance/entities/acda8576-73a2-4515-99bd-f641e537ef99/inter-entity",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/finance/entities/acda8576-73a2-4515-99bd-f641e537ef99/dashboard",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/finance/entities/acda8576-73a2-4515-99bd-f641e537ef99/audit",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "path": "/finance/invoices/07b28a69-fca0-48a7-b3c3-64206fd1aac0",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "Club Manager",
+      "path": "/committees?mine=false&search=",
+      "status": 200,
+      "passed": true,
+      "expected": 200
+    },
+    {
+      "role": "Club Manager",
+      "path": "/committees?mine=true&search=",
+      "status": 200,
+      "passed": true,
+      "expected": 200
+    },
+    {
+      "role": "Club Member",
+      "path": "/committees?mine=false&search=",
+      "status": 403,
+      "passed": true,
+      "expected": 403
+    },
+    {
+      "role": "Club Member",
+      "path": "/committees?mine=true&search=",
+      "status": 200,
+      "passed": true,
+      "expected": 200
+    },
+    {
+      "path": "/committees?orgId=00000000-0000-0000-0000-000000000001&search=",
+      "status": 200,
+      "passed": true
+    }
+  ],
+  "notes": [
+    "Read-only business API calls; auth sessions/workspace selection only.",
+    "Binary downloads, streams, private token endpoints and third-party webhooks excluded.",
+    "Record screens checked when an existing accessible fixture was available."
+  ]
+}

@@ -127,6 +127,7 @@ function Picture({ src, ...props }: any) {
   );
 }
 export default function CardDesigner() {
+  const [mobilePanel, setMobilePanel] = useState("canvas");
   const { id } = useParams(),
     { w } = useWorkspace(),
     qc = useQueryClient(),
@@ -424,6 +425,15 @@ export default function CardDesigner() {
       setBusy(false);
     }
   }
+  useEffect(() => {
+    if (!doc) return;
+    const fit = () => {
+      if (window.matchMedia("(max-width: 760px)").matches) setZoom(Math.max(0.1, Math.min(1, (window.innerWidth - 72) / ((doc.width + 16 + 2 * doc.bleed) * 6))));
+    };
+    fit();
+    window.addEventListener("resize", fit);
+    return () => window.removeEventListener("resize", fit);
+  }, [doc?.width, doc?.bleed]);
   if (q.isPending || !doc) return <Skeleton />;
   if (q.error) return <ErrorBox error={q.error} />;
   const current = doc[side],
@@ -444,7 +454,7 @@ export default function CardDesigner() {
     ["Layers", Layers],
   ] as const;
   return (
-    <div className="card-studio">
+    <div className="card-studio" data-mobile-panel={mobilePanel}>
       <header className="card-studio-toolbar">
         <Link to="/app/id-cards/templates" aria-label="Back to templates">
           <ArrowLeft size={19} />
@@ -494,6 +504,7 @@ export default function CardDesigner() {
         )}
       </header>
       <ErrorBox error={error} />
+      <nav className="designer-phone-tabs" aria-label="Designer views">{["canvas", "elements", "properties"].map(panel => <button type="button" className={mobilePanel === panel ? "secondary active" : "secondary"} aria-pressed={mobilePanel === panel} key={panel} onClick={() => setMobilePanel(panel)}>{panel === "canvas" ? "Canvas" : panel === "elements" ? "Elements" : "Properties"}</button>)}</nav>
       <div className="card-studio-body">
         <nav className="card-tool-tabs">
           {tabs.map(([label, Icon]) => (
@@ -508,6 +519,7 @@ export default function CardDesigner() {
           ))}
         </nav>
         <aside className="card-resource-panel">
+          <label className="designer-resource-picker">Element tools<select aria-label="Element tools" value={tab} onChange={e => setTab(e.target.value)}>{tabs.map(([label]) => <option key={label}>{label}</option>)}</select></label>
           <h3>{tab}</h3>
           {tab === "Templates" && (
             <>
@@ -831,6 +843,9 @@ export default function CardDesigner() {
               height={(doc.height + 2 * pad) * S}
               draggable={pan}
               onMouseDown={(e) => {
+                if (e.target === e.target.getStage()) setSelected([]);
+              }}
+              onTouchStart={(e) => {
                 if (e.target === e.target.getStage()) setSelected([]);
               }}
             >

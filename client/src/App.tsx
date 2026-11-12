@@ -252,25 +252,25 @@ function Shell() {
     }
   }
   async function toggleTheme() {
-                  try {
-                    const theme = me.data.theme === "dark" ? "light" : "dark";
-                    await api("/users/profile", "PUT", {
-                      name: me.data.name,
-                      phone: me.data.phone,
-                      locale: me.data.locale || "en",
-                      timeZone: me.data.timeZone || "UTC",
-                      theme,
-                    });
-                    qc.setQueryData(["me"], { ...me.data, theme });
-                  } catch (e) {
-                    setError(e);
-                  }
-                }
+    try {
+      const theme = me.data.theme === "dark" ? "light" : "dark";
+      await api("/users/profile", "PUT", {
+        name: me.data.name,
+        phone: me.data.phone,
+        locale: me.data.locale || "en",
+        timeZone: me.data.timeZone || "UTC",
+        theme,
+      });
+      qc.setQueryData(["me"], { ...me.data, theme });
+    } catch (e) {
+      setError(e);
+    }
+  }
   async function signOut() {
-                  await api("/auth/logout", "POST");
-                  qc.clear();
-                  nav("/login");
-                }
+    await api("/auth/logout", "POST");
+    qc.clear();
+    nav("/login");
+  }
   const visibleSections = navigationSections.map((section) => ({
     ...section,
     tabs: section.tabs.filter((tab) => canOpenTab(tab, w?.permissions || [], experience.data?.disabledFeatures || [])),
@@ -474,7 +474,7 @@ function Shell() {
               </Suspense>
             )}
           </main>
-          <nav className="mobile-bottom-nav" aria-label="Main navigation">
+          <nav className="mobile-bottom-nav" aria-label="Main navigation" style={{ gridTemplateColumns: `repeat(${Math.min(4, visibleSections.length) + 1}, minmax(0, 1fr))` }}>
             {visibleSections.slice(0, 4).map(section => { const Icon = section.icon; return <Link key={section.id} to={section.tabs[0].to} className={activeSection?.id === section.id ? "active" : undefined} aria-current={activeSection?.id === section.id ? "page" : undefined}><Icon size={20} /><span>{section.label}</span></Link>; })}
             <button onClick={() => setOpen(true)} aria-expanded={open} aria-controls="organization-navigation" className={visibleSections.slice(4).some(s => s.id === activeSection?.id) ? "secondary active" : "secondary"}><Menu size={20} /><span>More</span></button>
           </nav>

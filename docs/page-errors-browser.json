@@ -1,0 +1,373 @@
+{
+  "origin": "http://127.0.0.1:2233",
+  "mainViews": [
+    {
+      "errors": [],
+      "path": "/app/members"
+    },
+    {
+      "errors": [],
+      "path": "/app/directory"
+    },
+    {
+      "errors": [],
+      "path": "/app/approvals"
+    },
+    {
+      "errors": [],
+      "path": "/app/imports"
+    },
+    {
+      "errors": [],
+      "path": "/app/membership-insights"
+    },
+    {
+      "errors": [],
+      "path": "/app/membership-settings"
+    },
+    {
+      "errors": [],
+      "path": "/app/transfers"
+    },
+    {
+      "errors": [],
+      "path": "/app/organizations"
+    },
+    {
+      "errors": [],
+      "path": "/app/clubs"
+    },
+    {
+      "errors": [],
+      "path": "/app/club-administration"
+    },
+    {
+      "errors": [],
+      "path": "/app/leadership"
+    },
+    {
+      "errors": [],
+      "path": "/app/leadership-calendar"
+    },
+    {
+      "errors": [],
+      "path": "/app/handovers"
+    },
+    {
+      "errors": [],
+      "path": "/app/committees"
+    },
+    {
+      "errors": [],
+      "path": "/app/governance"
+    },
+    {
+      "errors": [],
+      "path": "/app/resolutions"
+    },
+    {
+      "errors": [],
+      "path": "/app/governance-documents"
+    },
+    {
+      "errors": [],
+      "path": "/app/governance-settings"
+    },
+    {
+      "errors": [],
+      "path": "/app/events"
+    },
+    {
+      "errors": [],
+      "path": "/app/my-events"
+    },
+    {
+      "errors": [],
+      "path": "/app/event-settings"
+    },
+    {
+      "errors": [],
+      "path": "/app/event-intelligence"
+    },
+    {
+      "errors": [],
+      "path": "/app/administration"
+    },
+    {
+      "errors": [],
+      "path": "/app/settings"
+    },
+    {
+      "errors": [],
+      "path": "/app/audit"
+    },
+    {
+      "errors": [],
+      "path": "/app/profile"
+    },
+    {
+      "errors": [],
+      "path": "/app/foundation-overview"
+    },
+    {
+      "errors": [],
+      "path": "/app/operations"
+    },
+    {
+      "errors": [],
+      "path": "/app/communications"
+    },
+    {
+      "errors": [],
+      "path": "/app/finance"
+    },
+    {
+      "errors": [],
+      "path": "/app/id-cards"
+    },
+    {
+      "errors": [],
+      "path": "/app/intelligence"
+    },
+    {
+      "errors": [],
+      "path": "/app/my-id"
+    },
+    {
+      "errors": [],
+      "path": "/app/apply"
+    },
+    {
+      "errors": [],
+      "path": "/app/"
+    },
+    {
+      "errors": [],
+      "path": "/app/my-membership"
+    }
+  ],
+  "nestedViews": [
+    {
+      "errors": [],
+      "heading": "Meet with purpose.",
+      "path": "/app/operations/meetings"
+    },
+    {
+      "errors": [],
+      "heading": "Good intentions. Clear next steps.",
+      "path": "/app/operations/tasks"
+    },
+    {
+      "errors": [],
+      "heading": "Serve together. Change lives.",
+      "path": "/app/operations/projects"
+    },
+    {
+      "errors": [],
+      "heading": "Many hands. One community.",
+      "path": "/app/operations/volunteers"
+    },
+    {
+      "errors": [],
+      "heading": "The difference we make.",
+      "path": "/app/operations/impact"
+    },
+    {
+      "errors": [],
+      "heading": "Knowledge, kept with care.",
+      "path": "/app/operations/documents"
+    },
+    {
+      "errors": [],
+      "heading": "Recognize a meaningful contribution.",
+      "path": "/app/operations/certificates"
+    },
+    {
+      "errors": [],
+      "heading": "Invoices",
+      "path": "/app/finance/invoices"
+    },
+    {
+      "errors": [],
+      "heading": "Membership dues",
+      "path": "/app/finance/dues"
+    },
+    {
+      "errors": [],
+      "heading": "Payments & receipts",
+      "path": "/app/finance/payments"
+    },
+    {
+      "errors": [],
+      "heading": "Bank reconciliation",
+      "path": "/app/finance/reconciliation"
+    },
+    {
+      "errors": [],
+      "heading": "Accounting",
+      "path": "/app/finance/accounts"
+    },
+    {
+      "errors": [],
+      "heading": "Budgets & commitments",
+      "path": "/app/finance/budgets"
+    },
+    {
+      "errors": [],
+      "heading": "Expenses & reimbursements",
+      "path": "/app/finance/expenses"
+    },
+    {
+      "errors": [],
+      "heading": "Donations & sponsorships",
+      "path": "/app/finance/funding"
+    },
+    {
+      "errors": [],
+      "heading": "Event & project finance",
+      "path": "/app/finance/sources"
+    },
+    {
+      "errors": [],
+      "heading": "Inter-entity allocations",
+      "path": "/app/finance/allocations"
+    },
+    {
+      "errors": [],
+      "heading": "Financial reports",
+      "path": "/app/finance/reports"
+    },
+    {
+      "errors": [],
+      "heading": "Financial settings",
+      "path": "/app/finance/settings"
+    },
+    {
+      "errors": [],
+      "heading": "My finances",
+      "path": "/app/finance/member"
+    },
+    {
+      "errors": [],
+      "heading": "Your community, in conversation",
+      "path": "/app/intelligence/assistant"
+    },
+    {
+      "errors": [],
+      "heading": "Knowledge, with its sources",
+      "path": "/app/intelligence/knowledge"
+    },
+    {
+      "errors": [],
+      "heading": "Thoughtful automation. Human control.",
+      "path": "/app/intelligence/workflows"
+    },
+    {
+      "errors": [],
+      "heading": "A shared language for your metrics",
+      "path": "/app/intelligence/metrics"
+    },
+    {
+      "errors": [],
+      "heading": "An identity of your own",
+      "path": "/app/intelligence/branding"
+    },
+    {
+      "errors": [],
+      "heading": "Release operations",
+      "path": "/app/intelligence/operations"
+    },
+    {
+      "errors": [],
+      "heading": "A collection with character.",
+      "path": "/app/id-cards/templates"
+    },
+    {
+      "errors": [],
+      "heading": "Membership made official.",
+      "path": "/app/id-cards/issuances"
+    },
+    {
+      "errors": [],
+      "heading": "A thousand identities. One workflow.",
+      "path": "/app/id-cards/bulk"
+    },
+    {
+      "errors": [],
+      "heading": "Made for the perfect print.",
+      "path": "/app/id-cards/print"
+    },
+    {
+      "errors": [],
+      "heading": "Identity with clear boundaries.",
+      "path": "/app/id-cards/settings"
+    },
+    {
+      "errors": [],
+      "path": "/app/communications/Inbox"
+    },
+    {
+      "errors": [],
+      "path": "/app/communications/Mine"
+    },
+    {
+      "errors": [],
+      "path": "/app/communications/Team"
+    },
+    {
+      "errors": [],
+      "path": "/app/communications/WhatsApp"
+    },
+    {
+      "errors": [],
+      "path": "/app/communications/Email"
+    },
+    {
+      "errors": [],
+      "path": "/app/communications/SMS"
+    },
+    {
+      "errors": [],
+      "path": "/app/communications/Announcements"
+    },
+    {
+      "errors": [],
+      "path": "/app/communications/Campaigns"
+    },
+    {
+      "errors": [],
+      "path": "/app/communications/Schedules"
+    },
+    {
+      "errors": [],
+      "path": "/app/communications/Templates"
+    },
+    {
+      "errors": [],
+      "path": "/app/communications/Audiences"
+    },
+    {
+      "errors": [],
+      "path": "/app/communications/Automations"
+    },
+    {
+      "errors": [],
+      "path": "/app/communications/Analytics"
+    },
+    {
+      "errors": [],
+      "path": "/app/communications/Delivery"
+    },
+    {
+      "errors": [],
+      "path": "/app/communications/Settings"
+    }
+  ],
+  "checked": 82,
+  "unexpectedErrors": 0,
+  "notes": [
+    "Authenticated administrator with existing authorized finance entities.",
+    "Visible page errors checked after the main loading state cleared.",
+    "Read-only page visits; no business form submissions or external provider operations."
+  ]
+}

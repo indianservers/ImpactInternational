@@ -1,0 +1,206 @@
+{
+  "authenticatedChecks": [
+    {
+      "pageWidth": 305,
+      "path": "/app/administration",
+      "title": "Roles & permissions",
+      "width": 320
+    },
+    {
+      "pageWidth": 305,
+      "path": "/app/leadership",
+      "title": "Leadership directory",
+      "width": 320
+    },
+    {
+      "pageWidth": 305,
+      "path": "/app/leadership-calendar",
+      "title": "Terms calendar",
+      "width": 320
+    },
+    {
+      "pageWidth": 305,
+      "path": "/app/handovers",
+      "title": "Leadership handovers",
+      "width": 320
+    },
+    {
+      "pageWidth": 305,
+      "path": "/app/governance",
+      "title": "Governance approval center",
+      "width": 320
+    },
+    {
+      "pageWidth": 305,
+      "path": "/app/resolutions",
+      "title": "Resolutions",
+      "width": 320
+    },
+    {
+      "pageWidth": 305,
+      "path": "/app/governance-documents",
+      "title": "Governance documents",
+      "width": 320
+    },
+    {
+      "pageWidth": 305,
+      "path": "/app/governance-settings",
+      "title": "Governance configuration",
+      "width": 320
+    },
+    {
+      "pageWidth": 305,
+      "path": "/app/transfers",
+      "title": "Membership operations",
+      "width": 320
+    },
+    {
+      "pageWidth": 305,
+      "path": "/app/imports",
+      "title": "Member import",
+      "width": 320
+    },
+    {
+      "pageWidth": 305,
+      "path": "/app/event-settings",
+      "title": "Event types",
+      "width": 320
+    },
+    {
+      "pageWidth": 305,
+      "path": "/app/event-intelligence",
+      "title": "Event intelligence",
+      "width": 320
+    },
+    {
+      "pageWidth": 305,
+      "path": "/app/events/new",
+      "title": "Create an event",
+      "width": 320
+    },
+    {
+      "pageWidth": 305,
+      "path": "/app/approvals",
+      "title": "Membership approvals",
+      "width": 320
+    },
+    {
+      "note": "Request failed",
+      "pageWidth": 305,
+      "path": "/app/committees",
+      "title": "Committee directory",
+      "width": 320
+    },
+    {
+      "pageWidth": 305,
+      "path": "/app/audit",
+      "title": "Audit trail",
+      "width": 320
+    },
+    {
+      "pageWidth": 305,
+      "path": "/app/settings",
+      "title": "Workspace settings",
+      "width": 320
+    }
+  ],
+  "publicChecks": [
+    {
+      "inputs": [
+        {
+          "font": "16px",
+          "height": 48
+        },
+        {
+          "font": "16px",
+          "height": 48
+        }
+      ],
+      "pageWidth": 320,
+      "path": "/login",
+      "width": 320
+    },
+    {
+      "inputs": [
+        {
+          "font": "16px",
+          "height": 48
+        },
+        {
+          "font": "16px",
+          "height": 48
+        },
+        {
+          "font": "16px",
+          "height": 48
+        },
+        {
+          "font": "16px",
+          "height": 48
+        },
+        {
+          "font": "16px",
+          "height": 48
+        },
+        {
+          "font": "16px",
+          "height": 48
+        }
+      ],
+      "pageWidth": 305,
+      "path": "/signup",
+      "width": 320
+    },
+    {
+      "inputs": [
+        {
+          "font": "16px",
+          "height": 48
+        }
+      ],
+      "pageWidth": 320,
+      "path": "/forgot-password",
+      "width": 320
+    },
+    {
+      "inputs": [
+        {
+          "font": "16px",
+          "height": 48
+        },
+        {
+          "font": "16px",
+          "height": 48
+        }
+      ],
+      "pageWidth": 305,
+      "path": "/request-organization",
+      "width": 320
+    },
+    {
+      "pageWidth": 320,
+      "path": "/join",
+      "width": 320
+    },
+    {
+      "pageWidth": 305,
+      "path": "/",
+      "width": 320
+    }
+  ],
+  "designer": {
+    "viewport": 320,
+    "canvasWidth": 248,
+    "studioWidth": 281,
+    "documentWidth": 305,
+    "elementToolCount": 11,
+    "layerPropertyFieldCount": 17
+  },
+  "profile": {
+    "draftRetainedAcrossTabs": true
+  },
+  "limitations": [
+    "Committee page reports Request failed; only its layout was verified.",
+    "Token-only invitation and verification success flows require valid private links and were not retested."
+  ]
+}
