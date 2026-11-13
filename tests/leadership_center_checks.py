@@ -24,14 +24,14 @@ while True:
  if not cursor['parentId']:break
  cursor=index[cursor['parentId']]
 person=sql("SELECT p.\"Id\" FROM \"Persons\" p JOIN \"Users\" u ON u.\"Id\"=p.\"UserId\" WHERE u.\"Email\"='member.club1@example.test'")
-fixturePath=pathlib.Path('.infra/leadership-center-fixtures.json');fixture=json.loads(fixturePath.read_text()) if fixturePath.exists() else {};positions={};appointments=[]
+fixturePath=pathlib.Path('.infra/leadership-center-fixtures.json');fixture=json.loads(fixturePath.read_text()) if fixturePath.exists() else {};fixture={k:v for k,v in fixture.items() if 'id' in v};positions={};appointments=[]
 for unit in path:
  kind=unit['level'];code='LP-QA-'+kind.upper();position=next((p for p in cfg['positions'] if p['code']==code),None)
  if not position:position=call(admin,'/officer-positions','POST',dict(code=code,title='QA '+kind+' Service Officer',levelId=unit['levelId'],mandatory=True,maximumHolders=1,defaultMonths=12,requireActiveMembership=True,approvalRequired=False))
  positions[kind]=position
  key='active-'+kind
  if key not in fixture:
-  fixture[key]=call(admin,'/officer-appointments','POST',dict(orgId=unit['id'],personId=person,positionId=position['id'],startsAt=at(-30),endsAt=at(20 if kind=='Club' else 365),method='Appointed',notes='QA existing central person appointment'))
+  fixture[key]=call(admin,'/officer-appointments','POST',dict(orgId=unit['id'],personId=person,positionId=position['id'],startsAt=at(-.01),endsAt=at(20 if kind=='Club' else 365),method='Appointed',notes='QA existing central person appointment'))
   fixturePath.write_text(json.dumps(fixture),encoding='utf-8')
  appointment=fixture[key];appointments.append(appointment['id']);detail=call(admin,'/officer-appointments/'+appointment['id']);check(kind+' existing person ID preserved',detail['appointment']['personId']==person);check(kind+' effective title-only appointment',detail['appointment']['status']=='Active');check(kind+' no automatic mapped access',detail['appointment']['grantRoleId'] is None)
 check('Multiple appointments create no people',int(sql('SELECT count(*) FROM "Persons"'))==basePeople)
@@ -45,7 +45,7 @@ for sort in ['name','name-desc','newest']:
 for query in ['search=Demo','search=Service','search=IM-','membershipStatus=Active','page=2','positionId='+positions['Club']['id']]:call(admin,'/leadership/people?'+query)
 call(admin,'/leadership/center?status=invalid',expected=400);call(admin,'/leadership/center?from=wrong',expected=400);call(admin,'/leadership/center?from=2026-11-01&to=2025-01-01',expected=400);call(admin,'/leadership/center?orgId='+str(uuid.uuid4()),expected=404)
 # Preserve actual conflict and workflow rules.
-payload=dict(orgId=club['id'],personId=person,positionId=positions['Club']['id'],startsAt=at(-1),endsAt=at(25),method='Appointed')
+payload=dict(orgId=club['id'],personId=person,positionId=positions['Club']['id'],startsAt=at(-.005),endsAt=at(25),method='Appointed')
 call(admin,'/officer-appointments','POST',payload,409)
 call(admin,'/officer-appointments','POST',{**payload,'positionId':positions['National']['id']},400)
 call(admin,'/officer-appointments','POST',{**payload,'startsAt':at(30),'endsAt':at(1)},400)
