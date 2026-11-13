@@ -207,6 +207,7 @@ app.Use(
 app.MapOpenApi();
 var api = app.MapGroup("/api/v1");
 api.MapMembership();
+api.MapMembershipAnalytics();
 api.MapMembershipWorkflows();
 api.MapGovernance();
 api.MapEvents();
@@ -224,6 +225,8 @@ api.MapMembershipLifecycle();
 api.MapMemberMedia();
 api.MapMemberImports();
 api.MapImpactStructure();
+api.MapOrganizationIntelligence();
+api.MapLeadershipCenter();
 api.MapGet(
     "/auth/csrf",
     (HttpContext c, IAntiforgery a) => new { token = a.GetAndStoreTokens(c).RequestToken }
@@ -260,6 +263,7 @@ api.MapPost(
         }
     )
     .RequireRateLimiting("auth");
+api.MapGet("/auth/methods", (IConfiguration config) => new { memberOtpEnabled = config.GetValue("Authentication:MemberOtpEnabled", true) });
 api.MapPost(
         "/auth/login",
         async (Login r, Db db, IPasswordHasher<User> h, HttpContext c, Access access) =>
@@ -270,7 +274,7 @@ api.MapPost(
             var valid =
                 h.VerifyHashedPassword(u ?? new(), u?.PasswordHash ?? Dummy, r.Password ?? "")
                 != PasswordVerificationResult.Failed;
-            if (u != null && valid && u.Verified && !(u.LockedUntil > DateTimeOffset.UtcNow) && !u.PlatformAdmin && await db.Assignments.AnyAsync(a => a.UserId == u.Id && db.Roles.Any(role => role.Id == a.RoleId && role.Name == "Club Member")))
+            if (app.Configuration.GetValue("Authentication:MemberOtpEnabled", true) && u != null && valid && u.Verified && !(u.LockedUntil > DateTimeOffset.UtcNow) && !u.PlatformAdmin && await db.Assignments.AnyAsync(a => a.UserId == u.Id && db.Roles.Any(role => role.Id == a.RoleId && role.Name == "Club Member")))
                 throw new ApiError(403, "Members sign in with an email OTP. Request a code to continue.");
             if (u == null || !valid || !u.Verified || u.LockedUntil > DateTimeOffset.UtcNow)
             {
@@ -578,27 +582,7 @@ api.MapPost(
         return Results.NoContent();
     }
 );
-api.MapGet(
-    "/dashboard",
-    async (Access a) =>
-    {
-        var w = await a.Workspace("organization.view");
-        var q = a.Visible(w);
-        return new
-        {
-            Organizations = await q.CountAsync(),
-            Clubs = await q.CountAsync(o => a.Db.Levels.Any(l => l.Id == o.LevelId && l.IsClub)),
-            Pending = await q.CountAsync(x => x.Status == "Pending"),
-            Recent = await a
-                .Db.Audits.Where(x =>
-                    x.TenantId == w.TenantId && x.OrgId != null && q.Any(o => o.Id == x.OrgId)
-                )
-                .OrderByDescending(x => x.At)
-                .Take(6)
-                .ToListAsync(),
-        };
-    }
-);
+api.MapGet("/dashboard", PlatformDashboard.Endpoint);
 api.MapGet(
     "/organizations",
     async (
@@ -606,6 +590,7 @@ api.MapGet(
         string? search,
         Guid? parentId,
         Guid? levelId,
+        Guid? scopeId,
         string? status,
         int page = 1,
         int size = 20,
@@ -615,6 +600,12 @@ api.MapGet(
     {
         var w = await a.Workspace("organization.view");
         var q = a.Visible(w);
+        if (scopeId != null)
+        {
+            Check(await a.Visible(w).AnyAsync(o=>o.Id==scopeId), "Scope outside authorized organization.", 404);
+            var branch=a.Tree(w.TenantId,scopeId.Value).Select(o=>o.Id);
+            q=q.Where(o=>branch.Contains(o.Id));
+        }
         if (clubs)
             q = q.Where(o => a.Db.Levels.Any(l => l.Id == o.LevelId && l.IsClub));
         if (parentId != null)
@@ -807,7 +798,7 @@ api.MapPost(
         var w = await a.Workspace("roles.assign");
         await using var tx = await a.Mutation(w);
         Check(await a.Visible(w).AnyAsync(x => x.Id == r.OrgId), "Scope denied.", 403);
-        var role = await a.Db.Roles.SingleOrDefaultAsync(x =>
+        var role = await a.Db.Roles.Include(x => x.Grants).SingleOrDefaultAsync(x =>
             x.Id == r.RoleId && x.TenantId == w.TenantId
         );
         var held = await a.Grants(w);
@@ -1012,6 +1003,11 @@ if (args.Contains("--seed-phase2") && !args.Contains("--migrate"))
 {
     using var scope = app.Services.CreateScope();
     await MembershipSetup.Demo(scope.ServiceProvider);
+    return;
+}
+if (args.Contains("--enable-local-password-testing"))
+{
+    await LeaderDemoLogins.EnablePasswordTesting(app.Services);
     return;
 }
 if (args.Contains("--seed-leader-logins"))

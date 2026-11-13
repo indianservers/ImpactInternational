@@ -1,0 +1,128 @@
+{
+  "total": 30,
+  "passed": 30,
+  "environment": "localhost:1234, isolated QA database",
+  "createdMember": "IM-000003153",
+  "results": [
+    {
+      "scenario": "Required name blocks Next",
+      "passed": true
+    },
+    {
+      "scenario": "Forward navigation through all four steps",
+      "passed": true
+    },
+    {
+      "scenario": "Completed tabs can be revisited",
+      "passed": true
+    },
+    {
+      "scenario": "Previous preserves entered values",
+      "passed": true
+    },
+    {
+      "scenario": "Date of birth retained and saved",
+      "passed": true
+    },
+    {
+      "scenario": "Photo upload preview and restored draft",
+      "passed": true
+    },
+    {
+      "scenario": "National through club cascading selection",
+      "passed": true
+    },
+    {
+      "scenario": "Changing region clears district zone and club",
+      "passed": true
+    },
+    {
+      "scenario": "Invalid Indian PIN blocks Next",
+      "passed": true
+    },
+    {
+      "scenario": "Multiple addresses retained across tabs",
+      "passed": true
+    },
+    {
+      "scenario": "Office primary address saved",
+      "passed": true
+    },
+    {
+      "scenario": "Draft saved without creating incomplete member",
+      "passed": true
+    },
+    {
+      "scenario": "Draft survives browser reload",
+      "passed": true
+    },
+    {
+      "scenario": "Draft restores selected hierarchy",
+      "passed": true
+    },
+    {
+      "scenario": "Draft retains document File across reload",
+      "passed": true
+    },
+    {
+      "scenario": "Unsaved close asks for confirmation",
+      "passed": true
+    },
+    {
+      "scenario": "Keep editing preserves data",
+      "passed": true
+    },
+    {
+      "scenario": "Discard closes registration",
+      "passed": true
+    },
+    {
+      "scenario": "Final review shows member community and addresses",
+      "passed": true
+    },
+    {
+      "scenario": "Final submission shows generated ID success",
+      "passed": true
+    },
+    {
+      "scenario": "Double click produces exactly one membership",
+      "passed": true
+    },
+    {
+      "scenario": "Supporting document uploaded after registration",
+      "passed": true
+    },
+    {
+      "scenario": "Successful registration clears saved draft",
+      "passed": true
+    },
+    {
+      "scenario": "Invalid document shows member already created",
+      "passed": true
+    },
+    {
+      "scenario": "Retry failed upload does not recreate member",
+      "passed": true
+    },
+    {
+      "scenario": "Possible duplicates require explicit decision",
+      "passed": true
+    },
+    {
+      "scenario": "390px mobile full-screen modal has no horizontal overflow",
+      "passed": true
+    },
+    {
+      "scenario": "Mobile forward and Previous work",
+      "passed": true
+    },
+    {
+      "scenario": "Sticky mobile footer remains visible",
+      "passed": true
+    },
+    {
+      "scenario": "Main database existing membership count preserved",
+      "passed": true
+    }
+  ]
+}

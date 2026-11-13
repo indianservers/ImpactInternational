@@ -54,7 +54,15 @@ public static class FinancePdf
         {
             var words = line.Replace("\r", " ")
                 .Replace("\n", " ")
-                .Split(' ', StringSplitOptions.RemoveEmptyEntries);
+                .Split(' ', StringSplitOptions.RemoveEmptyEntries)
+                .SelectMany(word => {
+                    var parts = new List<string>(); var part = "";
+                    foreach(var character in word) {
+                        if(part.Length>0 && gfx!.MeasureString(part+character,font).Width>page!.Width.Point-84) {parts.Add(part);part="";}
+                        part+=character;
+                    }
+                    if(part.Length>0)parts.Add(part);return parts;
+                });
             var current = "";
             void Draw(string text)
             {

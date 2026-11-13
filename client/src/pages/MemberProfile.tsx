@@ -1,3 +1,4 @@
+import "./Members.css";
 import {MemberAchievements} from "./Operations";
 import {MemberOffices} from "../GovernanceUI";
 import { useState } from "react";
@@ -39,6 +40,7 @@ export default function MemberProfile() {
     queryKey: ["member-profile", id, directory, w?.id],
     queryFn: () => api("/members/" + id + (directory ? "?directory=true" : "")),
   });
+  const hierarchy=useQuery<any>({queryKey:["profile-hierarchy",w?.id,q.data?.membership?.clubId],queryFn:()=>api("/membership/hierarchy?clubId="+q.data.membership.clubId),enabled:!!q.data?.membership?.clubId&&!!w});
   function refresh() {
     qc.invalidateQueries({ queryKey: ["member-profile"] });
     qc.invalidateQueries({ queryKey: ["members"] });
@@ -70,12 +72,17 @@ export default function MemberProfile() {
   const tabs = [
     "Overview",
     "Personal details",
+    "Contact information",
+    "Organizational hierarchy",
     "Professional",
     "Membership history",
     "Leadership",
     "Participation",
     "Documents",
     "Privacy & preferences",
+    ...(!directory&&w?.permissions.includes("finance.dues.reports")?["Dues & payments"]:[]),
+    ...(!directory&&w?.permissions.includes("communications.view")?["Communication"]:[]),
+    ...(!directory&&w?.permissions.includes("audit.view")?["Audit history"]:[]),
   ];
   return (
     <>
@@ -189,6 +196,11 @@ export default function MemberProfile() {
       </div>
       <div className="profile-layout">
         <section className="panel profile-body">
+          {tab==="Organizational hierarchy"&&<><h2>Organizational hierarchy</h2><p>Affiliation within your authorized structure.</p><ErrorBox error={hierarchy.error}/>{[...(hierarchy.data?.selectedPath||[])].reverse().map((o:any)=><div className="context-row" key={o.id}><span>{o.kind}</span><b>{o.name}</b></div>)}<p>Club: {m.club} · Category: {m.category}</p></>}
+          {tab==="Contact information"&&<><h2>Contact information</h2>{p.contacts?.length?p.contacts.map((c:any,i:number)=><div key={i} className="context-row"><span>{c.kind} · {c.label}</span><b>{c.value}</b></div>):<p>No contact information is shared with this workspace.</p>}{p.addresses?.map((a:any,i:number)=><div key={i} className="context-row"><span>Address</span><b>{[a.address,a.city,a.state,a.country,a.postalCode].filter(Boolean).join(", ")}</b></div>)}</>}
+          {tab==="Dues & payments"&&<><h2>Dues & payments</h2><p>Collections, verification and payment records remain in the authorized finance workspace. Membership administrative holds do not represent an accounting balance.</p><Link className="button secondary" to="/app/finance/dues-reports">Open authorized dues reports →</Link></>}
+          {tab==="Communication"&&<><h2>Communication workspace</h2><p>Use the Communication Center for messages within your assigned hierarchy and permitted audiences.</p><Link className="button secondary" to="/app/communications">Open Communication Center →</Link></>}
+          {tab==="Audit history"&&<><h2>Membership audit history</h2>{d.history?.map((h:any)=><div className="history-entry" key={h.id}><b>{h.oldStatus||"Created"} → {h.newStatus}</b><p>{h.reason}</p><small>Effective {new Date(h.effectiveAt).toLocaleString()} · recorded {new Date(h.recordedAt).toLocaleString()}</small></div>)}{!d.history?.length&&<p>No membership history recorded.</p>}</>}
           {tab === "Overview" && (
             <>
               <h2>Connected through service</h2>
@@ -633,7 +645,7 @@ export default function MemberProfile() {
             <section className="panel spaced">
               <h3>Membership actions</h3>
               <div className="action-stack">
-                {["status", "renew", "category", "hold", "link"].map((a) => (
+                {["status", "renew", "category", "hold", "link", "transfer"].map((a) => (
                   <button
                     className="secondary"
                     key={a}
@@ -643,6 +655,7 @@ export default function MemberProfile() {
                       (
                         {
                           status: "Change status",
+                          transfer: "Request club transfer",
                           renew: "Record renewal",
                           category: "Change category",
                           hold: "Administrative hold",

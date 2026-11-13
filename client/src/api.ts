@@ -59,7 +59,7 @@ export async function api<T = any>(
     try {
       message = (await r.json()).detail || message;
     } catch {}
-    throw new Error(message);
+    throw Object.assign(new Error(message), { status: r.status });
   }
   return r.status === 204 ? (undefined as T) : r.json();
 }

@@ -1,0 +1,399 @@
+{
+  "total": 52,
+  "passed": 52,
+  "results": [
+    {
+      "scenario": "Admin sign in",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Club president sign in",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Member sign in",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Options reuse",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Full registration with inactive status",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Read registered profile",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Persist legalName",
+      "passed": true,
+      "detail": "Wizard QA ff5e2d4d"
+    },
+    {
+      "scenario": "Persist birthDate",
+      "passed": true,
+      "detail": "1990-02-03"
+    },
+    {
+      "scenario": "Persist gender",
+      "passed": true,
+      "detail": "Female"
+    },
+    {
+      "scenario": "Persist anniversary",
+      "passed": true,
+      "detail": "2015-04-05"
+    },
+    {
+      "scenario": "Persist maritalStatus",
+      "passed": true,
+      "detail": "Married"
+    },
+    {
+      "scenario": "Persist spouseName",
+      "passed": true,
+      "detail": "QA Spouse"
+    },
+    {
+      "scenario": "Persist educationLevel",
+      "passed": true,
+      "detail": "Graduate"
+    },
+    {
+      "scenario": "Persist qualification",
+      "passed": true,
+      "detail": "BSc"
+    },
+    {
+      "scenario": "Persist institution",
+      "passed": true,
+      "detail": "QA College"
+    },
+    {
+      "scenario": "Persist employmentStatus",
+      "passed": true,
+      "detail": "Employed"
+    },
+    {
+      "scenario": "Persist additionalInformation",
+      "passed": true,
+      "detail": "Wizard notes"
+    },
+    {
+      "scenario": "Display name saved",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "All contacts saved",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Multiple addresses retain type and primary",
+      "passed": true,
+      "detail": [
+        {
+          "type": "Office",
+          "isPrimary": true,
+          "country": "India",
+          "state": "Telangana",
+          "city": "Secunderabad",
+          "postalCode": "500003",
+          "address": "QA Office Address"
+        },
+        {
+          "type": "Residential",
+          "isPrimary": false,
+          "country": "India",
+          "state": "Telangana",
+          "city": "Hyderabad",
+          "postalCode": "500001",
+          "address": "QA Residential Address"
+        }
+      ]
+    },
+    {
+      "scenario": "Initial status saved",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Generated ID unchanged",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Photo saved",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Profession saved",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Tags saved",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Languages saved",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Social links normalized",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Directory uses primary address",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Primary city displayed",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Same request safely replayed",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Replay returns same member",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Changed payload with same key rejected",
+      "passed": true,
+      "detail": {
+        "status": 409,
+        "response": {
+          "detail": "Registration request key was used with different details.",
+          "status": 409
+        }
+      }
+    },
+    {
+      "scenario": "Replay creates one membership",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Two primary addresses",
+      "passed": true,
+      "detail": {
+        "status": 400,
+        "response": {
+          "detail": "Choose only one primary address.",
+          "status": 400
+        }
+      }
+    },
+    {
+      "scenario": "Unsupported address type",
+      "passed": true,
+      "detail": {
+        "status": 400,
+        "response": {
+          "detail": "Choose a supported address type.",
+          "status": 400
+        }
+      }
+    },
+    {
+      "scenario": "Invalid initial status",
+      "passed": true,
+      "detail": {
+        "status": 400,
+        "response": {
+          "detail": "Choose an active, inactive or suspended initial membership status.",
+          "status": 400
+        }
+      }
+    },
+    {
+      "scenario": "Invalid PIN",
+      "passed": true,
+      "detail": {
+        "status": 400,
+        "response": {
+          "detail": "Enter a valid six-digit Indian PIN code.",
+          "status": 400
+        }
+      }
+    },
+    {
+      "scenario": "Legacy creation payload supported",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Legacy address profile",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Legacy address default primary Residential",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Existing profile address update",
+      "passed": true,
+      "detail": {
+        "status": 204,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Primary address update saved",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Unauthorized club assignment rejected",
+      "passed": true,
+      "detail": {
+        "status": 403,
+        "response": {
+          "detail": "Club outside scope.",
+          "status": 403
+        }
+      }
+    },
+    {
+      "scenario": "Ordinary member cannot register",
+      "passed": true,
+      "detail": {
+        "status": 403,
+        "response": {
+          "detail": "Action not permitted in this workspace.",
+          "status": 403
+        }
+      }
+    },
+    {
+      "scenario": "Foreign hierarchy path rejected",
+      "passed": true,
+      "detail": {
+        "status": 404,
+        "response": {
+          "detail": "Club unavailable in this scope.",
+          "status": 404
+        }
+      }
+    },
+    {
+      "scenario": "Concurrent retries return same membership",
+      "passed": true,
+      "detail": [
+        [
+          200,
+          {
+            "id": "3495d9bc-092f-40d1-837d-fc09529da11d",
+            "number": "IM-000003147",
+            "personId": "e2a993a7-bd78-43c2-b249-68c81335eacb",
+            "version": 1,
+            "status": "Active"
+          }
+        ],
+        [
+          200,
+          {
+            "id": "3495d9bc-092f-40d1-837d-fc09529da11d",
+            "number": "IM-000003147",
+            "personId": "e2a993a7-bd78-43c2-b249-68c81335eacb",
+            "version": 1,
+            "status": "Active"
+          }
+        ]
+      ]
+    },
+    {
+      "scenario": "Concurrent retry count one",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Duplicate review endpoint retained",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Duplicate candidates found",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Unreviewed duplicate rejected",
+      "passed": true,
+      "detail": {
+        "status": 409,
+        "response": {
+          "detail": "Potential duplicates need review. Confirm CreateSeparate or select an authorized existing person.",
+          "status": 409
+        }
+      }
+    },
+    {
+      "scenario": "Existing document upload",
+      "passed": true,
+      "detail": {
+        "id": "6ba04590-6c28-404b-aceb-027b2cfef6b2",
+        "fileName": "wizard-photo.png",
+        "status": "Approved",
+        "retainUntil": null
+      }
+    },
+    {
+      "scenario": "No incomplete member from invalid requests",
+      "passed": true,
+      "detail": null
+    }
+  ],
+  "member": {
+    "id": "8349fdad-fe85-4c73-aa0e-b3941b61ac2d",
+    "number": "IM-000003145",
+    "personId": "b059f8b2-3fb2-426a-baf6-9ea13012f09c",
+    "version": 2,
+    "status": "Inactive"
+  }
+}

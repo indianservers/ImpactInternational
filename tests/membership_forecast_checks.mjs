@@ -1,0 +1,21 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import {forecast} from '../client/src/pages/analytics/forecast.ts';
+const results=[];function check(name,test){try{test();results.push({scenario:name,passed:true});}catch(error){results.push({scenario:name,passed:false,error:String(error)});}}
+const rows=Array.from({length:13},(_,i)=>({date:`2025-${String(i+1).padStart(2,'0')}-01`,total:100+i*10,new:10,complete:i<12}));rows[12].date='2026-01-01';
+check('Insufficient history unavailable',()=>assert.equal(forecast(rows.slice(0,3),6),null));
+check('Six complete observations sufficient',()=>assert.ok(forecast(rows.slice(0,6),3)));
+check('Three month projection length',()=>assert.equal(forecast(rows,3).points.length,3));
+check('Six month projection length',()=>assert.equal(forecast(rows,6).points.length,6));
+check('Twelve month projection length',()=>assert.equal(forecast(rows,12).points.length,12));
+check('Constant acquisition model',()=>assert.equal(forecast(rows,3).points[0].registrations,10));
+check('Projected total adds acquisitions',()=>assert.equal(forecast(rows,3).points[0].total,230));
+check('Holdout MAE zero for constant series',()=>assert.equal(forecast(rows,3).mae,0));
+check('Projections never negative',()=>assert.ok(forecast(rows.map((r,i)=>({...r,new:120-i*10})),12).points.every(p=>p.registrations>=0&&p.lower>=0)));
+check('Intervals contain point estimate',()=>assert.ok(forecast(rows.map((r,i)=>({...r,new:10+i%3*5})),12).points.every(p=>p.lower<=p.total&&p.total<=p.upper)));
+check('Intervals widen by horizon',()=>{const f=forecast(rows.map((r,i)=>({...r,new:10+i%3*5})),12);assert.ok(f.points.at(-1).upper-f.points.at(-1).lower>=f.points[0].upper-f.points[0].lower)});
+check('Quarterly series rejected as monthly',()=>assert.equal(forecast(rows.filter((_,i)=>i%3===0),6),null));
+check('Daily series rejected',()=>assert.equal(forecast(rows.map((r,i)=>({...r,date:`2025-01-${String(i+1).padStart(2,'0')}`})),6),null));
+check('Empty history unavailable',()=>assert.equal(forecast([],6),null));
+check('Unobserved zero population unavailable',()=>assert.equal(forecast(rows.map(r=>({...r,total:0})),6),null));
+fs.writeFileSync('docs/qa/membership-forecast-results.json',JSON.stringify({total:results.length,passed:results.filter(r=>r.passed).length,results},null,2));console.log(results);assert.ok(results.every(r=>r.passed));

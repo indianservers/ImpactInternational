@@ -1,0 +1,25 @@
+{
+  "mockDatabase": "clubs_impact_dues_upgrade_20261113",
+  "invoices": 18,
+  "roles": [
+    "Club President",
+    "Platform Admin"
+  ],
+  "checks": {
+    "promiseRecordedWithoutReducingDues": "passed",
+    "cashSubmission": "passed",
+    "cancelAndResubmitSameReference": "passed",
+    "independentCashVerification": "passed",
+    "personalAccountVerification": "passed",
+    "receiptHistory": "passed",
+    "partialPromiseResolution": "passed",
+    "awaitingSettlement": "passed",
+    "regionDrilldown": "passed",
+    "filteredCsvDownload": "passed",
+    "pageOverflow": "none"
+  },
+  "verifiedMockPayments": 1850,
+  "pendingMockDues": 17850,
+  "awaitingVerification": 900,
+  "toCollect": 16950
+}

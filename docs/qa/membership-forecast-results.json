@@ -1,0 +1,66 @@
+{
+  "total": 15,
+  "passed": 15,
+  "results": [
+    {
+      "scenario": "Insufficient history unavailable",
+      "passed": true
+    },
+    {
+      "scenario": "Six complete observations sufficient",
+      "passed": true
+    },
+    {
+      "scenario": "Three month projection length",
+      "passed": true
+    },
+    {
+      "scenario": "Six month projection length",
+      "passed": true
+    },
+    {
+      "scenario": "Twelve month projection length",
+      "passed": true
+    },
+    {
+      "scenario": "Constant acquisition model",
+      "passed": true
+    },
+    {
+      "scenario": "Projected total adds acquisitions",
+      "passed": true
+    },
+    {
+      "scenario": "Holdout MAE zero for constant series",
+      "passed": true
+    },
+    {
+      "scenario": "Projections never negative",
+      "passed": true
+    },
+    {
+      "scenario": "Intervals contain point estimate",
+      "passed": true
+    },
+    {
+      "scenario": "Intervals widen by horizon",
+      "passed": true
+    },
+    {
+      "scenario": "Quarterly series rejected as monthly",
+      "passed": true
+    },
+    {
+      "scenario": "Daily series rejected",
+      "passed": true
+    },
+    {
+      "scenario": "Empty history unavailable",
+      "passed": true
+    },
+    {
+      "scenario": "Unobserved zero population unavailable",
+      "passed": true
+    }
+  ]
+}

@@ -1,0 +1,29 @@
+[
+  {
+    "query": "depth=5&refresh=1",
+    "status": 200,
+    "ms": 402.7,
+    "bytes": 545129,
+    "people": 103136,
+    "units": 2782,
+    "rendered": 1000
+  },
+  {
+    "query": "depth=5",
+    "status": 200,
+    "ms": 33.3,
+    "bytes": 545129,
+    "people": 103136,
+    "units": 2782,
+    "rendered": 1000
+  },
+  {
+    "query": "depth=3",
+    "status": 200,
+    "ms": 277.0,
+    "bytes": 19237,
+    "people": 103136,
+    "units": 2782,
+    "rendered": 32
+  }
+]

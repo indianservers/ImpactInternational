@@ -1,6 +1,19 @@
 import { LayoutDashboard, Network, Users, ShieldCheck, ClipboardCheck, CalendarDays, Settings, CreditCard, Wallet, Briefcase, Mail, ChartNoAxesCombined, UserRound } from "lucide-react";
 
 type Tab = { label: string; to: string; permissions?: string[] };
+export const financeMenu = [
+  ["", "Finance Overview"],
+  ["transactions", "Transactions"],
+  ["receipts", "Receipts & Collections"],
+  ["invoices", "Invoices & Billing"],
+  ["payments", "Payments"],
+  ["expenses", "Expenses"],
+  ["reconciliation", "Bank Reconciliation"],
+  ["dues", "Dues & Membership"],
+  ["budgets", "Budgets & Allocation"],
+  ["reports", "Financial Reports & Analytics"],
+  ["audit", "Audit Trail"],
+] as const;
 const tab = (label: string, path: string, ...permissions: string[]): Tab => ({ label, to: `/app${path}`, permissions });
 
 // Keep feature URLs stable: bookmarks, detail links and browser history select the same tab.
@@ -17,7 +30,7 @@ const featureSections = [
     tab("Club overview", "/club-administration", "governance.reports"),
   ] },
   { id: "leadership", label: "Leadership", icon: ShieldCheck, tabs: [
-    tab("Officers", "/leadership", "leadership.view"), tab("Calendar", "/leadership-calendar", "leadership.view"),
+    tab("Leadership Overview", "/leadership", "leadership.view"), tab("People Directory", "/leadership/directory", "leadership.view"), tab("Leadership Intelligence", "/leadership/intelligence", "leadership.view"), tab("Office Bearers", "/leadership/office-bearers", "leadership.view"), tab("Appointments", "/leadership/appointments", "leadership.view"), tab("Vacancies", "/leadership/vacancies", "leadership.view"), tab("Succession", "/leadership/succession", "leadership.view"), tab("History", "/leadership/history", "leadership.view"), tab("Office Positions", "/leadership/positions", "governance.configure"), tab("Calendar", "/leadership-calendar", "leadership.view"),
     tab("Handovers", "/handovers", "leadership.view"), tab("Committees", "/committees", "committees.view"),
   ] },
   { id: "governance", label: "Governance", icon: ClipboardCheck, tabs: [
@@ -46,9 +59,12 @@ const featureSections = [
 const areaDefinitions = [
   { id: "home", label: "Home", icon: LayoutDashboard, groups: [["Overview", "home"]] },
   { id: "people", label: "People", icon: Users, groups: [["Members", "membership"], ["Applications & transfers", "requests"], ["My membership", "community"]] },
-  { id: "organization", label: "Organization", icon: Network, groups: [["Structure & clubs", "organizations"], ["Leadership", "leadership"], ["Decisions & records", "governance"]] },
+  { id: "leadership", label: "Leadership", icon: ShieldCheck, groups: [["Leadership & People", "leadership"]] },
+  { id: "organization", label: "Organization", icon: Network, groups: [["Structure & clubs", "organizations"], ["Decisions & records", "governance"]] },
   { id: "activities", label: "Activities", icon: CalendarDays, groups: [["Events", "events"], ["Meetings & projects", "operations"], ["Messages", "communications"]] },
-  { id: "tools", label: "Finance & tools", icon: Wallet, groups: [["Finance", "finance"], ["ID cards", "cards"], ["Intelligence", "intelligence"]] },
+  { id: "cards", label: "ID cards", icon: CreditCard, groups: [["ID cards", "cards"]] },
+  { id: "tools", label: "Finance", icon: Wallet, groups: [["Finance", "finance"]] },
+  { id: "intelligence", label: "Intelligence", icon: ChartNoAxesCombined, groups: [["Intelligence", "intelligence"]] },
   { id: "administration", label: "Settings & access", icon: Settings, groups: [["Access & audit", "administration"], ["Module settings", "configuration"]] },
 ];
 const configurationPaths = ["/app/membership-settings", "/app/governance-settings", "/app/event-settings"];

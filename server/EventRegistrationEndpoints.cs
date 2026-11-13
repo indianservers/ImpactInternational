@@ -58,13 +58,43 @@ public static partial class EventEndpoints
         );
         api.MapGet(
             "/my/registrations",
-            async (EventService s, Guid? after = null) =>
+            async (EventService s, Guid? after = null, bool summary = false, string status = "", DateTimeOffset? from = null, DateTimeOffset? to = null) =>
             {
                 var p = await s.Me();
                 var q = s.Db.EventRegistrations.Where(x => x.PersonId == p && p != null);
+                if (summary) {
+                    var begin = (from ?? DateTimeOffset.UtcNow.AddMonths(-1)).ToUniversalTime();
+                    var end = (to ?? begin.AddMonths(3)).ToUniversalTime();
+                    Check(begin < end && end <= begin.AddYears(1), "Invalid personal schedule range.");
+                    var confirmed = q.Where(r => r.Status == "Confirmed");
+                    var next = await confirmed.Join(s.Db.Events.Where(e => e.Lifecycle != "Cancelled" && e.Lifecycle != "Archived"), r => r.EventId, e => e.Id, (r,e) => new { r.Id, r.EventId, r.Status, e.Title, e.StartsAt, e.EndsAt, e.Venue }).Where(e => e.StartsAt > DateTimeOffset.UtcNow).OrderBy(e => e.StartsAt).FirstOrDefaultAsync();
+                    return Results.Ok(new {
+                        scheduleRegistrations = await confirmed.Join(s.Db.Events.Where(e => e.Lifecycle != "Cancelled" && e.Lifecycle != "Archived"), r => r.EventId, e => e.Id, (r,e) => new { r.Id, eventId = e.Id, e.Title, e.StartsAt, e.EndsAt, e.Venue, kind = "Registration" }).Where(e => e.StartsAt < end && e.EndsAt > begin).OrderBy(e => e.StartsAt).Take(500).ToListAsync(),
+                        scheduleSessions = await s.Db.EventSessionBookings.Where(b => b.Active && confirmed.Any(r => r.Id == b.RegistrationId)).Join(s.Db.EventSessions.Where(e => e.Status == "Active"), b => b.SessionId, e => e.Id, (b,e) => new { e.Id, e.EventId, e.Title, e.StartsAt, e.EndsAt, venue = e.Room, kind = "Session" }).Where(e => e.StartsAt < end && e.EndsAt > begin).OrderBy(e => e.StartsAt).Take(500).ToListAsync(),
+                        scheduleMeetings = await s.Db.MeetingAttendances.Where(a => a.PersonId == p && p != null && a.Rsvp != "Declined").Join(s.Db.ClubMeetings.Where(m => m.Status == "Scheduled" || m.Status == "In Progress" || m.Status == "Completed"), a => a.MeetingId, m => m.Id, (a,m) => new { m.Id, m.EventId, m.Title, m.StartsAt, m.EndsAt, venue = m.Location, kind = "Meeting" }).Where(e => e.StartsAt < end && e.EndsAt > begin).OrderBy(e => e.StartsAt).Take(500).ToListAsync(),
+                        scheduleInvitations = await s.Db.EventInvitations.Where(i => i.PersonId == p && p != null && i.Rsvp == "Going").Join(s.Db.Events.Where(e => e.Publication == "Published" && e.Lifecycle != "Cancelled" && e.Lifecycle != "Archived"), i => i.EventId, e => e.Id, (i,e) => new { i.Id, eventId = e.Id, e.Title, e.StartsAt, e.EndsAt, e.Venue, kind = "Invitation" }).Where(e => e.StartsAt < end && e.EndsAt > begin).OrderBy(e => e.StartsAt).Take(500).ToListAsync(),
+                        scheduleDuties = await s.Db.EventStaff.Where(t => t.PersonId == p && p != null && t.Active && t.StartsAt < end && t.EndsAt > begin).Select(t => new { t.Id, t.EventId, title = t.Role, t.StartsAt, t.EndsAt, venue = t.Responsibilities, kind = "Duty" }).OrderBy(e => e.StartsAt).Take(500).ToListAsync(),
+                        volunteerHours = await s.Db.VolunteerHours.Where(h => h.PersonId == p && p != null && h.Status == "Verified").SumAsync(h => (decimal?)h.Hours) ?? 0,
+                        categoryPreferences = await confirmed.Where(r => s.Db.EventCheckins.Any(c => c.RegistrationId == r.Id && c.SessionId == null && !c.Voided)).Join(s.Db.Events, r => r.EventId, e => e.Id, (r,e) => new { e.TypeId }).GroupBy(e => e.TypeId).Select(g => new { name = s.Db.EventTypes.Where(t => t.Id == g.Key).Select(t => t.Name).First(), count = g.Count() }).ToListAsync(),
+                        participationTrend = await confirmed.Join(s.Db.Events, r => r.EventId, e => e.Id, (r,e) => new { r.Id, e.StartsAt.Year, e.StartsAt.Month }).GroupBy(e => new { e.Year, e.Month }).Select(g => new { g.Key.Year, g.Key.Month, registered = g.Count(), attended = g.Count(r => s.Db.EventCheckins.Any(c => c.RegistrationId == r.Id && c.SessionId == null && !c.Voided)) }).OrderBy(e => e.Year).ThenBy(e => e.Month).ToListAsync(),
+                        upcoming = await confirmed.CountAsync(r => s.Db.Events.Any(e => e.Id == r.EventId && e.StartsAt > DateTimeOffset.UtcNow && e.Lifecycle != "Cancelled" && e.Lifecycle != "Archived")),
+                        confirmed = await confirmed.CountAsync(),
+                        waitlisted = await q.CountAsync(r => r.Status == "Waitlisted"),
+                        passes = await q.CountAsync(r => r.Status == "Confirmed" && s.Db.EventTickets.Any(t => t.RegistrationId == r.Id && !t.Revoked)),
+                        attended = await q.CountAsync(r => s.Db.EventCheckins.Any(c => c.RegistrationId == r.Id && c.SessionId == null && !c.Voided)),
+                        next,
+                        pendingInvitations = await s.Db.EventInvitations.CountAsync(i => i.PersonId == p && p != null && i.Rsvp == "Awaiting Response" && i.ExpiresAt > DateTimeOffset.UtcNow),
+                        dutiesCompleted = await s.Db.EventStaff.CountAsync(t => t.PersonId == p && p != null && t.Active && t.TaskStatus == "Completed"),
+                        duties = await s.Db.EventStaff.CountAsync(t => t.PersonId == p && p != null && t.Active && t.EndsAt > DateTimeOffset.UtcNow)
+                    });
+                }
+                if (status == "Upcoming") q = q.Where(r => r.Status == "Confirmed" && s.Db.Events.Any(e => e.Id == r.EventId && e.EndsAt > DateTimeOffset.UtcNow && e.Lifecycle != "Cancelled" && e.Lifecycle != "Archived"));
+                else if (status == "Completed") q = q.Where(r => r.Status == "Confirmed" && s.Db.Events.Any(e => e.Id == r.EventId && e.EndsAt <= DateTimeOffset.UtcNow && e.Lifecycle != "Cancelled"));
+                else if (status == "Cancelled") q = q.Where(r => r.Status == "Cancelled" || s.Db.Events.Any(e => e.Id == r.EventId && e.Lifecycle == "Cancelled"));
+                else if (status != "" && status != "All") q = q.Where(r => r.Status == status);
                 if (after != null)
                     q = q.Where(x => x.Id.CompareTo(after.Value) > 0);
-                return await q.OrderBy(x => x.Id)
+                return Results.Ok(await q.OrderBy(x => x.Id)
                     .Take(50)
                     .Select(x => new
                     {
@@ -72,8 +102,14 @@ public static partial class EventEndpoints
                         x.EventId,
                         x.Status,
                         x.Category,
+                        eventLifecycle = s.Db.Events.Where(e => e.Id == x.EventId).Select(e => e.Lifecycle).First(),
                         x.OfferExpiresAt,
                         x.Companions,
+                        attended = s.Db.EventCheckins.Any(c => c.RegistrationId == x.Id && c.SessionId == null && !c.Voided),
+                        passIssued = s.Db.EventTickets.Any(t => t.RegistrationId == x.Id && !t.Revoked),
+                        venue = s.Db.Events.Where(e => e.Id == x.EventId).Select(e => e.Venue).First(),
+                        endsAt = s.Db.Events.Where(e => e.Id == x.EventId).Select(e => e.EndsAt).First(),
+                        registrationEndsAt = s.Db.Events.Where(e => e.Id == x.EventId).Select(e => e.RegistrationEndsAt).First(),
                         title = s
                             .Db.Events.Where(e => e.Id == x.EventId)
                             .Select(e => e.Title)
@@ -83,7 +119,7 @@ public static partial class EventEndpoints
                             .Select(e => e.StartsAt)
                             .First(),
                     })
-                    .ToListAsync();
+                    .ToListAsync());
             }
         );
         api.MapPost(

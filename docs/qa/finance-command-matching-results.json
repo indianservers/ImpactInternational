@@ -1,0 +1,54 @@
+[
+  {
+    "test": "Schedule does not post cash",
+    "passed": true
+  },
+  {
+    "test": "Scheduled expense visible",
+    "passed": true
+  },
+  {
+    "test": "Scheduled payable reconciles",
+    "passed": true
+  },
+  {
+    "test": "Cancellation removes planned payment",
+    "passed": true
+  },
+  {
+    "test": "Unknown expense schedule blocked",
+    "passed": true
+  },
+  {
+    "test": "Past schedule rejected",
+    "passed": true
+  },
+  {
+    "test": "Statement imported",
+    "passed": true
+  },
+  {
+    "test": "Recommendation uses posted net after refund and fee",
+    "passed": true
+  },
+  {
+    "test": "History traces actual refund",
+    "passed": true
+  },
+  {
+    "test": "Confirmed match posts no duplicate cash",
+    "passed": true
+  },
+  {
+    "test": "Matched payment excluded from recommendations",
+    "passed": true
+  },
+  {
+    "test": "Duplicate import idempotent",
+    "passed": true
+  },
+  {
+    "test": "Ledger remains balanced",
+    "passed": true
+  }
+]

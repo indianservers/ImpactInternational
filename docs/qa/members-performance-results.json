@@ -1,0 +1,58 @@
+{
+  "database": "clubs_impact_members_perf_20261113",
+  "membershipCount": 103136,
+  "syntheticMemberships": 100000,
+  "tests": [
+    {
+      "scenario": "first page",
+      "status": 200,
+      "elapsedMs": 213,
+      "recordsReturned": 20,
+      "passed": true
+    },
+    {
+      "scenario": "number sort",
+      "status": 200,
+      "elapsedMs": 52,
+      "recordsReturned": 20,
+      "passed": true
+    },
+    {
+      "scenario": "last page",
+      "status": 200,
+      "elapsedMs": 84,
+      "recordsReturned": 20,
+      "passed": true
+    },
+    {
+      "scenario": "name search",
+      "status": 200,
+      "elapsedMs": 87,
+      "recordsReturned": 1,
+      "passed": true
+    },
+    {
+      "scenario": "member ID search",
+      "status": 200,
+      "elapsedMs": 51,
+      "recordsReturned": 1,
+      "passed": true
+    },
+    {
+      "scenario": "6-month intelligence",
+      "status": 200,
+      "elapsedMs": 3458,
+      "recordsReturned": 0,
+      "passed": true
+    },
+    {
+      "scenario": "12-month intelligence",
+      "status": 200,
+      "elapsedMs": 3575,
+      "recordsReturned": 0,
+      "passed": true
+    }
+  ],
+  "passed": true,
+  "limits": "Single local request timings; no concurrent production load claim."
+}

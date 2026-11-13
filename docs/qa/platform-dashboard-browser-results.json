@@ -1,0 +1,109 @@
+{
+  "date": "2026-11-13T14:01:40.484320+00:00",
+  "method": "Interactive in-app browser; actual sign-ins and UI controls",
+  "scenarios": [
+    {
+      "scenario": "Platform admin Sai login",
+      "result": "Premium platform home; actual 625 clubs, 3126 members",
+      "passed": true
+    },
+    {
+      "scenario": "Club President login",
+      "result": "Club-only home: 1 club, 6 members; no Settings & access menu",
+      "passed": true
+    },
+    {
+      "scenario": "Club President direct premium URL",
+      "result": "Platform administrator authority required; no premium metrics",
+      "passed": true
+    },
+    {
+      "scenario": "Club Member login",
+      "result": "Member portal; member-level navigation",
+      "passed": true
+    },
+    {
+      "scenario": "Club Member direct premium URL",
+      "result": "Platform administrator authority required; no premium metrics",
+      "passed": true
+    },
+    {
+      "scenario": "Committee chair login",
+      "result": "My committee dashboard with only QA Dashboard Committee",
+      "passed": true
+    },
+    {
+      "scenario": "Club Treasurer login",
+      "result": "Automatically routed to finance; entity books require explicit grants",
+      "passed": true
+    },
+    {
+      "scenario": "Regional administrator login",
+      "result": "Regional home: 156 units, 125 clubs in assigned region",
+      "passed": true
+    },
+    {
+      "scenario": "Regional workspace switching",
+      "result": "Region 01 -> Region 02; heading, breadcrumb and scope update",
+      "passed": true
+    },
+    {
+      "scenario": "Last 30 days filter",
+      "result": "Dates update to 2026-10-15 through 2026-11-13",
+      "passed": true
+    },
+    {
+      "scenario": "District distribution control",
+      "result": "Actual district counts replace region bars",
+      "passed": true
+    },
+    {
+      "scenario": "Dark/light theme",
+      "result": "Both displayed and checked; light restored",
+      "passed": true
+    },
+    {
+      "scenario": "Mobile 390 x 844",
+      "result": "No horizontal overflow; document scrollWidth 375 <= viewport390",
+      "passed": true
+    },
+    {
+      "scenario": "Mobile menu",
+      "result": "Open and close navigation; main features reachable",
+      "passed": true
+    },
+    {
+      "scenario": "Active-member metric drill-down",
+      "result": "/app/members?status=Active; Active button class active",
+      "passed": true
+    },
+    {
+      "scenario": "Invalid custom date range",
+      "result": "Apply dates rejected inverted range; Reset dashboard filters restores metrics",
+      "passed": true
+    },
+    {
+      "scenario": "Desktop 1680 x 1050",
+      "result": "No horizontal overflow; scrollWidth1680",
+      "passed": true
+    },
+    {
+      "scenario": "Final deliverable",
+      "result": "Platform home left signed in as Sai on port1233; viewport override reset",
+      "passed": true
+    }
+  ],
+  "total": 18,
+  "passed": 18,
+  "screenshots": [
+    "platform-dashboard-desktop.jpg",
+    "platform-dashboard-full.jpg",
+    "platform-dashboard-mobile.jpg",
+    "platform-dashboard-dark.jpg",
+    "platform-dashboard-club-denied.jpg",
+    "platform-dashboard-member-denied.jpg",
+    "platform-dashboard-committee.jpg",
+    "platform-dashboard-treasurer.jpg",
+    "platform-dashboard-regional-switch.jpg"
+  ]
+}

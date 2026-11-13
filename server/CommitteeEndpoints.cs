@@ -19,6 +19,7 @@ public static class CommitteeEndpoints
             {
                 var u = await s.A.User();
                 var q = s.Db.Committees.AsQueryable();
+                if (s.A.BoundTenant != null) q = q.Where(c => c.TenantId == s.A.BoundTenant);
                 if (mine)
                     q = q.Where(x =>
                         x.Status == "Active"
@@ -30,6 +31,7 @@ public static class CommitteeEndpoints
                             && m.StartsAt <= DateTimeOffset.UtcNow
                             && m.EndsAt > DateTimeOffset.UtcNow
                             && s.Db.Persons.Any(p => p.Id == m.PersonId && p.UserId == u.Id)
+                            && s.Db.CommitteeRoles.Any(r => r.Id == m.RoleId && r.Active)
                         )
                     );
                 else

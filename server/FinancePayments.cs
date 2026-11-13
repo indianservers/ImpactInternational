@@ -446,6 +446,14 @@ public static partial class FinanceEndpoints
                 var e = await s.Entity(row.EntityId, "finance.reconcile");
                 await using var tx = await s.Db.Database.BeginTransactionAsync();
                 await s.Lock(e.Id);
+                await s.Db.Entry(row).ReloadAsync();
+                if (i.PaymentIds is { Length: > 0 })
+                {
+                    await MatchClubRemittance(row, i, e, s);
+                    await s.Db.SaveChangesAsync();
+                    await tx.CommitAsync();
+                    return row;
+                }
                 if (row.Status == "Matched")
                 {
                     Check(row.PaymentId == i.PaymentId, "Already matched to another payment.", 409);
@@ -477,13 +485,14 @@ public static partial class FinanceEndpoints
                     409
                 );
                 Check(
-                    !await s.Db.FinanceBankTransactions.AnyAsync(x =>
-                        x.PaymentId == p.Id && x.Status == "Matched"
+                    !await s.Db.FinanceBankPaymentMatches.AnyAsync(x=>x.PaymentId==p.Id) && !await s.Db.FinanceBankTransactions.AnyAsync(x =>
+                        (x.PaymentId == p.Id || x.MatchedPaymentIds.Contains(p.Id)) && x.Status == "Matched"
                     ),
                     "Payment already matched.",
                     409
                 );
                 row.PaymentId = p.Id;
+                s.Db.FinanceBankPaymentMatches.Add(s.Bind(new FinanceBankPaymentMatch{BankTransactionId=row.Id,PaymentId=p.Id,BankAmount=row.Amount},e));
                 row.Status = "Matched";
                 row.Version++;
                 s.Audit(e, (await s.Workspace()).UserId, "bank.match", p.Reference);

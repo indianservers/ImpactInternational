@@ -1,0 +1,74 @@
+[
+  {
+    "test": "CSV parsed",
+    "passed": true
+  },
+  {
+    "test": "Keys stable across decimal formatting",
+    "passed": true
+  },
+  {
+    "test": "Quoted CSV and negative amounts",
+    "passed": true
+  },
+  {
+    "test": "bad date rejected",
+    "passed": true
+  },
+  {
+    "test": "future date rejected",
+    "passed": true
+  },
+  {
+    "test": "zero amount rejected",
+    "passed": true
+  },
+  {
+    "test": "bad amount rejected",
+    "passed": true
+  },
+  {
+    "test": "missing header rejected",
+    "passed": true
+  },
+  {
+    "test": "missing reference rejected",
+    "passed": true
+  },
+  {
+    "test": "empty statement rejected",
+    "passed": true
+  },
+  {
+    "test": "unclosed quote rejected",
+    "passed": true
+  },
+  {
+    "test": "duplicate key rejected",
+    "passed": true
+  },
+  {
+    "test": "Unsupported file rejected",
+    "passed": true
+  },
+  {
+    "test": "Malformed XLSX rejected",
+    "passed": true
+  },
+  {
+    "test": "XLSX values parsed",
+    "passed": true
+  },
+  {
+    "test": "Large file rejected",
+    "passed": true
+  },
+  {
+    "test": "Anonymous parser denied",
+    "passed": true
+  },
+  {
+    "test": "Ordinary member parser denied",
+    "passed": true
+  }
+]

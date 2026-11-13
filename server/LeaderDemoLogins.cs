@@ -5,6 +5,46 @@ namespace Clubs;
 
 public static class LeaderDemoLogins
 {
+    public static async Task EnablePasswordTesting(IServiceProvider services)
+    {
+        using var scope = services.CreateScope();
+        Check(scope.ServiceProvider.GetRequiredService<IHostEnvironment>().IsDevelopment(), "Local password testing requires Development.");
+        var db = scope.ServiceProvider.GetRequiredService<Db>();
+        var password = Environment.GetEnvironmentVariable("CLUBS_LOCAL_TEST_PASSWORD");
+        Check(password is { Length: >= 12 }, "Set CLUBS_LOCAL_TEST_PASSWORD to at least 12 characters.");
+        var tenant = await db.Tenants.SingleAsync(t => t.Name == ImpactSetup.Name);
+        var headquarters = await db.Orgs.SingleAsync(o => o.TenantId == tenant.Id && o.Code == "IMPACT-HQ");
+        var role = await db.Roles.SingleAsync(r => r.TenantId == tenant.Id && r.Name == "Association Super Admin");
+        var hasher = scope.ServiceProvider.GetRequiredService<Microsoft.AspNetCore.Identity.IPasswordHasher<User>>();
+        await using var tx = await db.Database.BeginTransactionAsync();
+        foreach (var email in new[] { "saisatish@indianservers.com", "admin@example.test" })
+        {
+            var user = await db.Users.SingleOrDefaultAsync(u => u.Email == email);
+            if (user == null)
+            {
+                user = new User { Email = email, Name = email.StartsWith("saisatish@") ? "Sai Satish" : "Impact International Administrator", TimeZone = "Asia/Kolkata" };
+                db.Users.Add(user);
+            }
+            user.PlatformAdmin = true; user.Verified = true;
+            if (!await db.Assignments.AnyAsync(a => a.UserId == user.Id && a.OrgId == headquarters.Id && a.RoleId == role.Id))
+                db.Assignments.Add(new Assignment { UserId = user.Id, TenantId = tenant.Id, OrgId = headquarters.Id, RoleId = role.Id });
+            db.AuthenticationAudits.Add(new() { ActorId = user.Id, Action = "operator.platform-admin.grant" });
+        }
+        await db.SaveChangesAsync();
+        var emails = new[] { "saisatish@indianservers.com", "admin@example.test", "international.president@example.test", "national.president@example.test", "regional.president@example.test", "district.president@example.test", "zonal.president@example.test", "club.president@example.test", "member.club1@example.test", "member.club2@example.test", "member.zone2@example.test", "member.district2@example.test", "member.region2@example.test" };
+        var users = await db.Users.Where(u => emails.Contains(u.Email)).ToListAsync();
+        Check(users.Count == emails.Length, "Create all demo leader/member logins before enabling password testing.");
+        foreach (var user in users)
+        {
+            user.PasswordHash = hasher.HashPassword(user, password!); user.Verified = true; user.FailedAttempts = 0; user.LockedUntil = null;
+            db.AuthenticationAudits.Add(new() { ActorId = user.Id, Action = "operator.local-password-testing" });
+        }
+        await db.LoginChallenges.Where(c => !c.Used).ExecuteUpdateAsync(s => s.SetProperty(c => c.Used, true).SetProperty(c => c.CodeProtected, ""));
+        await db.Mails.Where(m => m.Kind == "login-otp" && !m.Used).ExecuteUpdateAsync(s => s.SetProperty(m => m.Used, true).SetProperty(m => m.Body, ""));
+        await db.SaveChangesAsync(); await tx.CommitAsync();
+        Console.WriteLine("Both Platform Admin accounts and eleven leader/member accounts are ready for local password testing. No passwords were printed.");
+    }
+
     public static async Task Run(IServiceProvider services)
     {
         using var scope = services.CreateScope();

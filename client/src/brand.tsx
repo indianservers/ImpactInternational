@@ -115,7 +115,7 @@ export function ImpactDocumentTitle() {
 export function ImpactPageContext() {
   const { pathname } = useLocation();
   const [, title, description] = pageIdentity(pathname);
-  return <div className="foundation-page-context"><div><span>IMPACT INTERNATIONAL / {title}</span><p>{description}</p></div><Link to="/" aria-label="About Impact International"><img src={impact.logo} width="42" height="42" alt="" /></Link></div>;
+  return <div className="foundation-page-context"><div><span>IMPACT INTERNATIONAL / {title}</span><p>{description}</p></div><Link to="/about" aria-label="About Impact International"><img src={impact.logo} width="42" height="42" alt="" /></Link></div>;
 }
 export function impactRole(name?: string) {
   return name === "Association Super Admin" ? "Impact Administrator" : name || "Impact member";

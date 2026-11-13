@@ -1,8 +1,9 @@
 import {TenantBrand} from "../TenantBrand";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Eye, EyeOff, ArrowRight } from "lucide-react";
-import { useQueryClient } from "@tanstack/react-query";
+import { Eye, EyeOff, ArrowRight, Mail, LockKeyhole, UsersRound, CircleAlert } from "lucide-react";
+import "./Auth.css";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { api } from "../api";
 import { ErrorBox } from "../App";
 export default function Auth({ mode }: { mode: string }) {
@@ -12,7 +13,10 @@ export default function Auth({ mode }: { mode: string }) {
     [busy, setBusy] = useState(false),
     [error, setError] = useState<unknown>(),
     [message, setMessage] = useState("");
-  const [staff, setStaff] = useState(false);
+  const [passwordMode, setStaff] = useState(false);
+  const methods = useQuery<any>({ queryKey: ["auth-methods"], queryFn: () => api("/auth/methods"), enabled: mode === "login", staleTime: 0 });
+  const otpEnabled = methods.data?.memberOtpEnabled === true;
+  const staff = !otpEnabled || passwordMode;
   const [identifier, setIdentifier] = useState("");
   const [challenge, setChallenge] = useState<string>();
   const [resendAt, setResendAt] = useState(0);
@@ -66,12 +70,12 @@ export default function Auth({ mode }: { mode: string }) {
     }
   }
   return (
-    <div className="auth-page">
+    <div className="auth-page impact-auth-page">
       <div className="auth-story">
         <Link className="brand" to="/">
           <TenantBrand/>
         </Link>
-        <div>
+        <div className="auth-story-copy">
           <div className="eyebrow">CONNECTED BY PURPOSE</div>
           <h1>
             A place for people
@@ -85,13 +89,14 @@ export default function Auth({ mode }: { mode: string }) {
             <br />
             Training. Business. Service. Leadership.
           </p>
-          <figure className="impact-auth-founder"><img src="/brand/gampa-nageshwer-rao.webp" alt="Gampa Nageshwer Rao, founder of Impact International" width="800" height="800" /><figcaption>Gampa Nageshwer Rao<span>Founder, Impact International</span></figcaption></figure>
+          <figure className="impact-auth-founder"><span className="auth-founder-portrait"><img src="/brand/gampa-nageshwer-rao.webp" alt="Gampa Nageshwer Rao, founder of Impact International" width="800" height="800" /></span><figcaption>Gampa Nageshwer Rao<span>Founder, Impact International</span></figcaption></figure>
         </div>
-        <small>Leadership without borders.</small>
+        <small className="auth-story-footer"><UsersRound size={26} aria-hidden="true" />Leadership without borders.</small>
       </div>
+      <div className="auth-side">
       <div className="auth-form">
-        <Link to="/" className="back-link">
-          ← Back to Impact International
+        <Link to="/about" className="back-link">
+          About Impact International
         </Link>
         <div className="eyebrow">WELCOME TO YOUR COMMUNITY</div>
         <h1>
@@ -110,7 +115,7 @@ export default function Auth({ mode }: { mode: string }) {
               ? "Enter your email to request a password reset."
               : complete
                 ? "Complete your secure account request."
-                : "Members sign in with a one-time email code. Enter your registered email or phone number."}
+                : otpEnabled ? "Members sign in with a one-time email code. Enter your registered email or phone number." : "Sign in with your email and password. Email OTP login is temporarily paused."}
         </p>
         <form onSubmit={submit} className="form-stack">
           {signup && (
@@ -130,7 +135,7 @@ export default function Auth({ mode }: { mode: string }) {
           </>}
           {!complete && (mode !== "login" || staff) && (
             <label>
-              Email address
+              <span className="auth-field-title"><Mail size={20} aria-hidden="true" />Email address</span>
               <input
                 name="email"
                 type="email"
@@ -159,7 +164,7 @@ export default function Auth({ mode }: { mode: string }) {
           )}
           {!forgot && !verify && (mode !== "login" || staff) && (
             <label>
-              {complete ? "New password" : "Password"}
+              <span className="auth-field-title"><LockKeyhole size={20} aria-hidden="true" />{complete ? "New password" : "Password"}</span>
               <div className="password-field">
                 <input
                   name="password"
@@ -209,23 +214,22 @@ export default function Auth({ mode }: { mode: string }) {
               </details>
             </>
           )}
-          {mode === "login" && staff && (
+          {mode === "login" && staff && <div className="auth-links">
             <Link className="forgot-link" to="/forgot-password">
               Forgot password?
             </Link>
-          )}
-          {mode === "login" && staff && (
+            <span aria-hidden="true">|</span>
             <Link className="forgot-link" to="/resend-verification">
               Resend verification email
             </Link>
-          )}
-          <ErrorBox error={error} />
+          </div>}
+          {!!(error || methods.error) && <div className="auth-error"><CircleAlert size={27} aria-hidden="true" /><div><strong>Request failed</strong><ErrorBox error={error || methods.error} /></div></div>}
           {message && (
             <div className="success" role="status">
               {message}
             </div>
           )}
-          <button disabled={busy}>
+          <button className="auth-submit" type="submit" disabled={busy || mode === "login" && methods.isPending}>
             {busy
               ? "Please wait…"
               : signup
@@ -238,7 +242,7 @@ export default function Auth({ mode }: { mode: string }) {
             <ArrowRight size={16} />
           </button>
         </form>
-        {mode === "login" && <button type="button" className="secondary" onClick={() => { setStaff(!staff); setChallenge(undefined); setMessage(""); setError(null); }}>{staff ? "Member sign in with OTP" : "Administrator / staff password sign in"}</button>}
+        {mode === "login" && otpEnabled && <button type="button" className="secondary" onClick={() => { setStaff(!staff); setChallenge(undefined); setMessage(""); setError(null); }}>{staff ? "Member sign in with OTP" : "Administrator / staff password sign in"}</button>}
         <p className="auth-bottom">
           {mode === "login" ? (
             <>
@@ -248,6 +252,7 @@ export default function Auth({ mode }: { mode: string }) {
             <Link to="/login">Return to sign in</Link>
           )}
         </p>
+      </div>
       </div>
     </div>
   );

@@ -1,0 +1,2250 @@
+[
+  {
+    "test": "Admin login",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/overview",
+    "passed": true
+  },
+  {
+    "test": "overview page bounded",
+    "passed": true
+  },
+  {
+    "test": "overview entity isolation label",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/overview?sort=date&direction=asc&pageSize=2",
+    "passed": true
+  },
+  {
+    "test": "overview date asc ordered",
+    "passed": true
+  },
+  {
+    "test": "overview pagination bounded dateasc",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/overview?sort=date&direction=desc&pageSize=2",
+    "passed": true
+  },
+  {
+    "test": "overview date desc ordered",
+    "passed": true
+  },
+  {
+    "test": "overview pagination bounded datedesc",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/overview?sort=amount&direction=asc&pageSize=2",
+    "passed": true
+  },
+  {
+    "test": "overview amount asc ordered",
+    "passed": true
+  },
+  {
+    "test": "overview pagination bounded amountasc",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/overview?sort=amount&direction=desc&pageSize=2",
+    "passed": true
+  },
+  {
+    "test": "overview amount desc ordered",
+    "passed": true
+  },
+  {
+    "test": "overview pagination bounded amountdesc",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/overview?sort=party&direction=asc&pageSize=2",
+    "passed": true
+  },
+  {
+    "test": "overview party asc ordered",
+    "passed": true
+  },
+  {
+    "test": "overview pagination bounded partyasc",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/overview?sort=party&direction=desc&pageSize=2",
+    "passed": true
+  },
+  {
+    "test": "overview party desc ordered",
+    "passed": true
+  },
+  {
+    "test": "overview pagination bounded partydesc",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/overview?sort=reference&direction=asc&pageSize=2",
+    "passed": true
+  },
+  {
+    "test": "overview reference asc ordered",
+    "passed": true
+  },
+  {
+    "test": "overview pagination bounded referenceasc",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/overview?sort=reference&direction=desc&pageSize=2",
+    "passed": true
+  },
+  {
+    "test": "overview reference desc ordered",
+    "passed": true
+  },
+  {
+    "test": "overview pagination bounded referencedesc",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/overview?sort=outstanding&direction=asc&pageSize=2",
+    "passed": true
+  },
+  {
+    "test": "overview outstanding asc ordered",
+    "passed": true
+  },
+  {
+    "test": "overview pagination bounded outstandingasc",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/overview?sort=outstanding&direction=desc&pageSize=2",
+    "passed": true
+  },
+  {
+    "test": "overview outstanding desc ordered",
+    "passed": true
+  },
+  {
+    "test": "overview pagination bounded outstandingdesc",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/overview?page=999&pageSize=1",
+    "passed": true
+  },
+  {
+    "test": "overview exhausted page empty",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/overview?search=c58f678c942d41b2bbb16a9c43925c8f",
+    "passed": true
+  },
+  {
+    "test": "overview search absent",
+    "passed": true
+  },
+  {
+    "test": "overview csv export",
+    "passed": true
+  },
+  {
+    "test": "overview xlsx export",
+    "passed": true
+  },
+  {
+    "test": "overview workbook has manifest",
+    "passed": true
+  },
+  {
+    "test": "overview pdf export",
+    "passed": true
+  },
+  {
+    "test": "overview valid PDF signature",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/transactions",
+    "passed": true
+  },
+  {
+    "test": "transactions page bounded",
+    "passed": true
+  },
+  {
+    "test": "transactions entity isolation label",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/transactions?sort=date&direction=asc&pageSize=2",
+    "passed": true
+  },
+  {
+    "test": "transactions date asc ordered",
+    "passed": true
+  },
+  {
+    "test": "transactions pagination bounded dateasc",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/transactions?sort=date&direction=desc&pageSize=2",
+    "passed": true
+  },
+  {
+    "test": "transactions date desc ordered",
+    "passed": true
+  },
+  {
+    "test": "transactions pagination bounded datedesc",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/transactions?sort=amount&direction=asc&pageSize=2",
+    "passed": true
+  },
+  {
+    "test": "transactions amount asc ordered",
+    "passed": true
+  },
+  {
+    "test": "transactions pagination bounded amountasc",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/transactions?sort=amount&direction=desc&pageSize=2",
+    "passed": true
+  },
+  {
+    "test": "transactions amount desc ordered",
+    "passed": true
+  },
+  {
+    "test": "transactions pagination bounded amountdesc",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/transactions?sort=party&direction=asc&pageSize=2",
+    "passed": true
+  },
+  {
+    "test": "transactions party asc ordered",
+    "passed": true
+  },
+  {
+    "test": "transactions pagination bounded partyasc",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/transactions?sort=party&direction=desc&pageSize=2",
+    "passed": true
+  },
+  {
+    "test": "transactions party desc ordered",
+    "passed": true
+  },
+  {
+    "test": "transactions pagination bounded partydesc",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/transactions?sort=reference&direction=asc&pageSize=2",
+    "passed": true
+  },
+  {
+    "test": "transactions reference asc ordered",
+    "passed": true
+  },
+  {
+    "test": "transactions pagination bounded referenceasc",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/transactions?sort=reference&direction=desc&pageSize=2",
+    "passed": true
+  },
+  {
+    "test": "transactions reference desc ordered",
+    "passed": true
+  },
+  {
+    "test": "transactions pagination bounded referencedesc",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/transactions?sort=outstanding&direction=asc&pageSize=2",
+    "passed": true
+  },
+  {
+    "test": "transactions outstanding asc ordered",
+    "passed": true
+  },
+  {
+    "test": "transactions pagination bounded outstandingasc",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/transactions?sort=outstanding&direction=desc&pageSize=2",
+    "passed": true
+  },
+  {
+    "test": "transactions outstanding desc ordered",
+    "passed": true
+  },
+  {
+    "test": "transactions pagination bounded outstandingdesc",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/transactions?page=999&pageSize=1",
+    "passed": true
+  },
+  {
+    "test": "transactions exhausted page empty",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/transactions?search=354e18d8712e4f02812cc3fa758606ef",
+    "passed": true
+  },
+  {
+    "test": "transactions search absent",
+    "passed": true
+  },
+  {
+    "test": "transactions csv export",
+    "passed": true
+  },
+  {
+    "test": "transactions xlsx export",
+    "passed": true
+  },
+  {
+    "test": "transactions workbook has manifest",
+    "passed": true
+  },
+  {
+    "test": "transactions pdf export",
+    "passed": true
+  },
+  {
+    "test": "transactions valid PDF signature",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/receipts",
+    "passed": true
+  },
+  {
+    "test": "receipts page bounded",
+    "passed": true
+  },
+  {
+    "test": "receipts entity isolation label",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/receipts?sort=date&direction=asc&pageSize=2",
+    "passed": true
+  },
+  {
+    "test": "receipts date asc ordered",
+    "passed": true
+  },
+  {
+    "test": "receipts pagination bounded dateasc",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/receipts?sort=date&direction=desc&pageSize=2",
+    "passed": true
+  },
+  {
+    "test": "receipts date desc ordered",
+    "passed": true
+  },
+  {
+    "test": "receipts pagination bounded datedesc",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/receipts?sort=amount&direction=asc&pageSize=2",
+    "passed": true
+  },
+  {
+    "test": "receipts amount asc ordered",
+    "passed": true
+  },
+  {
+    "test": "receipts pagination bounded amountasc",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/receipts?sort=amount&direction=desc&pageSize=2",
+    "passed": true
+  },
+  {
+    "test": "receipts amount desc ordered",
+    "passed": true
+  },
+  {
+    "test": "receipts pagination bounded amountdesc",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/receipts?sort=party&direction=asc&pageSize=2",
+    "passed": true
+  },
+  {
+    "test": "receipts party asc ordered",
+    "passed": true
+  },
+  {
+    "test": "receipts pagination bounded partyasc",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/receipts?sort=party&direction=desc&pageSize=2",
+    "passed": true
+  },
+  {
+    "test": "receipts party desc ordered",
+    "passed": true
+  },
+  {
+    "test": "receipts pagination bounded partydesc",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/receipts?sort=reference&direction=asc&pageSize=2",
+    "passed": true
+  },
+  {
+    "test": "receipts reference asc ordered",
+    "passed": true
+  },
+  {
+    "test": "receipts pagination bounded referenceasc",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/receipts?sort=reference&direction=desc&pageSize=2",
+    "passed": true
+  },
+  {
+    "test": "receipts reference desc ordered",
+    "passed": true
+  },
+  {
+    "test": "receipts pagination bounded referencedesc",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/receipts?sort=outstanding&direction=asc&pageSize=2",
+    "passed": true
+  },
+  {
+    "test": "receipts outstanding asc ordered",
+    "passed": true
+  },
+  {
+    "test": "receipts pagination bounded outstandingasc",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/receipts?sort=outstanding&direction=desc&pageSize=2",
+    "passed": true
+  },
+  {
+    "test": "receipts outstanding desc ordered",
+    "passed": true
+  },
+  {
+    "test": "receipts pagination bounded outstandingdesc",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/receipts?page=999&pageSize=1",
+    "passed": true
+  },
+  {
+    "test": "receipts exhausted page empty",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/receipts?search=3a5874f0d77943e593b55a1c13cd9a4c",
+    "passed": true
+  },
+  {
+    "test": "receipts search absent",
+    "passed": true
+  },
+  {
+    "test": "receipts csv export",
+    "passed": true
+  },
+  {
+    "test": "receipts xlsx export",
+    "passed": true
+  },
+  {
+    "test": "receipts workbook has manifest",
+    "passed": true
+  },
+  {
+    "test": "receipts pdf export",
+    "passed": true
+  },
+  {
+    "test": "receipts valid PDF signature",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/invoices",
+    "passed": true
+  },
+  {
+    "test": "invoices page bounded",
+    "passed": true
+  },
+  {
+    "test": "invoices entity isolation label",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/invoices?sort=date&direction=asc&pageSize=2",
+    "passed": true
+  },
+  {
+    "test": "invoices date asc ordered",
+    "passed": true
+  },
+  {
+    "test": "invoices pagination bounded dateasc",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/invoices?sort=date&direction=desc&pageSize=2",
+    "passed": true
+  },
+  {
+    "test": "invoices date desc ordered",
+    "passed": true
+  },
+  {
+    "test": "invoices pagination bounded datedesc",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/invoices?sort=amount&direction=asc&pageSize=2",
+    "passed": true
+  },
+  {
+    "test": "invoices amount asc ordered",
+    "passed": true
+  },
+  {
+    "test": "invoices pagination bounded amountasc",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/invoices?sort=amount&direction=desc&pageSize=2",
+    "passed": true
+  },
+  {
+    "test": "invoices amount desc ordered",
+    "passed": true
+  },
+  {
+    "test": "invoices pagination bounded amountdesc",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/invoices?sort=party&direction=asc&pageSize=2",
+    "passed": true
+  },
+  {
+    "test": "invoices party asc ordered",
+    "passed": true
+  },
+  {
+    "test": "invoices pagination bounded partyasc",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/invoices?sort=party&direction=desc&pageSize=2",
+    "passed": true
+  },
+  {
+    "test": "invoices party desc ordered",
+    "passed": true
+  },
+  {
+    "test": "invoices pagination bounded partydesc",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/invoices?sort=reference&direction=asc&pageSize=2",
+    "passed": true
+  },
+  {
+    "test": "invoices reference asc ordered",
+    "passed": true
+  },
+  {
+    "test": "invoices pagination bounded referenceasc",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/invoices?sort=reference&direction=desc&pageSize=2",
+    "passed": true
+  },
+  {
+    "test": "invoices reference desc ordered",
+    "passed": true
+  },
+  {
+    "test": "invoices pagination bounded referencedesc",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/invoices?sort=outstanding&direction=asc&pageSize=2",
+    "passed": true
+  },
+  {
+    "test": "invoices outstanding asc ordered",
+    "passed": true
+  },
+  {
+    "test": "invoices pagination bounded outstandingasc",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/invoices?sort=outstanding&direction=desc&pageSize=2",
+    "passed": true
+  },
+  {
+    "test": "invoices outstanding desc ordered",
+    "passed": true
+  },
+  {
+    "test": "invoices pagination bounded outstandingdesc",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/invoices?page=999&pageSize=1",
+    "passed": true
+  },
+  {
+    "test": "invoices exhausted page empty",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/invoices?search=4ad5b867c54144d1a6dd7d03144542be",
+    "passed": true
+  },
+  {
+    "test": "invoices search absent",
+    "passed": true
+  },
+  {
+    "test": "invoices csv export",
+    "passed": true
+  },
+  {
+    "test": "invoices xlsx export",
+    "passed": true
+  },
+  {
+    "test": "invoices workbook has manifest",
+    "passed": true
+  },
+  {
+    "test": "invoices pdf export",
+    "passed": true
+  },
+  {
+    "test": "invoices valid PDF signature",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/payments",
+    "passed": true
+  },
+  {
+    "test": "payments page bounded",
+    "passed": true
+  },
+  {
+    "test": "payments entity isolation label",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/payments?sort=date&direction=asc&pageSize=2",
+    "passed": true
+  },
+  {
+    "test": "payments date asc ordered",
+    "passed": true
+  },
+  {
+    "test": "payments pagination bounded dateasc",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/payments?sort=date&direction=desc&pageSize=2",
+    "passed": true
+  },
+  {
+    "test": "payments date desc ordered",
+    "passed": true
+  },
+  {
+    "test": "payments pagination bounded datedesc",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/payments?sort=amount&direction=asc&pageSize=2",
+    "passed": true
+  },
+  {
+    "test": "payments amount asc ordered",
+    "passed": true
+  },
+  {
+    "test": "payments pagination bounded amountasc",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/payments?sort=amount&direction=desc&pageSize=2",
+    "passed": true
+  },
+  {
+    "test": "payments amount desc ordered",
+    "passed": true
+  },
+  {
+    "test": "payments pagination bounded amountdesc",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/payments?sort=party&direction=asc&pageSize=2",
+    "passed": true
+  },
+  {
+    "test": "payments party asc ordered",
+    "passed": true
+  },
+  {
+    "test": "payments pagination bounded partyasc",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/payments?sort=party&direction=desc&pageSize=2",
+    "passed": true
+  },
+  {
+    "test": "payments party desc ordered",
+    "passed": true
+  },
+  {
+    "test": "payments pagination bounded partydesc",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/payments?sort=reference&direction=asc&pageSize=2",
+    "passed": true
+  },
+  {
+    "test": "payments reference asc ordered",
+    "passed": true
+  },
+  {
+    "test": "payments pagination bounded referenceasc",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/payments?sort=reference&direction=desc&pageSize=2",
+    "passed": true
+  },
+  {
+    "test": "payments reference desc ordered",
+    "passed": true
+  },
+  {
+    "test": "payments pagination bounded referencedesc",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/payments?sort=outstanding&direction=asc&pageSize=2",
+    "passed": true
+  },
+  {
+    "test": "payments outstanding asc ordered",
+    "passed": true
+  },
+  {
+    "test": "payments pagination bounded outstandingasc",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/payments?sort=outstanding&direction=desc&pageSize=2",
+    "passed": true
+  },
+  {
+    "test": "payments outstanding desc ordered",
+    "passed": true
+  },
+  {
+    "test": "payments pagination bounded outstandingdesc",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/payments?page=999&pageSize=1",
+    "passed": true
+  },
+  {
+    "test": "payments exhausted page empty",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/payments?search=3759092dc4cb491da4a83e3e067cc329",
+    "passed": true
+  },
+  {
+    "test": "payments search absent",
+    "passed": true
+  },
+  {
+    "test": "payments csv export",
+    "passed": true
+  },
+  {
+    "test": "payments xlsx export",
+    "passed": true
+  },
+  {
+    "test": "payments workbook has manifest",
+    "passed": true
+  },
+  {
+    "test": "payments pdf export",
+    "passed": true
+  },
+  {
+    "test": "payments valid PDF signature",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/expenses",
+    "passed": true
+  },
+  {
+    "test": "expenses page bounded",
+    "passed": true
+  },
+  {
+    "test": "expenses entity isolation label",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/expenses?sort=date&direction=asc&pageSize=2",
+    "passed": true
+  },
+  {
+    "test": "expenses date asc ordered",
+    "passed": true
+  },
+  {
+    "test": "expenses pagination bounded dateasc",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/expenses?sort=date&direction=desc&pageSize=2",
+    "passed": true
+  },
+  {
+    "test": "expenses date desc ordered",
+    "passed": true
+  },
+  {
+    "test": "expenses pagination bounded datedesc",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/expenses?sort=amount&direction=asc&pageSize=2",
+    "passed": true
+  },
+  {
+    "test": "expenses amount asc ordered",
+    "passed": true
+  },
+  {
+    "test": "expenses pagination bounded amountasc",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/expenses?sort=amount&direction=desc&pageSize=2",
+    "passed": true
+  },
+  {
+    "test": "expenses amount desc ordered",
+    "passed": true
+  },
+  {
+    "test": "expenses pagination bounded amountdesc",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/expenses?sort=party&direction=asc&pageSize=2",
+    "passed": true
+  },
+  {
+    "test": "expenses party asc ordered",
+    "passed": true
+  },
+  {
+    "test": "expenses pagination bounded partyasc",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/expenses?sort=party&direction=desc&pageSize=2",
+    "passed": true
+  },
+  {
+    "test": "expenses party desc ordered",
+    "passed": true
+  },
+  {
+    "test": "expenses pagination bounded partydesc",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/expenses?sort=reference&direction=asc&pageSize=2",
+    "passed": true
+  },
+  {
+    "test": "expenses reference asc ordered",
+    "passed": true
+  },
+  {
+    "test": "expenses pagination bounded referenceasc",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/expenses?sort=reference&direction=desc&pageSize=2",
+    "passed": true
+  },
+  {
+    "test": "expenses reference desc ordered",
+    "passed": true
+  },
+  {
+    "test": "expenses pagination bounded referencedesc",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/expenses?sort=outstanding&direction=asc&pageSize=2",
+    "passed": true
+  },
+  {
+    "test": "expenses outstanding asc ordered",
+    "passed": true
+  },
+  {
+    "test": "expenses pagination bounded outstandingasc",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/expenses?sort=outstanding&direction=desc&pageSize=2",
+    "passed": true
+  },
+  {
+    "test": "expenses outstanding desc ordered",
+    "passed": true
+  },
+  {
+    "test": "expenses pagination bounded outstandingdesc",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/expenses?page=999&pageSize=1",
+    "passed": true
+  },
+  {
+    "test": "expenses exhausted page empty",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/expenses?search=6c0a225c7394490b882df44bd34752bb",
+    "passed": true
+  },
+  {
+    "test": "expenses search absent",
+    "passed": true
+  },
+  {
+    "test": "expenses csv export",
+    "passed": true
+  },
+  {
+    "test": "expenses xlsx export",
+    "passed": true
+  },
+  {
+    "test": "expenses workbook has manifest",
+    "passed": true
+  },
+  {
+    "test": "expenses pdf export",
+    "passed": true
+  },
+  {
+    "test": "expenses valid PDF signature",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/reconciliation",
+    "passed": true
+  },
+  {
+    "test": "reconciliation page bounded",
+    "passed": true
+  },
+  {
+    "test": "reconciliation entity isolation label",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/reconciliation?sort=date&direction=asc&pageSize=2",
+    "passed": true
+  },
+  {
+    "test": "reconciliation date asc ordered",
+    "passed": true
+  },
+  {
+    "test": "reconciliation pagination bounded dateasc",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/reconciliation?sort=date&direction=desc&pageSize=2",
+    "passed": true
+  },
+  {
+    "test": "reconciliation date desc ordered",
+    "passed": true
+  },
+  {
+    "test": "reconciliation pagination bounded datedesc",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/reconciliation?sort=amount&direction=asc&pageSize=2",
+    "passed": true
+  },
+  {
+    "test": "reconciliation amount asc ordered",
+    "passed": true
+  },
+  {
+    "test": "reconciliation pagination bounded amountasc",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/reconciliation?sort=amount&direction=desc&pageSize=2",
+    "passed": true
+  },
+  {
+    "test": "reconciliation amount desc ordered",
+    "passed": true
+  },
+  {
+    "test": "reconciliation pagination bounded amountdesc",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/reconciliation?sort=party&direction=asc&pageSize=2",
+    "passed": true
+  },
+  {
+    "test": "reconciliation party asc ordered",
+    "passed": true
+  },
+  {
+    "test": "reconciliation pagination bounded partyasc",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/reconciliation?sort=party&direction=desc&pageSize=2",
+    "passed": true
+  },
+  {
+    "test": "reconciliation party desc ordered",
+    "passed": true
+  },
+  {
+    "test": "reconciliation pagination bounded partydesc",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/reconciliation?sort=reference&direction=asc&pageSize=2",
+    "passed": true
+  },
+  {
+    "test": "reconciliation reference asc ordered",
+    "passed": true
+  },
+  {
+    "test": "reconciliation pagination bounded referenceasc",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/reconciliation?sort=reference&direction=desc&pageSize=2",
+    "passed": true
+  },
+  {
+    "test": "reconciliation reference desc ordered",
+    "passed": true
+  },
+  {
+    "test": "reconciliation pagination bounded referencedesc",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/reconciliation?sort=outstanding&direction=asc&pageSize=2",
+    "passed": true
+  },
+  {
+    "test": "reconciliation outstanding asc ordered",
+    "passed": true
+  },
+  {
+    "test": "reconciliation pagination bounded outstandingasc",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/reconciliation?sort=outstanding&direction=desc&pageSize=2",
+    "passed": true
+  },
+  {
+    "test": "reconciliation outstanding desc ordered",
+    "passed": true
+  },
+  {
+    "test": "reconciliation pagination bounded outstandingdesc",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/reconciliation?page=999&pageSize=1",
+    "passed": true
+  },
+  {
+    "test": "reconciliation exhausted page empty",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/reconciliation?search=059465ea64ab42daaf9d9deae22bbe8a",
+    "passed": true
+  },
+  {
+    "test": "reconciliation search absent",
+    "passed": true
+  },
+  {
+    "test": "reconciliation csv export",
+    "passed": true
+  },
+  {
+    "test": "reconciliation xlsx export",
+    "passed": true
+  },
+  {
+    "test": "reconciliation workbook has manifest",
+    "passed": true
+  },
+  {
+    "test": "reconciliation pdf export",
+    "passed": true
+  },
+  {
+    "test": "reconciliation valid PDF signature",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/budgets",
+    "passed": true
+  },
+  {
+    "test": "budgets page bounded",
+    "passed": true
+  },
+  {
+    "test": "budgets entity isolation label",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/budgets?sort=date&direction=asc&pageSize=2",
+    "passed": true
+  },
+  {
+    "test": "budgets date asc ordered",
+    "passed": true
+  },
+  {
+    "test": "budgets pagination bounded dateasc",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/budgets?sort=date&direction=desc&pageSize=2",
+    "passed": true
+  },
+  {
+    "test": "budgets date desc ordered",
+    "passed": true
+  },
+  {
+    "test": "budgets pagination bounded datedesc",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/budgets?sort=amount&direction=asc&pageSize=2",
+    "passed": true
+  },
+  {
+    "test": "budgets amount asc ordered",
+    "passed": true
+  },
+  {
+    "test": "budgets pagination bounded amountasc",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/budgets?sort=amount&direction=desc&pageSize=2",
+    "passed": true
+  },
+  {
+    "test": "budgets amount desc ordered",
+    "passed": true
+  },
+  {
+    "test": "budgets pagination bounded amountdesc",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/budgets?sort=party&direction=asc&pageSize=2",
+    "passed": true
+  },
+  {
+    "test": "budgets party asc ordered",
+    "passed": true
+  },
+  {
+    "test": "budgets pagination bounded partyasc",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/budgets?sort=party&direction=desc&pageSize=2",
+    "passed": true
+  },
+  {
+    "test": "budgets party desc ordered",
+    "passed": true
+  },
+  {
+    "test": "budgets pagination bounded partydesc",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/budgets?sort=reference&direction=asc&pageSize=2",
+    "passed": true
+  },
+  {
+    "test": "budgets reference asc ordered",
+    "passed": true
+  },
+  {
+    "test": "budgets pagination bounded referenceasc",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/budgets?sort=reference&direction=desc&pageSize=2",
+    "passed": true
+  },
+  {
+    "test": "budgets reference desc ordered",
+    "passed": true
+  },
+  {
+    "test": "budgets pagination bounded referencedesc",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/budgets?sort=outstanding&direction=asc&pageSize=2",
+    "passed": true
+  },
+  {
+    "test": "budgets outstanding asc ordered",
+    "passed": true
+  },
+  {
+    "test": "budgets pagination bounded outstandingasc",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/budgets?sort=outstanding&direction=desc&pageSize=2",
+    "passed": true
+  },
+  {
+    "test": "budgets outstanding desc ordered",
+    "passed": true
+  },
+  {
+    "test": "budgets pagination bounded outstandingdesc",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/budgets?page=999&pageSize=1",
+    "passed": true
+  },
+  {
+    "test": "budgets exhausted page empty",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/budgets?search=b271867ec974425fa386ff6d9aac73d9",
+    "passed": true
+  },
+  {
+    "test": "budgets search absent",
+    "passed": true
+  },
+  {
+    "test": "budgets csv export",
+    "passed": true
+  },
+  {
+    "test": "budgets xlsx export",
+    "passed": true
+  },
+  {
+    "test": "budgets workbook has manifest",
+    "passed": true
+  },
+  {
+    "test": "budgets pdf export",
+    "passed": true
+  },
+  {
+    "test": "budgets valid PDF signature",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/audit",
+    "passed": true
+  },
+  {
+    "test": "audit page bounded",
+    "passed": true
+  },
+  {
+    "test": "audit entity isolation label",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/audit?sort=date&direction=asc&pageSize=2",
+    "passed": true
+  },
+  {
+    "test": "audit date asc ordered",
+    "passed": true
+  },
+  {
+    "test": "audit pagination bounded dateasc",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/audit?sort=date&direction=desc&pageSize=2",
+    "passed": true
+  },
+  {
+    "test": "audit date desc ordered",
+    "passed": true
+  },
+  {
+    "test": "audit pagination bounded datedesc",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/audit?sort=amount&direction=asc&pageSize=2",
+    "passed": true
+  },
+  {
+    "test": "audit amount asc ordered",
+    "passed": true
+  },
+  {
+    "test": "audit pagination bounded amountasc",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/audit?sort=amount&direction=desc&pageSize=2",
+    "passed": true
+  },
+  {
+    "test": "audit amount desc ordered",
+    "passed": true
+  },
+  {
+    "test": "audit pagination bounded amountdesc",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/audit?sort=party&direction=asc&pageSize=2",
+    "passed": true
+  },
+  {
+    "test": "audit party asc ordered",
+    "passed": true
+  },
+  {
+    "test": "audit pagination bounded partyasc",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/audit?sort=party&direction=desc&pageSize=2",
+    "passed": true
+  },
+  {
+    "test": "audit party desc ordered",
+    "passed": true
+  },
+  {
+    "test": "audit pagination bounded partydesc",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/audit?sort=reference&direction=asc&pageSize=2",
+    "passed": true
+  },
+  {
+    "test": "audit reference asc ordered",
+    "passed": true
+  },
+  {
+    "test": "audit pagination bounded referenceasc",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/audit?sort=reference&direction=desc&pageSize=2",
+    "passed": true
+  },
+  {
+    "test": "audit reference desc ordered",
+    "passed": true
+  },
+  {
+    "test": "audit pagination bounded referencedesc",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/audit?sort=outstanding&direction=asc&pageSize=2",
+    "passed": true
+  },
+  {
+    "test": "audit outstanding asc ordered",
+    "passed": true
+  },
+  {
+    "test": "audit pagination bounded outstandingasc",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/audit?sort=outstanding&direction=desc&pageSize=2",
+    "passed": true
+  },
+  {
+    "test": "audit outstanding desc ordered",
+    "passed": true
+  },
+  {
+    "test": "audit pagination bounded outstandingdesc",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/audit?page=999&pageSize=1",
+    "passed": true
+  },
+  {
+    "test": "audit exhausted page empty",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/audit?search=6423567dc4ce4c1ba5320b77fcb21358",
+    "passed": true
+  },
+  {
+    "test": "audit search absent",
+    "passed": true
+  },
+  {
+    "test": "audit csv export",
+    "passed": true
+  },
+  {
+    "test": "audit xlsx export",
+    "passed": true
+  },
+  {
+    "test": "audit workbook has manifest",
+    "passed": true
+  },
+  {
+    "test": "audit pdf export",
+    "passed": true
+  },
+  {
+    "test": "audit valid PDF signature",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/ledger",
+    "passed": true
+  },
+  {
+    "test": "ledger page bounded",
+    "passed": true
+  },
+  {
+    "test": "ledger entity isolation label",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/ledger?sort=date&direction=asc&pageSize=2",
+    "passed": true
+  },
+  {
+    "test": "ledger date asc ordered",
+    "passed": true
+  },
+  {
+    "test": "ledger pagination bounded dateasc",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/ledger?sort=date&direction=desc&pageSize=2",
+    "passed": true
+  },
+  {
+    "test": "ledger date desc ordered",
+    "passed": true
+  },
+  {
+    "test": "ledger pagination bounded datedesc",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/ledger?sort=amount&direction=asc&pageSize=2",
+    "passed": true
+  },
+  {
+    "test": "ledger amount asc ordered",
+    "passed": true
+  },
+  {
+    "test": "ledger pagination bounded amountasc",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/ledger?sort=amount&direction=desc&pageSize=2",
+    "passed": true
+  },
+  {
+    "test": "ledger amount desc ordered",
+    "passed": true
+  },
+  {
+    "test": "ledger pagination bounded amountdesc",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/ledger?sort=party&direction=asc&pageSize=2",
+    "passed": true
+  },
+  {
+    "test": "ledger party asc ordered",
+    "passed": true
+  },
+  {
+    "test": "ledger pagination bounded partyasc",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/ledger?sort=party&direction=desc&pageSize=2",
+    "passed": true
+  },
+  {
+    "test": "ledger party desc ordered",
+    "passed": true
+  },
+  {
+    "test": "ledger pagination bounded partydesc",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/ledger?sort=reference&direction=asc&pageSize=2",
+    "passed": true
+  },
+  {
+    "test": "ledger reference asc ordered",
+    "passed": true
+  },
+  {
+    "test": "ledger pagination bounded referenceasc",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/ledger?sort=reference&direction=desc&pageSize=2",
+    "passed": true
+  },
+  {
+    "test": "ledger reference desc ordered",
+    "passed": true
+  },
+  {
+    "test": "ledger pagination bounded referencedesc",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/ledger?sort=outstanding&direction=asc&pageSize=2",
+    "passed": true
+  },
+  {
+    "test": "ledger outstanding asc ordered",
+    "passed": true
+  },
+  {
+    "test": "ledger pagination bounded outstandingasc",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/ledger?sort=outstanding&direction=desc&pageSize=2",
+    "passed": true
+  },
+  {
+    "test": "ledger outstanding desc ordered",
+    "passed": true
+  },
+  {
+    "test": "ledger pagination bounded outstandingdesc",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/ledger?page=999&pageSize=1",
+    "passed": true
+  },
+  {
+    "test": "ledger exhausted page empty",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/ledger?search=b2088560f90243ab991c2eae8d8a03fe",
+    "passed": true
+  },
+  {
+    "test": "ledger search absent",
+    "passed": true
+  },
+  {
+    "test": "ledger csv export",
+    "passed": true
+  },
+  {
+    "test": "ledger xlsx export",
+    "passed": true
+  },
+  {
+    "test": "ledger workbook has manifest",
+    "passed": true
+  },
+  {
+    "test": "ledger pdf export",
+    "passed": true
+  },
+  {
+    "test": "ledger valid PDF signature",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/gateway",
+    "passed": true
+  },
+  {
+    "test": "gateway page bounded",
+    "passed": true
+  },
+  {
+    "test": "gateway entity isolation label",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/gateway?sort=date&direction=asc&pageSize=2",
+    "passed": true
+  },
+  {
+    "test": "gateway date asc ordered",
+    "passed": true
+  },
+  {
+    "test": "gateway pagination bounded dateasc",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/gateway?sort=date&direction=desc&pageSize=2",
+    "passed": true
+  },
+  {
+    "test": "gateway date desc ordered",
+    "passed": true
+  },
+  {
+    "test": "gateway pagination bounded datedesc",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/gateway?sort=amount&direction=asc&pageSize=2",
+    "passed": true
+  },
+  {
+    "test": "gateway amount asc ordered",
+    "passed": true
+  },
+  {
+    "test": "gateway pagination bounded amountasc",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/gateway?sort=amount&direction=desc&pageSize=2",
+    "passed": true
+  },
+  {
+    "test": "gateway amount desc ordered",
+    "passed": true
+  },
+  {
+    "test": "gateway pagination bounded amountdesc",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/gateway?sort=party&direction=asc&pageSize=2",
+    "passed": true
+  },
+  {
+    "test": "gateway party asc ordered",
+    "passed": true
+  },
+  {
+    "test": "gateway pagination bounded partyasc",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/gateway?sort=party&direction=desc&pageSize=2",
+    "passed": true
+  },
+  {
+    "test": "gateway party desc ordered",
+    "passed": true
+  },
+  {
+    "test": "gateway pagination bounded partydesc",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/gateway?sort=reference&direction=asc&pageSize=2",
+    "passed": true
+  },
+  {
+    "test": "gateway reference asc ordered",
+    "passed": true
+  },
+  {
+    "test": "gateway pagination bounded referenceasc",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/gateway?sort=reference&direction=desc&pageSize=2",
+    "passed": true
+  },
+  {
+    "test": "gateway reference desc ordered",
+    "passed": true
+  },
+  {
+    "test": "gateway pagination bounded referencedesc",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/gateway?sort=outstanding&direction=asc&pageSize=2",
+    "passed": true
+  },
+  {
+    "test": "gateway outstanding asc ordered",
+    "passed": true
+  },
+  {
+    "test": "gateway pagination bounded outstandingasc",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/gateway?sort=outstanding&direction=desc&pageSize=2",
+    "passed": true
+  },
+  {
+    "test": "gateway outstanding desc ordered",
+    "passed": true
+  },
+  {
+    "test": "gateway pagination bounded outstandingdesc",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/gateway?page=999&pageSize=1",
+    "passed": true
+  },
+  {
+    "test": "gateway exhausted page empty",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/gateway?search=6a7dc5c988164d0d962ffdb7d1011438",
+    "passed": true
+  },
+  {
+    "test": "gateway search absent",
+    "passed": true
+  },
+  {
+    "test": "gateway csv export",
+    "passed": true
+  },
+  {
+    "test": "gateway xlsx export",
+    "passed": true
+  },
+  {
+    "test": "gateway workbook has manifest",
+    "passed": true
+  },
+  {
+    "test": "gateway pdf export",
+    "passed": true
+  },
+  {
+    "test": "gateway valid PDF signature",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/scheduled",
+    "passed": true
+  },
+  {
+    "test": "scheduled page bounded",
+    "passed": true
+  },
+  {
+    "test": "scheduled entity isolation label",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/scheduled?sort=date&direction=asc&pageSize=2",
+    "passed": true
+  },
+  {
+    "test": "scheduled date asc ordered",
+    "passed": true
+  },
+  {
+    "test": "scheduled pagination bounded dateasc",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/scheduled?sort=date&direction=desc&pageSize=2",
+    "passed": true
+  },
+  {
+    "test": "scheduled date desc ordered",
+    "passed": true
+  },
+  {
+    "test": "scheduled pagination bounded datedesc",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/scheduled?sort=amount&direction=asc&pageSize=2",
+    "passed": true
+  },
+  {
+    "test": "scheduled amount asc ordered",
+    "passed": true
+  },
+  {
+    "test": "scheduled pagination bounded amountasc",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/scheduled?sort=amount&direction=desc&pageSize=2",
+    "passed": true
+  },
+  {
+    "test": "scheduled amount desc ordered",
+    "passed": true
+  },
+  {
+    "test": "scheduled pagination bounded amountdesc",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/scheduled?sort=party&direction=asc&pageSize=2",
+    "passed": true
+  },
+  {
+    "test": "scheduled party asc ordered",
+    "passed": true
+  },
+  {
+    "test": "scheduled pagination bounded partyasc",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/scheduled?sort=party&direction=desc&pageSize=2",
+    "passed": true
+  },
+  {
+    "test": "scheduled party desc ordered",
+    "passed": true
+  },
+  {
+    "test": "scheduled pagination bounded partydesc",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/scheduled?sort=reference&direction=asc&pageSize=2",
+    "passed": true
+  },
+  {
+    "test": "scheduled reference asc ordered",
+    "passed": true
+  },
+  {
+    "test": "scheduled pagination bounded referenceasc",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/scheduled?sort=reference&direction=desc&pageSize=2",
+    "passed": true
+  },
+  {
+    "test": "scheduled reference desc ordered",
+    "passed": true
+  },
+  {
+    "test": "scheduled pagination bounded referencedesc",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/scheduled?sort=outstanding&direction=asc&pageSize=2",
+    "passed": true
+  },
+  {
+    "test": "scheduled outstanding asc ordered",
+    "passed": true
+  },
+  {
+    "test": "scheduled pagination bounded outstandingasc",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/scheduled?sort=outstanding&direction=desc&pageSize=2",
+    "passed": true
+  },
+  {
+    "test": "scheduled outstanding desc ordered",
+    "passed": true
+  },
+  {
+    "test": "scheduled pagination bounded outstandingdesc",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/scheduled?page=999&pageSize=1",
+    "passed": true
+  },
+  {
+    "test": "scheduled exhausted page empty",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command/scheduled?search=e0d4c65eaf2745ab961206c18af97377",
+    "passed": true
+  },
+  {
+    "test": "scheduled search absent",
+    "passed": true
+  },
+  {
+    "test": "scheduled csv export",
+    "passed": true
+  },
+  {
+    "test": "scheduled xlsx export",
+    "passed": true
+  },
+  {
+    "test": "scheduled workbook has manifest",
+    "passed": true
+  },
+  {
+    "test": "scheduled pdf export",
+    "passed": true
+  },
+  {
+    "test": "scheduled valid PDF signature",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/command-metrics",
+    "passed": true
+  },
+  {
+    "test": "Mock Impact Dues \u00b7 DEMO-R01-D01-Z01-C01 generated reconciles to SQL",
+    "passed": true
+  },
+  {
+    "test": "Mock Impact Dues \u00b7 DEMO-R01-D01-Z01-C01 allocated reconciles to SQL",
+    "passed": true
+  },
+  {
+    "test": "Mock Impact Dues \u00b7 DEMO-R01-D01-Z01-C01 invoice equation",
+    "passed": true
+  },
+  {
+    "test": "Mock Impact Dues \u00b7 DEMO-R01-D01-Z01-C01 source totals",
+    "passed": true
+  },
+  {
+    "test": "Mock Impact Dues \u00b7 DEMO-R01-D01-Z01-C01 ageing totals",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/377e329c-1ddd-4c62-a82f-c986255f3306/command-metrics",
+    "passed": true
+  },
+  {
+    "test": "Mock Impact Dues \u00b7 DEMO-R01-D02-Z01-C01 generated reconciles to SQL",
+    "passed": true
+  },
+  {
+    "test": "Mock Impact Dues \u00b7 DEMO-R01-D02-Z01-C01 allocated reconciles to SQL",
+    "passed": true
+  },
+  {
+    "test": "Mock Impact Dues \u00b7 DEMO-R01-D02-Z01-C01 invoice equation",
+    "passed": true
+  },
+  {
+    "test": "Mock Impact Dues \u00b7 DEMO-R01-D02-Z01-C01 source totals",
+    "passed": true
+  },
+  {
+    "test": "Mock Impact Dues \u00b7 DEMO-R01-D02-Z01-C01 ageing totals",
+    "passed": true
+  },
+  {
+    "test": "GET /finance/entities/9eacd109-5f28-44e9-9645-702eddc3fd0b/command-metrics",
+    "passed": true
+  },
+  {
+    "test": "Mock Impact Dues \u00b7 DEMO-R02-D01-Z01-C01 generated reconciles to SQL",
+    "passed": true
+  },
+  {
+    "test": "Mock Impact Dues \u00b7 DEMO-R02-D01-Z01-C01 allocated reconciles to SQL",
+    "passed": true
+  },
+  {
+    "test": "Mock Impact Dues \u00b7 DEMO-R02-D01-Z01-C01 invoice equation",
+    "passed": true
+  },
+  {
+    "test": "Mock Impact Dues \u00b7 DEMO-R02-D01-Z01-C01 source totals",
+    "passed": true
+  },
+  {
+    "test": "Mock Impact Dues \u00b7 DEMO-R02-D01-Z01-C01 ageing totals",
+    "passed": true
+  },
+  {
+    "test": "Invalid filter rejected page=0",
+    "passed": true
+  },
+  {
+    "test": "Invalid filter rejected pageSize=101",
+    "passed": true
+  },
+  {
+    "test": "Invalid filter rejected sort=sql",
+    "passed": true
+  },
+  {
+    "test": "Invalid filter rejected direction=invalid",
+    "passed": true
+  },
+  {
+    "test": "Invalid filter rejected quick=invalid",
+    "passed": true
+  },
+  {
+    "test": "Invalid filter rejected format=invalid",
+    "passed": true
+  },
+  {
+    "test": "Invalid filter rejected columns=private",
+    "passed": true
+  },
+  {
+    "test": "Invalid filter rejected from=2026-12-31&to=2026-01-01",
+    "passed": true
+  },
+  {
+    "test": "Unknown workspace rejected",
+    "passed": true
+  },
+  {
+    "test": "Unknown entity rejected",
+    "passed": true
+  },
+  {
+    "test": "Anonymous denied overview",
+    "passed": true
+  },
+  {
+    "test": "Anonymous denied transactions",
+    "passed": true
+  },
+  {
+    "test": "Anonymous denied receipts",
+    "passed": true
+  },
+  {
+    "test": "Anonymous denied invoices",
+    "passed": true
+  },
+  {
+    "test": "Anonymous denied payments",
+    "passed": true
+  },
+  {
+    "test": "Anonymous denied expenses",
+    "passed": true
+  },
+  {
+    "test": "Anonymous denied reconciliation",
+    "passed": true
+  },
+  {
+    "test": "Anonymous denied budgets",
+    "passed": true
+  },
+  {
+    "test": "Anonymous denied audit",
+    "passed": true
+  },
+  {
+    "test": "Anonymous denied ledger",
+    "passed": true
+  },
+  {
+    "test": "Anonymous denied gateway",
+    "passed": true
+  },
+  {
+    "test": "Anonymous denied scheduled",
+    "passed": true
+  },
+  {
+    "test": "Member login",
+    "passed": true
+  },
+  {
+    "test": "Member cannot read entity overview",
+    "passed": true
+  },
+  {
+    "test": "Member cannot read entity transactions",
+    "passed": true
+  },
+  {
+    "test": "Member cannot read entity receipts",
+    "passed": true
+  },
+  {
+    "test": "Member cannot read entity invoices",
+    "passed": true
+  },
+  {
+    "test": "Member cannot read entity payments",
+    "passed": true
+  },
+  {
+    "test": "Member cannot read entity expenses",
+    "passed": true
+  },
+  {
+    "test": "Member cannot read entity reconciliation",
+    "passed": true
+  },
+  {
+    "test": "Member cannot read entity budgets",
+    "passed": true
+  },
+  {
+    "test": "Member cannot read entity audit",
+    "passed": true
+  },
+  {
+    "test": "Member cannot read entity ledger",
+    "passed": true
+  },
+  {
+    "test": "Member cannot read entity gateway",
+    "passed": true
+  },
+  {
+    "test": "Member cannot read entity scheduled",
+    "passed": true
+  },
+  {
+    "test": "Member export denied csv",
+    "passed": true
+  },
+  {
+    "test": "Member export denied xlsx",
+    "passed": true
+  },
+  {
+    "test": "Member export denied pdf",
+    "passed": true
+  }
+]

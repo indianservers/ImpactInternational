@@ -1,0 +1,1342 @@
+[
+  {
+    "test": "Administrator signs in",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Authorized options",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Report overview",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Paginated overview",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "overview csv export is valid",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "overview xlsx export is valid",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "overview pdf export is valid",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Report club",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Paginated club",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "club csv export is valid",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "club xlsx export is valid",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "club pdf export is valid",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Report zone",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Paginated zone",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "zone csv export is valid",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "zone xlsx export is valid",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "zone pdf export is valid",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Report district",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Paginated district",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "district csv export is valid",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "district xlsx export is valid",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "district pdf export is valid",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Report region",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Paginated region",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "region csv export is valid",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "region xlsx export is valid",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "region pdf export is valid",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Report national",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Paginated national",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "national csv export is valid",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "national xlsx export is valid",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "national pdf export is valid",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Report member",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Paginated member",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "member csv export is valid",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "member xlsx export is valid",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "member pdf export is valid",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Report pending",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Paginated pending",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "pending csv export is valid",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "pending xlsx export is valid",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "pending pdf export is valid",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Report overdue",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Paginated overdue",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "overdue csv export is valid",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "overdue xlsx export is valid",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "overdue pdf export is valid",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Report unpaid",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Paginated unpaid",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "unpaid csv export is valid",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "unpaid xlsx export is valid",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "unpaid pdf export is valid",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Report partial",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Paginated partial",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "partial csv export is valid",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "partial xlsx export is valid",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "partial pdf export is valid",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Report paid",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Paginated paid",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "paid csv export is valid",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "paid xlsx export is valid",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "paid pdf export is valid",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Report ageing",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Paginated ageing",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "ageing csv export is valid",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "ageing xlsx export is valid",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "ageing pdf export is valid",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Report purpose",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Paginated purpose",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "purpose csv export is valid",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "purpose xlsx export is valid",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "purpose pdf export is valid",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Report billing-month",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Paginated billing-month",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "billing-month csv export is valid",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "billing-month xlsx export is valid",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "billing-month pdf export is valid",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Report collection-month",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Paginated collection-month",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "collection-month csv export is valid",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "collection-month xlsx export is valid",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "collection-month pdf export is valid",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Report cash",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Paginated cash",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "cash csv export is valid",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "cash xlsx export is valid",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "cash pdf export is valid",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Report personal",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Paginated personal",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "personal csv export is valid",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "personal xlsx export is valid",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "personal pdf export is valid",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Report verification",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Paginated verification",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "verification csv export is valid",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "verification xlsx export is valid",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "verification pdf export is valid",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Report rejected",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Paginated rejected",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "rejected csv export is valid",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "rejected xlsx export is valid",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "rejected pdf export is valid",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Report collector",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Paginated collector",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "collector csv export is valid",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "collector xlsx export is valid",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "collector pdf export is valid",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Report unsettled",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Paginated unsettled",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "unsettled csv export is valid",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "unsettled xlsx export is valid",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "unsettled pdf export is valid",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Report followup",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Paginated followup",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "followup csv export is valid",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "followup xlsx export is valid",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "followup pdf export is valid",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Report promises",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Paginated promises",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "promises csv export is valid",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "promises xlsx export is valid",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "promises pdf export is valid",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Report cancelled",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Paginated cancelled",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "cancelled csv export is valid",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "cancelled xlsx export is valid",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "cancelled pdf export is valid",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Live intelligence",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "INR billed matches SQL ledger",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "INR collected matches SQL ledger",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "INR credits matches SQL ledger",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "INR pending matches SQL ledger",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "INR aging reconciles to outstanding",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "INR monthly generated reconciles",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "INR National generated rollup",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "INR National collected rollup",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "INR Region generated rollup",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "INR Region collected rollup",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "INR District generated rollup",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "INR District collected rollup",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "INR Zone generated rollup",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "INR Zone collected rollup",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "INR Club generated rollup",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "INR Club collected rollup",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "USD billed matches SQL ledger",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "USD collected matches SQL ledger",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "USD credits matches SQL ledger",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "USD pending matches SQL ledger",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "USD aging reconciles to outstanding",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "USD monthly generated reconciles",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "USD National generated rollup",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "USD National collected rollup",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "USD Region generated rollup",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "USD Region collected rollup",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "USD District generated rollup",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "USD District collected rollup",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "USD Zone generated rollup",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "USD Zone collected rollup",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "USD Club generated rollup",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "USD Club collected rollup",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Currencies are separate",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Intelligence contains no private contact fields",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Invalid intelligence filter rejected ?from=2026-12-31&to=2026-01-01",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Invalid intelligence filter rejected ?currency=TOOLONG",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Invalid intelligence filter rejected ?search=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Unknown scope denied /intelligence",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Unknown scope denied /members",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Unknown scope denied /renewals",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Unknown scope denied /collections",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Unknown scope denied /adjustments",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Collection source All",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Collection page bounded All",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Collection source Gateway",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Collection page bounded Gateway",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Source filter Gateway",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Collection source Manual",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Collection page bounded Manual",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Source filter Manual",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Collection source Unallocated",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Collection page bounded Unallocated",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Collection source Settled",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Collection page bounded Settled",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Collection source Failed",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Collection page bounded Failed",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Collection source Refunded",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Collection page bounded Refunded",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "/members csv download",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "/members xlsx download",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "/members pdf download",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "/collections csv download",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "/collections xlsx download",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "/collections pdf download",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "/adjustments csv download",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "/adjustments xlsx download",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "/adjustments pdf download",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Renewals 7 days",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Renewal rows limited 7",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Renewals 30 days",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Renewal rows limited 30",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Renewals 60 days",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Renewal rows limited 60",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Renewals 90 days",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Renewal rows limited 90",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Invalid renewal horizon",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Renewal status expired",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Renewal status completed",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Member balances",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Member aggregate rows bounded",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Complete member ledger",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Ledger membership matches",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Ledger balance identity INR",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Member statement csv",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Member statement xlsx",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Member statement pdf",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Club president signs in",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "President cannot read other club /intelligence",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "President cannot read other club /members",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "President cannot read other club /renewals",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "President cannot read other club /collections",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "President cannot read other club /adjustments",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Foreign member ledger denied",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Foreign member statement denied",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Member signs in",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Member cannot use organizational /intelligence",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Member cannot use organizational /members",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Member cannot use organizational /renewals",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Member cannot use organizational /collections",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Member cannot use organizational /adjustments",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Member own finances preserved",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Anonymous denied /intelligence",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Anonymous denied /members",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Anonymous denied /renewals",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Anonymous denied /collections",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Anonymous denied /adjustments",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Existing configured plans reused",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Hierarchy generation preview",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Preview has eligible members",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Preview only emits configured club members",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Generation requires selected plans",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Null plan list rejected",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Unknown plan denied",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Foreign plan generation denied",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "New assessment candidates available",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Duplicate reviewed rows rejected",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Stale plan version rejected",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Generate reviewed assessments",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Each reviewed row generates one invoice",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Generation retry is repeat-safe",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "No duplicate invoices on retry",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Dues generation never renews membership",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Auditable discount credit",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Credit retry idempotency",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Credit reference reused",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Issued amount is immutable",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Credit changes only balance",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Over-credit rejected",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Empty bulk collection rejected",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Empty reminders rejected",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Null reminder template rejected",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Null generation rows rejected",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Member cannot generate dues",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Member cannot record bulk collections",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Member cannot queue organizational reminders",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Unauthorized credit posting blocked",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Financial journals remain balanced",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Post-adjustment intelligence",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "All current balance identities reconcile",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Aggregate queries complete under two seconds at QA scale",
+    "passed": true,
+    "detail": null
+  }
+]

@@ -33,7 +33,7 @@ public record ExportInput(
     string? Industry = null,
     string? Expertise = null,
     string? Office = null,
-    Guid? RegionId = null
+    Guid? RegionId = null, Guid? DistrictId = null, Guid? ZoneId = null, string? MembershipType = null, DateOnly? JoinedFrom = null, DateOnly? JoinedTo = null, DateOnly? RenewalFrom = null, DateOnly? RenewalTo = null, string Sort = "number", Guid? NationalId=null,string? Country=null,string? State=null
 );
 
 public static class MembershipImport
@@ -514,6 +514,7 @@ public static class MembershipImport
             "number",
             "name",
             "club",
+            "region", "district", "zone", "offices", "updatedAt", "renewalStatus",
             "category",
             "status",
             "city",
@@ -545,26 +546,33 @@ public static class MembershipImport
             r.Profession,
             r.Industry,
             r.Expertise,
-            r.Office
+            r.Office, w
         );
         q = await RegionalDirectory.Filter(s, w, q, r.RegionId);
+        q = await MembershipPresentation.Filter(s,w,q,r.DistrictId,r.ZoneId,r.MembershipType,r.JoinedFrom,r.JoinedTo,r.RenewalFrom,r.RenewalTo,r.NationalId,r.Country,r.State);
         if (r.SelectedIds != null)
             q = q.Where(x => r.SelectedIds.Contains(x.Id));
         Check(await q.CountAsync() <= 10000, "Narrow the filters to 10,000 memberships or fewer.");
         var grants = await s.Access.Grants(w);
         var rows = await s.Rows(
-                q.OrderBy(x => x.Number),
+                MembershipPresentation.Sort(q,r.Sort).ThenBy(x=>x.Id),
                 true,
                 grants.Contains("members.contacts.view"),
                 true,
                 w.UserId
             )
             .ToListAsync();
+        var places=await RegionalDirectory.Places(s,w.TenantId,rows.Select(r=>r.ClubId).Distinct().ToArray());
+        var people=rows.Select(r=>r.PersonId).Distinct().ToArray();
+        var offices=await GovernanceService.Current(s.Db).Where(o=>o.TenantId==w.TenantId&&people.Contains(o.PersonId)&&s.Access.Visible(w).Any(v=>v.Id==o.OrgId)).Select(o=>new{o.PersonId,o.PositionTitle}).ToListAsync();
         var data = rows.Select(x => new Dictionary<string, string>
             {
                 { "number", x.Number },
                 { "name", x.Name },
                 { "club", x.Club },
+                { "region",places[x.ClubId].Region }, { "district",places[x.ClubId].District }, { "zone",places[x.ClubId].Zone },
+                { "offices",string.Join(", ",offices.Where(o=>o.PersonId==x.PersonId).Select(o=>o.PositionTitle).Distinct()) },
+                { "updatedAt",x.UpdatedAt.ToString("yyyy-MM-dd") }, { "renewalStatus",x.RenewalStatus },
                 { "category", x.Category },
                 { "status", x.Status },
                 { "city", x.City },

@@ -883,6 +883,7 @@ public class GovernanceService(
         var u = await A.User();
         var c = await Db.Committees.SingleOrDefaultAsync(x => x.Id == id);
         Check(c != null, "Committee not found.", 404);
+        Check(A.BoundTenant == null || A.BoundTenant == c.TenantId, "Committee is outside this domain's organization.", 404);
         var session = await A.Session();
         var w = await Db.Assignments.SingleOrDefaultAsync(x =>
             x.Id == session.WorkspaceId && x.UserId == u.Id
@@ -913,7 +914,7 @@ public class GovernanceService(
                     && x.StartsAt <= DateTimeOffset.UtcNow
                     && x.EndsAt > DateTimeOffset.UtcNow
                     && Db.Persons.Any(p => p.Id == x.PersonId && p.UserId == u.Id)
-                    && (!manage || Db.CommitteeRoles.Any(r => r.Id == x.RoleId && r.CanManage))
+                    && Db.CommitteeRoles.Any(r => r.Id == x.RoleId && r.Active && (!manage || r.CanManage))
                 ),
             "Committee outside authorized scope.",
             404

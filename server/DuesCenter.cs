@@ -33,9 +33,10 @@ public record DuesCollectionInput(Guid InvoiceId, decimal Amount, DateOnly Date,
     string AccountHolder, string Destination, string Evidence, string Notes, Guid RequestKey);
 public record DuesCollectionReview(bool Approve, string Note);
 
-public static class DuesCenter
+public static partial class DuesCenter
 {
     public const string View = "finance.dues.reports", Collect = "finance.dues.collect";
+    public static readonly string[] CollectionMethods = ["Cash", "BankTransfer", "UPI", "Cheque", "PersonalAccount"];
     public static readonly string[] Purposes = ["ClubDues", "AssociationDues", "DistrictDues", "RegionalDues", "ZonalDues", "NationalDues", "InternationalDues", "JoiningFee", "Renewal"];
     public static readonly string[][] Reports =
     [
@@ -47,6 +48,8 @@ public static class DuesCenter
         ["collection-month", "Monthly verified collections"], ["cash", "Cash collection register"],
         ["personal", "Personal-account collection register"], ["verification", "Pending collection verification"],
         ["rejected", "Rejected collections"], ["collector", "Collector performance"],
+        ["unsettled", "Verified collections awaiting settlement"], ["followup", "Member follow-up register"],
+        ["promises", "Payment promises due"], ["cancelled", "Cancelled collection entries"],
     ];
     static IQueryable<FinanceInvoice> Invoices(Db db, Access a, Assignment w) => db.FinanceInvoices.Where(i =>
         i.TenantId == w.TenantId && i.State == "Issued" && i.MembershipId != null && Purposes.Contains(i.Purpose)
@@ -60,22 +63,26 @@ public static class DuesCenter
     public static void MapDuesCenter(this RouteGroupBuilder root)
     {
         var api = root.MapGroup("/finance/dues-center");
-        api.MapGet("/options", async (Access a, CommunicationService comm) =>
+        api.MapGet("/options", async (Access a, CommunicationService comm, IHostEnvironment env) =>
         {
             var w = await Workspace(a, comm, View);
-            return new { reports = Reports.Select(r => new { id = r[0], name = r[1] }),
+            return new { collectionMethods = CollectionMethods, mockData = env.IsDevelopment() && a.Db.Database.GetDbConnection().Database.StartsWith("clubs_impact_dues_upgrade_"), reports = Reports.Select(r => new { id = r[0], name = r[1] }),
                 organizations = await a.Visible(w).Where(o => o.Status == "Active").OrderBy(o => o.Name)
                     .Select(o => new { o.Id, o.Name, o.ParentId, type = a.Db.Levels.Where(l => l.Id == o.LevelId).Select(l => l.Name).First() }).ToListAsync(),
+                plans = await a.Db.DuesPlans.Where(p=>p.TenantId==w.TenantId && a.Visible(w).Any(o=>o.Id==p.BillingOrgId)).OrderBy(p=>p.Name).Take(500).Select(p=>new {p.Id,p.Name,p.EntityId,p.BillingOrgId,p.CategoryId,p.Purpose,p.Months,p.GraceDays,p.EffectiveFrom,p.EffectiveTo,p.Prorate,p.Once,p.Version,currency=a.Db.FinanceEntitys.Where(e=>e.Id==p.EntityId).Select(e=>e.Currency).First()}).ToListAsync(),
+                canGenerate = (await a.Grants(w)).Contains("finance.manage"), canPost = (await a.Grants(w)).Contains("finance.post"),
                 canCollect = (await a.Grants(w)).Contains(Collect), canReview = (await a.Grants(w)).Contains("finance.reconcile") };
         });
-        api.MapGet("/invoices", async (Access a, CommunicationService comm, string? search, Guid? clubId, int page = 1) =>
+        api.MapGet("/invoices", async (Access a, CommunicationService comm, string? search, Guid? clubId, int page = 1, Guid? orgId = null) =>
         {
             var w = await Workspace(a, comm, Collect);
             var q = Invoices(a.Db, a, w).Where(i => i.Total > i.Paid + i.Credited);
+            if(orgId!=null){Check(await a.Visible(w).AnyAsync(o=>o.Id==orgId),"Organization outside your scope.",404);q=q.Where(i=>a.Db.Memberships.Any(m=>m.Id==i.MembershipId&&a.Tree(w.TenantId,orgId.Value).Any(o=>o.Id==m.ClubId)));}
             if (clubId != null) q = q.Where(i => a.Db.Memberships.Any(m => m.Id == i.MembershipId && m.ClubId == clubId));
             if (!string.IsNullOrWhiteSpace(search)) q = q.Where(i => EF.Functions.ILike(i.Customer, "%" + search + "%") || EF.Functions.ILike(i.Number, "%" + search + "%"));
             return new { total = await q.CountAsync(), items = await q.OrderBy(i => i.DueOn).ThenBy(i => i.Id).Skip((Math.Clamp(page, 1, 10000) - 1) * 50).Take(50)
                 .Select(i => new { i.Id, i.Number, i.Customer, i.Currency, i.DueOn, outstanding = i.Total - i.Paid - i.Credited,
+                    decimals = a.Db.FinanceEntitys.Where(e => e.Id == i.EntityId).Select(e => e.Decimals).First(),
                     entity = a.Db.FinanceEntitys.Where(e => e.Id == i.EntityId).Select(e => e.Name).First(),
                     club = a.Db.Memberships.Where(m => m.Id == i.MembershipId).Select(m => m.Club.Name).First(),
                     pendingVerification = a.Db.DuesCollections.Where(c => c.InvoiceId == i.Id && c.Status == "Submitted").Sum(c => c.Amount) }).ToListAsync() };
@@ -83,12 +90,19 @@ public static class DuesCenter
         api.MapPost("/collections", Submit);
         api.MapPost("/collections/{id:guid}/review", Review);
         api.MapGet("/reports/{kind}", Report);
+        MapOperations(api);
+        MapIntelligence(api);
+        MapGeneration(api);
+        MapWorkflows(api);
+        MapRegisters(api);
+        MapMembers(api);
+        MapClubRemittances(api);
     }
     static async Task<IResult> Submit(DuesCollectionInput input, Access a, CommunicationService comm, FinanceService finance)
     {
         var w = await Workspace(a, comm, Collect); var db = a.Db;
         Check(input.RequestKey != Guid.Empty && input.Amount > 0 && input.Date <= FinanceService.Today
-            && new[] { "Cash", "PersonalAccount", "BankTransfer", "UPI" }.Contains(input.Method)
+            && CollectionMethods.Contains(input.Method)
             && !string.IsNullOrWhiteSpace(input.Reference) && input.Reference.Length <= 150
             && (input.AccountHolder?.Length ?? 0) <= 200 && (input.Destination?.Length ?? 0) <= 200
             && (input.Notes?.Length ?? 0) <= 2000 && (input.Evidence?.Length ?? 0) <= 2000, "Enter a valid amount, date, method, and receipt/transaction reference.");
@@ -116,7 +130,7 @@ public static class DuesCenter
         var reserved = await db.DuesCollections.Where(c => c.InvoiceId == invoice.Id && c.Status == "Submitted").SumAsync(c => c.Amount);
         Check(input.Amount <= invoice.Outstanding - reserved, "Amount exceeds the dues remaining after pending collections.", 409);
         var reference = input.Reference.Trim().ToUpperInvariant();
-        Check(!await db.DuesCollections.AnyAsync(c => c.TenantId == w.TenantId && c.ClubId == membership.ClubId && c.Reference == reference)
+        Check(!await db.DuesCollections.AnyAsync(c => c.TenantId == w.TenantId && c.ClubId == membership.ClubId && c.Reference == reference && (c.Status == "Submitted" || c.Status == "Approved"))
             && !await db.FinancePayments.AnyAsync(p => p.EntityId == invoice.EntityId && p.Reference.ToUpper() == reference), "Receipt/transaction reference already recorded.", 409);
         var collection = new DuesCollection { TenantId = w.TenantId, ClubId = membership.ClubId, InvoiceId = invoice.Id,
             RecorderId = w.UserId, RequestKey = input.RequestKey, Amount = input.Amount, Currency = invoice.Currency,
@@ -156,13 +170,27 @@ public static class DuesCenter
     }
 
     static async Task<IResult> Report(string kind, Access a, CommunicationService comm, Guid? orgId, DateOnly? from, DateOnly? to, string? currency,
-        string? format, int page = 1)
+        string? format, string? search, string? age, string? sort, string? balance, int page = 1, Guid? planId = null, Guid? membershipId = null)
     {
         var w = await Workspace(a, comm, View); var db = a.Db;
         Check(Reports.Any(r => r[0] == kind), "Unknown dues report.", 404);
+        Check(new[] { "", "billed", "collected", "pending", "overdue", "collectionRate" }.Contains(sort ?? ""), "Invalid report sort.");
+        Check(new[] { "", "outstanding", "unpaid" }.Contains(balance ?? ""), "Invalid balance filter.");
         var start = from ?? DateOnly.MinValue; var end = to ?? FinanceService.Today;
         Check(start <= end, "From date must be before the through date.");
         var iq = Invoices(db, a, w);
+        if(planId!=null)iq=iq.Where(i=>i.PlanId==planId);
+        if(membershipId!=null)iq=iq.Where(i=>i.MembershipId==membershipId);
+        Check((search?.Length ?? 0) <= 100 && new[] { "", "current", "1-30", "31-60", "61-90", "90+" }.Contains(age ?? ""), "Invalid search or ageing filter.");
+        if (!string.IsNullOrWhiteSpace(search))
+            iq = iq.Where(i => EF.Functions.ILike(i.Customer, "%" + search.Trim() + "%") || EF.Functions.ILike(i.Number, "%" + search.Trim() + "%")
+                || db.Memberships.Any(m => m.Id == i.MembershipId && (EF.Functions.ILike(m.Number, "%" + search.Trim() + "%") || EF.Functions.ILike(m.Club.Name, "%" + search.Trim() + "%"))));
+        var now = FinanceService.Today;
+        if (age == "current") iq = iq.Where(i => i.DueOn >= now && i.Total > i.Paid + i.Credited);
+        if (age == "1-30") iq = iq.Where(i => i.DueOn < now && i.DueOn >= now.AddDays(-30) && i.Total > i.Paid + i.Credited);
+        if (age == "31-60") iq = iq.Where(i => i.DueOn < now.AddDays(-30) && i.DueOn >= now.AddDays(-60) && i.Total > i.Paid + i.Credited);
+        if (age == "61-90") iq = iq.Where(i => i.DueOn < now.AddDays(-60) && i.DueOn >= now.AddDays(-90) && i.Total > i.Paid + i.Credited);
+        if (age == "90+") iq = iq.Where(i => i.DueOn < now.AddDays(-90) && i.Total > i.Paid + i.Credited);
         if (orgId != null)
         {
             Check(await a.Visible(w).AnyAsync(o => o.Id == orgId), "Organization is outside your scope.", 404);
@@ -189,10 +217,15 @@ public static class DuesCenter
             return Guid.Empty;
         }
         var invoices = all.Where(i => i.Date >= start && i.Date <= end).ToList();
-        var claims = await db.DuesCollections.Where(c => c.TenantId == w.TenantId && ids.Contains(c.InvoiceId) && c.Date >= start && c.Date <= end).OrderByDescending(c => c.CreatedAt).ThenBy(c => c.Id).AsNoTracking().ToListAsync();
+        var allClaims = await db.DuesCollections.Where(c => c.TenantId == w.TenantId && ids.Contains(c.InvoiceId)).OrderByDescending(c => c.CreatedAt).ThenByDescending(c => c.Id).AsNoTracking().ToListAsync();
+        var claims = allClaims.Where(c => c.Date >= start && c.Date <= end).ToList();
+        var awaiting = allClaims.Where(c => c.Status == "Submitted").GroupBy(c => c.InvoiceId).ToDictionary(g => g.Key, g => g.Sum(c => c.Amount));
+        var followups = await db.DuesFollowups.Where(f => f.TenantId == w.TenantId && ids.Contains(f.InvoiceId)).OrderByDescending(f => f.CreatedAt).ThenByDescending(f => f.Id).ToListAsync();
+        var latestFollowup = followups.DistinctBy(f => f.InvoiceId).ToDictionary(f => f.InvoiceId);
         var allocated = await (from allocation in db.FinanceAllocations join payment in db.FinancePayments on allocation.PaymentId equals payment.Id
             where ids.Contains(allocation.InvoiceId) && payment.Status == "Verified" && payment.Date >= start && payment.Date <= end
-            select new { allocation.InvoiceId, allocation.Amount, payment.Date, payment.Currency }).ToListAsync();
+            select new { allocation.InvoiceId, allocation.Amount, payment.Date, payment.Currency, payment.SettlementStatus, payment.ReceiptNumber, payment.Reference,
+                Method = db.DuesCollections.Where(c => c.PaymentId == payment.Id && c.Status == "Approved").Select(c => c.Method).FirstOrDefault() ?? payment.Method }).ToListAsync();
         var invoiceById = all.ToDictionary(i => i.Id);
         var entityIds = all.Select(i => i.EntityId).Distinct().ToArray();
         var entities = await db.FinanceEntitys.Where(e => entityIds.Contains(e.Id) && e.TenantId == w.TenantId).ToDictionaryAsync(e => e.Id, e => e.Name);
@@ -203,18 +236,30 @@ public static class DuesCenter
         var users = await db.Users.Where(u => claims.Select(c => c.RecorderId).Contains(u.Id)).Select(u => new { u.Id, u.Name }).ToDictionaryAsync(u => u.Id, u => u.Name);
         Dictionary<string, object?> InvoiceRow(FinanceInvoice i) => new()
         {
-            ["invoiceId"] = i.Id, ["invoice"] = i.Number, ["member"] = i.Customer, ["memberId"] = members[i.MembershipId!.Value].Number,
+            ["membershipId"] = i.MembershipId, ["invoiceId"] = i.Id, ["invoice"] = i.Number, ["member"] = i.Customer, ["memberId"] = members[i.MembershipId!.Value].Number,
             ["entity"] = entities.GetValueOrDefault(i.EntityId, "Unknown"),
             ["club"] = Level(i, "Club"), ["region"] = Level(i, "Region"), ["district"] = Level(i, "District"), ["zone"] = Level(i, "Zone"),
             ["currency"] = i.Currency, ["billed"] = i.Total, ["collected"] = i.Paid, ["credits"] = i.Credited, ["pending"] = i.Outstanding,
             ["dueOn"] = i.DueOn, ["status"] = i.PaymentStatus, ["purpose"] = i.Purpose,
-            ["pendingVerification"] = claims.Where(c => c.InvoiceId == i.Id && c.Status == "Submitted").Sum(c => c.Amount),
+            ["pendingVerification"] = awaiting.GetValueOrDefault(i.Id),
+            ["availableToCollect"] = Math.Max(0, i.Outstanding - awaiting.GetValueOrDefault(i.Id)),
+            ["daysOverdue"] = i.Outstanding > 0 ? Math.Max(0, now.DayNumber - i.DueOn.DayNumber) : 0,
+            ["followUpOutcome"] = latestFollowup.GetValueOrDefault(i.Id)?.Outcome ?? "Not contacted",
+            ["nextFollowUp"] = latestFollowup.GetValueOrDefault(i.Id)?.NextFollowUp,
+            ["promisedOn"] = latestFollowup.GetValueOrDefault(i.Id)?.PromisedOn,
+            ["promisedAmount"] = latestFollowup.GetValueOrDefault(i.Id)?.PromisedAmount,
         };
         List<Dictionary<string, object?>> Aggregate(IEnumerable<FinanceInvoice> source, Func<FinanceInvoice, string> label, Func<FinanceInvoice, string>? identity = null) => source
             .GroupBy(i => new { Name = label(i), Identity = identity?.Invoke(i) ?? label(i), i.Currency }).OrderBy(g => g.Key.Name).ThenBy(g => g.Key.Currency)
             .Select(g => new Dictionary<string, object?> { ["group"] = g.Key.Name, ["groupId"] = g.Key.Identity, ["currency"] = g.Key.Currency,
                 ["invoices"] = g.Count(), ["billed"] = g.Sum(i => i.Total), ["collected"] = g.Sum(i => i.Paid), ["credits"] = g.Sum(i => i.Credited),
-                ["pending"] = g.Sum(i => i.Outstanding), ["overdue"] = g.Where(i => i.DueOn < FinanceService.Today).Sum(i => i.Outstanding) }).ToList();
+                ["pending"] = g.Sum(i => i.Outstanding), ["overdue"] = g.Where(i => i.DueOn < FinanceService.Today).Sum(i => i.Outstanding),
+                ["pendingVerification"] = g.Sum(i => awaiting.GetValueOrDefault(i.Id)),
+                ["availableToCollect"] = g.Sum(i => Math.Max(0, i.Outstanding - awaiting.GetValueOrDefault(i.Id))),
+                ["members"] = g.Select(i => i.PersonId).Distinct().Count(),
+                ["overdueInvoices"] = g.Count(i => i.Outstanding > 0 && i.DueOn < now),
+                ["dueToday"] = g.Where(i => i.Outstanding > 0 && i.DueOn == now).Sum(i => i.Outstanding),
+                ["collectionRate"] = g.Sum(i => i.Total - i.Credited) <= 0 ? 100 : Math.Round(100 * g.Sum(i => i.Paid) / g.Sum(i => i.Total - i.Credited), 1) }).ToList();
         var rows = kind switch
         {
             "overview" => Aggregate(invoices, _ => "Impact dues"),
@@ -224,12 +269,19 @@ public static class DuesCenter
             "ageing" => Aggregate(invoices.Where(i => i.Outstanding > 0), i => i.DueOn >= FinanceService.Today ? "Not yet overdue" : FinanceService.Today.DayNumber - i.DueOn.DayNumber <= 30 ? "1–30 days" : FinanceService.Today.DayNumber - i.DueOn.DayNumber <= 60 ? "31–60 days" : FinanceService.Today.DayNumber - i.DueOn.DayNumber <= 90 ? "61–90 days" : "90+ days"),
             "collection-month" => allocated.GroupBy(p => new { Month = p.Date.ToString("yyyy-MM"), p.Currency }).OrderBy(g => g.Key.Month)
                 .Select(g => new Dictionary<string, object?> { ["month"] = g.Key.Month, ["currency"] = g.Key.Currency, ["collections"] = g.Count(), ["collected"] = g.Sum(p => p.Amount) }).ToList(),
+            "unsettled" => allocated.Where(p => p.SettlementStatus != "Settled").Select(p => new Dictionary<string, object?> {
+                ["invoiceId"] = p.InvoiceId, ["invoice"] = invoiceById[p.InvoiceId].Number, ["member"] = invoiceById[p.InvoiceId].Customer,
+                ["club"] = Level(invoiceById[p.InvoiceId], "Club"), ["currency"] = p.Currency, ["amount"] = p.Amount,
+                ["receipt"] = p.ReceiptNumber, ["reference"] = p.Reference, ["method"] = p.Method, ["date"] = p.Date, ["status"] = p.SettlementStatus }).ToList(),
+            "followup" => invoices.Where(i => latestFollowup.ContainsKey(i.Id)).Select(i => { var row = InvoiceRow(i); row["followUpNotes"] = latestFollowup[i.Id].Notes; return row; }).ToList(),
+            "promises" => invoices.Where(i => i.Outstanding > 0 && latestFollowup.TryGetValue(i.Id, out var f) && f.Outcome == "PromiseToPay" && f.PromisedOn <= now).Select(InvoiceRow).ToList(),
             "collector" => claims.GroupBy(c => new { c.RecorderId, c.Currency }).Select(g => new Dictionary<string, object?> {
                 ["collector"] = users.GetValueOrDefault(g.Key.RecorderId, "Unknown"), ["collectorId"] = g.Key.RecorderId, ["currency"] = g.Key.Currency,
                 ["submitted"] = g.Sum(c => c.Amount), ["approved"] = g.Where(c => c.Status == "Approved").Sum(c => c.Amount),
-                ["pendingVerification"] = g.Where(c => c.Status == "Submitted").Sum(c => c.Amount), ["rejected"] = g.Where(c => c.Status == "Rejected").Sum(c => c.Amount) }).ToList(),
-            "cash" or "personal" or "verification" or "rejected" => claims.Where(c => kind == "cash" ? c.Method == "Cash" : kind == "personal" ? c.Method == "PersonalAccount" : kind == "verification" ? c.Status == "Submitted" : c.Status == "Rejected")
-                .Select(c => new Dictionary<string, object?> { ["collectionId"] = c.Id, ["invoice"] = invoiceById[c.InvoiceId].Number, ["member"] = invoiceById[c.InvoiceId].Customer,
+                ["pendingVerification"] = g.Where(c => c.Status == "Submitted").Sum(c => c.Amount), ["rejected"] = g.Where(c => c.Status == "Rejected").Sum(c => c.Amount),
+                ["cancelled"] = g.Where(c => c.Status == "Cancelled").Sum(c => c.Amount) }).ToList(),
+            "cash" or "personal" or "verification" or "rejected" or "cancelled" => claims.Where(c => kind == "cash" ? c.Method == "Cash" : kind == "personal" ? c.Method == "PersonalAccount" : kind == "verification" ? c.Status == "Submitted" : kind == "cancelled" ? c.Status == "Cancelled" : c.Status == "Rejected")
+                .Select(c => new Dictionary<string, object?> { ["collectionId"] = c.Id, ["invoiceId"] = c.InvoiceId, ["invoice"] = invoiceById[c.InvoiceId].Number, ["member"] = invoiceById[c.InvoiceId].Customer,
                     ["entity"] = entities.GetValueOrDefault(invoiceById[c.InvoiceId].EntityId, "Unknown"),
                     ["club"] = Level(invoiceById[c.InvoiceId], "Club"), ["region"] = Level(invoiceById[c.InvoiceId], "Region"), ["currency"] = c.Currency, ["amount"] = c.Amount,
                     ["date"] = c.Date, ["method"] = c.Method, ["reference"] = c.Reference, ["accountHolder"] = c.AccountHolder, ["destination"] = c.Destination,
@@ -237,16 +289,29 @@ public static class DuesCenter
                     ["reviewNote"] = c.ReviewNote, ["canReview"] = c.Status == "Submitted" && c.RecorderId != w.UserId && canReview
                         && (platformAdmin || reviewableEntities.Contains(invoiceById[c.InvoiceId].EntityId)) }).ToList(),
             _ => invoices.Where(i => kind == "member" || kind == "pending" && i.Outstanding > 0 || kind == "overdue" && i.Outstanding > 0 && i.DueOn < FinanceService.Today
-                || kind == "unpaid" && i.Paid == 0 && i.Outstanding > 0 || kind == "partial" && i.Paid > 0 && i.Outstanding > 0 || kind == "paid" && i.Outstanding <= 0).Select(InvoiceRow).ToList(),
+                || kind == "unpaid" && i.Paid == 0 && i.Outstanding > 0 || kind == "partial" && i.Paid > 0 && i.Outstanding > 0 || kind == "paid" && i.Outstanding <= 0)
+                .OrderByDescending(i => i.Outstanding > 0 && i.DueOn < now).ThenBy(i => i.DueOn).ThenBy(i => i.Id).Select(InvoiceRow).ToList(),
         };
+        if (balance == "outstanding") rows = rows.Where(r => Convert.ToDecimal(r.GetValueOrDefault("pending") ?? 0) > 0).ToList();
+        if (balance == "unpaid") rows = rows.Where(r => Convert.ToDecimal(r.GetValueOrDefault("pending") ?? 0) > 0 && Convert.ToDecimal(r.GetValueOrDefault("collected") ?? 0) == 0).ToList();
+        if (!string.IsNullOrEmpty(sort))
+            rows = sort == "collectionRate"
+                ? rows.OrderBy(r => Convert.ToString(r.GetValueOrDefault("currency"))).ThenBy(r => Convert.ToDecimal(r.GetValueOrDefault(sort) ?? 0)).ThenBy(r => Convert.ToString(r.GetValueOrDefault("group"))).ToList()
+                : rows.OrderBy(r => Convert.ToString(r.GetValueOrDefault("currency"))).ThenByDescending(r => Convert.ToDecimal(r.GetValueOrDefault(sort) ?? 0)).ThenBy(r => Convert.ToString(r.GetValueOrDefault("group"))).ToList();
+        if (format == "pdf" || format == "xlsx") {
+            var headers=rows.SelectMany(r=>r.Keys).Distinct().Where(k=>k!="canReview").ToArray();
+            var values=rows.Select(r=>headers.Select(k=>Convert.ToString(r.GetValueOrDefault(k),CultureInfo.InvariantCulture)??"").ToArray()).ToList();
+            if(format=="xlsx")return Results.File(FinanceWorkbook.Build(headers,values),"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet","impact-dues-"+kind+".xlsx");
+            return Results.File(FinancePdf.Build("Impact dues / "+kind,new[]{start+" to "+end,string.Join(" | ",headers)}.Concat(values.Select(r=>string.Join(" | ",r))).ToArray()),"application/pdf","impact-dues-"+kind+".pdf");
+        }
         if (format == "csv")
         {
-            string Cell(object? value) { var s = Convert.ToString(value, CultureInfo.InvariantCulture) ?? ""; if (s.Length > 0 && "=+-@\t\r".Contains(s[0])) s = "'" + s; return "\"" + s.Replace("\"", "\"\"") + "\""; }
+            string Cell(object? value) { var s = Convert.ToString(value, CultureInfo.InvariantCulture) ?? ""; if ((s.Length > 0 && "=+-@\t\r\n".Contains(s[0])) || (s.TrimStart().Length > 0 && "=+-@".Contains(s.TrimStart()[0]))) s = "'" + s; return "\"" + s.Replace("\"", "\"\"") + "\""; }
             var columns = rows.SelectMany(r => r.Keys).Distinct().Where(k => k != "canReview").ToArray();
             var csv = string.Join(",", columns.Select(Cell)) + "\r\n" + string.Join("\r\n", rows.Select(r => string.Join(",", columns.Select(k => Cell(r.GetValueOrDefault(k))))));
             return Results.File(Encoding.UTF8.GetPreamble().Concat(Encoding.UTF8.GetBytes(csv)).ToArray(), "text/csv", "impact-dues-" + kind + ".csv");
         }
-        Check(string.IsNullOrEmpty(format), "Choose CSV export or the on-screen report.");
+        Check(string.IsNullOrEmpty(format), "Choose CSV, Excel, PDF or the on-screen report.");
         return Results.Ok(new { title = Reports.Single(r => r[0] == kind)[1], kind, from = start, to = end, total = rows.Count,
             page = Math.Clamp(page, 1, 10000), items = rows.Skip((Math.Clamp(page, 1, 10000) - 1) * 50).Take(50),
             summary = Aggregate(invoices, _ => "Total"),

@@ -795,6 +795,7 @@ public static partial class EventEndpoints
         string status = "",
         string venueType = "",
         string location = "",
+        string registrationStatus = "",
         Guid? after = null,
         bool mine = false,
         bool manage = false,
@@ -880,6 +881,7 @@ public static partial class EventEndpoints
                     r.EventId == e.Id && r.PersonId == person && r.Status != "Cancelled"
                 )
             );
+        if (registrationStatus != "") q = q.Where(e => person != null && s.Db.EventRegistrations.Any(r => r.EventId == e.Id && r.PersonId == person && r.Status == registrationStatus));
         if (typeId != null)
             q = q.Where(x => x.TypeId == typeId);
         if (orgId != null)
@@ -901,6 +903,18 @@ public static partial class EventEndpoints
             q = q.Where(x => x.VenueType == venueType);
         if (location != "")
             q = q.Where(x => EF.Functions.ILike(x.Venue, "%" + location + "%"));
+        var matchingIds = q.Select(e => e.Id);
+        var confirmedRecords = s.Db.EventRegistrations.Where(r => matchingIds.Contains(r.EventId) && r.Status == "Confirmed");
+        var confirmedCount = await confirmedRecords.CountAsync();
+        var attendedCount = await s.Db.EventCheckins.Where(c => matchingIds.Contains(c.EventId) && c.SessionId == null && !c.Voided).Select(c => c.RegistrationId).Distinct().CountAsync();
+        var summary = new {
+            upcoming = await q.CountAsync(e => e.StartsAt > DateTimeOffset.UtcNow && e.Publication == "Published" && e.Lifecycle != "Cancelled"),
+            openInvitations = await s.Db.EventInvitations.CountAsync(i => matchingIds.Contains(i.EventId) && i.Rsvp == "Awaiting Response" && i.ExpiresAt > DateTimeOffset.UtcNow && i.PersonId == person && person != null),
+            confirmed = confirmedCount,
+            attendanceRate = confirmedCount == 0 ? (double?)null : Math.Round(100d * attendedCount / confirmedCount, 1),
+            hosts = await q.Select(e => e.OrgId).Distinct().CountAsync(),
+            programs = await q.CountAsync()
+        };
         if (after != null)
         {
             var cursor = await q.Where(x => x.Id == after)
@@ -931,6 +945,13 @@ public static partial class EventEndpoints
                 x.Lifecycle,
                 x.Capacity,
                 x.Visibility,
+                x.RegistrationEndsAt,
+                registrationWindow = EventService.Window(x),
+                organizer = s.Db.Orgs.Where(o => o.Id == x.OrgId).Select(o => o.Name).First(),
+                category = s.Db.EventTypes.Where(t => t.Id == x.TypeId).Select(t => t.Name).First(),
+                registered = s.Db.EventRegistrations.Count(r => r.EventId == x.Id && r.Status == "Confirmed"),
+                myStatus = s.Db.EventRegistrations.Where(r => r.EventId == x.Id && r.PersonId == person && person != null).Select(r => r.Status).FirstOrDefault(),
+                coverId = s.Db.GovernanceDocuments.Where(d => d.TenantId == x.TenantId && d.EventId == x.Id && d.Kind == "EventBanner" && d.Status == "Available" && (d.RetainUntil == null || d.RetainUntil > DateTimeOffset.UtcNow)).Select(d => (Guid?)d.Id).FirstOrDefault(),
             })
             .ToListAsync();
         var more = items.Count > Math.Clamp(size, 1, 100);
@@ -939,6 +960,7 @@ public static partial class EventEndpoints
         return new
         {
             items,
+            summary,
             next = more ? items.LastOrDefault()?.Id : (Guid?)null,
             from = start,
             to = end,

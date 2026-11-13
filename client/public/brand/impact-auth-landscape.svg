@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 1100" preserveAspectRatio="xMidYMid slice">
+<defs>
+<linearGradient id="sky" x2=".75" y2="1"><stop stop-color="#04162e"/><stop offset=".48" stop-color="#0d2a52"/><stop offset=".73" stop-color="#455071"/><stop offset=".87" stop-color="#e5b098"/><stop offset="1" stop-color="#284365"/></linearGradient>
+<radialGradient id="light"><stop stop-color="#fffad1"/><stop offset=".2" stop-color="#ffe1a0" stop-opacity=".9"/><stop offset=".55" stop-color="#f6be93" stop-opacity=".35"/><stop offset="1" stop-color="#e8b695" stop-opacity="0"/></radialGradient>
+<linearGradient id="veil"><stop stop-color="#031831" stop-opacity=".85"/><stop offset=".7" stop-color="#082246" stop-opacity=".2"/><stop offset="1" stop-color="#071c38" stop-opacity=".45"/></linearGradient>
+<linearGradient id="gold"><stop stop-color="#a96e19" stop-opacity="0"/><stop offset=".5" stop-color="#ffda87"/><stop offset="1" stop-color="#f8cb6b"/></linearGradient>
+<filter id="glow"><feGaussianBlur stdDeviation="16"/></filter>
+</defs>
+<path fill="url(#sky)" d="M0 0h900v1100H0z"/>
+<ellipse cx="827" cy="817" rx="340" ry="170" fill="url(#light)"/>
+<path d="M530 855 710 814 900 776" fill="none" stroke="#ffe6b6" stroke-width="13" opacity=".5" filter="url(#glow)"/>
+<circle cx="816" cy="819" r="15" fill="#fff8ce"/>
+<path d="m0 919 120-47 75 16 99-54 106 27 109-47 77 26 94-51 58 35 61-34 101 84v226H0z" fill="#67728b"/>
+<path d="m0 929 133-32 86 37 98-59 91 15 95-35 80 24 70-18 75-47 43 26 70-39 59 28v271H0z" fill="#3b5677"/>
+<path d="m0 948 125 33 100-41 85 17 77-29 139 28 89-43 89 5 82-39 114 11v210H0z" fill="#234465"/>
+<path d="m0 1037 124-39 122 29 100-33 103 21 101-53 83 12 72-28 195 31v123H0z" fill="#0c2c4c"/>
+<path d="m0 1050 98-15 100 34 92-20 120 21 106-35 82 15 99-45 203 39v56H0z" fill="#061b34"/>
+<path fill="url(#veil)" d="M0 0h900v1100H0z"/>
+<path d="M390 0H900V85C725 66 612 169 431 183 601 118 704 61 781 0" fill="#2e4b79" opacity=".35"/>
+<path d="M900-10C720 129 613 133 414 216" fill="none" stroke="url(#gold)" stroke-width="2.3"/>
+<path d="M898 356C721 463 686 541 499 591 708 549 790 480 900 434" fill="#3a5480" opacity=".16"/>
+<path d="M900 410C734 540 655 568 513 608" fill="none" stroke="url(#gold)" stroke-width="1" opacity=".5"/>
+<path d="M544 1100C668 1012 775 987 913 952" fill="none" stroke="url(#gold)" stroke-width="2"/>
+</svg>

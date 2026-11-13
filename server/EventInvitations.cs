@@ -206,6 +206,12 @@ public static partial class EventEndpoints
                         x.EventId,
                         x.Rsvp,
                         x.ExpiresAt,
+                        x.SentAt,
+                        x.Status,
+                        x.RespondedAt,
+                        startsAt = s.Db.Events.Where(e => e.Id == x.EventId).Select(e => e.StartsAt).First(),
+                        venue = s.Db.Events.Where(e => e.Id == x.EventId).Select(e => e.Venue).First(),
+                        organization = s.Db.Events.Where(e => e.Id == x.EventId).Join(s.Db.Orgs, e => e.OrgId, o => o.Id, (e,o) => o.Name).First(),
                         title = s
                             .Db.Events.Where(e => e.Id == x.EventId)
                             .Select(e => e.Title)

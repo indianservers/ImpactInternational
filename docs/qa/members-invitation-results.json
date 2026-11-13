@@ -1,0 +1,46 @@
+{
+  "total": 8,
+  "passed": 8,
+  "scenarios": [
+    {
+      "scenario": "Intended-recipient invitation created",
+      "passed": true,
+      "status": 200
+    },
+    {
+      "scenario": "Another account cannot accept intended invitation",
+      "passed": true,
+      "status": 403
+    },
+    {
+      "scenario": "Verified intended recipient accepts invitation",
+      "passed": true,
+      "status": 200
+    },
+    {
+      "scenario": "Same invitation cannot be consumed twice",
+      "passed": true,
+      "status": 409
+    },
+    {
+      "scenario": "Acceptance tracked using real usage count",
+      "passed": true,
+      "status": 200
+    },
+    {
+      "scenario": "expired invitation cannot be accepted",
+      "passed": true,
+      "status": 409
+    },
+    {
+      "scenario": "revoked invitation cannot be accepted",
+      "passed": true,
+      "status": 409
+    },
+    {
+      "scenario": "Oversized personal message rejected",
+      "passed": true,
+      "status": 400
+    }
+  ]
+}

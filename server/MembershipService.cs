@@ -11,7 +11,7 @@ public record AddressInput(
     string State,
     string City,
     string PostalCode,
-    string Address
+    string Address, string Type = "Residential", bool IsPrimary = false
 );
 
 public record PersonInput(
@@ -204,6 +204,8 @@ public class MembershipService(
         Check(new[] { r.SpouseName, r.EducationLevel, r.Qualification, r.Institution, r.EmploymentStatus }.All(v => v != null && v.Length <= 200), "Profile fields must be at most 200 characters.");
         Check(r.AdditionalInformation != null && r.AdditionalInformation.Length <= 2000, "Additional information must be at most 2000 characters.");
         Check(r.Anniversary == null || (r.Anniversary >= new DateOnly(1900, 1, 1) && r.Anniversary <= DateOnly.FromDateTime(DateTime.UtcNow) && (r.BirthDate == null || r.Anniversary >= r.BirthDate)), "Invalid marriage anniversary date.");
+        Check((r.Addresses??[]).Count(a=>a.IsPrimary)<=1,"Choose only one primary address.");
+        foreach(var address in r.Addresses??[]) Check(new[]{"Residential","Office","Other"}.Contains(address.Type),"Choose a supported address type.");
         foreach (var a in r.Addresses ?? [])
             Check(a.PostalCode != null && a.PostalCode.Length <= 20 && (a.Country.Trim().Equals("India", StringComparison.OrdinalIgnoreCase) == false || string.IsNullOrWhiteSpace(a.PostalCode) || System.Text.RegularExpressions.Regex.IsMatch(a.PostalCode, @"^[1-9][0-9]{5}$")), "Enter a valid six-digit Indian PIN code.");
 
@@ -270,8 +272,9 @@ public class MembershipService(
             })
             .ToList();
         p.Addresses = (r.Addresses ?? [])
-            .Select(x => new PersonAddress
+            .Select((x,index) => new PersonAddress
             {
+                Type = x.Type, IsPrimary = x.IsPrimary || (!(r.Addresses??[]).Any(a=>a.IsPrimary) && index==0),
                 Country = x.Country,
                 State = x.State,
                 City = x.City,
@@ -375,9 +378,10 @@ public class MembershipService(
             })
             .ToList();
         p.Addresses = (r.Addresses ?? [])
-            .Select(x => new PersonAddress
+            .Select((x,index) => new PersonAddress
             {
                 PersonId = p.Id,
+                Type = x.Type, IsPrimary = x.IsPrimary || (!(r.Addresses??[]).Any(a=>a.IsPrimary) && index==0),
                 Country = x.Country,
                 State = x.State,
                 City = x.City,
@@ -460,6 +464,7 @@ public class MembershipService(
                 }),
             Addresses = p.Addresses.Select(a => new
             {
+                a.Type, a.IsPrimary,
                 a.Country,
                 a.State,
                 a.City,
@@ -511,11 +516,11 @@ public class MembershipService(
             m.CategoryId,
             m.Category.Name,
             m.Status,
-            Db.PersonAddresses.Where(a => a.PersonId == m.PersonId)
+            Db.PersonAddresses.Where(a => a.PersonId == m.PersonId).OrderByDescending(a=>a.IsPrimary).ThenBy(a=>a.Id)
                 .Select(a => a.City)
                 .FirstOrDefault()
                 ?? "",
-            Db.PersonAddresses.Where(a => a.PersonId == m.PersonId)
+            Db.PersonAddresses.Where(a => a.PersonId == m.PersonId).OrderByDescending(a=>a.IsPrimary).ThenBy(a=>a.Id)
                 .Select(a => a.Country)
                 .FirstOrDefault()
                 ?? "",

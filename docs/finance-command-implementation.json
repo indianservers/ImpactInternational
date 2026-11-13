@@ -1,0 +1,281 @@
+{
+  "entry": "http://localhost:1234/app/finance",
+  "schemaChanges": [],
+  "design": "Navy finance navigation, purple charts and surfaces, gold primary actions, page-specific registers and visualizations",
+  "workspaces": [
+    {
+      "route": "/app/finance",
+      "page": "Finance Overview",
+      "records": [
+        "FinanceInvoices",
+        "FinancePayments",
+        "FinanceJournalLines"
+      ],
+      "apis": [
+        "GET /finance/entities/{entity}/command-metrics",
+        "GET /finance/entities/{entity}/command/{workspace}"
+      ]
+    },
+    {
+      "route": "/app/finance/transactions",
+      "page": "Transactions",
+      "records": [
+        "FinancePayments",
+        "FinanceReimbursements",
+        "FinanceExpenses",
+        "FinanceRefunds",
+        "FinanceCredits"
+      ],
+      "workflow": "Existing balanced journal and reversal controls"
+    },
+    {
+      "route": "/app/finance/receipts",
+      "page": "Receipts & Collections",
+      "records": [
+        "FinancePayments",
+        "FinanceAllocations",
+        "FinanceIntents",
+        "FinanceRefunds"
+      ],
+      "workflow": "Existing manual payment, independent verification, allocation, settlement, refund and receipt endpoints; new collection-history read endpoint"
+    },
+    {
+      "route": "/app/finance/invoices",
+      "page": "Invoices & Billing",
+      "records": [
+        "FinanceInvoices",
+        "FinanceInvoiceLines",
+        "FinanceCredits"
+      ],
+      "workflow": "Existing create/issue/credit/remind/checkout APIs; CSV/JSON draft import reuses POST invoices with stable keys"
+    },
+    {
+      "route": "/app/finance/payments",
+      "page": "Payments",
+      "records": [
+        "FinanceExpenses",
+        "FinanceReimbursements",
+        "FinanceAudits"
+      ],
+      "workflow": "Approved expenses, outgoing reimbursements, append-only scheduling metadata. Scheduling never posts money."
+    },
+    {
+      "route": "/app/finance/expenses",
+      "page": "Expenses",
+      "records": [
+        "FinanceExpenses",
+        "GovernanceRequests"
+      ],
+      "workflow": "Existing evidence-backed expense creation, governance approval and separate reimbursement APIs"
+    },
+    {
+      "route": "/app/finance/reconciliation",
+      "page": "Bank Reconciliation",
+      "records": [
+        "FinanceBankTransactions",
+        "FinancePayments",
+        "FinanceJournalLines",
+        "FinanceBanks"
+      ],
+      "workflow": "CSV/XLSX parse and preview; existing import and confirmed match endpoints. Suggestions use posted settlement amounts and never auto-match."
+    },
+    {
+      "route": "/app/finance/dues",
+      "page": "Dues & Membership",
+      "records": [
+        "Memberships",
+        "Orgs",
+        "FinanceInvoices",
+        "FinanceAllocations",
+        "DuesCollections"
+      ],
+      "workflow": "Connected existing Dues Management Center, reports, hierarchy drill-down, generation and collection workflows"
+    },
+    {
+      "route": "/app/finance/budgets",
+      "page": "Budgets & Allocation",
+      "records": [
+        "FinanceBudgets",
+        "FinanceExpenses"
+      ],
+      "workflow": "Existing budget creation, revisions and governance reviews. Metrics follow predecessor revision lineage and exclude replaced approved limits."
+    },
+    {
+      "route": "/app/finance/reports",
+      "page": "Financial Reports & Analytics",
+      "reports": [
+        "custom",
+        "collections",
+        "receipts",
+        "invoices",
+        "outstanding",
+        "overdue",
+        "payments",
+        "expenses",
+        "settlements",
+        "reconciliation",
+        "income-statement",
+        "budget-actual",
+        "entity"
+      ],
+      "workflow": "Server-side record search/sort/pagination, CSV/XLSX/PDF, selected-column exports, session-saved custom views, posted ledger summaries"
+    },
+    {
+      "route": "/app/finance/audit",
+      "page": "Audit Trail",
+      "records": [
+        "FinanceAudits",
+        "Users"
+      ],
+      "workflow": "Search, filters, date and actor display, exports. No audit edit/delete actions"
+    }
+  ],
+  "configuration": "Existing independent books and settings retained under configuration controls; no new account-management workspace",
+  "paymentGateway": {
+    "provider": "Existing Stripe integration",
+    "integrity": [
+      "Signature verification",
+      "Provider state retrieval",
+      "Event payload hash / idempotency",
+      "Separate capture, allocation and settlement",
+      "Gross, fee and net kept distinct",
+      "Immutable verified receipt and reversal/refund records"
+    ],
+    "validation": "Local signed-protocol fake provider only; no live charges were made"
+  },
+  "financialIntegrity": [
+    "Entity authority enforced by FinanceService.Entity on every new endpoint",
+    "Ordinary member entity access and exports denied",
+    "No duplicate source records or consolidation",
+    "Existing balanced journal posting engine retained",
+    "Scheduling creates audit metadata only",
+    "Statement match creates no duplicate cash posting",
+    "CSV formula injection escaped; XLSX text cannot become formulas; amount columns numeric"
+  ],
+  "limits": [
+    "Exports capped at 20,000 rows per filtered request",
+    "Statement import: CSV/XLSX, 500 KB and 500 rows, first worksheet, YYYY-MM-DD text dates",
+    "Invoice imports create drafts; issue/review/notification remain explicit operations",
+    "Custom saved views are session-local",
+    "Forecast is an explicitly labelled three-active-month trailing average and is withheld below six completed active months",
+    "Payment scheduling records a plan, not a bank transfer; execution is separately evidenced through existing reimbursement controls"
+  ],
+  "modifiedFiles": [
+    "client/src/App.tsx",
+    "client/src/navigation.ts",
+    "client/src/pages/Finance.tsx",
+    "client/src/pages/FinanceCommand.css",
+    "client/src/pages/FinanceCommand.tsx",
+    "client/src/pages/FinanceContext.ts",
+    "client/src/pages/FinanceInvoiceImport.tsx",
+    "client/src/pages/FinanceRecordTools.tsx",
+    "client/src/pages/financeForecast.ts",
+    "server/FinanceCommand.cs",
+    "server/FinanceEndpoints.cs",
+    "server/FinancePdf.cs",
+    "server/FinanceStatement.cs",
+    "server/FinanceWorkbook.cs",
+    "client/src/pages/LeadershipCenter.tsx"
+  ],
+  "builds": {
+    "client": "Finance production bundle passed before concurrent Leadership edits. Final TypeScript check passes; final whole-project Vite bundle is blocked by missing client/src/pages/LeadershipCenter.css.",
+    "server": "Build passed, zero warnings/errors"
+  },
+  "testIsolation": [
+    "clubs_finance_command_20261113",
+    "clubs_finance_workflows_20261113"
+  ],
+  "tests": {
+    "checks": 1376,
+    "passed": 1376,
+    "failed": 0,
+    "suites": [
+      {
+        "file": "docs/qa/finance-command-api-results.json",
+        "checks": 562,
+        "passed": 562,
+        "failed": 0
+      },
+      {
+        "file": "docs/qa/finance-command-rich-api-results.json",
+        "checks": 562,
+        "passed": 562,
+        "failed": 0
+      },
+      {
+        "file": "docs/qa/finance-statement-results.json",
+        "checks": 18,
+        "passed": 18,
+        "failed": 0
+      },
+      {
+        "file": "docs/qa/finance-command-matching-results.json",
+        "checks": 13,
+        "passed": 13,
+        "failed": 0
+      },
+      {
+        "file": "docs/qa/finance-command-provider-results.json",
+        "checks": 18,
+        "passed": 18,
+        "failed": 0
+      },
+      {
+        "file": "docs/qa/finance-command-source-results.json",
+        "checks": 10,
+        "passed": 10,
+        "failed": 0
+      },
+      {
+        "file": "docs/qa/finance-command-browser-results.json",
+        "checks": 74,
+        "passed": 74,
+        "failed": 0
+      },
+      {
+        "file": "docs/qa/finance-command-import-browser-results.json",
+        "checks": 8,
+        "passed": 8,
+        "failed": 0
+      },
+      {
+        "file": "docs/qa/finance-command-core-results.json",
+        "checks": 51,
+        "passed": 51,
+        "failed": 0
+      },
+      {
+        "file": "docs/qa/finance-command-extended-results.json",
+        "checks": 29,
+        "passed": 29,
+        "failed": 0
+      },
+      {
+        "file": "docs/qa/finance-command-security-results.json",
+        "checks": 21,
+        "passed": 21,
+        "failed": 0
+      },
+      {
+        "file": "docs/qa/finance-forecast-results.json",
+        "checks": 10,
+        "passed": 10,
+        "failed": 0
+      }
+    ]
+  },
+  "newEndpoints": [
+    "GET /finance/entities/{entity}/command/{workspace}",
+    "GET /finance/entities/{entity}/command-metrics",
+    "GET /finance/entities/{entity}/collection-history/{id}",
+    "GET /finance/entities/{entity}/reconciliation/{id}/suggestions",
+    "POST /finance/entities/{entity}/reconciliation/parse",
+    "POST /finance/expenses/{id}/schedule"
+  ],
+  "incidentalBuildFixes": [
+    "client/src/pages/LeadershipCenter.tsx: closed an incomplete JSX event handler and removed two unused icon imports in concurrently added code."
+  ],
+  "outstandingIssues": [
+    "A separate in-progress LeadershipCenter.css import currently blocks the whole-project Vite production bundle. Finance routes are verified in the running app."
+  ]
+}

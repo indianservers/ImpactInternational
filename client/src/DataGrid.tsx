@@ -20,6 +20,7 @@ export default function DataGrid<T extends { id: string }>({
   onSelection,
   onOpen,
   empty = "No matching records.",
+  sort, onSort,
 }: {
   rows: T[];
   columns: GridColumn<T>[];
@@ -29,6 +30,8 @@ export default function DataGrid<T extends { id: string }>({
   onSelection?: (s: Set<string>) => void;
   onOpen?: (row: T) => void;
   empty?: string;
+  sort?: string;
+  onSort?: (sort:string)=>void;
 }) {
   const [settings, setSettings] = useState(false);
   const ordered = [
@@ -171,7 +174,7 @@ export default function DataGrid<T extends { id: string }>({
               )}
               {visible.map((c) => (
                 <th key={c.key}>
-                  {c.label}
+                  {onSort && ["name","number","club","category","status","joinedAt","endsAt"].includes(c.key) ? <button className="text-button grid-sort-heading" onClick={()=>{const key=c.key==="joinedAt"?"joined":c.key==="endsAt"?"renewal":c.key;onSort(sort===key?(key==="joined"?"joined-asc":key+"-desc"):key);}}>{c.label} {sort?.startsWith(c.key==="joinedAt"?"joined":c.key==="endsAt"?"renewal":c.key)?"↕":""}</button> : c.label}
                   <span
                     role="separator"
                     aria-orientation="vertical"

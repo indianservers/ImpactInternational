@@ -751,6 +751,9 @@ public class FinanceService(
         Audit(e, actor, "payment.allocate", i.Number);
     }
 
+    public static string DuesKey(DuesPlan plan, Guid member, DateOnly start, DateOnly end) =>
+        "dues:" + member + ":" + plan.ChargeCode + ":" + (plan.Once ? "once" : start + ":" + end);
+
     public async Task<FinanceInvoice?> Assess(
         FinanceEntity e,
         DuesPlan plan,
@@ -776,8 +779,7 @@ public class FinanceService(
                 && (plan.CategoryId == null || plan.CategoryId == m.CategoryId),
             "Membership does not match active fee eligibility."
         );
-        var key =
-            "dues:" + m.Id + ":" + plan.ChargeCode + ":" + (plan.Once ? "once" : start + ":" + end);
+        var key = DuesKey(plan, m.Id, start, end);
         var old = await Db.FinanceInvoices.SingleOrDefaultAsync(x =>
             x.EntityId == e.Id && x.IdempotencyKey == key
         );

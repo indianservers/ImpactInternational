@@ -1,0 +1,3050 @@
+[
+  {
+    "method": "GET",
+    "route": "/operations/certificate-sources",
+    "source": "server/CertificateEndpoints.cs",
+    "line": 50
+  },
+  {
+    "method": "GET",
+    "route": "/certificate-templates",
+    "source": "server/CertificateEndpoints.cs",
+    "line": 123
+  },
+  {
+    "method": "POST",
+    "route": "/certificate-templates",
+    "source": "server/CertificateEndpoints.cs",
+    "line": 138
+  },
+  {
+    "method": "PUT",
+    "route": "/certificate-templates/{id:guid}",
+    "source": "server/CertificateEndpoints.cs",
+    "line": 163
+  },
+  {
+    "method": "POST",
+    "route": "/certificate-templates/preview",
+    "source": "server/CertificateEndpoints.cs",
+    "line": 187
+  },
+  {
+    "method": "POST",
+    "route": "/certificates",
+    "source": "server/CertificateEndpoints.cs",
+    "line": 219
+  },
+  {
+    "method": "GET",
+    "route": "/certificates",
+    "source": "server/CertificateEndpoints.cs",
+    "line": 339
+  },
+  {
+    "method": "GET",
+    "route": "/certificates/{id:guid}/pdf",
+    "source": "server/CertificateEndpoints.cs",
+    "line": 372
+  },
+  {
+    "method": "POST",
+    "route": "/certificates/{id:guid}/revoke",
+    "source": "server/CertificateEndpoints.cs",
+    "line": 410
+  },
+  {
+    "method": "POST",
+    "route": "/certificates/bulk-pdf",
+    "source": "server/CertificateEndpoints.cs",
+    "line": 438
+  },
+  {
+    "method": "GET",
+    "route": "/certificates/verify/{token}",
+    "source": "server/CertificateEndpoints.cs",
+    "line": 493
+  },
+  {
+    "method": "GET",
+    "route": "/clubs",
+    "source": "server/ClubGovernanceEndpoints.cs",
+    "line": 10
+  },
+  {
+    "method": "GET",
+    "route": "/clubs/{id:guid}",
+    "source": "server/ClubGovernanceEndpoints.cs",
+    "line": 99
+  },
+  {
+    "method": "GET",
+    "route": "/clubs/{id:guid}/history",
+    "source": "server/ClubGovernanceEndpoints.cs",
+    "line": 143
+  },
+  {
+    "method": "POST",
+    "route": "/clubs",
+    "source": "server/ClubGovernanceEndpoints.cs",
+    "line": 167
+  },
+  {
+    "method": "PUT",
+    "route": "/clubs/{id:guid}",
+    "source": "server/ClubGovernanceEndpoints.cs",
+    "line": 198
+  },
+  {
+    "method": "POST",
+    "route": "/clubs/{id:guid}/status",
+    "source": "server/ClubGovernanceEndpoints.cs",
+    "line": 223
+  },
+  {
+    "method": "POST",
+    "route": "/organizations/{id:guid}/restructure",
+    "source": "server/ClubGovernanceEndpoints.cs",
+    "line": 247
+  },
+  {
+    "method": "GET",
+    "route": "/clubs/{id:guid}/health",
+    "source": "server/ClubGovernanceEndpoints.cs",
+    "line": 272
+  },
+  {
+    "method": "GET",
+    "route": "/administration/dashboard",
+    "source": "server/ClubGovernanceEndpoints.cs",
+    "line": 281
+  },
+  {
+    "method": "GET",
+    "route": "/leadership/me",
+    "source": "server/ClubGovernanceEndpoints.cs",
+    "line": 406
+  },
+  {
+    "method": "GET",
+    "route": "/committees",
+    "source": "server/CommitteeEndpoints.cs",
+    "line": 10
+  },
+  {
+    "method": "POST",
+    "route": "/committees",
+    "source": "server/CommitteeEndpoints.cs",
+    "line": 88
+  },
+  {
+    "method": "GET",
+    "route": "/committees/{id:guid}",
+    "source": "server/CommitteeEndpoints.cs",
+    "line": 138
+  },
+  {
+    "method": "PUT",
+    "route": "/committees/{id:guid}",
+    "source": "server/CommitteeEndpoints.cs",
+    "line": 199
+  },
+  {
+    "method": "POST",
+    "route": "/committees/{id:guid}/members",
+    "source": "server/CommitteeEndpoints.cs",
+    "line": 240
+  },
+  {
+    "method": "POST",
+    "route": "/committees/{id:guid}/chair",
+    "source": "server/CommitteeEndpoints.cs",
+    "line": 256
+  },
+  {
+    "method": "POST",
+    "route": "/committees/{id:guid}/members/{memberId:guid}/remove",
+    "source": "server/CommitteeEndpoints.cs",
+    "line": 290
+  },
+  {
+    "method": "POST",
+    "route": "/committees/{id:guid}/close",
+    "source": "server/CommitteeEndpoints.cs",
+    "line": 349
+  },
+  {
+    "method": "GET",
+    "route": "/committees/{id:guid}/eligible",
+    "source": "server/CommitteeEndpoints.cs",
+    "line": 375
+  },
+  {
+    "method": "GET",
+    "route": "/committees/{id:guid}/roles",
+    "source": "server/CommitteeEndpoints.cs",
+    "line": 397
+  },
+  {
+    "method": "POST",
+    "route": "/committee-roles",
+    "source": "server/CommitteeEndpoints.cs",
+    "line": 413
+  },
+  {
+    "method": "GET",
+    "route": "/audiences",
+    "source": "server/CommunicationBroadcasts.cs",
+    "line": 73
+  },
+  {
+    "method": "POST",
+    "route": "/audiences",
+    "source": "server/CommunicationBroadcasts.cs",
+    "line": 88
+  },
+  {
+    "method": "POST",
+    "route": "/audiences/preview",
+    "source": "server/CommunicationBroadcasts.cs",
+    "line": 111
+  },
+  {
+    "method": "GET",
+    "route": "/templates",
+    "source": "server/CommunicationBroadcasts.cs",
+    "line": 157
+  },
+  {
+    "method": "POST",
+    "route": "/templates",
+    "source": "server/CommunicationBroadcasts.cs",
+    "line": 172
+  },
+  {
+    "method": "PUT",
+    "route": "/templates/{id:guid}",
+    "source": "server/CommunicationBroadcasts.cs",
+    "line": 176
+  },
+  {
+    "method": "GET",
+    "route": "/revisions/{id:guid}",
+    "source": "server/CommunicationBroadcasts.cs",
+    "line": 180
+  },
+  {
+    "method": "GET",
+    "route": "/campaigns",
+    "source": "server/CommunicationBroadcasts.cs",
+    "line": 207
+  },
+  {
+    "method": "POST",
+    "route": "/campaigns",
+    "source": "server/CommunicationBroadcasts.cs",
+    "line": 229
+  },
+  {
+    "method": "PUT",
+    "route": "/campaigns/{id:guid}",
+    "source": "server/CommunicationBroadcasts.cs",
+    "line": 233
+  },
+  {
+    "method": "GET",
+    "route": "/campaigns/{id:guid}",
+    "source": "server/CommunicationBroadcasts.cs",
+    "line": 238
+  },
+  {
+    "method": "GET",
+    "route": "/campaigns/{id:guid}/recipients",
+    "source": "server/CommunicationBroadcasts.cs",
+    "line": 253
+  },
+  {
+    "method": "POST",
+    "route": "/campaigns/{id:guid}/status",
+    "source": "server/CommunicationBroadcasts.cs",
+    "line": 281
+  },
+  {
+    "method": "GET",
+    "route": "/announcements",
+    "source": "server/CommunicationBroadcasts.cs",
+    "line": 412
+  },
+  {
+    "method": "POST",
+    "route": "/announcements/{id:guid}/acknowledge",
+    "source": "server/CommunicationBroadcasts.cs",
+    "line": 463
+  },
+  {
+    "method": "GET",
+    "route": "/schedules",
+    "source": "server/CommunicationBroadcasts.cs",
+    "line": 488
+  },
+  {
+    "method": "GET",
+    "route": "/automations",
+    "source": "server/CommunicationBroadcasts.cs",
+    "line": 504
+  },
+  {
+    "method": "POST",
+    "route": "/greetings",
+    "source": "server/CommunicationBroadcasts.cs",
+    "line": 519
+  },
+  {
+    "method": "POST",
+    "route": "/automations",
+    "source": "server/CommunicationBroadcasts.cs",
+    "line": 535
+  },
+  {
+    "method": "PUT",
+    "route": "/automations/{id:guid}",
+    "source": "server/CommunicationBroadcasts.cs",
+    "line": 539
+  },
+  {
+    "method": "POST",
+    "route": "/automations/{id:guid}/submit",
+    "source": "server/CommunicationBroadcasts.cs",
+    "line": 544
+  },
+  {
+    "method": "GET",
+    "route": "/automations/{id:guid}/executions",
+    "source": "server/CommunicationBroadcasts.cs",
+    "line": 613
+  },
+  {
+    "method": "GET",
+    "route": "/analytics",
+    "source": "server/CommunicationBroadcasts.cs",
+    "line": 630
+  },
+  {
+    "method": "GET",
+    "route": "/audit",
+    "source": "server/CommunicationBroadcasts.cs",
+    "line": 694
+  },
+  {
+    "method": "GET",
+    "route": "/people",
+    "source": "server/CommunicationConversations.cs",
+    "line": 45
+  },
+  {
+    "method": "POST",
+    "route": "/conversations",
+    "source": "server/CommunicationConversations.cs",
+    "line": 90
+  },
+  {
+    "method": "GET",
+    "route": "/conversations",
+    "source": "server/CommunicationConversations.cs",
+    "line": 262
+  },
+  {
+    "method": "GET",
+    "route": "/conversations/{id:guid}",
+    "source": "server/CommunicationConversations.cs",
+    "line": 404
+  },
+  {
+    "method": "GET",
+    "route": "/conversations/{id:guid}/messages",
+    "source": "server/CommunicationConversations.cs",
+    "line": 429
+  },
+  {
+    "method": "POST",
+    "route": "/conversations/{id:guid}/messages",
+    "source": "server/CommunicationConversations.cs",
+    "line": 493
+  },
+  {
+    "method": "POST",
+    "route": "/conversations/{id:guid}/read",
+    "source": "server/CommunicationConversations.cs",
+    "line": 665
+  },
+  {
+    "method": "PUT",
+    "route": "/conversations/{id:guid}",
+    "source": "server/CommunicationConversations.cs",
+    "line": 677
+  },
+  {
+    "method": "POST",
+    "route": "/conversations/{id:guid}/participants",
+    "source": "server/CommunicationConversations.cs",
+    "line": 727
+  },
+  {
+    "method": "GET",
+    "route": "/conversations/{id:guid}/context",
+    "source": "server/CommunicationConversations.cs",
+    "line": 761
+  },
+  {
+    "method": "GET",
+    "route": "/stream",
+    "source": "server/CommunicationConversations.cs",
+    "line": 821
+  },
+  {
+    "method": "POST",
+    "route": "/messages/{id:guid}/attachments",
+    "source": "server/CommunicationFiles.cs",
+    "line": 25
+  },
+  {
+    "method": "POST",
+    "route": "/messages/{id:guid}/dispatch",
+    "source": "server/CommunicationFiles.cs",
+    "line": 123
+  },
+  {
+    "method": "GET",
+    "route": "/attachments/{id:guid}",
+    "source": "server/CommunicationFiles.cs",
+    "line": 147
+  },
+  {
+    "method": "GET",
+    "route": "/team-inbox",
+    "source": "server/CommunicationFiles.cs",
+    "line": 171
+  },
+  {
+    "method": "POST",
+    "route": "/team-inbox/{id:guid}/claim",
+    "source": "server/CommunicationFiles.cs",
+    "line": 197
+  },
+  {
+    "method": "GET",
+    "route": "/capabilities",
+    "source": "server/CommunicationProviders.cs",
+    "line": 275
+  },
+  {
+    "method": "GET",
+    "route": "/organizations",
+    "source": "server/CommunicationProviders.cs",
+    "line": 345
+  },
+  {
+    "method": "GET",
+    "route": "/options",
+    "source": "server/CommunicationProviders.cs",
+    "line": 363
+  },
+  {
+    "method": "GET",
+    "route": "/notifications",
+    "source": "server/CommunicationProviders.cs",
+    "line": 399
+  },
+  {
+    "method": "GET",
+    "route": "/accounts",
+    "source": "server/CommunicationProviders.cs",
+    "line": 424
+  },
+  {
+    "method": "POST",
+    "route": "/accounts",
+    "source": "server/CommunicationProviders.cs",
+    "line": 461
+  },
+  {
+    "method": "PUT",
+    "route": "/accounts/{id:guid}",
+    "source": "server/CommunicationProviders.cs",
+    "line": 465
+  },
+  {
+    "method": "POST",
+    "route": "/accounts/{id:guid}/verify",
+    "source": "server/CommunicationProviders.cs",
+    "line": 469
+  },
+  {
+    "method": "POST",
+    "route": "/accounts/{id:guid}/sync-templates",
+    "source": "server/CommunicationProviders.cs",
+    "line": 564
+  },
+  {
+    "method": "GET",
+    "route": "/preferences",
+    "source": "server/CommunicationProviders.cs",
+    "line": 655
+  },
+  {
+    "method": "PUT",
+    "route": "/preferences",
+    "source": "server/CommunicationProviders.cs",
+    "line": 665
+  },
+  {
+    "method": "GET",
+    "route": "/policy",
+    "source": "server/CommunicationProviders.cs",
+    "line": 696
+  },
+  {
+    "method": "PUT",
+    "route": "/policy",
+    "source": "server/CommunicationProviders.cs",
+    "line": 706
+  },
+  {
+    "method": "GET",
+    "route": "/delivery",
+    "source": "server/CommunicationProviders.cs",
+    "line": 730
+  },
+  {
+    "method": "POST",
+    "route": "/delivery/{id:guid}/retry",
+    "source": "server/CommunicationProviders.cs",
+    "line": 761
+  },
+  {
+    "method": "GET",
+    "route": "/unsubscribe",
+    "source": "server/CommunicationWebhooks.cs",
+    "line": 19
+  },
+  {
+    "method": "POST",
+    "route": "/unsubscribe",
+    "source": "server/CommunicationWebhooks.cs",
+    "line": 33
+  },
+  {
+    "method": "GET",
+    "route": "/webhooks/meta/{id:guid}",
+    "source": "server/CommunicationWebhooks.cs",
+    "line": 61
+  },
+  {
+    "method": "POST",
+    "route": "/webhooks/meta/{id:guid}",
+    "source": "server/CommunicationWebhooks.cs",
+    "line": 82
+  },
+  {
+    "method": "POST",
+    "route": "/webhooks/twilio/{id:guid}",
+    "source": "server/CommunicationWebhooks.cs",
+    "line": 267
+  },
+  {
+    "method": "POST",
+    "route": "/webhooks/email/{id:guid}",
+    "source": "server/CommunicationWebhooks.cs",
+    "line": 339
+  },
+  {
+    "method": "GET",
+    "route": "/options",
+    "source": "server/DuesCenter.cs",
+    "line": 65
+  },
+  {
+    "method": "GET",
+    "route": "/invoices",
+    "source": "server/DuesCenter.cs",
+    "line": 73
+  },
+  {
+    "method": "POST",
+    "route": "/collections",
+    "source": "server/DuesCenter.cs",
+    "line": 85
+  },
+  {
+    "method": "POST",
+    "route": "/collections/{id:guid}/review",
+    "source": "server/DuesCenter.cs",
+    "line": 86
+  },
+  {
+    "method": "GET",
+    "route": "/reports/{kind}",
+    "source": "server/DuesCenter.cs",
+    "line": 87
+  },
+  {
+    "method": "GET",
+    "route": "/invoices/{id:guid}",
+    "source": "server/DuesOperations.cs",
+    "line": 31
+  },
+  {
+    "method": "POST",
+    "route": "/invoices/{id:guid}/followups",
+    "source": "server/DuesOperations.cs",
+    "line": 55
+  },
+  {
+    "method": "POST",
+    "route": "/collections/{id:guid}/cancel",
+    "source": "server/DuesOperations.cs",
+    "line": 86
+  },
+  {
+    "method": "GET",
+    "route": "/public-events/{id:guid}",
+    "source": "server/EventEndpoints.cs",
+    "line": 74
+  },
+  {
+    "method": "GET",
+    "route": "/event-organizations",
+    "source": "server/EventEndpoints.cs",
+    "line": 103
+  },
+  {
+    "method": "GET",
+    "route": "/event-options",
+    "source": "server/EventEndpoints.cs",
+    "line": 153
+  },
+  {
+    "method": "GET",
+    "route": "/event-people",
+    "source": "server/EventEndpoints.cs",
+    "line": 179
+  },
+  {
+    "method": "GET",
+    "route": "/event-types",
+    "source": "server/EventEndpoints.cs",
+    "line": 211
+  },
+  {
+    "method": "POST",
+    "route": "/event-types",
+    "source": "server/EventEndpoints.cs",
+    "line": 222
+  },
+  {
+    "method": "GET",
+    "route": "/events",
+    "source": "server/EventEndpoints.cs",
+    "line": 242
+  },
+  {
+    "method": "GET",
+    "route": "/my/events",
+    "source": "server/EventEndpoints.cs",
+    "line": 243
+  },
+  {
+    "method": "POST",
+    "route": "/events",
+    "source": "server/EventEndpoints.cs",
+    "line": 244
+  },
+  {
+    "method": "PUT",
+    "route": "/events/{id:guid}",
+    "source": "server/EventEndpoints.cs",
+    "line": 245
+  },
+  {
+    "method": "GET",
+    "route": "/events/{id:guid}",
+    "source": "server/EventEndpoints.cs",
+    "line": 249
+  },
+  {
+    "method": "POST",
+    "route": "/events/{id:guid}/status",
+    "source": "server/EventEndpoints.cs",
+    "line": 319
+  },
+  {
+    "method": "POST",
+    "route": "/events/{id:guid}/amend",
+    "source": "server/EventEndpoints.cs",
+    "line": 475
+  },
+  {
+    "method": "POST",
+    "route": "/events/{id:guid}/duplicate",
+    "source": "server/EventEndpoints.cs",
+    "line": 515
+  },
+  {
+    "method": "GET",
+    "route": "/events/{id:guid}/calendar.ics",
+    "source": "server/EventEndpoints.cs",
+    "line": 570
+  },
+  {
+    "method": "POST",
+    "route": "/events/{id:guid}/sessions",
+    "source": "server/EventEndpoints.cs",
+    "line": 603
+  },
+  {
+    "method": "DELETE",
+    "route": "/events/{id:guid}/sessions/{sessionId:guid}",
+    "source": "server/EventEndpoints.cs",
+    "line": 661
+  },
+  {
+    "method": "PUT",
+    "route": "/events/{id:guid}/audience",
+    "source": "server/EventEndpoints.cs",
+    "line": 682
+  },
+  {
+    "method": "GET",
+    "route": "/events/{id:guid}/audience",
+    "source": "server/EventEndpoints.cs",
+    "line": 756
+  },
+  {
+    "method": "POST",
+    "route": "/events/{id:guid}/invitations",
+    "source": "server/EventInvitations.cs",
+    "line": 11
+  },
+  {
+    "method": "GET",
+    "route": "/events/{id:guid}/invitations",
+    "source": "server/EventInvitations.cs",
+    "line": 142
+  },
+  {
+    "method": "GET",
+    "route": "/my/invitations",
+    "source": "server/EventInvitations.cs",
+    "line": 193
+  },
+  {
+    "method": "POST",
+    "route": "/event-invitations/redeem",
+    "source": "server/EventInvitations.cs",
+    "line": 217
+  },
+  {
+    "method": "POST",
+    "route": "/events/{id:guid}/rsvps",
+    "source": "server/EventInvitations.cs",
+    "line": 253
+  },
+  {
+    "method": "GET",
+    "route": "/events/{id:guid}/rsvps",
+    "source": "server/EventInvitations.cs",
+    "line": 328
+  },
+  {
+    "method": "POST",
+    "route": "/events/{id:guid}/guest-link",
+    "source": "server/EventInvitations.cs",
+    "line": 341
+  },
+  {
+    "method": "GET",
+    "route": "/events/{id:guid}/documents",
+    "source": "server/EventMedia.cs",
+    "line": 13
+  },
+  {
+    "method": "POST",
+    "route": "/events/{id:guid}/documents",
+    "source": "server/EventMedia.cs",
+    "line": 38
+  },
+  {
+    "method": "GET",
+    "route": "/events/{id:guid}/documents/{documentId:guid}",
+    "source": "server/EventMedia.cs",
+    "line": 102
+  },
+  {
+    "method": "POST",
+    "route": "/events/{id:guid}/passes/{registrationId:guid}/{format}",
+    "source": "server/EventMedia.cs",
+    "line": 147
+  },
+  {
+    "method": "POST",
+    "route": "/events/{id:guid}/certificates/{registrationId:guid}",
+    "source": "server/EventMedia.cs",
+    "line": 197
+  },
+  {
+    "method": "GET",
+    "route": "/events/{id:guid}/activity",
+    "source": "server/EventOperations.cs",
+    "line": 12
+  },
+  {
+    "method": "GET",
+    "route": "/my/event-duties",
+    "source": "server/EventOperations.cs",
+    "line": 37
+  },
+  {
+    "method": "GET",
+    "route": "/events/{id:guid}/team",
+    "source": "server/EventOperations.cs",
+    "line": 64
+  },
+  {
+    "method": "POST",
+    "route": "/events/{id:guid}/team",
+    "source": "server/EventOperations.cs",
+    "line": 111
+  },
+  {
+    "method": "POST",
+    "route": "/events/{id:guid}/volunteer",
+    "source": "server/EventOperations.cs",
+    "line": 172
+  },
+  {
+    "method": "POST",
+    "route": "/events/{id:guid}/team/{staffId:guid}/duty",
+    "source": "server/EventOperations.cs",
+    "line": 207
+  },
+  {
+    "method": "DELETE",
+    "route": "/events/{id:guid}/team/{staffId:guid}",
+    "source": "server/EventOperations.cs",
+    "line": 239
+  },
+  {
+    "method": "PUT",
+    "route": "/events/{id:guid}/feedback-form",
+    "source": "server/EventOperations.cs",
+    "line": 257
+  },
+  {
+    "method": "GET",
+    "route": "/events/{id:guid}/feedback-form",
+    "source": "server/EventOperations.cs",
+    "line": 286
+  },
+  {
+    "method": "POST",
+    "route": "/events/{id:guid}/feedback/{registrationId:guid}",
+    "source": "server/EventOperations.cs",
+    "line": 297
+  },
+  {
+    "method": "GET",
+    "route": "/events/{id:guid}/feedback",
+    "source": "server/EventOperations.cs",
+    "line": 335
+  },
+  {
+    "method": "GET",
+    "route": "/events/{id:guid}/feedback/export",
+    "source": "server/EventOperations.cs",
+    "line": 373
+  },
+  {
+    "method": "GET",
+    "route": "/events/{id:guid}/analytics",
+    "source": "server/EventOperations.cs",
+    "line": 418
+  },
+  {
+    "method": "GET",
+    "route": "/events-dashboard",
+    "source": "server/EventOperations.cs",
+    "line": 427
+  },
+  {
+    "method": "GET",
+    "route": "/events/{id:guid}/attendance/export",
+    "source": "server/EventOperations.cs",
+    "line": 586
+  },
+  {
+    "method": "GET",
+    "route": "/event-filters",
+    "source": "server/EventOperations.cs",
+    "line": 642
+  },
+  {
+    "method": "POST",
+    "route": "/event-filters",
+    "source": "server/EventOperations.cs",
+    "line": 653
+  },
+  {
+    "method": "POST",
+    "route": "/events/{id:guid}/registrations",
+    "source": "server/EventRegistrationEndpoints.cs",
+    "line": 11
+  },
+  {
+    "method": "GET",
+    "route": "/events/{id:guid}/registrations",
+    "source": "server/EventRegistrationEndpoints.cs",
+    "line": 26
+  },
+  {
+    "method": "GET",
+    "route": "/my/registrations",
+    "source": "server/EventRegistrationEndpoints.cs",
+    "line": 59
+  },
+  {
+    "method": "POST",
+    "route": "/events/{id:guid}/registrations/{registrationId:guid}/cancel",
+    "source": "server/EventRegistrationEndpoints.cs",
+    "line": 89
+  },
+  {
+    "method": "POST",
+    "route": "/events/{id:guid}/registrations/{registrationId:guid}/accept-offer",
+    "source": "server/EventRegistrationEndpoints.cs",
+    "line": 153
+  },
+  {
+    "method": "POST",
+    "route": "/events/{id:guid}/registrations/{registrationId:guid}/sessions",
+    "source": "server/EventRegistrationEndpoints.cs",
+    "line": 178
+  },
+  {
+    "method": "POST",
+    "route": "/events/{id:guid}/tickets/{registrationId:guid}",
+    "source": "server/EventRegistrationEndpoints.cs",
+    "line": 200
+  },
+  {
+    "method": "POST",
+    "route": "/events/{id:guid}/tickets/{registrationId:guid}/reissue",
+    "source": "server/EventRegistrationEndpoints.cs",
+    "line": 254
+  },
+  {
+    "method": "POST",
+    "route": "/events/{id:guid}/tickets/{registrationId:guid}/revoke",
+    "source": "server/EventRegistrationEndpoints.cs",
+    "line": 288
+  },
+  {
+    "method": "POST",
+    "route": "/events/{id:guid}/checkins/verify",
+    "source": "server/EventRegistrationEndpoints.cs",
+    "line": 316
+  },
+  {
+    "method": "POST",
+    "route": "/events/{id:guid}/checkins",
+    "source": "server/EventRegistrationEndpoints.cs",
+    "line": 327
+  },
+  {
+    "method": "GET",
+    "route": "/events/{id:guid}/checkins",
+    "source": "server/EventRegistrationEndpoints.cs",
+    "line": 379
+  },
+  {
+    "method": "POST",
+    "route": "/events/{id:guid}/checkins/{checkinId:guid}/correct",
+    "source": "server/EventRegistrationEndpoints.cs",
+    "line": 406
+  },
+  {
+    "method": "GET",
+    "route": "/entities/{entity:guid}/invoices",
+    "source": "server/FinanceBilling.cs",
+    "line": 11
+  },
+  {
+    "method": "POST",
+    "route": "/entities/{entity:guid}/invoices",
+    "source": "server/FinanceBilling.cs",
+    "line": 36
+  },
+  {
+    "method": "GET",
+    "route": "/invoices/{id:guid}",
+    "source": "server/FinanceBilling.cs",
+    "line": 72
+  },
+  {
+    "method": "POST",
+    "route": "/invoices/{id:guid}/issue",
+    "source": "server/FinanceBilling.cs",
+    "line": 94
+  },
+  {
+    "method": "POST",
+    "route": "/invoices/{id:guid}/cancel",
+    "source": "server/FinanceBilling.cs",
+    "line": 108
+  },
+  {
+    "method": "POST",
+    "route": "/invoices/{id:guid}/credits",
+    "source": "server/FinanceBilling.cs",
+    "line": 131
+  },
+  {
+    "method": "GET",
+    "route": "/invoices/{id:guid}/pdf",
+    "source": "server/FinanceBilling.cs",
+    "line": 254
+  },
+  {
+    "method": "POST",
+    "route": "/invoices/{id:guid}/send",
+    "source": "server/FinanceBilling.cs",
+    "line": 311
+  },
+  {
+    "method": "GET",
+    "route": "/entities/{entity:guid}/dues-plans",
+    "source": "server/FinanceBilling.cs",
+    "line": 344
+  },
+  {
+    "method": "POST",
+    "route": "/entities/{entity:guid}/dues-plans",
+    "source": "server/FinanceBilling.cs",
+    "line": 356
+  },
+  {
+    "method": "POST",
+    "route": "/dues-plans/{id:guid}/assess",
+    "source": "server/FinanceBilling.cs",
+    "line": 419
+  },
+  {
+    "method": "POST",
+    "route": "/dues-plans/{id:guid}/batches",
+    "source": "server/FinanceBilling.cs",
+    "line": 449
+  },
+  {
+    "method": "GET",
+    "route": "/entities/{entity:guid}/jobs",
+    "source": "server/FinanceBilling.cs",
+    "line": 486
+  },
+  {
+    "method": "POST",
+    "route": "/entities/{entity:guid}/journals",
+    "source": "server/FinanceBilling.cs",
+    "line": 498
+  },
+  {
+    "method": "POST",
+    "route": "/journals/{id:guid}/reverse",
+    "source": "server/FinanceBilling.cs",
+    "line": 527
+  },
+  {
+    "method": "GET",
+    "route": "/entities",
+    "source": "server/FinanceEndpoints.cs",
+    "line": 180
+  },
+  {
+    "method": "POST",
+    "route": "/entities",
+    "source": "server/FinanceEndpoints.cs",
+    "line": 196
+  },
+  {
+    "method": "GET",
+    "route": "/entities/{entity:guid}/settings",
+    "source": "server/FinanceEndpoints.cs",
+    "line": 292
+  },
+  {
+    "method": "PUT",
+    "route": "/entities/{entity:guid}/gateway",
+    "source": "server/FinanceEndpoints.cs",
+    "line": 319
+  },
+  {
+    "method": "POST",
+    "route": "/entities/{entity:guid}/grants",
+    "source": "server/FinanceEndpoints.cs",
+    "line": 347
+  },
+  {
+    "method": "DELETE",
+    "route": "/entities/{entity:guid}/grants/{user:guid}",
+    "source": "server/FinanceEndpoints.cs",
+    "line": 384
+  },
+  {
+    "method": "POST",
+    "route": "/entities/{entity:guid}/organizations",
+    "source": "server/FinanceEndpoints.cs",
+    "line": 409
+  },
+  {
+    "method": "GET",
+    "route": "/entities/{entity:guid}/options",
+    "source": "server/FinanceEndpoints.cs",
+    "line": 442
+  },
+  {
+    "method": "GET",
+    "route": "/entities/{entity:guid}/accounts",
+    "source": "server/FinanceEndpoints.cs",
+    "line": 516
+  },
+  {
+    "method": "POST",
+    "route": "/entities/{entity:guid}/accounts",
+    "source": "server/FinanceEndpoints.cs",
+    "line": 527
+  },
+  {
+    "method": "POST",
+    "route": "/entities/{entity:guid}/periods",
+    "source": "server/FinanceEndpoints.cs",
+    "line": 555
+  },
+  {
+    "method": "POST",
+    "route": "/entities/{entity:guid}/periods/{id:guid}/{action}",
+    "source": "server/FinanceEndpoints.cs",
+    "line": 591
+  },
+  {
+    "method": "POST",
+    "route": "/invoices/{id:guid}/payment-intents",
+    "source": "server/FinanceGateway.cs",
+    "line": 185
+  },
+  {
+    "method": "POST",
+    "route": "/api/v1/finance/webhooks/{entity:guid}",
+    "source": "server/FinanceGateway.cs",
+    "line": 255
+  },
+  {
+    "method": "GET",
+    "route": "/api/v1/my/finance",
+    "source": "server/FinanceMembers.cs",
+    "line": 12
+  },
+  {
+    "method": "GET",
+    "route": "/api/v1/finance/entities/{entity:guid}/event-prices",
+    "source": "server/FinanceMembers.cs",
+    "line": 54
+  },
+  {
+    "method": "POST",
+    "route": "/api/v1/finance/entities/{entity:guid}/event-prices",
+    "source": "server/FinanceMembers.cs",
+    "line": 65
+  },
+  {
+    "method": "POST",
+    "route": "/api/v1/finance/registrations/{id:guid}/invoice",
+    "source": "server/FinanceMembers.cs",
+    "line": 121
+  },
+  {
+    "method": "POST",
+    "route": "/api/v1/finance/registrations/{id:guid}/confirm",
+    "source": "server/FinanceMembers.cs",
+    "line": 174
+  },
+  {
+    "method": "POST",
+    "route": "/api/v1/finance/jobs/{id:guid}/retry",
+    "source": "server/FinanceMembers.cs",
+    "line": 196
+  },
+  {
+    "method": "GET",
+    "route": "/entities/{entity:guid}/payments",
+    "source": "server/FinancePayments.cs",
+    "line": 11
+  },
+  {
+    "method": "POST",
+    "route": "/entities/{entity:guid}/payments",
+    "source": "server/FinancePayments.cs",
+    "line": 22
+  },
+  {
+    "method": "POST",
+    "route": "/payments/{id:guid}/verify",
+    "source": "server/FinancePayments.cs",
+    "line": 80
+  },
+  {
+    "method": "POST",
+    "route": "/payments/{id:guid}/allocate",
+    "source": "server/FinancePayments.cs",
+    "line": 94
+  },
+  {
+    "method": "POST",
+    "route": "/payments/{id:guid}/settle",
+    "source": "server/FinancePayments.cs",
+    "line": 112
+  },
+  {
+    "method": "POST",
+    "route": "/payments/{id:guid}/refunds",
+    "source": "server/FinancePayments.cs",
+    "line": 168
+  },
+  {
+    "method": "GET",
+    "route": "/payments/{id:guid}/receipt",
+    "source": "server/FinancePayments.cs",
+    "line": 292
+  },
+  {
+    "method": "GET",
+    "route": "/entities/{entity:guid}/bank-accounts",
+    "source": "server/FinancePayments.cs",
+    "line": 324
+  },
+  {
+    "method": "POST",
+    "route": "/entities/{entity:guid}/bank-accounts",
+    "source": "server/FinancePayments.cs",
+    "line": 332
+  },
+  {
+    "method": "POST",
+    "route": "/entities/{entity:guid}/reconciliation/import",
+    "source": "server/FinancePayments.cs",
+    "line": 373
+  },
+  {
+    "method": "GET",
+    "route": "/entities/{entity:guid}/reconciliation",
+    "source": "server/FinancePayments.cs",
+    "line": 429
+  },
+  {
+    "method": "POST",
+    "route": "/reconciliation/{id:guid}/match",
+    "source": "server/FinancePayments.cs",
+    "line": 440
+  },
+  {
+    "method": "POST",
+    "route": "/entities/{entity:guid}/convert",
+    "source": "server/FinancePlanning.cs",
+    "line": 11
+  },
+  {
+    "method": "GET",
+    "route": "/entities/{entity:guid}/reviews",
+    "source": "server/FinancePlanning.cs",
+    "line": 49
+  },
+  {
+    "method": "GET",
+    "route": "/entities/{entity:guid}/expenses",
+    "source": "server/FinancePlanning.cs",
+    "line": 80
+  },
+  {
+    "method": "POST",
+    "route": "/entities/{entity:guid}/expenses",
+    "source": "server/FinancePlanning.cs",
+    "line": 91
+  },
+  {
+    "method": "POST",
+    "route": "/expenses/{id:guid}/submit",
+    "source": "server/FinancePlanning.cs",
+    "line": 196
+  },
+  {
+    "method": "POST",
+    "route": "/expenses/{id:guid}/reimburse",
+    "source": "server/FinancePlanning.cs",
+    "line": 239
+  },
+  {
+    "method": "GET",
+    "route": "/entities/{entity:guid}/budgets",
+    "source": "server/FinancePlanning.cs",
+    "line": 308
+  },
+  {
+    "method": "POST",
+    "route": "/entities/{entity:guid}/budgets",
+    "source": "server/FinancePlanning.cs",
+    "line": 320
+  },
+  {
+    "method": "POST",
+    "route": "/budgets/{id:guid}/submit",
+    "source": "server/FinancePlanning.cs",
+    "line": 399
+  },
+  {
+    "method": "GET",
+    "route": "/entities/{entity:guid}/pledges",
+    "source": "server/FinancePlanning.cs",
+    "line": 436
+  },
+  {
+    "method": "POST",
+    "route": "/entities/{entity:guid}/pledges",
+    "source": "server/FinancePlanning.cs",
+    "line": 448
+  },
+  {
+    "method": "POST",
+    "route": "/pledges/{id:guid}/invoice",
+    "source": "server/FinancePlanning.cs",
+    "line": 483
+  },
+  {
+    "method": "GET",
+    "route": "/entities/{entity:guid}/inter-entity",
+    "source": "server/FinancePlanning.cs",
+    "line": 523
+  },
+  {
+    "method": "POST",
+    "route": "/inter-entity/{id:guid}/settle",
+    "source": "server/FinancePlanning.cs",
+    "line": 543
+  },
+  {
+    "method": "POST",
+    "route": "/entities/{entity:guid}/exchange-rates",
+    "source": "server/FinancePlanning.cs",
+    "line": 613
+  },
+  {
+    "method": "GET",
+    "route": "/entities/{entity:guid}/dashboard",
+    "source": "server/FinanceReports.cs",
+    "line": 11
+  },
+  {
+    "method": "GET",
+    "route": "/entities/{entity:guid}/journals",
+    "source": "server/FinanceReports.cs",
+    "line": 73
+  },
+  {
+    "method": "GET",
+    "route": "/journals/{id:guid}",
+    "source": "server/FinanceReports.cs",
+    "line": 84
+  },
+  {
+    "method": "GET",
+    "route": "/entities/{entity:guid}/audit",
+    "source": "server/FinanceReports.cs",
+    "line": 113
+  },
+  {
+    "method": "GET",
+    "route": "/entities/{entity:guid}/reports/{kind}",
+    "source": "server/FinanceReports.cs",
+    "line": 124
+  },
+  {
+    "method": "GET",
+    "route": "/entities/{entity:guid}/budgets/{id:guid}/actual",
+    "source": "server/FinanceReports.cs",
+    "line": 125
+  },
+  {
+    "method": "GET",
+    "route": "/governance/documents",
+    "source": "server/GovernanceDocuments.cs",
+    "line": 11
+  },
+  {
+    "method": "POST",
+    "route": "/governance/documents",
+    "source": "server/GovernanceDocuments.cs",
+    "line": 85
+  },
+  {
+    "method": "GET",
+    "route": "/governance/documents/{id:guid}",
+    "source": "server/GovernanceDocuments.cs",
+    "line": 189
+  },
+  {
+    "method": "POST",
+    "route": "/governance/documents/{id:guid}/withdraw",
+    "source": "server/GovernanceDocuments.cs",
+    "line": 205
+  },
+  {
+    "method": "POST",
+    "route": "/governance/resolutions",
+    "source": "server/GovernanceDocuments.cs",
+    "line": 229
+  },
+  {
+    "method": "GET",
+    "route": "/governance/resolutions",
+    "source": "server/GovernanceDocuments.cs",
+    "line": 279
+  },
+  {
+    "method": "GET",
+    "route": "/members/{id:guid}/leadership",
+    "source": "server/GovernanceEndpoints.cs",
+    "line": 10
+  },
+  {
+    "method": "GET",
+    "route": "/governance/organizations",
+    "source": "server/GovernanceEndpoints.cs",
+    "line": 49
+  },
+  {
+    "method": "GET",
+    "route": "/governance/options",
+    "source": "server/GovernanceEndpoints.cs",
+    "line": 85
+  },
+  {
+    "method": "GET",
+    "route": "/leadership/eligible",
+    "source": "server/GovernanceEndpoints.cs",
+    "line": 145
+  },
+  {
+    "method": "POST",
+    "route": "/officer-positions",
+    "source": "server/GovernanceEndpoints.cs",
+    "line": 186
+  },
+  {
+    "method": "PUT",
+    "route": "/officer-positions/{id:guid}",
+    "source": "server/GovernanceEndpoints.cs",
+    "line": 190
+  },
+  {
+    "method": "GET",
+    "route": "/officer-positions",
+    "source": "server/GovernanceEndpoints.cs",
+    "line": 194
+  },
+  {
+    "method": "POST",
+    "route": "/leadership-terms",
+    "source": "server/GovernanceEndpoints.cs",
+    "line": 205
+  },
+  {
+    "method": "GET",
+    "route": "/leadership-terms",
+    "source": "server/GovernanceEndpoints.cs",
+    "line": 244
+  },
+  {
+    "method": "POST",
+    "route": "/officer-appointments",
+    "source": "server/GovernanceEndpoints.cs",
+    "line": 296
+  },
+  {
+    "method": "GET",
+    "route": "/officer-appointments",
+    "source": "server/GovernanceEndpoints.cs",
+    "line": 326
+  },
+  {
+    "method": "GET",
+    "route": "/officer-appointments/{id:guid}",
+    "source": "server/GovernanceEndpoints.cs",
+    "line": 327
+  },
+  {
+    "method": "POST",
+    "route": "/officer-appointments/{id:guid}/removal",
+    "source": "server/GovernanceEndpoints.cs",
+    "line": 355
+  },
+  {
+    "method": "POST",
+    "route": "/governance/workflows",
+    "source": "server/GovernanceEndpoints.cs",
+    "line": 396
+  },
+  {
+    "method": "GET",
+    "route": "/governance/requests",
+    "source": "server/GovernanceEndpoints.cs",
+    "line": 470
+  },
+  {
+    "method": "GET",
+    "route": "/governance/requests/{id:guid}",
+    "source": "server/GovernanceEndpoints.cs",
+    "line": 526
+  },
+  {
+    "method": "POST",
+    "route": "/governance/requests/{id:guid}/submit",
+    "source": "server/GovernanceEndpoints.cs",
+    "line": 615
+  },
+  {
+    "method": "PUT",
+    "route": "/governance/requests/{id:guid}",
+    "source": "server/GovernanceEndpoints.cs",
+    "line": 649
+  },
+  {
+    "method": "POST",
+    "route": "/governance/requests/{id:guid}/withdraw",
+    "source": "server/GovernanceEndpoints.cs",
+    "line": 728
+  },
+  {
+    "method": "POST",
+    "route": "/governance/requests/{id:guid}/decisions",
+    "source": "server/GovernanceEndpoints.cs",
+    "line": 782
+  },
+  {
+    "method": "POST",
+    "route": "/governance/delegations",
+    "source": "server/GovernanceEndpoints.cs",
+    "line": 972
+  },
+  {
+    "method": "GET",
+    "route": "/governance/delegations",
+    "source": "server/GovernanceEndpoints.cs",
+    "line": 1017
+  },
+  {
+    "method": "POST",
+    "route": "/governance/delegations/{id:guid}/revoke",
+    "source": "server/GovernanceEndpoints.cs",
+    "line": 1032
+  },
+  {
+    "method": "PUT",
+    "route": "/governance/health-configuration",
+    "source": "server/GovernanceEndpoints.cs",
+    "line": 1046
+  },
+  {
+    "method": "POST",
+    "route": "/leadership-handovers",
+    "source": "server/HandoverEndpoints.cs",
+    "line": 10
+  },
+  {
+    "method": "GET",
+    "route": "/leadership-handovers",
+    "source": "server/HandoverEndpoints.cs",
+    "line": 136
+  },
+  {
+    "method": "GET",
+    "route": "/leadership-handovers/{id:guid}",
+    "source": "server/HandoverEndpoints.cs",
+    "line": 186
+  },
+  {
+    "method": "PUT",
+    "route": "/leadership-handovers/{id:guid}/items/{itemId:guid}",
+    "source": "server/HandoverEndpoints.cs",
+    "line": 206
+  },
+  {
+    "method": "POST",
+    "route": "/leadership-handovers/{id:guid}/accept",
+    "source": "server/HandoverEndpoints.cs",
+    "line": 251
+  },
+  {
+    "method": "POST",
+    "route": "/leadership-handovers/{id:guid}/submit",
+    "source": "server/HandoverEndpoints.cs",
+    "line": 286
+  },
+  {
+    "method": "GET",
+    "route": "/options",
+    "source": "server/IdCardEndpoints.cs",
+    "line": 28
+  },
+  {
+    "method": "GET",
+    "route": "/templates",
+    "source": "server/IdCardEndpoints.cs",
+    "line": 55
+  },
+  {
+    "method": "POST",
+    "route": "/templates",
+    "source": "server/IdCardEndpoints.cs",
+    "line": 92
+  },
+  {
+    "method": "GET",
+    "route": "/templates/{id:guid}",
+    "source": "server/IdCardEndpoints.cs",
+    "line": 116
+  },
+  {
+    "method": "PUT",
+    "route": "/templates/{id:guid}",
+    "source": "server/IdCardEndpoints.cs",
+    "line": 138
+  },
+  {
+    "method": "GET",
+    "route": "/versions/{id:guid}",
+    "source": "server/IdCardEndpoints.cs",
+    "line": 165
+  },
+  {
+    "method": "POST",
+    "route": "/templates/{id:guid}/duplicate",
+    "source": "server/IdCardEndpoints.cs",
+    "line": 180
+  },
+  {
+    "method": "POST",
+    "route": "/templates/{id:guid}/archive",
+    "source": "server/IdCardEndpoints.cs",
+    "line": 220
+  },
+  {
+    "method": "POST",
+    "route": "/templates/{id:guid}/publish",
+    "source": "server/IdCardEndpoints.cs",
+    "line": 233
+  },
+  {
+    "method": "POST",
+    "route": "/templates/{id:guid}/preview",
+    "source": "server/IdCardEndpoints.cs",
+    "line": 273
+  },
+  {
+    "method": "GET",
+    "route": "/members/{id:guid}/bindings",
+    "source": "server/IdCardEndpoints.cs",
+    "line": 300
+  },
+  {
+    "method": "GET",
+    "route": "/versions/{id:guid}/assets/{asset:guid}",
+    "source": "server/IdCardEndpoints.cs",
+    "line": 322
+  },
+  {
+    "method": "GET",
+    "route": "/members",
+    "source": "server/IdCardEndpoints.cs",
+    "line": 339
+  },
+  {
+    "method": "POST",
+    "route": "/issuances",
+    "source": "server/IdCardEndpoints.cs",
+    "line": 415
+  },
+  {
+    "method": "GET",
+    "route": "/issuances",
+    "source": "server/IdCardEndpoints.cs",
+    "line": 426
+  },
+  {
+    "method": "GET",
+    "route": "/issuances/{id:guid}",
+    "source": "server/IdCardEndpoints.cs",
+    "line": 466
+  },
+  {
+    "method": "POST",
+    "route": "/issuances/{id:guid}/submit",
+    "source": "server/IdCardEndpoints.cs",
+    "line": 496
+  },
+  {
+    "method": "POST",
+    "route": "/issuances/{id:guid}/generate",
+    "source": "server/IdCardEndpoints.cs",
+    "line": 539
+  },
+  {
+    "method": "POST",
+    "route": "/issuances/{id:guid}/issue",
+    "source": "server/IdCardEndpoints.cs",
+    "line": 553
+  },
+  {
+    "method": "POST",
+    "route": "/issuances/{id:guid}/revoke",
+    "source": "server/IdCardEndpoints.cs",
+    "line": 567
+  },
+  {
+    "method": "GET",
+    "route": "/issuances/{id:guid}/download",
+    "source": "server/IdCardEndpoints.cs",
+    "line": 588
+  },
+  {
+    "method": "GET",
+    "route": "/issuances/{id:guid}/preview",
+    "source": "server/IdCardEndpoints.cs",
+    "line": 592
+  },
+  {
+    "method": "GET",
+    "route": "/api/v1/my/id-card",
+    "source": "server/IdCardEndpoints.cs",
+    "line": 618
+  },
+  {
+    "method": "GET",
+    "route": "/api/v1/my/id-card/download",
+    "source": "server/IdCardEndpoints.cs",
+    "line": 650
+  },
+  {
+    "method": "POST",
+    "route": "/issuances/{id:guid}/requests",
+    "source": "server/IdCardEndpoints.cs",
+    "line": 655
+  },
+  {
+    "method": "GET",
+    "route": "/analytics",
+    "source": "server/IdCardEndpoints.cs",
+    "line": 681
+  },
+  {
+    "method": "GET",
+    "route": "/policy",
+    "source": "server/IdCardEndpoints.cs",
+    "line": 721
+  },
+  {
+    "method": "PUT",
+    "route": "/policy",
+    "source": "server/IdCardEndpoints.cs",
+    "line": 725
+  },
+  {
+    "method": "GET",
+    "route": "/qr-preview",
+    "source": "server/IdCardEndpoints.cs",
+    "line": 753
+  },
+  {
+    "method": "GET",
+    "route": "/assets",
+    "source": "server/IdCardEndpoints.cs",
+    "line": 765
+  },
+  {
+    "method": "POST",
+    "route": "/assets",
+    "source": "server/IdCardEndpoints.cs",
+    "line": 801
+  },
+  {
+    "method": "POST",
+    "route": "/members/{id:guid}/photo",
+    "source": "server/IdCardEndpoints.cs",
+    "line": 866
+  },
+  {
+    "method": "POST",
+    "route": "/bulk-preview",
+    "source": "server/IdCardJobs.cs",
+    "line": 127
+  },
+  {
+    "method": "POST",
+    "route": "/bulk-jobs",
+    "source": "server/IdCardJobs.cs",
+    "line": 159
+  },
+  {
+    "method": "GET",
+    "route": "/bulk-jobs",
+    "source": "server/IdCardJobs.cs",
+    "line": 285
+  },
+  {
+    "method": "GET",
+    "route": "/bulk-jobs/{id:guid}",
+    "source": "server/IdCardJobs.cs",
+    "line": 299
+  },
+  {
+    "method": "POST",
+    "route": "/bulk-jobs/{id:guid}/cancel",
+    "source": "server/IdCardJobs.cs",
+    "line": 317
+  },
+  {
+    "method": "POST",
+    "route": "/bulk-jobs/{id:guid}/retry",
+    "source": "server/IdCardJobs.cs",
+    "line": 340
+  },
+  {
+    "method": "GET",
+    "route": "/bulk-jobs/{id:guid}/download",
+    "source": "server/IdCardJobs.cs",
+    "line": 370
+  },
+  {
+    "method": "GET",
+    "route": "/print-presets",
+    "source": "server/IdCardJobs.cs",
+    "line": 420
+  },
+  {
+    "method": "POST",
+    "route": "/print-presets",
+    "source": "server/IdCardJobs.cs",
+    "line": 434
+  },
+  {
+    "method": "POST",
+    "route": "/print-preview",
+    "source": "server/IdCardJobs.cs",
+    "line": 456
+  },
+  {
+    "method": "GET",
+    "route": "/api/v1/public/id-cards/verify/{token}",
+    "source": "server/IdCardJobs.cs",
+    "line": 476
+  },
+  {
+    "method": "GET",
+    "route": "/structure",
+    "source": "server/ImpactStructure.cs",
+    "line": 35
+  },
+  {
+    "method": "POST",
+    "route": "/setup-guide/complete",
+    "source": "server/ImpactStructure.cs",
+    "line": 47
+  },
+  {
+    "method": "GET",
+    "route": "/metrics",
+    "source": "server/IntelligenceEndpoints.cs",
+    "line": 20
+  },
+  {
+    "method": "GET",
+    "route": "/dashboard",
+    "source": "server/IntelligenceEndpoints.cs",
+    "line": 28
+  },
+  {
+    "method": "GET",
+    "route": "/export",
+    "source": "server/IntelligenceEndpoints.cs",
+    "line": 37
+  },
+  {
+    "method": "GET",
+    "route": "/search",
+    "source": "server/IntelligenceEndpoints.cs",
+    "line": 77
+  },
+  {
+    "method": "POST",
+    "route": "/assistant",
+    "source": "server/IntelligenceEndpoints.cs",
+    "line": 93
+  },
+  {
+    "method": "POST",
+    "route": "/knowledge/{id:guid}/index",
+    "source": "server/IntelligenceEndpoints.cs",
+    "line": 98
+  },
+  {
+    "method": "GET",
+    "route": "/knowledge",
+    "source": "server/IntelligenceEndpoints.cs",
+    "line": 102
+  },
+  {
+    "method": "GET",
+    "route": "/knowledge/indexes",
+    "source": "server/IntelligenceEndpoints.cs",
+    "line": 122
+  },
+  {
+    "method": "GET",
+    "route": "/branding/current",
+    "source": "server/IntelligenceEndpoints.cs",
+    "line": 171
+  },
+  {
+    "method": "GET",
+    "route": "/branding",
+    "source": "server/IntelligenceEndpoints.cs",
+    "line": 198
+  },
+  {
+    "method": "PUT",
+    "route": "/branding",
+    "source": "server/IntelligenceEndpoints.cs",
+    "line": 216
+  },
+  {
+    "method": "GET",
+    "route": "/api/v1/branding",
+    "source": "server/IntelligenceEndpoints.cs",
+    "line": 220
+  },
+  {
+    "method": "POST",
+    "route": "/domains",
+    "source": "server/IntelligenceEndpoints.cs",
+    "line": 225
+  },
+  {
+    "method": "POST",
+    "route": "/domains/{id:guid}/verify",
+    "source": "server/IntelligenceEndpoints.cs",
+    "line": 258
+  },
+  {
+    "method": "POST",
+    "route": "/domains/{id:guid}/activate",
+    "source": "server/IntelligenceEndpoints.cs",
+    "line": 262
+  },
+  {
+    "method": "POST",
+    "route": "/domains/{id:guid}/deactivate",
+    "source": "server/IntelligenceEndpoints.cs",
+    "line": 288
+  },
+  {
+    "method": "GET",
+    "route": "/workflows",
+    "source": "server/IntelligenceEndpoints.cs",
+    "line": 314
+  },
+  {
+    "method": "GET",
+    "route": "/workflows/options",
+    "source": "server/IntelligenceEndpoints.cs",
+    "line": 344
+  },
+  {
+    "method": "POST",
+    "route": "/workflows",
+    "source": "server/IntelligenceEndpoints.cs",
+    "line": 378
+  },
+  {
+    "method": "PUT",
+    "route": "/workflows/{id:guid}",
+    "source": "server/IntelligenceEndpoints.cs",
+    "line": 432
+  },
+  {
+    "method": "POST",
+    "route": "/workflows/{id:guid}/test",
+    "source": "server/IntelligenceEndpoints.cs",
+    "line": 469
+  },
+  {
+    "method": "POST",
+    "route": "/workflows/{id:guid}/submit",
+    "source": "server/IntelligenceEndpoints.cs",
+    "line": 498
+  },
+  {
+    "method": "POST",
+    "route": "/workflows/{id:guid}/cancel",
+    "source": "server/IntelligenceEndpoints.cs",
+    "line": 526
+  },
+  {
+    "method": "POST",
+    "route": "/workflows/{id:guid}/copy",
+    "source": "server/IntelligenceEndpoints.cs",
+    "line": 547
+  },
+  {
+    "method": "GET",
+    "route": "/workflows/{id:guid}/executions",
+    "source": "server/IntelligenceEndpoints.cs",
+    "line": 570
+  },
+  {
+    "method": "POST",
+    "route": "/executions/{id:guid}/retry",
+    "source": "server/IntelligenceEndpoints.cs",
+    "line": 582
+  },
+  {
+    "method": "GET",
+    "route": "/health/live",
+    "source": "server/IntelligenceOperations.cs",
+    "line": 33
+  },
+  {
+    "method": "GET",
+    "route": "/health/ready",
+    "source": "server/IntelligenceOperations.cs",
+    "line": 34
+  },
+  {
+    "method": "GET",
+    "route": "/operations",
+    "source": "server/IntelligenceOperations.cs",
+    "line": 80
+  },
+  {
+    "method": "GET",
+    "route": "/member-messages",
+    "source": "server/LeaderCommunications.cs",
+    "line": 90
+  },
+  {
+    "method": "GET",
+    "route": "/member-scope",
+    "source": "server/LeaderCommunications.cs",
+    "line": 104
+  },
+  {
+    "method": "POST",
+    "route": "/member-messages",
+    "source": "server/LeaderCommunications.cs",
+    "line": 127
+  },
+  {
+    "method": "GET",
+    "route": "/operations/agenda-templates/{orgId:guid}",
+    "source": "server/MeetingEndpoints.cs",
+    "line": 75
+  },
+  {
+    "method": "PUT",
+    "route": "/operations/agenda-templates/{orgId:guid}/{name}",
+    "source": "server/MeetingEndpoints.cs",
+    "line": 96
+  },
+  {
+    "method": "GET",
+    "route": "/meetings",
+    "source": "server/MeetingEndpoints.cs",
+    "line": 133
+  },
+  {
+    "method": "POST",
+    "route": "/meetings",
+    "source": "server/MeetingEndpoints.cs",
+    "line": 197
+  },
+  {
+    "method": "GET",
+    "route": "/meetings/{id:guid}",
+    "source": "server/MeetingEndpoints.cs",
+    "line": 236
+  },
+  {
+    "method": "PUT",
+    "route": "/meetings/{id:guid}",
+    "source": "server/MeetingEndpoints.cs",
+    "line": 241
+  },
+  {
+    "method": "POST",
+    "route": "/meetings/{id:guid}/status",
+    "source": "server/MeetingEndpoints.cs",
+    "line": 274
+  },
+  {
+    "method": "PUT",
+    "route": "/meetings/{id:guid}/agenda",
+    "source": "server/MeetingEndpoints.cs",
+    "line": 310
+  },
+  {
+    "method": "POST",
+    "route": "/meetings/{id:guid}/agenda/submit",
+    "source": "server/MeetingEndpoints.cs",
+    "line": 346
+  },
+  {
+    "method": "GET",
+    "route": "/meetings/{id:guid}/minutes",
+    "source": "server/MeetingEndpoints.cs",
+    "line": 365
+  },
+  {
+    "method": "POST",
+    "route": "/meetings/{id:guid}/minutes",
+    "source": "server/MeetingEndpoints.cs",
+    "line": 378
+  },
+  {
+    "method": "POST",
+    "route": "/meetings/{id:guid}/minutes/{version:guid}/submit",
+    "source": "server/MeetingEndpoints.cs",
+    "line": 420
+  },
+  {
+    "method": "GET",
+    "route": "/meetings/{id:guid}/minutes/{version:guid}/pdf",
+    "source": "server/MeetingEndpoints.cs",
+    "line": 442
+  },
+  {
+    "method": "GET",
+    "route": "/meetings/{id:guid}/attendance",
+    "source": "server/MeetingEndpoints.cs",
+    "line": 468
+  },
+  {
+    "method": "POST",
+    "route": "/meetings/{id:guid}/attendance",
+    "source": "server/MeetingEndpoints.cs",
+    "line": 491
+  },
+  {
+    "method": "POST",
+    "route": "/meetings/{id:guid}/rsvp",
+    "source": "server/MeetingEndpoints.cs",
+    "line": 545
+  },
+  {
+    "method": "GET",
+    "route": "/meetings/{id:guid}/calendar",
+    "source": "server/MeetingEndpoints.cs",
+    "line": 582
+  },
+  {
+    "method": "POST",
+    "route": "/members/{id:guid}/photo",
+    "source": "server/MemberMediaEndpoints.cs",
+    "line": 13
+  },
+  {
+    "method": "POST",
+    "route": "/persons/me/photo",
+    "source": "server/MemberMediaEndpoints.cs",
+    "line": 31
+  },
+  {
+    "method": "POST",
+    "route": "/members/{id:guid}/documents",
+    "source": "server/MemberMediaEndpoints.cs",
+    "line": 52
+  },
+  {
+    "method": "GET",
+    "route": "/membership/documents/{id:guid}",
+    "source": "server/MemberMediaEndpoints.cs",
+    "line": 137
+  },
+  {
+    "method": "POST",
+    "route": "/membership/documents/{id:guid}/approve",
+    "source": "server/MemberMediaEndpoints.cs",
+    "line": 158
+  },
+  {
+    "method": "DELETE",
+    "route": "/membership/documents/{id:guid}",
+    "source": "server/MemberMediaEndpoints.cs",
+    "line": 172
+  },
+  {
+    "method": "GET",
+    "route": "/members/{id:guid}/cards",
+    "source": "server/MemberMediaEndpoints.cs",
+    "line": 185
+  },
+  {
+    "method": "POST",
+    "route": "/members/{id:guid}/cards/reissue",
+    "source": "server/MemberMediaEndpoints.cs",
+    "line": 202
+  },
+  {
+    "method": "POST",
+    "route": "/membership/cards/{id:guid}/revoke",
+    "source": "server/MemberMediaEndpoints.cs",
+    "line": 230
+  },
+  {
+    "method": "GET",
+    "route": "/members/{id:guid}/card",
+    "source": "server/MemberMediaEndpoints.cs",
+    "line": 244
+  },
+  {
+    "method": "GET",
+    "route": "/membership/invitations/{id:guid}/qr",
+    "source": "server/MemberMediaEndpoints.cs",
+    "line": 269
+  },
+  {
+    "method": "GET",
+    "route": "/cards/verify/{token}",
+    "source": "server/MemberMediaEndpoints.cs",
+    "line": 293
+  },
+  {
+    "method": "POST",
+    "route": "/auth/otp/request",
+    "source": "server/MemberOtp.cs",
+    "line": 71
+  },
+  {
+    "method": "POST",
+    "route": "/auth/otp/verify",
+    "source": "server/MemberOtp.cs",
+    "line": 105
+  },
+  {
+    "method": "GET",
+    "route": "/membership/catalog",
+    "source": "server/MembershipEndpoints.cs",
+    "line": 42
+  },
+  {
+    "method": "GET",
+    "route": "/membership/options",
+    "source": "server/MembershipEndpoints.cs",
+    "line": 93
+  },
+  {
+    "method": "GET",
+    "route": "/members",
+    "source": "server/MembershipEndpoints.cs",
+    "line": 137
+  },
+  {
+    "method": "GET",
+    "route": "/directory",
+    "source": "server/MembershipEndpoints.cs",
+    "line": 175
+  },
+  {
+    "method": "GET",
+    "route": "/members/{id:guid}",
+    "source": "server/MembershipEndpoints.cs",
+    "line": 213
+  },
+  {
+    "method": "GET",
+    "route": "/members/{id:guid}/photo",
+    "source": "server/MembershipEndpoints.cs",
+    "line": 417
+  },
+  {
+    "method": "POST",
+    "route": "/persons/me",
+    "source": "server/MembershipEndpoints.cs",
+    "line": 438
+  },
+  {
+    "method": "PUT",
+    "route": "/persons/me",
+    "source": "server/MembershipEndpoints.cs",
+    "line": 446
+  },
+  {
+    "method": "PUT",
+    "route": "/persons/me/privacy",
+    "source": "server/MembershipEndpoints.cs",
+    "line": 461
+  },
+  {
+    "method": "PUT",
+    "route": "/members/{id:guid}/person",
+    "source": "server/MembershipEndpoints.cs",
+    "line": 483
+  },
+  {
+    "method": "POST",
+    "route": "/members",
+    "source": "server/MembershipEndpoints.cs",
+    "line": 498
+  },
+  {
+    "method": "POST",
+    "route": "/members/duplicates",
+    "source": "server/MembershipEndpoints.cs",
+    "line": 558
+  },
+  {
+    "method": "POST",
+    "route": "/members/{id:guid}/status",
+    "source": "server/MembershipEndpoints.cs",
+    "line": 567
+  },
+  {
+    "method": "GET",
+    "route": "/membership/me",
+    "source": "server/MembershipEndpoints.cs",
+    "line": 589
+  },
+  {
+    "method": "POST",
+    "route": "/directory/{id:guid}/contact-request",
+    "source": "server/MembershipEndpoints.cs",
+    "line": 694
+  },
+  {
+    "method": "POST",
+    "route": "/membership/contact-requests/{id:guid}/respond",
+    "source": "server/MembershipEndpoints.cs",
+    "line": 736
+  },
+  {
+    "method": "GET",
+    "route": "/membership/notification-status",
+    "source": "server/MembershipEndpoints.cs",
+    "line": 764
+  },
+  {
+    "method": "GET",
+    "route": "/membership/views",
+    "source": "server/MembershipEndpoints.cs",
+    "line": 797
+  },
+  {
+    "method": "POST",
+    "route": "/membership/views",
+    "source": "server/MembershipEndpoints.cs",
+    "line": 809
+  },
+  {
+    "method": "GET",
+    "route": "/membership/metrics",
+    "source": "server/MembershipEndpoints.cs",
+    "line": 844
+  },
+  {
+    "method": "GET",
+    "route": "/membership/hierarchy",
+    "source": "server/MembershipHierarchy.cs",
+    "line": 10
+  },
+  {
+    "method": "POST",
+    "route": "/membership/imports",
+    "source": "server/MembershipImport.cs",
+    "line": 201
+  },
+  {
+    "method": "GET",
+    "route": "/membership/imports",
+    "source": "server/MembershipImport.cs",
+    "line": 289
+  },
+  {
+    "method": "GET",
+    "route": "/membership/imports/{id:guid}",
+    "source": "server/MembershipImport.cs",
+    "line": 315
+  },
+  {
+    "method": "POST",
+    "route": "/membership/imports/{id:guid}/mapping",
+    "source": "server/MembershipImport.cs",
+    "line": 354
+  },
+  {
+    "method": "POST",
+    "route": "/membership/imports/{id:guid}/resolve",
+    "source": "server/MembershipImport.cs",
+    "line": 377
+  },
+  {
+    "method": "POST",
+    "route": "/membership/imports/{id:guid}/commit",
+    "source": "server/MembershipImport.cs",
+    "line": 422
+  },
+  {
+    "method": "POST",
+    "route": "/membership/imports/{id:guid}/cancel",
+    "source": "server/MembershipImport.cs",
+    "line": 449
+  },
+  {
+    "method": "POST",
+    "route": "/membership/imports/{id:guid}/retry",
+    "source": "server/MembershipImport.cs",
+    "line": 473
+  },
+  {
+    "method": "POST",
+    "route": "/membership/export",
+    "source": "server/MembershipImport.cs",
+    "line": 495
+  },
+  {
+    "method": "POST",
+    "route": "/members/{id:guid}/transfers",
+    "source": "server/MembershipLifecycleEndpoints.cs",
+    "line": 24
+  },
+  {
+    "method": "GET",
+    "route": "/membership/transfers",
+    "source": "server/MembershipLifecycleEndpoints.cs",
+    "line": 83
+  },
+  {
+    "method": "POST",
+    "route": "/membership/transfers/{id:guid}/decisions",
+    "source": "server/MembershipLifecycleEndpoints.cs",
+    "line": 131
+  },
+  {
+    "method": "POST",
+    "route": "/membership/transfers/{id:guid}/cancel",
+    "source": "server/MembershipLifecycleEndpoints.cs",
+    "line": 224
+  },
+  {
+    "method": "POST",
+    "route": "/membership/transfers/{id:guid}/clearance",
+    "source": "server/MembershipLifecycleEndpoints.cs",
+    "line": 263
+  },
+  {
+    "method": "POST",
+    "route": "/membership/transfers/{id:guid}/retry",
+    "source": "server/MembershipLifecycleEndpoints.cs",
+    "line": 298
+  },
+  {
+    "method": "POST",
+    "route": "/members/{id:guid}/financial-hold",
+    "source": "server/MembershipLifecycleEndpoints.cs",
+    "line": 333
+  },
+  {
+    "method": "POST",
+    "route": "/members/{id:guid}/renewals",
+    "source": "server/MembershipLifecycleEndpoints.cs",
+    "line": 354
+  },
+  {
+    "method": "POST",
+    "route": "/members/{id:guid}/category",
+    "source": "server/MembershipLifecycleEndpoints.cs",
+    "line": 418
+  },
+  {
+    "method": "GET",
+    "route": "/membership/config",
+    "source": "server/MembershipWorkflowEndpoints.cs",
+    "line": 38
+  },
+  {
+    "method": "POST",
+    "route": "/membership/categories",
+    "source": "server/MembershipWorkflowEndpoints.cs",
+    "line": 73
+  },
+  {
+    "method": "PUT",
+    "route": "/membership/policy",
+    "source": "server/MembershipWorkflowEndpoints.cs",
+    "line": 92
+  },
+  {
+    "method": "POST",
+    "route": "/membership/workflows",
+    "source": "server/MembershipWorkflowEndpoints.cs",
+    "line": 122
+  },
+  {
+    "method": "POST",
+    "route": "/membership/applications",
+    "source": "server/MembershipWorkflowEndpoints.cs",
+    "line": 193
+  },
+  {
+    "method": "PUT",
+    "route": "/membership/applications/{id:guid}",
+    "source": "server/MembershipWorkflowEndpoints.cs",
+    "line": 239
+  },
+  {
+    "method": "POST",
+    "route": "/membership/applications/{id:guid}/submit",
+    "source": "server/MembershipWorkflowEndpoints.cs",
+    "line": 281
+  },
+  {
+    "method": "POST",
+    "route": "/membership/applications/{id:guid}/withdraw",
+    "source": "server/MembershipWorkflowEndpoints.cs",
+    "line": 355
+  },
+  {
+    "method": "GET",
+    "route": "/membership/applications",
+    "source": "server/MembershipWorkflowEndpoints.cs",
+    "line": 382
+  },
+  {
+    "method": "GET",
+    "route": "/membership/applications/{id:guid}",
+    "source": "server/MembershipWorkflowEndpoints.cs",
+    "line": 438
+  },
+  {
+    "method": "POST",
+    "route": "/membership/applications/{id:guid}/decisions",
+    "source": "server/MembershipWorkflowEndpoints.cs",
+    "line": 504
+  },
+  {
+    "method": "POST",
+    "route": "/membership/invitations",
+    "source": "server/MembershipWorkflowEndpoints.cs",
+    "line": 505
+  },
+  {
+    "method": "GET",
+    "route": "/membership/invitations",
+    "source": "server/MembershipWorkflowEndpoints.cs",
+    "line": 581
+  },
+  {
+    "method": "DELETE",
+    "route": "/membership/invitations/{id:guid}",
+    "source": "server/MembershipWorkflowEndpoints.cs",
+    "line": 606
+  },
+  {
+    "method": "POST",
+    "route": "/membership/invitations/accept",
+    "source": "server/MembershipWorkflowEndpoints.cs",
+    "line": 622
+  },
+  {
+    "method": "GET",
+    "route": "/membership/link-requests",
+    "source": "server/MembershipWorkflowEndpoints.cs",
+    "line": 623
+  },
+  {
+    "method": "POST",
+    "route": "/membership/link-requests/{id:guid}/decide",
+    "source": "server/MembershipWorkflowEndpoints.cs",
+    "line": 652
+  },
+  {
+    "method": "GET",
+    "route": "/documents",
+    "source": "server/OperationDocuments.cs",
+    "line": 20
+  },
+  {
+    "method": "POST",
+    "route": "/documents",
+    "source": "server/OperationDocuments.cs",
+    "line": 91
+  },
+  {
+    "method": "GET",
+    "route": "/documents/{id:guid}",
+    "source": "server/OperationDocuments.cs",
+    "line": 169
+  },
+  {
+    "method": "POST",
+    "route": "/documents/{id:guid}/versions",
+    "source": "server/OperationDocuments.cs",
+    "line": 210
+  },
+  {
+    "method": "PUT",
+    "route": "/documents/{id:guid}",
+    "source": "server/OperationDocuments.cs",
+    "line": 274
+  },
+  {
+    "method": "GET",
+    "route": "/documents/{id:guid}/download",
+    "source": "server/OperationDocuments.cs",
+    "line": 309
+  },
+  {
+    "method": "POST",
+    "route": "/documents/{id:guid}/submit",
+    "source": "server/OperationDocuments.cs",
+    "line": 362
+  },
+  {
+    "method": "GET",
+    "route": "/operations/options",
+    "source": "server/OperationsIntelligence.cs",
+    "line": 10
+  },
+  {
+    "method": "GET",
+    "route": "/operations/history/{id:guid}",
+    "source": "server/OperationsIntelligence.cs",
+    "line": 100
+  },
+  {
+    "method": "GET",
+    "route": "/operations/analytics",
+    "source": "server/OperationsIntelligence.cs",
+    "line": 120
+  },
+  {
+    "method": "GET",
+    "route": "/members/{id:guid}/achievements",
+    "source": "server/OperationsIntelligence.cs",
+    "line": 211
+  },
+  {
+    "method": "GET",
+    "route": "/auth/csrf",
+    "source": "server/Program.cs",
+    "line": 227
+  },
+  {
+    "method": "POST",
+    "route": "/auth/register",
+    "source": "server/Program.cs",
+    "line": 231
+  },
+  {
+    "method": "GET",
+    "route": "/auth/methods",
+    "source": "server/Program.cs",
+    "line": 263
+  },
+  {
+    "method": "POST",
+    "route": "/auth/login",
+    "source": "server/Program.cs",
+    "line": 264
+  },
+  {
+    "method": "POST",
+    "route": "/auth/resend-verification",
+    "source": "server/Program.cs",
+    "line": 345
+  },
+  {
+    "method": "POST",
+    "route": "/auth/forgot-password",
+    "source": "server/Program.cs",
+    "line": 366
+  },
+  {
+    "method": "POST",
+    "route": "/auth/complete",
+    "source": "server/Program.cs",
+    "line": 387
+  },
+  {
+    "method": "GET",
+    "route": "/auth/me",
+    "source": "server/Program.cs",
+    "line": 428
+  },
+  {
+    "method": "POST",
+    "route": "/auth/logout",
+    "source": "server/Program.cs",
+    "line": 448
+  },
+  {
+    "method": "GET",
+    "route": "/auth/sessions",
+    "source": "server/Program.cs",
+    "line": 458
+  },
+  {
+    "method": "DELETE",
+    "route": "/auth/sessions/{id}",
+    "source": "server/Program.cs",
+    "line": 476
+  },
+  {
+    "method": "PUT",
+    "route": "/users/profile",
+    "source": "server/Program.cs",
+    "line": 485
+  },
+  {
+    "method": "POST",
+    "route": "/auth/change-password",
+    "source": "server/Program.cs",
+    "line": 510
+  },
+  {
+    "method": "GET",
+    "route": "/workspaces",
+    "source": "server/Program.cs",
+    "line": 528
+  },
+  {
+    "method": "POST",
+    "route": "/workspaces/{id:guid}/activate",
+    "source": "server/Program.cs",
+    "line": 567
+  },
+  {
+    "method": "GET",
+    "route": "/dashboard",
+    "source": "server/Program.cs",
+    "line": 582
+  },
+  {
+    "method": "GET",
+    "route": "/organizations",
+    "source": "server/Program.cs",
+    "line": 583
+  },
+  {
+    "method": "GET",
+    "route": "/organizations/{id:guid}",
+    "source": "server/Program.cs",
+    "line": 653
+  },
+  {
+    "method": "POST",
+    "route": "/organizations",
+    "source": "server/Program.cs",
+    "line": 662
+  },
+  {
+    "method": "PUT",
+    "route": "/organizations/{id:guid}",
+    "source": "server/Program.cs",
+    "line": 666
+  },
+  {
+    "method": "GET",
+    "route": "/levels",
+    "source": "server/Program.cs",
+    "line": 670
+  },
+  {
+    "method": "POST",
+    "route": "/levels",
+    "source": "server/Program.cs",
+    "line": 678
+  },
+  {
+    "method": "GET",
+    "route": "/roles",
+    "source": "server/Program.cs",
+    "line": 686
+  },
+  {
+    "method": "GET",
+    "route": "/permissions",
+    "source": "server/Program.cs",
+    "line": 694
+  },
+  {
+    "method": "POST",
+    "route": "/roles",
+    "source": "server/Program.cs",
+    "line": 702
+  },
+  {
+    "method": "PUT",
+    "route": "/roles/{id:guid}",
+    "source": "server/Program.cs",
+    "line": 722
+  },
+  {
+    "method": "GET",
+    "route": "/assignments",
+    "source": "server/Program.cs",
+    "line": 760
+  },
+  {
+    "method": "POST",
+    "route": "/assignments",
+    "source": "server/Program.cs",
+    "line": 784
+  },
+  {
+    "method": "GET",
+    "route": "/settings",
+    "source": "server/Program.cs",
+    "line": 816
+  },
+  {
+    "method": "PUT",
+    "route": "/settings",
+    "source": "server/Program.cs",
+    "line": 824
+  },
+  {
+    "method": "GET",
+    "route": "/audit-logs",
+    "source": "server/Program.cs",
+    "line": 856
+  },
+  {
+    "method": "POST",
+    "route": "/associations",
+    "source": "server/Program.cs",
+    "line": 895
+  },
+  {
+    "method": "POST",
+    "route": "/registration-requests/{id:guid}/provision",
+    "source": "server/Program.cs",
+    "line": 899
+  },
+  {
+    "method": "DELETE",
+    "route": "/assignments/{id:guid}",
+    "source": "server/Program.cs",
+    "line": 918
+  },
+  {
+    "method": "GET",
+    "route": "/development/mail",
+    "source": "server/Program.cs",
+    "line": 947
+  },
+  {
+    "method": "POST",
+    "route": "/registration-requests",
+    "source": "server/Program.cs",
+    "line": 968
+  },
+  {
+    "method": "GET",
+    "route": "/registration-requests",
+    "source": "server/Program.cs",
+    "line": 977
+  },
+  {
+    "method": "GET",
+    "route": "/health",
+    "source": "server/Program.cs",
+    "line": 985
+  },
+  {
+    "method": "GET",
+    "route": "/tasks",
+    "source": "server/ProjectEndpoints.cs",
+    "line": 73
+  },
+  {
+    "method": "POST",
+    "route": "/tasks",
+    "source": "server/ProjectEndpoints.cs",
+    "line": 114
+  },
+  {
+    "method": "GET",
+    "route": "/tasks/{id:guid}",
+    "source": "server/ProjectEndpoints.cs",
+    "line": 143
+  },
+  {
+    "method": "PUT",
+    "route": "/tasks/{id:guid}",
+    "source": "server/ProjectEndpoints.cs",
+    "line": 164
+  },
+  {
+    "method": "POST",
+    "route": "/tasks/{id:guid}/status",
+    "source": "server/ProjectEndpoints.cs",
+    "line": 200
+  },
+  {
+    "method": "POST",
+    "route": "/tasks/{id:guid}/comments",
+    "source": "server/ProjectEndpoints.cs",
+    "line": 236
+  },
+  {
+    "method": "GET",
+    "route": "/projects",
+    "source": "server/ProjectEndpoints.cs",
+    "line": 338
+  },
+  {
+    "method": "POST",
+    "route": "/projects",
+    "source": "server/ProjectEndpoints.cs",
+    "line": 398
+  },
+  {
+    "method": "GET",
+    "route": "/projects/{id:guid}",
+    "source": "server/ProjectEndpoints.cs",
+    "line": 455
+  },
+  {
+    "method": "POST",
+    "route": "/projects/{id:guid}/submit",
+    "source": "server/ProjectEndpoints.cs",
+    "line": 502
+  },
+  {
+    "method": "POST",
+    "route": "/projects/{id:guid}/status",
+    "source": "server/ProjectEndpoints.cs",
+    "line": 516
+  },
+  {
+    "method": "POST",
+    "route": "/projects/{id:guid}/activities",
+    "source": "server/ProjectEndpoints.cs",
+    "line": 563
+  },
+  {
+    "method": "POST",
+    "route": "/projects/{id:guid}/impact/{impactId:guid}/corrections",
+    "source": "server/ProjectEndpoints.cs",
+    "line": 591
+  },
+  {
+    "method": "GET",
+    "route": "/impact-metrics",
+    "source": "server/ProjectEndpoints.cs",
+    "line": 634
+  },
+  {
+    "method": "POST",
+    "route": "/impact-metrics",
+    "source": "server/ProjectEndpoints.cs",
+    "line": 648
+  },
+  {
+    "method": "GET",
+    "route": "/projects/{id:guid}/impact",
+    "source": "server/ProjectEndpoints.cs",
+    "line": 674
+  },
+  {
+    "method": "POST",
+    "route": "/projects/{id:guid}/impact",
+    "source": "server/ProjectEndpoints.cs",
+    "line": 700
+  },
+  {
+    "method": "GET",
+    "route": "/directory/regions",
+    "source": "server/RegionalDirectory.cs",
+    "line": 7
+  },
+  {
+    "method": "GET",
+    "route": "/volunteers",
+    "source": "server/VolunteerEndpoints.cs",
+    "line": 44
+  },
+  {
+    "method": "POST",
+    "route": "/volunteers",
+    "source": "server/VolunteerEndpoints.cs",
+    "line": 67
+  },
+  {
+    "method": "GET",
+    "route": "/volunteers/opportunities",
+    "source": "server/VolunteerEndpoints.cs",
+    "line": 102
+  },
+  {
+    "method": "POST",
+    "route": "/volunteers/shifts",
+    "source": "server/VolunteerEndpoints.cs",
+    "line": 140
+  },
+  {
+    "method": "POST",
+    "route": "/volunteers/shifts/{id:guid}/apply",
+    "source": "server/VolunteerEndpoints.cs",
+    "line": 185
+  },
+  {
+    "method": "GET",
+    "route": "/volunteers/assignments",
+    "source": "server/VolunteerEndpoints.cs",
+    "line": 246
+  },
+  {
+    "method": "POST",
+    "route": "/volunteers/assignments/{id:guid}/status",
+    "source": "server/VolunteerEndpoints.cs",
+    "line": 267
+  },
+  {
+    "method": "POST",
+    "route": "/volunteers/assignments/{id:guid}/attendance",
+    "source": "server/VolunteerEndpoints.cs",
+    "line": 322
+  },
+  {
+    "method": "POST",
+    "route": "/volunteers/hours",
+    "source": "server/VolunteerEndpoints.cs",
+    "line": 397
+  },
+  {
+    "method": "GET",
+    "route": "/volunteers/hours",
+    "source": "server/VolunteerEndpoints.cs",
+    "line": 472
+  },
+  {
+    "method": "POST",
+    "route": "/volunteers/hours/{id:guid}/verify",
+    "source": "server/VolunteerEndpoints.cs",
+    "line": 492
+  }
+]

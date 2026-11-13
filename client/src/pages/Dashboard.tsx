@@ -22,8 +22,8 @@ export default function Dashboard() {
     <>
       <PageHeader
         eyebrow="IMPACT INTERNATIONAL AT A GLANCE"
-        title="Impact International overview"
-        description="Membership, clubs, leadership, and service across Impact International."
+        title={q.data?.dashboard?.title || "Your workspace overview"}
+        description={"Membership, clubs, and service in your authorized scope: " + w?.organization}
       >
         <span className="date-label">
           {new Date().toLocaleDateString("en-IN", {
@@ -43,7 +43,7 @@ export default function Dashboard() {
           <p>
             Great things happen when Impact communities come together.
             <br />
-            Here’s what’s happening across Impact International.
+            Here’s what’s happening within your assigned workspace.
           </p>
           <Link to="/app/organizations">
             Explore your organization <ArrowRight size={16} />

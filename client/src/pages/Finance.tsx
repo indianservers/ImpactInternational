@@ -1,7 +1,9 @@
-import ModuleNavigation from "../ModuleNavigation";
+
 import DuesReports from "./DuesReports";
 import "./DuesReports.css";
-import { createContext, useContext, useState, useEffect } from "react";
+import { useState, useEffect } from "react";
+import { FinanceContext as ctx, useFinance } from "./FinanceContext";
+import FinanceCommand from "./FinanceCommand";
 import {
   Link,
   Route,
@@ -11,20 +13,16 @@ import {
 } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
-  ArrowUpRight,
   Plus,
-  ShieldCheck,
   Landmark,
-  Receipt,
 } from "lucide-react";
 import { api } from "../api";
 import { ErrorBox, Skeleton, useWorkspace } from "../App";
 import "./Operations.css";
 import "./Finance.css";
+import "./FinanceCommand.css";
 type Row = Record<string, any>;
-const root = "/app/finance",
-  ctx = createContext<Row>({});
-const useFinance = () => useContext(ctx);
+const root = "/app/finance";
 function useData(path: string, enabled = true) {
   const { w } = useWorkspace();
   return useQuery<any>({
@@ -282,8 +280,8 @@ export default function Finance() {
   const path = e ? "/finance/entities/" + e.id : "";
   const navigate = useNavigate();
   return (
-    <ctx.Provider value={{ e, path, currency: e?.currency ?? "INR", a }}>
-      <div className="operations finance">
+    <ctx.Provider value={{ e, path, currency: e?.currency ?? "INR", a, entities:q.data, onEntityChange:(id:string)=>{setEntity(id);sessionStorage.setItem("finance:"+w?.id,id);} }}>
+      <div className="operations finance finance-command-shell">
         <div className="fin-context">
           <span>
             <Landmark size={18} /> Financial workspace
@@ -311,11 +309,11 @@ export default function Finance() {
             </button>
           )}
         </div>
-        <ModuleNavigation root={root} label="Finance" items={[["", "Overview"], ["invoices", "Invoices"], ["dues", "Membership dues"], ["payments", "Payments"], ["reconciliation", "Reconciliation"], ["accounts", "Accounting"], ["budgets", "Budgets"], ["expenses", "Expenses"], ["funding", "Donations & sponsors"], ["sources", "Events & projects"], ["allocations", "Inter-entity"], ["reports", "Reports"], ["settings", "Settings"], ["member", "My finances"]]} groups={{"Overview": ["", "reports", "member"], "Billing": ["invoices", "dues", "payments", "expenses", "funding", "sources", "allocations"], "Books & settings": ["accounts", "reconciliation", "budgets", "settings"]}} />
-        {w?.permissions.includes("finance.dues.reports") && <nav className="header-actions" aria-label="Dues and collection tools"><Link className="button secondary" to={root + "/dues-reports"}>Dues & collection reports</Link>{w.permissions.includes("finance.dues.collect") && <Link className="button secondary" to={root + "/club-collections"}>Record club collections</Link>}</nav>}
+        <details className="fc-configuration"><summary>Books & configuration</summary><nav aria-label="Finance configuration">{[["settings","Financial settings"],["dues-plans","Dues rules & generation"],["funding","Donations & sponsors"],["sources","Events & projects"],["allocations","Inter-entity allocations"],["member","My finances"]].map(([path,label])=><Link key={path} to={root+"/"+path}>{label}</Link>)}{w?.permissions.includes("finance.configure")&&<button onClick={()=>setCreate(true)}>New independent entity</button>}</nav></details>
         <ErrorBox error={q.error ?? a.error} />
         <Routes>
           <Route path="dues-reports" element={<DuesReports />} />
+          <Route path="dues" element={<DuesReports management />} />
           <Route path="club-collections" element={<DuesReports collecting />} />
           <Route path="member" element={<MemberFinance />} />
           <Route path="invoices/:id" element={<Invoice />} />
@@ -337,18 +335,22 @@ export default function Finance() {
                 </>
               ) : (
                 <Routes>
-                  <Route index element={<Dashboard />} />
-                  <Route path="invoices" element={<Invoices />} />
-                  <Route path="dues" element={<Dues />} />
-                  <Route path="payments" element={<Payments />} />
-                  <Route path="reconciliation" element={<Reconciliation />} />
-                  <Route path="accounts" element={<Accounting />} />
-                  <Route path="budgets" element={<Budgets />} />
-                  <Route path="expenses" element={<Expenses />} />
+                  <Route index element={<FinanceCommand workspace="overview" />} />
+                  <Route path="transactions" element={<FinanceCommand workspace="transactions" workflow={<Accounting />} />} />
+                  <Route path="receipts" element={<FinanceCommand workspace="receipts" workflow={<Payments autoCreate />} />} />
+                  <Route path="audit" element={<FinanceCommand workspace="audit" />} />
+                  <Route path="invoices" element={<FinanceCommand workspace="invoices" workflow={<Invoices autoCreate />} />} />
+                  <Route path="dues-plans" element={<Dues />} />
+                  <Route path="payments" element={<FinanceCommand workspace="payments" workflow={<Expenses />} />} />
+                  <Route path="reconciliation" element={<FinanceCommand workspace="reconciliation" workflow={<Reconciliation />} />} />
+                  <Route path="accounts" element={<Accounting configuration />} />
+                  <Route path="budgets" element={<FinanceCommand workspace="budgets" workflow={<Budgets autoCreate />} />} />
+                  <Route path="expenses" element={<FinanceCommand workspace="expenses" workflow={<Expenses autoCreate />} />} />
                   <Route path="funding" element={<Funding />} />
                   <Route path="sources" element={<Sources />} />
                   <Route path="allocations" element={<Allocations />} />
-                  <Route path="reports" element={<Reports />} />
+                  <Route path="reports" element={<FinanceCommand workspace="reports" workflow={<Reports />} />} />
+                  <Route path="reports/:report" element={<FinanceCommand workspace="reports" workflow={<Reports />} />} />
                   <Route path="settings" element={<Settings />} />
                 </Routes>
               )
@@ -405,82 +407,6 @@ export default function Finance() {
         )}
       </div>
     </ctx.Provider>
-  );
-}
-function Dashboard() {
-  const { path, currency, e } = useFinance();
-  const q = useData(path + "/dashboard");
-  return (
-    <>
-      <Header
-        title="Impact finance overview"
-        description={
-          e.name + " · Independent entity books, connected to your club."
-        }
-        action={
-          <Link className="op-primary" to={root + "/invoices"}>
-            Manage invoices <ArrowUpRight size={16} />
-          </Link>
-        }
-      />
-      {!q.data ? (
-        <Skeleton />
-      ) : (
-        <>
-          <div className="fin-hero">
-            <div>
-              <p>OUTSTANDING RECEIVABLES</p>
-              <strong>{money(q.data.outstanding, currency)}</strong>
-              <span>
-                Across issued invoices · credits and verified allocations
-                included
-              </span>
-            </div>
-            <Receipt size={58} />
-          </div>
-          <div className="fin-stats">
-            {[
-              ["Verified this month", q.data.monthCollections],
-              ["Overdue", q.data.overdue],
-              ["Cash / bank book", q.data.cashBank],
-              ["Awaiting settlement", q.data.unsettled],
-            ].map(([label, v]) => (
-              <section className="op-card" key={String(label)}>
-                <p>{label}</p>
-                <h2>{money(v, currency)}</h2>
-              </section>
-            ))}
-          </div>
-          <div className="fin-two">
-            <section className="op-card">
-              <h2>Recent invoices</h2>
-              <InvoiceTable rows={q.data.recentInvoices} />
-            </section>
-            <section className="op-card">
-              <h2>Recent verified collections</h2>
-              <Table
-                rows={q.data.recentPayments}
-                cols={[
-                  ["receiptNumber", "Receipt"],
-                  ["payer", "Payer"],
-                  ["amount", "Amount", (r) => money(r.amount, currency)],
-                  [
-                    "settlementStatus",
-                    "Settlement",
-                    (r) => <Badge>{r.settlementStatus}</Badge>,
-                  ],
-                ]}
-              />
-            </section>
-          </div>
-          <p className="fin-policy">
-            <ShieldCheck size={17} />
-            {q.data.policy}
-          </p>
-        </>
-      )}
-      <ErrorBox error={q.error} />
-    </>
   );
 }
 function InvoiceTable({ rows }: any) {
@@ -556,11 +482,11 @@ function PickerFields(options: Row) {
     { key: "notes", label: "Notes", type: "textarea", required: false },
   ] as Field[];
 }
-function Invoices() {
+function Invoices({ autoCreate = false }: { autoCreate?: boolean }) {
   const { path, a } = useFinance();
   const [search, setSearch] = useState("");
   const [after, setAfter] = useState("");
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(autoCreate);
   const q = useData(
     path +
       "/invoices?search=" +
@@ -1098,13 +1024,13 @@ function Dues() {
   );
 }
 
-function Payments() {
+function Payments({ autoCreate = false }: { autoCreate?: boolean }) {
   const { path, a, currency } = useFinance();
   const q = useData(path + "/payments"),
     opts = useData(path + "/options"),
     banks = useData(path + "/bank-accounts"),
     invoices = useData(path + "/invoices");
-  const [form, setForm] = useState(""),
+  const [form, setForm] = useState(autoCreate ? "record" : ""),
     [record, setRecord] = useState<Row>(),
     [after, setAfter] = useState("");
   const list = useData(path + "/payments" + (after ? "?after=" + after : ""));
@@ -1416,7 +1342,7 @@ function Reconciliation() {
     </>
   );
 }
-function Accounting() {
+function Accounting({ configuration = false }: { configuration?: boolean }) {
   const { path, a, currency } = useFinance();
   const accounts = useData(path + "/accounts"),
     journals = useData(path + "/journals");
@@ -1425,11 +1351,11 @@ function Accounting() {
   return (
     <>
       <Header
-        title="Impact accounts & journals"
+        title="Journals & corrections"
         description="Balanced, immutable journals in open accounting periods. Corrections create reversing entries."
         action={
           <div className="fin-actions">
-            <button onClick={() => setForm("account")}>Add account</button>
+            {configuration && <button onClick={() => setForm("account")}>Add account</button>}
             <button className="op-primary" onClick={() => setForm("journal")}>
               Post journal
             </button>
@@ -1437,8 +1363,8 @@ function Accounting() {
         }
       />
       <div className="fin-two">
-        <section className="op-card">
-          <h2>Chart of accounts</h2>
+        {configuration && <section className="op-card">
+          <h2>Configured ledger references</h2>
           <Table
             rows={accounts.data ?? []}
             cols={[
@@ -1447,7 +1373,7 @@ function Accounting() {
               ["kind", "Classification"],
             ]}
           />
-        </section>
+        </section>}
         <section className="op-card">
           <h2>Posted journals</h2>
           <Table
@@ -1565,11 +1491,11 @@ function Accounting() {
     </>
   );
 }
-function Budgets() {
+function Budgets({ autoCreate = false }: { autoCreate?: boolean }) {
   const { path, a, currency } = useFinance();
   const q = useData(path + "/budgets"),
     opts = useData(path + "/options");
-  const [open, setOpen] = useState(false),
+  const [open, setOpen] = useState(autoCreate),
     [revision, setRevision] = useState<Row>(),
     [detail, setDetail] = useState<Row>();
   return (
@@ -1727,12 +1653,12 @@ function Budgets() {
     </>
   );
 }
-function Expenses() {
+function Expenses({ autoCreate = false }: { autoCreate?: boolean }) {
   const { path, a, currency } = useFinance();
   const q = useData(path + "/expenses"),
     opts = useData(path + "/options"),
     budgets = useData(path + "/budgets");
-  const [form, setForm] = useState(""),
+  const [form, setForm] = useState(autoCreate ? "claim" : ""),
     [record, setRecord] = useState<Row>();
   return (
     <>

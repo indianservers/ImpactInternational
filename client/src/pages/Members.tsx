@@ -1,11 +1,7 @@
-import { useEffect, useState, useRef } from "react";
-import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useSearchParams } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
-  Users,
-  UserCheck,
-  ClipboardList,
-  TrendingUp,
   Plus,
   Search,
   Download,
@@ -17,6 +13,10 @@ import {
   Copy,
   Send,
 } from "lucide-react";
+import {useDialog} from "../useDialog";
+import AddMemberWizard from "./AddMemberWizard";
+import MembershipIntelligence from "./MembershipIntelligence";
+import "./Members.css";
 import { api, apiDownload } from "../api";
 import { PageHeader, Skeleton, ErrorBox, useWorkspace } from "../App";
 import DataGrid, { type GridColumn, type GridConfig } from "../DataGrid";
@@ -25,22 +25,25 @@ import {
   MemberAvatar,
   MemberStatus,
   ClubCategoryFields,
-  PersonEditor,
 } from "../MemberComponents";
 export default function Members({
   directory = false,
 }: {
   directory?: boolean;
 }) {
+  const [dashboardFilters,setDashboardFilters] = useSearchParams();
   const { w } = useWorkspace(),
     qc = useQueryClient();
   const grants = w?.permissions || [];
+  const [bulkTarget,setBulkTarget]=useState<any>({clubId:"",categoryId:""});
+  const [range,setRange]=useState("6m"),[dates,setDates]=useState<any>({}),[extra,setExtra]=useState<any>(()=>Object.fromEntries(Array.from(dashboardFilters.entries()).filter(([key])=>["nationalId","membershipType","joinedFrom","joinedTo","renewalFrom","renewalTo","country","state"].includes(key)))),[draftFilters,setDraftFilters]=useState<any>({}),[bulk,setBulk]=useState(""),[bulkReason,setBulkReason]=useState(""),[bulkStatus,setBulkStatus]=useState("Inactive"),[bulkCategory,setBulkCategory]=useState(""),[viewName,setViewName]=useState("");
+  const [districtId,setDistrict]=useState(()=>dashboardFilters.get("districtId")||""),[zoneId,setZone]=useState(()=>dashboardFilters.get("zoneId")||"");
   const [search, setSearch] = useState(""),
     [term, setTerm] = useState(""),
-    [statuses, setStatuses] = useState<string[]>([]),
-    [clubId, setClub] = useState(""),
-    [regionId, setRegion] = useState(""),
-    [categoryId, setCategory] = useState(""),
+    [statuses, setStatuses] = useState<string[]>(() => { const s=dashboardFilters.get("status"); return s && ["Active","Inactive","Suspended","Transferred","Expired","Renewal Due","Resigned","Terminated","Deceased"].includes(s)?[s]:[]; }),
+    [clubId, setClub] = useState(()=>dashboardFilters.get("clubId")||""),
+    [regionId, setRegion] = useState(()=>dashboardFilters.get("regionId")||""),
+    [categoryId, setCategory] = useState(()=>dashboardFilters.get("categoryId")||""),
     [city, setCity] = useState(""),
     [profession, setProfession] = useState(""),
     [industry, setIndustry] = useState(""),
@@ -48,13 +51,13 @@ export default function Members({
     [office, setOffice] = useState(""),
     [sort, setSort] = useState("name"),
     [page, setPage] = useState(1),
-    [view, setView] = useState("list"),
+    [view, setView] = useState(()=>localStorage.getItem("impact-members-view") || "list"),
     [advanced, setAdvanced] = useState(false),
     [selected, setSelected] = useState<Set<string>>(new Set()),
     [quick, setQuick] = useState<any>(null),
     [drawer, setDrawer] = useState(""),
     [error, setError] = useState<unknown>(),
-    [message, setMessage] = useState(""),
+    [message, setMessage] = useState(()=>dashboardFilters.get("asOf")?"Opened from Insights as of "+dashboardFilters.get("asOf")+". This directory shows current records; open a profile to inspect historical status.":""),
     [busy, setBusy] = useState(false),
     [config, setConfig] = useState<GridConfig>({
       order: [
@@ -68,6 +71,7 @@ export default function Members({
         "offices",
         "city",
         "joinedAt",
+        "endsAt",
         "status",
         "renewalStatus",
         "updatedAt",
@@ -77,20 +81,22 @@ export default function Members({
         "industry",
         "actions",
       ],
-      hidden: ["updatedAt", "email", "phone", "profession", "industry", "district", "zone"],
+      hidden: ["updatedAt", "email", "phone", "profession", "industry", "district", "zone", "renewalStatus", "endsAt"],
       widths: {
-        name: 230,
-        club: 210,
-        number: 140,
-        category: 130,
-        offices: 180,
-        city: 140,
-        status: 130,
+        name: 210,
+        club: 160,
+        region: 110,
+        number: 130,
+        category: 100,
+        offices: 120,
+        city: 100,
+        status: 90,
         renewalStatus: 110,
-        joinedAt: 120,
-        actions: 100,
+        joinedAt: 95,
+        actions: 60,
       },
     });
+  useEffect(()=>{const p=new URLSearchParams(dashboardFilters);if(statuses.length===1)p.set("status",statuses[0]);else p.delete("status");setDashboardFilters(p,{replace:true});},[statuses]);
   useEffect(() => {
     const t = setTimeout(() => {
       setTerm(search);
@@ -104,7 +110,7 @@ export default function Members({
   }, [
     statuses,
     clubId,
-    regionId,
+    regionId, districtId, zoneId, extra,
     categoryId,
     city,
     profession,
@@ -128,23 +134,34 @@ export default function Members({
   if (clubId) params.set("clubId", clubId);
   if (regionId) params.set("regionId", regionId);
   if (categoryId) params.set("categoryId", categoryId);
+  if (districtId) params.set("districtId",districtId);
+  if (zoneId) params.set("zoneId",zoneId);
+  for(const [k,v] of Object.entries(extra))if(v)params.set(k,String(v));
+  const mobileFilters=advanced&&window.matchMedia("(max-width:760px)").matches;
+  useDialog(mobileFilters,()=>setAdvanced(false));
+  useEffect(()=>{if(!mobileFilters)return;const old=document.body.style.overflow;document.body.style.overflow="hidden";return()=>{document.body.style.overflow=old;};},[mobileFilters]);
+  useEffect(()=>{localStorage.setItem("impact-members-view",view);},[view]);
+  const selectRegion=(id:string)=>{setRegion(id);setDistrict("");setZone("");setClub("");};
+  const resetFilters=()=>{setSearch("");setStatuses([]);selectRegion("");setCategory("");setCity("");setProfession("");setIndustry("");setExpertise("");setOffice("");setExtra({});setDraftFilters({});};
+  const districtChoices=useQuery<any>({queryKey:["member-districts",w?.id,regionId],queryFn:()=>api("/membership/hierarchy?kind=District"+(regionId?"&parentId="+regionId:"")),enabled:!!w});
+  const zoneChoices=useQuery<any>({queryKey:["member-zones",w?.id,districtId],queryFn:()=>api("/membership/hierarchy?kind=Zone&parentId="+districtId),enabled:!!w&&!!districtId});
   const q = useQuery({
     queryKey: ["members", directory, w?.id, params.toString()],
     queryFn: () => api((directory ? "/directory" : "/members") + "?" + params),
     placeholderData: (p) => p,
   });
   const metrics = useQuery({
-    queryKey: ["member-metrics", w?.id],
-    queryFn: () => api("/membership/metrics"),
+    queryKey: ["member-metrics", w?.id, range,dates],
+    queryFn: () => api("/membership/metrics?"+new URLSearchParams({range,...dates})),
     enabled: !directory,
   });
   const choices = useQuery({
-    queryKey: ["member-choices", w?.id, regionId],
-    queryFn: () => api("/membership/options" + (regionId ? "?regionId=" + regionId : "")),
+    queryKey: ["member-choices", w?.id, regionId, districtId, zoneId],
+    queryFn: () => api("/membership/options?"+new URLSearchParams({...regionId?{regionId}:{},...districtId?{districtId}:{},...zoneId?{zoneId}:{}})),
     enabled: !!w,
   });
   const regions = useQuery<any[]>({ queryKey: ["directory-regions", w?.id], queryFn: () => api("/directory/regions"), enabled: !!w });
-  useEffect(() => { setRegion(""); setClub(""); setQuick(null); setSelected(new Set()); }, [w?.id]);
+  useEffect(() => { selectRegion(""); setQuick(null); setSelected(new Set()); }, [w?.id]);
   const saved = useQuery({
     queryKey: ["member-views", w?.id],
     queryFn: () => api("/membership/views"),
@@ -179,6 +196,7 @@ export default function Members({
       "offices",
       "city",
       "joinedAt",
+      "endsAt",
       "status",
       "renewalStatus",
       "updatedAt",
@@ -193,6 +211,7 @@ export default function Members({
           {
             number: "Member ID",
             joinedAt: "Joined",
+            endsAt: "Renewal date",
             renewalStatus: "Renewal",
             updatedAt: "Updated",
             offices: "Current office",
@@ -204,8 +223,8 @@ export default function Members({
           <MemberStatus status={r.status} />
         ) : key === "offices" ? (
           r.offices?.join(", ") || "—"
-        ) : key === "joinedAt" || key === "updatedAt" ? (
-          new Date(r[key]).toLocaleDateString()
+        ) : key === "joinedAt" || key === "updatedAt" || key === "endsAt" ? (
+          r[key] ? new Date(r[key]).toLocaleDateString() : "No expiry"
         ) : (
           r[key] || "—"
         ),
@@ -215,7 +234,7 @@ export default function Members({
       label: "Actions",
       render: (r) => (
         <button className="text-button" onClick={() => setQuick(r)}>
-          Quick view <ArrowUpRight size={13} />
+          View <ArrowUpRight size={13} />
         </button>
       ),
     },
@@ -228,12 +247,11 @@ export default function Members({
         "/membership/export",
         {
           format,
-          columns: columns
-            .map((c) => c.key)
+          columns: [...config.order, ...columns.map(c=>c.key).filter(k=>!config.order.includes(k))]
             .filter(
               (k) =>
                 !config.hidden.includes(k) &&
-                !["offices", "actions", "updatedAt", "renewalStatus", "region", "district", "zone"].includes(
+                !["actions"].includes(
                   k,
                 ),
             ),
@@ -241,7 +259,7 @@ export default function Members({
           search: term,
           statuses: statuses.join(","),
           clubId: clubId || null,
-          regionId: regionId || null,
+          regionId: regionId || null, districtId:districtId||null,zoneId:zoneId||null,...extra,sort,
           categoryId: categoryId || null,
           city,
           profession,
@@ -262,7 +280,8 @@ export default function Members({
     if (!v) return;
     try {
       const c = JSON.parse(v.configuration);
-      setConfig(c.grid);
+      if(c.grid)setConfig(c.grid);
+      setDistrict(c.districtId||"");setZone(c.zoneId||"");setExtra(c.extra||{});setDraftFilters(c.extra||{});setView(c.view||"list");
       setStatuses(c.statuses || []);
       setClub(c.clubId || "");
       setRegion(c.regionId || "");
@@ -279,25 +298,26 @@ export default function Members({
     }
   }
   return (
-    <>
+    <div className="members-premium">
       <PageHeader
         eyebrow={
-          directory ? "YOUR IMPACT COMMUNITY" : "IMPACT MEMBERSHIP"
+          directory ? "YOUR IMPACT COMMUNITY" : "PEOPLE & MEMBERSHIP"
         }
-        title={directory ? "Impact member directory" : "Impact members"}
+        title={directory ? "Impact member directory" : "Impact Members"}
         description={
           directory
             ? "Connect with Impact members, shared expertise, and opportunities to serve."
-            : "Member profiles and club affiliations across Impact International."
+            : "Manage member profiles, affiliations, and membership records across Impact International."
         }
       >
         <div className="header-actions">
           {!directory && grants.includes("members.invite") && (
             <button className="secondary" onClick={() => setDrawer("invite")}>
               <Mail size={16} />
-              Invite
+              Invite member
             </button>
           )}
+          {!directory&&grants.includes("members.import")&&<Link className="button secondary" to="/app/imports"><Upload size={16}/>Import members</Link>}
           {!directory && grants.includes("members.manage") && (
             <button onClick={() => setDrawer("create")}>
               <Plus size={16} />
@@ -306,83 +326,19 @@ export default function Members({
           )}
         </div>
       </PageHeader>
-      <section className="panel" aria-label="Region-wise member directory"><div className="form-grid"><label>Region<select value={regionId} onChange={e => { setRegion(e.target.value); setClub(""); setPage(1); setSelected(new Set()); }}><option value="">All authorized regions</option>{regions.data?.map(r => <option key={r.id} value={r.id}>{r.name} · {r.code}</option>)}</select></label><div><h3>{regionId ? regions.data?.find(r => r.id === regionId)?.name : "Region-wise members"}</h3><p>{q.data?.total ?? 0} memberships in the current view. Select a region, search members, then open a member to see their details.</p></div></div><ErrorBox error={regions.error} /><small>Results remain within your login’s hierarchy. Directory contact details follow each member’s sharing preferences.</small></section>
-      {!directory && !regionId &&
-        (metrics.isPending ? (
-          <Skeleton />
-        ) : (
-          metrics.data && (
-            <details className="compact-summary"><summary>Membership overview · {metrics.data.totalMembers} people · {metrics.data.activeMembers} active</summary>
-              <div className="member-kpis">
-                {[
-                  [
-                    Users,
-                    "Total people",
-                    metrics.data.totalMembers,
-                    "Across your authorized scope",
-                  ],
-                  [
-                    UserCheck,
-                    "Active members",
-                    metrics.data.activeMembers,
-                    "Current, active memberships",
-                  ],
-                  [
-                    ClipboardList,
-                    "Pending applications",
-                    metrics.data.pendingApplications,
-                    "Ready for your next step",
-                  ],
-                  [
-                    TrendingUp,
-                    "Joined this month",
-                    metrics.data.joinedThisMonth,
-                    "New connections, shared purpose",
-                  ],
-                ].map(([I, t, v, d]: any) => (
-                  <section className="stat-card" key={t}>
-                    <div className="stat-title">
-                      {t}
-                      <span>
-                        <I size={19} />
-                      </span>
-                    </div>
-                    <strong>{v}</strong>
-                    <p>{d}</p>
-                  </section>
-                ))}
-              </div>
-              <div className="intelligence-strip">
-                <span>
-                  Growth{" "}
-                  <b>
-                    {metrics.data.growthPercent == null
-                      ? "No opening cohort"
-                      : metrics.data.growthPercent + "%"}
-                  </b>
-                </span>
-                <span>
-                  Retention{" "}
-                  <b>
-                    {metrics.data.retentionPercent == null
-                      ? "No opening cohort"
-                      : metrics.data.retentionPercent + "%"}
-                  </b>
-                </span>
-                <span>
-                  Renewal due <b>{metrics.data.upcomingRenewals}</b>
-                </span>
-                <span>
-                  Not currently active <b>{metrics.data.inactiveMembers}</b>
-                </span>
-                <span>
-                  Needs attention <b>{metrics.data.requiringAttention}</b>
-                </span>
-                <Link to="/app/membership-insights">Explore insights →</Link>
-              </div>
-            </details>
-          )
-        ))}
+      <div className="mm-mobile-search search-field"><Search size={17}/><input aria-label="Search members on mobile" placeholder="Search name or member ID…" value={search} onChange={e=>setSearch(e.target.value)}/><small>{q.data?.total?.toLocaleString()??"…"}</small></div>
+      {!directory&&grants.includes("members.manage")&&<button className="mm-floating-add" aria-label="Add new member" onClick={()=>setDrawer("create")}><Plus size={18}/>Add member</button>}
+      {!directory&&<nav className="mm-status-tabs" aria-label="Membership status">{[["All members",""],["Active","Active"],["Inactive","Inactive"],["Suspended","Suspended"],["Transferred","Transferred"],["Expired","Expired"],["Renewals due","Renewal Due"]].map(([label,status])=><button key={label} className={statuses.join(",")===status?"active":""} aria-pressed={statuses.join(",")===status} onClick={()=>setStatuses(status?[status]:[])}>{label}<span>{status===""?metrics.data?.memberships??"—":status==="Renewal Due"?metrics.data?.upcomingRenewals??"—":metrics.data?(metrics.data.intelligence?.statusCounts.find((x:any)=>x.status===status)?.count??0):"—"}</span></button>)}{grants.includes("members.approve")&&<Link to="/app/approvals">Pending applications <b>{metrics.data?.pendingApplications??"—"}</b></Link>}</nav>}
+      {!directory&&<MembershipIntelligence {...{metrics,range,setRange,setDates}} onStatus={setStatuses} onRegion={selectRegion} canApprove={grants.includes("members.approve")}/>}
+      <section className="mm-primary-filters" aria-label="Member hierarchy filters">
+       <label>Region<select value={regionId} onChange={e=>selectRegion(e.target.value)}><option value="">All authorized regions</option>{regions.data?.map(r=><option key={r.id} value={r.id}>{r.name}</option>)}</select></label>
+       <label>District<select value={districtId} onChange={e=>{setDistrict(e.target.value);setZone("");setClub("");}}><option value="">All authorized districts</option>{districtChoices.data?.items.map((d:any)=><option key={d.id} value={d.id}>{d.name}</option>)}</select></label>
+       <label>Zone<select value={zoneId} disabled={!districtId} onChange={e=>{setZone(e.target.value);setClub("");}}><option value="">{districtId?"All zones":"Choose district first"}</option>{zoneChoices.data?.items.map((d:any)=><option key={d.id} value={d.id}>{d.name}</option>)}</select></label>
+       <label>Club<select value={clubId} onChange={e=>setClub(e.target.value)}><option value="">All authorized clubs</option>{choices.data?.clubs.map((c:any)=><option key={c.id} value={c.id}>{c.name}</option>)}</select></label>
+       <label>Category<select value={categoryId} onChange={e=>setCategory(e.target.value)}><option value="">All categories</option>{choices.data?.categories.map((c:any)=><option key={c.id} value={c.id}>{c.name}</option>)}</select></label>
+       <label>Status<select aria-label="Membership status filter" value={statuses.length===1?statuses[0]:""} onChange={e=>setStatuses(e.target.value?[e.target.value]:[])}><option value="">All statuses</option>{["Active","Inactive","Suspended","Transferred","Expired","Renewal Due","Resigned","Terminated","Deceased"].map(s=><option key={s}>{s}</option>)}</select></label>
+       <button className="text-button" onClick={resetFilters}>Reset</button>
+      </section>
       <ErrorBox error={error || q.error || metrics.error} />
       {message && (
         <div className="success" role="status">
@@ -390,35 +346,7 @@ export default function Members({
         </div>
       )}
       <section className="panel directory">
-        <div className="member-quick-filters">
-          {[
-            ["All members", []],
-            ["Active", ["Active"]],
-            ["Inactive", ["Inactive"]],
-            ["Suspended", ["Suspended"]],
-            ["Transferred", ["Transferred"]],
-            ["Expired", ["Expired"]],
-            ["Renewal due", ["Renewal Due"]],
-          ].map(([label, values]: any) => (
-            <button
-              key={label}
-              className={
-                JSON.stringify(statuses) === JSON.stringify(values)
-                  ? "active"
-                  : ""
-              }
-              onClick={() => setStatuses(values)}
-            >
-              {label}
-            </button>
-          ))}
-          {!directory && grants.includes("members.approve") && (
-            <Link to="/app/approvals">
-              Pending applications <span>↗</span>
-            </Link>
-          )}
-        </div>
-        <div className="filter-bar">
+        <div className="filter-bar"><strong className="mm-result-count">{q.data?.total?.toLocaleString()??"…"} {directory?"directory records":"memberships"}</strong>
           <div className="search-field">
             <Search size={17} />
             <input
@@ -462,9 +390,10 @@ export default function Members({
               <LayoutGrid size={17} />
             </button>
           </div>
+          {!directory&&grants.includes("members.export")&&<button className="secondary" disabled={busy} onClick={()=>exportRows("csv")}><Download size={15}/>Export</button>}
         </div>
         {advanced && (
-          <div className="advanced-filters">
+          <div className="advanced-filters mm-advanced" role={mobileFilters?"dialog":"region"} aria-modal={mobileFilters||undefined} aria-label="Advanced member filters"><header><h2>Advanced filters</h2><button className="text-button" onClick={()=>setAdvanced(false)}>Close filters</button></header><label>Membership type<select value={draftFilters.membershipType||""} onChange={e=>setDraftFilters({...draftFilters,membershipType:e.target.value})}><option value="">All club types</option>{choices.data?.membershipTypes?.map((t:string)=><option key={t}>{t}</option>)}</select></label>{[["joinedFrom","Joined from"],["joinedTo","Joined to"],["renewalFrom","Renewal from"],["renewalTo","Renewal to"]].map(([key,label])=><label key={key}>{label}<input type="date" value={draftFilters[key]||""} onChange={e=>setDraftFilters({...draftFilters,[key]:e.target.value})}/></label>)}<button className="secondary" onClick={()=>{setExtra({...draftFilters});setAdvanced(false);}}>Apply filters</button>
             <label>
               Statuses
               <select
@@ -489,38 +418,6 @@ export default function Members({
                 ))}
               </select>
             </label>
-            {choices.data && (
-              <>
-                <label>
-                  Club
-                  <select
-                    value={clubId}
-                    onChange={(e) => setClub(e.target.value)}
-                  >
-                    <option value="">All authorized clubs</option>
-                    {choices.data.clubs.map((c: any) => (
-                      <option key={c.id} value={c.id}>
-                        {c.name}
-                      </option>
-                    ))}
-                  </select>
-                </label>
-                <label>
-                  Category
-                  <select
-                    value={categoryId}
-                    onChange={(e) => setCategory(e.target.value)}
-                  >
-                    <option value="">All categories</option>
-                    {choices.data.categories.map((c: any) => (
-                      <option key={c.id} value={c.id}>
-                        {c.name}
-                      </option>
-                    ))}
-                  </select>
-                </label>
-              </>
-            )}
             {[
               ["City", city, setCity],
               ["Profession", profession, setProfession],
@@ -549,10 +446,10 @@ export default function Members({
                 </option>
               ))}
             </select>
-            <button
+            <input aria-label="Saved view name" placeholder="Name this view" value={viewName} onChange={e=>setViewName(e.target.value)}/><button
               className="text-button"
               onClick={async () => {
-                const name = window.prompt("Name this view");
+                const name = viewName.trim();
                 if (!name) return;
                 try {
                   await api("/membership/views", "POST", {
@@ -561,7 +458,7 @@ export default function Members({
                       grid: config,
                       statuses,
                       clubId,
-                      regionId,
+                      regionId, districtId, zoneId, extra, view,
                       categoryId,
                       city,
                       profession,
@@ -609,6 +506,7 @@ export default function Members({
             )}
           </div></details>
         )}
+        {!directory&&selected.size>0&&<div className="mm-bulk-bar"><strong>{selected.size} selected</strong>{grants.includes("members.export")&&<><button className="secondary" onClick={()=>exportRows("csv")}>Export selected</button><button className="secondary" onClick={()=>window.print()}>Print selected on this page</button></>}{grants.includes("members.manage")&&<><button className="secondary" onClick={()=>setBulk("status")}>Change status</button><button className="secondary" onClick={()=>setBulk("category")}>Assign category</button><button className="secondary" onClick={()=>setBulk("transfer")}>Request transfer</button></>}<button className="text-button" onClick={()=>setSelected(new Set())}>Clear selection</button></div>}
         {q.isPending ? (
           <Skeleton />
         ) : (
@@ -622,6 +520,7 @@ export default function Members({
                 rows={q.data?.items || []}
                 columns={columns}
                 config={config}
+                sort={sort} onSort={setSort}
                 onConfig={setConfig}
                 selected={directory ? undefined : selected}
                 onSelection={directory ? undefined : setSelected}
@@ -649,9 +548,9 @@ export default function Members({
                     directory={directory}
                     size="large"
                   />
-                  <MemberStatus status={m.status} />
-                  <h3>{m.name}</h3>
-                  <p>{m.profession || m.category}</p>
+                  {!directory&&<label className="mm-card-select"><input type="checkbox" aria-label={"Select member "+m.number} checked={selected.has(m.id)} onChange={e=>setSelected(old=>{const next=new Set(old);e.target.checked?next.add(m.id):next.delete(m.id);return next;})}/>Select</label>}<MemberStatus status={m.status} />
+                  <h3>{m.name}</h3><b className="mm-card-id">{m.number}</b>
+                  <p>{m.category} · {m.profession || "Community member"}</p><small>{m.offices?.join(", ")||"No current office"} · Joined {new Date(m.joinedAt).toLocaleDateString()}</small>
                   <span>{m.club}</span>
                   <small>{[m.region, m.district, m.zone].filter(Boolean).join(" → ")}</small>
                   <small>{m.city || m.country || "Location not shared"}</small>
@@ -686,6 +585,7 @@ export default function Members({
           </>
         )}
       </section>
+      {bulk&&<MemberDrawer title={bulk==="status"?"Confirm bulk status change":bulk==="transfer"?"Confirm bulk transfer requests":"Confirm bulk category change"} onClose={()=>setBulk("")}><form className="form-stack" onSubmit={async e=>{e.preventDefault();setBusy(true);setError(null);let done=0,unchanged=0;const failed:string[]=[];for(const id of selected){try{const d=await api("/members/"+id);if((bulk==="status"&&d.membership.status===bulkStatus)||(bulk==="category"&&d.membership.categoryId===bulkCategory)||(bulk==="transfer"&&d.membership.clubId===bulkTarget.clubId)){unchanged++;continue;}await api("/members/"+id+"/"+(bulk==="status"?"status":bulk==="transfer"?"transfers":"category"),"POST",{status:bulkStatus,destinationClubId:bulkTarget.clubId,categoryId:bulk==="transfer"?bulkTarget.categoryId:bulkCategory,reason:bulkReason,version:d.membership.version});done++;}catch(err){failed.push(id+": "+String(err));}}setBusy(false);setBulk("");setMessage(`${done} memberships updated; ${unchanged} already matched. ${failed.length?failed.length+" failed; review the error details. No automatic retries were made.":""}`);if(failed.length)setError(new Error(failed.join("; ")));setSelected(new Set());qc.invalidateQueries({queryKey:["members"]});qc.invalidateQueries({queryKey:["member-metrics"]});}}><p>You are confirming a change to <strong>{selected.size} selected memberships</strong>. Each record is validated independently; failed changes will be reported. Transfer requests follow the existing review stages and do not immediately move members.</p>{bulk==="transfer"?<ClubCategoryFields {...bulkTarget} onChange={(v:any)=>setBulkTarget({...bulkTarget,...v})}/>:bulk==="status"?<label>New status<select value={bulkStatus} onChange={e=>setBulkStatus(e.target.value)}>{["Active","Inactive","Suspended","Expired","Resigned","Terminated","Deceased"].map(s=><option key={s}>{s}</option>)}</select></label>:<label>New category<select required value={bulkCategory} onChange={e=>setBulkCategory(e.target.value)}><option value="">Choose category</option>{choices.data?.categories.map((c:any)=><option key={c.id} value={c.id}>{c.name}</option>)}</select></label>}<label>Reason<textarea required minLength={5} maxLength={2000} value={bulkReason} onChange={e=>setBulkReason(e.target.value)}/></label><button disabled={busy}>{busy?"Updating…":`Confirm change for ${selected.size} memberships`}</button></form></MemberDrawer>}
       {quick && (
         <MemberDrawer title="Member quick view" onClose={() => setQuick(null)}>
           <div className="quick-member-hero">
@@ -736,11 +636,7 @@ export default function Members({
         </MemberDrawer>
       )}
       {drawer === "create" && (
-        <MemberDrawer
-          title="Add a community member"
-          onClose={() => setDrawer("")}
-        >
-          <CreateMember
+          <AddMemberWizard onClose={() => setDrawer("")}
             onDone={(member: any) => {
               if (member?.number) setMessage("Member " + member.number + " created.");
               setDrawer("");
@@ -748,7 +644,6 @@ export default function Members({
               qc.invalidateQueries({ queryKey: ["member-metrics"] });
             }}
           />
-        </MemberDrawer>
       )}
       {drawer === "invite" && (
         <MemberDrawer
@@ -758,131 +653,16 @@ export default function Members({
           <InviteMember />
         </MemberDrawer>
       )}
-    </>
-  );
-}
-function CreateMember({ onDone }: any) {
-  const [target, setTarget] = useState<any>({ clubId: "", categoryId: "" }),
-    [draft, setDraft] = useState<any>(null),
-    [duplicates, setDuplicates] = useState<any[]>([]),
-    [error, setError] = useState<unknown>(),
-    [busy, setBusy] = useState(false),
-    [photo, setPhoto] = useState(""),
-    [photoLoading, setPhotoLoading] = useState(false);
-  const photoInput = useRef<HTMLInputElement>(null);
-  async function create(
-    person: any,
-    decision = "",
-    personId: string | null = null,
-  ) {
-    setBusy(true);
-    setError(null);
-    try {
-      if (!target.clubId || !target.categoryId)
-        throw new Error("Choose a club and category.");
-      const created = await api("/members", "POST", {
-        photoBase64: photo ? photo.split(",")[1] : null,
-        person,
-        ...target,
-        personId,
-        duplicateDecision: decision,
-      });
-      onDone(created);
-    } catch (e) {
-      setError(e);
-    } finally {
-      setBusy(false);
-    }
-  }
-  return (
-    <>
-      <div className="form-stack">
-        <div className="member-entry-intro"><label>Member ID<input value="Auto-generated when saved" readOnly /></label><p>Only the member’s name, community, and membership category are required. Other details can be added later.</p></div>
-        <div className="member-photo-picker">{photo ? <img src={photo} alt="Selected member photo preview" /> : <div className="member-photo-placeholder" aria-hidden="true">Photo</div>}<div><label>Member photo (optional)<input ref={photoInput} type="file" accept="image/png,image/jpeg" onChange={async e => {
-          const file = e.target.files?.[0]; if (!file) return;
-          if (!["image/png", "image/jpeg"].includes(file.type) || file.size > 2097152) { setError(new Error("Choose a PNG or JPEG photo smaller than 2 MB.")); e.target.value = ""; return; }
-          setPhotoLoading(true); setError(null);
-          try { const data = await new Promise<string>((resolve, reject) => { const reader = new FileReader(); reader.onload = () => resolve(String(reader.result)); reader.onerror = () => reject(new Error("Unable to read photo.")); reader.readAsDataURL(file); }); setPhoto(data); }
-          catch (e) { setError(e); } finally { setPhotoLoading(false); }
-        }} /></label><small>PNG or JPEG, up to 2 MB.</small>{photo && <button type="button" className="text-button" onClick={() => { setPhoto(""); if (photoInput.current) photoInput.current.value = ""; }}>Remove photo</button>}</div></div>
-        <ClubCategoryFields
-          {...target}
-          onChange={(v: any) => setTarget({ ...target, ...v })}
-        />
-        <label>
-          Joining date
-          <input
-            type="date"
-            onChange={(e) =>
-              setTarget({
-                ...target,
-                joinedAt: e.target.value
-                  ? new Date(e.target.value).toISOString()
-                  : null,
-              })
-            }
-          />
-        </label>
-      </div>
-      <ErrorBox error={error} />
-      {draft && duplicates.length ? (
-        <section className="duplicate-review">
-          <h3>Review possible matches</h3>
-          <p>A shared email or family phone is not proof of the same person.</p>
-          {duplicates.map((d) => (
-            <div className="context-row" key={d.id}>
-              <span>
-                {d.name}
-                <small>{d.reason}</small>
-              </span>
-              <button
-                className="secondary"
-                disabled={busy}
-                onClick={() => create(draft, "", d.id)}
-              >
-                Use this person
-              </button>
-            </div>
-          ))}
-          <button
-            disabled={busy}
-            onClick={() => create(draft, "CreateSeparate")}
-          >
-            I reviewed the matches — create a separate person
-          </button>
-          <button className="text-button" onClick={() => setDraft(null)}>
-            Back to profile details
-          </button>
-        </section>
-      ) : (
-        <PersonEditor
-          submitLabel="Add member"
-          busy={busy || photoLoading}
-          onCancel={onDone}
-          onSave={async (person: any) => {
-            setBusy(true);
-            try {
-              const matches = await api("/members/duplicates", "POST", person);
-              if (matches.length) {
-                setDraft(person);
-                setDuplicates(matches);
-              } else await create(person);
-            } catch (e) {
-              setError(e);
-            } finally {
-              setBusy(false);
-            }
-          }}
-        />
-      )}
-    </>
+    </div>
   );
 }
 export function InviteMember() {
+  const {w}=useWorkspace();const invites=useQuery<any[]>({queryKey:["member-invitations",w?.id],queryFn:()=>api("/membership/invitations"),enabled:!!w});const [moreInvites,setMoreInvites]=useState<any[]>([]);
   const [form, setForm] = useState<any>({
       clubId: "",
       categoryId: "",
       email: "",
+      message:"",
       expiresInDays: 7,
       usageLimit: 1,
     }),
@@ -896,7 +676,7 @@ export function InviteMember() {
         e.preventDefault();
         setBusy(true);
         try {
-          setResult(await api("/membership/invitations", "POST", form));
+          const emails=String(form.email).split(/[;,\n]+/).map(e=>e.trim()).filter(Boolean);if(emails.length>20)throw new Error("Invite up to 20 recipients at a time.");const created=[];const failures=[];for(const email of emails.length?emails:[""]){try{created.push(await api("/membership/invitations", "POST", {...form,email}));}catch(err){failures.push(email+": "+String(err));}}if(created.length){setResult(created[0]);setMoreInvites(created.slice(1));}if(failures.length)setError(new Error("Some invitations failed: "+failures.join("; ")+". Successful invitations above were retained; no retry was made."));void invites.refetch();
         } catch (e) {
           setError(e);
         } finally {
@@ -909,13 +689,14 @@ export function InviteMember() {
         onChange={(v: any) => setForm({ ...form, ...v })}
       />
       <label>
-        Intended email (optional for a shareable club link)
-        <input
-          type="email"
+        Recipient emails (optional for a shareable club link)
+        <textarea
+          placeholder="Separate up to 20 emails with commas or new lines"
           value={form.email}
           onChange={(e) => setForm({ ...form, email: e.target.value })}
         />
       </label>
+      <label>Personal invitation message (optional)<textarea maxLength={2000} value={form.message} onChange={e=>setForm({...form,message:e.target.value})}/></label>
       <div className="form-grid">
         <label>
           Expires in days
@@ -949,7 +730,7 @@ export function InviteMember() {
       <ErrorBox error={error} />
       {result ? (
         <div className="invitation-result">
-          <h3>Invitation created</h3>
+          <h3>{moreInvites.length?moreInvites.length+1+" invitations created":"Invitation created"}</h3>{moreInvites.map((r:any)=><input key={r.id} aria-label="Additional invitation link" readOnly value={location.origin+r.link}/>)}
           <p>
             Email delivery is queued when a recipient was supplied. A share link
             does not send a WhatsApp message.
@@ -1001,6 +782,7 @@ export function InviteMember() {
           {busy ? "Creating…" : "Create secure invitation"}
         </button>
       )}
+      <details className="mm-invitation-history"><summary>Invitation tracking · {invites.data?.length??0} recent invitations</summary><ErrorBox error={invites.error}/>{invites.data?.map((i:any)=><div className="context-row" key={i.id}><span>{i.email||"Shareable club link"}<small>Expires {new Date(i.expiresAt).toLocaleDateString()} · {i.uses}/{i.usageLimit} accepted</small></span><MemberStatus status={i.revoked?"Revoked":i.uses>=i.usageLimit?"Accepted":new Date(i.expiresAt)<new Date()?"Expired":"Pending acceptance"}/></div>)}</details>
     </form>
   );
 }

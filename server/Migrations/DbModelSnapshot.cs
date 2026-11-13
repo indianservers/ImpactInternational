@@ -1899,12 +1899,63 @@ namespace Clubs.Api.Migrations
                     b.HasIndex("InvoiceId", "Status");
 
                     b.HasIndex("TenantId", "ClubId", "Reference")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasFilter("\"Status\" IN ('Submitted','Approved')");
 
                     b.HasIndex("TenantId", "RecorderId", "RequestKey")
                         .IsUnique();
 
                     b.ToTable("DuesCollections");
+                });
+
+            modelBuilder.Entity("Clubs.DuesFollowup", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("ActorId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("InvoiceId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateOnly?>("NextFollowUp")
+                        .HasColumnType("date");
+
+                    b.Property<string>("Notes")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Outcome")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<decimal?>("PromisedAmount")
+                        .HasColumnType("numeric");
+
+                    b.Property<DateOnly?>("PromisedOn")
+                        .HasColumnType("date");
+
+                    b.Property<Guid>("RequestKey")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ActorId");
+
+                    b.HasIndex("InvoiceId", "CreatedAt");
+
+                    b.HasIndex("TenantId", "ActorId", "RequestKey")
+                        .IsUnique();
+
+                    b.ToTable("DuesFollowups");
                 });
 
             modelBuilder.Entity("Clubs.DuesPlan", b =>
@@ -2919,6 +2970,59 @@ namespace Clubs.Api.Migrations
                     b.ToTable("FinanceBanks");
                 });
 
+            modelBuilder.Entity("Clubs.FinanceBankPaymentMatch", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<decimal>("BankAmount")
+                        .HasPrecision(20, 4)
+                        .HasColumnType("numeric(24,8)");
+
+                    b.Property<Guid>("BankTransactionId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("ClubId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("EntityId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("OrgId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("PaymentId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid");
+
+                    b.Property<long>("Version")
+                        .IsConcurrencyToken()
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasAlternateKey("TenantId", "Id");
+
+                    b.HasIndex("BankTransactionId");
+
+                    b.HasIndex("PaymentId")
+                        .IsUnique();
+
+                    b.HasIndex("TenantId", "ClubId");
+
+                    b.HasIndex("TenantId", "EntityId", "BankTransactionId");
+
+                    b.HasIndex("TenantId", "EntityId", "PaymentId");
+
+                    b.ToTable("FinanceBankPaymentMatches", t =>
+                        {
+                            t.HasCheckConstraint("CK_FinanceBankPaymentMatch_Amount", "\"BankAmount\" > 0");
+                        });
+                });
+
             modelBuilder.Entity("Clubs.FinanceBankTransaction", b =>
                 {
                     b.Property<Guid>("Id")
@@ -2941,6 +3045,12 @@ namespace Clubs.Api.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.PrimitiveCollection<Guid[]>("MatchedPaymentIds")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid[]")
+                        .HasDefaultValueSql("'{}'::uuid[]");
+
                     b.Property<Guid>("OrgId")
                         .HasColumnType("uuid");
 
@@ -2950,6 +3060,9 @@ namespace Clubs.Api.Migrations
                     b.Property<string>("Reference")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<Guid?>("RemittanceClubId")
+                        .HasColumnType("uuid");
 
                     b.Property<string>("Status")
                         .IsRequired()
@@ -2966,7 +3079,9 @@ namespace Clubs.Api.Migrations
 
                     b.HasAlternateKey("TenantId", "Id");
 
-                    b.HasAlternateKey("TenantId", "EntityId", "Id");
+                    b.HasIndex("MatchedPaymentIds");
+
+                    NpgsqlIndexBuilderExtensions.HasMethod(b.HasIndex("MatchedPaymentIds"), "gin");
 
                     b.HasIndex("EntityId", "Id");
 
@@ -2974,6 +3089,8 @@ namespace Clubs.Api.Migrations
                         .IsUnique();
 
                     b.HasIndex("TenantId", "OrgId");
+
+                    b.HasIndex("TenantId", "RemittanceClubId");
 
                     b.HasIndex("TenantId", "EntityId", "BankAccountId");
 
@@ -7826,6 +7943,9 @@ namespace Clubs.Api.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<bool>("IsPrimary")
+                        .HasColumnType("boolean");
+
                     b.Property<Guid>("PersonId")
                         .HasColumnType("uuid");
 
@@ -7837,11 +7957,20 @@ namespace Clubs.Api.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.HasKey("Id");
 
                     b.HasIndex("PersonId");
 
                     b.HasIndex("City", "PersonId");
+
+                    b.HasIndex(new[] { "PersonId" }, "PrimaryAddress")
+                        .IsUnique()
+                        .HasDatabaseName("IX_PersonAddresses_Primary")
+                        .HasFilter("\"IsPrimary\"");
 
                     b.ToTable("PersonAddresses");
                 });
@@ -9567,6 +9696,21 @@ namespace Clubs.Api.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Clubs.DuesFollowup", b =>
+                {
+                    b.HasOne("Clubs.User", null)
+                        .WithMany()
+                        .HasForeignKey("ActorId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Clubs.FinanceInvoice", null)
+                        .WithMany()
+                        .HasForeignKey("InvoiceId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Clubs.DuesPlan", b =>
                 {
                     b.HasOne("Clubs.Tenant", null)
@@ -10057,6 +10201,35 @@ namespace Clubs.Api.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Clubs.FinanceBankPaymentMatch", b =>
+                {
+                    b.HasOne("Clubs.Tenant", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Clubs.Org", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "ClubId")
+                        .HasPrincipalKey("TenantId", "Id")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Clubs.FinanceBankTransaction", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "EntityId", "BankTransactionId")
+                        .HasPrincipalKey("TenantId", "EntityId", "Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Clubs.FinancePayment", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "EntityId", "PaymentId")
+                        .HasPrincipalKey("TenantId", "EntityId", "Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Clubs.FinanceBankTransaction", b =>
                 {
                     b.HasOne("Clubs.Tenant", null)
@@ -10078,6 +10251,12 @@ namespace Clubs.Api.Migrations
                         .HasPrincipalKey("TenantId", "Id")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.HasOne("Clubs.Org", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "RemittanceClubId")
+                        .HasPrincipalKey("TenantId", "Id")
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Clubs.FinanceBank", null)
                         .WithMany()

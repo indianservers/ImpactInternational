@@ -1,0 +1,301 @@
+{
+  "results": [
+    {
+      "test": "Finance Overview desktop renders",
+      "passed": true
+    },
+    {
+      "test": "Finance Overview desktop no overflow",
+      "passed": true
+    },
+    {
+      "test": "Finance Overview no API error",
+      "passed": true
+    },
+    {
+      "test": "Finance Overview search filters records",
+      "passed": true
+    },
+    {
+      "test": "Finance Overview mobile no overflow",
+      "passed": true
+    },
+    {
+      "test": "Transactions desktop renders",
+      "passed": true
+    },
+    {
+      "test": "Transactions desktop no overflow",
+      "passed": true
+    },
+    {
+      "test": "Transactions no API error",
+      "passed": true
+    },
+    {
+      "test": "Transactions search filters records",
+      "passed": true
+    },
+    {
+      "test": "Transactions mobile no overflow",
+      "passed": true
+    },
+    {
+      "test": "Receipts & Collections desktop renders",
+      "passed": true
+    },
+    {
+      "test": "Receipts & Collections desktop no overflow",
+      "passed": true
+    },
+    {
+      "test": "Receipts & Collections no API error",
+      "passed": true
+    },
+    {
+      "test": "Receipts & Collections search filters records",
+      "passed": true
+    },
+    {
+      "test": "Receipts & Collections mobile no overflow",
+      "passed": true
+    },
+    {
+      "test": "Invoices & Billing desktop renders",
+      "passed": true
+    },
+    {
+      "test": "Invoices & Billing desktop no overflow",
+      "passed": true
+    },
+    {
+      "test": "Invoices & Billing no API error",
+      "passed": true
+    },
+    {
+      "test": "Invoices & Billing search filters records",
+      "passed": true
+    },
+    {
+      "test": "Invoices & Billing mobile no overflow",
+      "passed": true
+    },
+    {
+      "test": "Payments desktop renders",
+      "passed": true
+    },
+    {
+      "test": "Payments desktop no overflow",
+      "passed": true
+    },
+    {
+      "test": "Payments no API error",
+      "passed": true
+    },
+    {
+      "test": "Payments search filters records",
+      "passed": true
+    },
+    {
+      "test": "Payments mobile no overflow",
+      "passed": true
+    },
+    {
+      "test": "Expenses desktop renders",
+      "passed": true
+    },
+    {
+      "test": "Expenses desktop no overflow",
+      "passed": true
+    },
+    {
+      "test": "Expenses no API error",
+      "passed": true
+    },
+    {
+      "test": "Expenses search filters records",
+      "passed": true
+    },
+    {
+      "test": "Expenses mobile no overflow",
+      "passed": true
+    },
+    {
+      "test": "Bank Reconciliation desktop renders",
+      "passed": true
+    },
+    {
+      "test": "Bank Reconciliation desktop no overflow",
+      "passed": true
+    },
+    {
+      "test": "Bank Reconciliation no API error",
+      "passed": true
+    },
+    {
+      "test": "Bank Reconciliation search filters records",
+      "passed": true
+    },
+    {
+      "test": "Bank Reconciliation mobile no overflow",
+      "passed": true
+    },
+    {
+      "test": "Budgets & Allocation desktop renders",
+      "passed": true
+    },
+    {
+      "test": "Budgets & Allocation desktop no overflow",
+      "passed": true
+    },
+    {
+      "test": "Budgets & Allocation no API error",
+      "passed": true
+    },
+    {
+      "test": "Budgets & Allocation search filters records",
+      "passed": true
+    },
+    {
+      "test": "Budgets & Allocation mobile no overflow",
+      "passed": true
+    },
+    {
+      "test": "Financial Reports & Analytics desktop renders",
+      "passed": true
+    },
+    {
+      "test": "Financial Reports & Analytics desktop no overflow",
+      "passed": true
+    },
+    {
+      "test": "Financial Reports & Analytics no API error",
+      "passed": true
+    },
+    {
+      "test": "Financial Reports & Analytics search filters records",
+      "passed": true
+    },
+    {
+      "test": "Financial Reports & Analytics mobile no overflow",
+      "passed": true
+    },
+    {
+      "test": "Audit Trail desktop renders",
+      "passed": true
+    },
+    {
+      "test": "Audit Trail desktop no overflow",
+      "passed": true
+    },
+    {
+      "test": "Audit Trail no API error",
+      "passed": true
+    },
+    {
+      "test": "Audit Trail search filters records",
+      "passed": true
+    },
+    {
+      "test": "Audit Trail mobile no overflow",
+      "passed": true
+    },
+    {
+      "test": "Collection detail drawer opens",
+      "passed": true
+    },
+    {
+      "test": "Escape closes drawer",
+      "passed": true
+    },
+    {
+      "test": "Report route custom",
+      "passed": true
+    },
+    {
+      "test": "Report route collections",
+      "passed": true
+    },
+    {
+      "test": "Report route receipts",
+      "passed": true
+    },
+    {
+      "test": "Report route invoices",
+      "passed": true
+    },
+    {
+      "test": "Report route outstanding",
+      "passed": true
+    },
+    {
+      "test": "Report route overdue",
+      "passed": true
+    },
+    {
+      "test": "Report route payments",
+      "passed": true
+    },
+    {
+      "test": "Report route expenses",
+      "passed": true
+    },
+    {
+      "test": "Report route settlements",
+      "passed": true
+    },
+    {
+      "test": "Report route reconciliation",
+      "passed": true
+    },
+    {
+      "test": "Report route income-statement",
+      "passed": true
+    },
+    {
+      "test": "Report route budget-actual",
+      "passed": true
+    },
+    {
+      "test": "Report route entity",
+      "passed": true
+    },
+    {
+      "test": "Direct creation workflow invoices",
+      "passed": true
+    },
+    {
+      "test": "Direct creation workflow receipts",
+      "passed": true
+    },
+    {
+      "test": "Direct creation workflow expenses",
+      "passed": true
+    },
+    {
+      "test": "Direct creation workflow budgets",
+      "passed": true
+    },
+    {
+      "test": "Dues workspace renders",
+      "passed": true
+    },
+    {
+      "test": "Dues no API error",
+      "passed": true
+    },
+    {
+      "test": "Dues desktop no overflow",
+      "passed": true
+    },
+    {
+      "test": "Dues mobile no overflow",
+      "passed": true
+    },
+    {
+      "test": "No uncaught browser errors",
+      "passed": true
+    }
+  ],
+  "errors": []
+}

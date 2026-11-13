@@ -1,0 +1,79 @@
+{
+  "checks": 1376,
+  "passed": 1376,
+  "failed": 0,
+  "suites": [
+    {
+      "file": "docs/qa/finance-command-api-results.json",
+      "checks": 562,
+      "passed": 562,
+      "failed": 0
+    },
+    {
+      "file": "docs/qa/finance-command-rich-api-results.json",
+      "checks": 562,
+      "passed": 562,
+      "failed": 0
+    },
+    {
+      "file": "docs/qa/finance-statement-results.json",
+      "checks": 18,
+      "passed": 18,
+      "failed": 0
+    },
+    {
+      "file": "docs/qa/finance-command-matching-results.json",
+      "checks": 13,
+      "passed": 13,
+      "failed": 0
+    },
+    {
+      "file": "docs/qa/finance-command-provider-results.json",
+      "checks": 18,
+      "passed": 18,
+      "failed": 0
+    },
+    {
+      "file": "docs/qa/finance-command-source-results.json",
+      "checks": 10,
+      "passed": 10,
+      "failed": 0
+    },
+    {
+      "file": "docs/qa/finance-command-browser-results.json",
+      "checks": 74,
+      "passed": 74,
+      "failed": 0
+    },
+    {
+      "file": "docs/qa/finance-command-import-browser-results.json",
+      "checks": 8,
+      "passed": 8,
+      "failed": 0
+    },
+    {
+      "file": "docs/qa/finance-command-core-results.json",
+      "checks": 51,
+      "passed": 51,
+      "failed": 0
+    },
+    {
+      "file": "docs/qa/finance-command-extended-results.json",
+      "checks": 29,
+      "passed": 29,
+      "failed": 0
+    },
+    {
+      "file": "docs/qa/finance-command-security-results.json",
+      "checks": 21,
+      "passed": 21,
+      "failed": 0
+    },
+    {
+      "file": "docs/qa/finance-forecast-results.json",
+      "checks": 10,
+      "passed": 10,
+      "failed": 0
+    }
+  ]
+}

@@ -1,3 +1,4 @@
+import "./Members.css";
 import { Link } from "react-router-dom";
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -61,19 +62,23 @@ export default function MemberImports() {
       />
       <div className="import-steps">
         {[
+          "Template",
           "Upload",
           "Map columns",
           "Validate",
-          "Review duplicates",
-          "Commit & summary",
+          "Errors & duplicates",
+          "Preview",
+          "Confirm import",
+          "Summary",
         ].map((s, i) => (
-          <div key={s}>
+          <div key={s} className={i===(!id?1:d?.status==="Uploaded"?2:d?.status==="Validating"?3:d?.status==="NeedsReview"?4:d?.status==="Ready"?5:d?.status==="Completed"?7:6)?"active":""} aria-current={i===(!id?1:d?.status==="Uploaded"?2:d?.status==="Validating"?3:d?.status==="NeedsReview"?4:d?.status==="Ready"?5:d?.status==="Completed"?7:6)?"step":undefined}>
             <span>{i + 1}</span>
             {s}
-            {i < 4 && <ArrowRight size={14} />}
+            {i < 7 && <ArrowRight size={14} />}
           </div>
         ))}
       </div>
+      <a className="button secondary" href="/templates/impact-members.csv" download><Download size={15}/>Download import template (CSV)</a><p className="muted">Use the existing field names. Choose a destination club and category before upload; no rows are imported until validation and confirmation.</p>
       <ErrorBox error={error || jobs.error || job.error} />
       {!id ? (
         <div className="dashboard-grid">
@@ -231,6 +236,7 @@ export default function MemberImports() {
                     </div>
                   )}
                   {d.error && <div className="error">{d.error}</div>}
+                  {d.rows?.some((r:any)=>r.status==="Invalid"||r.status==="NeedsReview")&&<button className="secondary" onClick={()=>{const cell=(v:any)=>'"'+(/^[=+\-@\t\r]/.test(String(v??''))?"'"+String(v??''):String(v??'')).replaceAll('"','""')+'"';const rows=d.rows.filter((r:any)=>r.status==="Invalid"||r.status==="NeedsReview");const csv="row,status,validation\r\n"+rows.map((r:any)=>[r.rowNumber,r.status,r.error||r.reviewReason||r.errors||"Review required"].map(cell).join(",")).join("\r\n");const url=URL.createObjectURL(new Blob([csv],{type:"text/csv"}));const a=document.createElement("a");a.href=url;a.download="import-errors-current-page.csv";a.click();URL.revokeObjectURL(url);}}>Download errors & review rows on this page</button>}
                   {d.status === "Uploaded" && (
                     <form
                       className="form-stack"

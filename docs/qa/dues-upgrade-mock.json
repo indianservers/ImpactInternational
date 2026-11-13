@@ -1,0 +1,38 @@
+{
+  "database": "clubs_impact_dues_upgrade_20261113",
+  "entities": [
+    "ef40e543-bd2e-467a-a160-cc85f4afe1e7",
+    "377e329c-1ddd-4c62-a82f-c986255f3306",
+    "9eacd109-5f28-44e9-9645-702eddc3fd0b"
+  ],
+  "fixtures": {
+    "overdue-95": "08da9a38-29e6-4ee7-808a-3950bfdd9951",
+    "overdue-45": "f8176b09-1352-4fb9-a290-809cc2babb0d",
+    "partial-cash": "fd5dfa0d-eb74-44ff-9a72-1f6369fe4ab4",
+    "partial-cash-collection": "4007d18e-a908-4da7-a040-1d2e3cfda6e7",
+    "personal-pending": "77c9b660-d62b-4034-b2e1-030f62e9ff1a",
+    "personal-pending-collection": "75ac2398-077d-46b6-8a6b-d579778c9cf3",
+    "cash-pending": "d2998669-2fb5-487c-9d2a-251da4c85335",
+    "cash-pending-collection": "6a390135-9a3c-4bce-997e-5b61a1108150",
+    "paid": "15701421-3d54-490e-83a5-b2acd86af895",
+    "paid-collection": "a6d8a5f0-794a-4363-982b-2f978332ebc0",
+    "due-today": "f1d0db01-1402-4b84-bed6-98eb2db101d6",
+    "upcoming": "a36bf7cc-3927-4005-b1b1-808d61be4fe0",
+    "promise-today": "8c1ecd66-1683-42b5-b0a1-927c6a84e34e",
+    "disputed": "fcdd0bc4-2fee-4eab-b815-d705eeb911fc",
+    "rejected": "71eab05b-f500-4536-aeb4-6beb4738e7e8",
+    "rejected-collection": "6f377e45-4dfc-45a5-9e17-75d1b6debad6",
+    "cancelled": "311f2e41-9a27-4f6b-870a-df188e3ac7d3",
+    "cancelled-collection": "7d3c58c0-baf9-4e89-8b85-3f71fba7dc92",
+    "same-region-0": "5d2e07ad-18ee-4fb4-9a51-5bfe92ae63c5",
+    "same-region-1": "93e58877-76d6-4300-a9cb-0d9682ca9c9a",
+    "same-region-2": "986ca6a5-0fd9-4db5-bcf3-065ea2738141",
+    "other-region-0": "34100865-1f92-495d-9e97-2155d9344a9d",
+    "other-region-1": "94a2a50e-c45e-47d8-9b32-089c0fde3a8d",
+    "other-region-2": "97adb480-2067-4d44-a214-1507de9d8ffe"
+  },
+  "invoices": 18,
+  "collections": 6,
+  "followups": 2,
+  "mock": true
+}

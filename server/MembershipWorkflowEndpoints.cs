@@ -24,7 +24,7 @@ public record InvitationInput(
     string Email = "",
     int ExpiresInDays = 7,
     int UsageLimit = 1,
-    Guid? PersonId = null
+    Guid? PersonId = null, string Message = ""
 );
 
 public record TokenInput(string Token);
@@ -538,6 +538,7 @@ public static class MembershipWorkflowEndpoints
                         403
                     );
                 }
+                Check(r.Message.Length<=2000,"Invitation message must be 2,000 characters or fewer.");
                 var token = Token();
                 var invite = new MembershipInvitation
                 {
@@ -561,7 +562,7 @@ public static class MembershipWorkflowEndpoints
                         "membership.invitation",
                         invite.Kind == "AccountLink"
                             ? "Verify your account and request a reviewed link to your existing membership."
-                            : "You are invited to apply for club membership. Required approvals still apply.",
+                            : "You are invited to apply for club membership. Required approvals still apply." + (string.IsNullOrWhiteSpace(r.Message)?"":"\n\n"+r.Message.Trim()),
                         link,
                         w.TenantId,
                         invite.ClubId

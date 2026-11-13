@@ -1,0 +1,115 @@
+[
+  {
+    "test": "events desktop page renders",
+    "passed": true
+  },
+  {
+    "test": "events no horizontal overflow",
+    "passed": true
+  },
+  {
+    "test": "Calendar Week view",
+    "passed": true
+  },
+  {
+    "test": "Calendar Day view",
+    "passed": true
+  },
+  {
+    "test": "Calendar Agenda view",
+    "passed": true
+  },
+  {
+    "test": "Calendar List view",
+    "passed": true
+  },
+  {
+    "test": "Calendar Month view",
+    "passed": true
+  },
+  {
+    "test": "events mobile no horizontal overflow",
+    "passed": true
+  },
+  {
+    "test": "Discovery metric opens list view",
+    "passed": true
+  },
+  {
+    "test": "my-events desktop page renders",
+    "passed": true
+  },
+  {
+    "test": "my-events no horizontal overflow",
+    "passed": true
+  },
+  {
+    "test": "my-events mobile no horizontal overflow",
+    "passed": true
+  },
+  {
+    "test": "Pending invitation metric opens inbox",
+    "passed": true
+  },
+  {
+    "test": "event-intelligence desktop page renders",
+    "passed": true
+  },
+  {
+    "test": "event-intelligence no horizontal overflow",
+    "passed": true
+  },
+  {
+    "test": "event-intelligence mobile no horizontal overflow",
+    "passed": true
+  },
+  {
+    "test": "Seven creation steps",
+    "passed": true
+  },
+  {
+    "test": "Wizard saves and advances to Audience & Scope",
+    "passed": true
+  },
+  {
+    "test": "Wizard saves and advances to Registration",
+    "passed": true
+  },
+  {
+    "test": "Wizard saves and advances to Program & Agenda",
+    "passed": true
+  },
+  {
+    "test": "Wizard saves and advances to Communication",
+    "passed": true
+  },
+  {
+    "test": "Wizard saves and advances to Review & Publish",
+    "passed": true
+  },
+  {
+    "test": "Review draft persists without publication",
+    "passed": true
+  },
+  {
+    "test": "Registration Daily interval",
+    "passed": true
+  },
+  {
+    "test": "Registration Weekly interval",
+    "passed": true
+  },
+  {
+    "test": "Registration Monthly interval",
+    "passed": true
+  },
+  {
+    "test": "Registration Quarterly interval",
+    "passed": true
+  },
+  {
+    "test": "No runtime errors",
+    "passed": true,
+    "errors": []
+  }
+]

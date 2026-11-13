@@ -240,6 +240,7 @@ public partial class Db(DbContextOptions<Db> options) : DbContext(options)
     public DbSet<Mail> Mails => Set<Mail>();
     public DbSet<LoginChallenge> LoginChallenges => Set<LoginChallenge>();
     public DbSet<DuesCollection> DuesCollections => Set<DuesCollection>();
+    public DbSet<DuesFollowup> DuesFollowups => Set<DuesFollowup>();
     public DbSet<SystemSetting> SystemSettings => Set<SystemSetting>();
     public DbSet<TenantSetting> TenantSettings => Set<TenantSetting>();
     public DbSet<OrganizationSetting> OrganizationSettings => Set<OrganizationSetting>();
@@ -396,7 +397,11 @@ public partial class Db(DbContextOptions<Db> options) : DbContext(options)
         b.Entity<Mail>().HasIndex(x => x.TokenHash).IsUnique();
         b.Entity<LoginChallenge>().HasIndex(x => new { x.IdentifierHash, x.CreatedAt });
         b.Entity<DuesCollection>().HasIndex(x => new { x.TenantId, x.RecorderId, x.RequestKey }).IsUnique();
-        b.Entity<DuesCollection>().HasIndex(x => new { x.TenantId, x.ClubId, x.Reference }).IsUnique();
+        b.Entity<DuesCollection>().HasIndex(x => new { x.TenantId, x.ClubId, x.Reference }).IsUnique().HasFilter("\"Status\" IN ('Submitted','Approved')");
+        b.Entity<DuesFollowup>().HasIndex(x => new { x.TenantId, x.ActorId, x.RequestKey }).IsUnique();
+        b.Entity<DuesFollowup>().HasIndex(x => new { x.InvoiceId, x.CreatedAt });
+        b.Entity<DuesFollowup>().HasOne<FinanceInvoice>().WithMany().HasForeignKey(x => x.InvoiceId).OnDelete(DeleteBehavior.Restrict);
+        b.Entity<DuesFollowup>().HasOne<User>().WithMany().HasForeignKey(x => x.ActorId).OnDelete(DeleteBehavior.Restrict);
         b.Entity<DuesCollection>().HasIndex(x => new { x.InvoiceId, x.Status });
         b.Entity<DuesCollection>().HasOne<FinanceInvoice>().WithMany().HasForeignKey(x => x.InvoiceId).OnDelete(DeleteBehavior.Restrict);
         b.Entity<DuesCollection>().HasOne<Org>().WithMany().HasForeignKey(x => x.ClubId).OnDelete(DeleteBehavior.Restrict);

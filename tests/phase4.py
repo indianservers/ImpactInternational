@@ -6,6 +6,12 @@ def check(name,ok,data=None):
  results.append({'test':name,'passed':bool(ok)});print(('PASS ' if ok else 'FAIL ')+name, '' if ok else str(data)[:500],flush=True);pathlib.Path('test-results/phase4.json').write_text(json.dumps(results,indent=2));assert ok,(name,data)
 def good(c,p,m='GET',d=None,status=200):
  code,b=c.req(p,m,d);assert code==status,(p,code,b);return b
+def personal_invitations(c):
+ rows=[];path='/my/invitations'
+ while True:
+  page=good(c,path);rows.extend(page)
+  if len(page)<50:return rows
+  path='/my/invitations?after='+page[-1]['id']
 def at(hours=0):return (datetime.datetime.now(datetime.timezone.utc)+datetime.timedelta(hours=hours)).isoformat()
 sql('UPDATE "EventInvitations" SET "Status"=\'Cancelled\' WHERE "Status"=\'Queued\' AND "EventId" IN(SELECT "Id" FROM "Events" WHERE "Title" LIKE \'Verified community gathering %\' OR "Title" LIKE \'Capacity race %\')')
 tag=uuid.uuid4().hex[:8];admin=Client();good(admin,'/auth/login','POST',{'email':'admin@example.test','password':__import__('support').PASSWORD});root=next(w for w in good(admin,'/workspaces') if w['role']=='Association Super Admin' and w['association'].startswith('Global'));admin.activate(root)
@@ -30,7 +36,7 @@ check('eligible member can view published event',good(member,'/events/'+eid)['ev
 first=good(admin,'/events/'+eid+'/invitations','POST',{'message':'Invitation test','guests':[{'name':'Consenting Guest','email':'event-'+tag+'@example.test','consent':True}]});again=good(admin,'/events/'+eid+'/invitations','POST',{});check('duplicate invitation recipients suppressed',first['queued']>0 and again['queued']==0)
 check('verified member and guest email alias deduplicate to one person',good(admin,'/events/'+eid+'/invitations','POST',{'guests':[{'name':'Maya alias','email':'member@example.test','consent':True}]})['queued']==0)
 check('audience frozen after publication',admin.req('/events/'+eid+'/audience','PUT',{'rules':[]})[0]==409)
-member_inv=sql(f'SELECT "Id" FROM "EventInvitations" WHERE "EventId"=\'{eid}\' AND "PersonId"=\'{person}\'');check('personal invitations list includes event',any(i['eventId']==eid for i in good(member,'/my/invitations')))
+member_inv=sql(f'SELECT "Id" FROM "EventInvitations" WHERE "EventId"=\'{eid}\' AND "PersonId"=\'{person}\'');check('personal invitations list includes event',any(i['eventId']==eid for i in personal_invitations(member)))
 r=good(member,'/events/'+eid+'/rsvps','POST',{'response':'Going'});check('RSVP does not reserve a seat',r['seatReserved']==False and sql(f'SELECT count(*) FROM "EventRegistrations" WHERE "EventId"=\'{eid}\'')=='0');good(member,'/events/'+eid+'/rsvps','POST',{'response':'Maybe'});check('RSVP change preserves response history',int(sql(f'SELECT count(*) FROM "EventRsvpHistory" WHERE "InvitationId"=\'{member_inv}\''))==2)
 reg=good(member,'/events/'+eid+'/registrations','POST',{'companions':0,'guestNames':[],'sessionIds':[session['id']]});check('eligible member registration confirmed',reg['status']=='Confirmed');check('registration idempotency prevents duplicate seat',member.req('/events/'+eid+'/registrations','POST',{})[0]==409)
 ticket=good(member,'/events/'+eid+'/tickets/'+reg['id'],'POST',{});check('opaque digital ticket generated',len(ticket['token'])==64 and '@' not in ticket['token']);check('anonymous directory remains denied',Client().req('/members')[0]==401)

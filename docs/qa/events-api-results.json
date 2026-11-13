@@ -1,0 +1,222 @@
+[
+  {
+    "test": "/workspaces status 200",
+    "passed": true
+  },
+  {
+    "test": "/events-dashboard?from=2026-01-01&to=2027-01-01 status 200",
+    "passed": true
+  },
+  {
+    "test": "Category event totals reconcile",
+    "passed": true
+  },
+  {
+    "test": "Organization event totals reconcile",
+    "passed": true
+  },
+  {
+    "test": "Registration trend confirmed totals reconcile",
+    "passed": true
+  },
+  {
+    "test": "Invitation funnel begins with unique invitation records",
+    "passed": true
+  },
+  {
+    "test": "Invitation cohort responses bounded",
+    "passed": true
+  },
+  {
+    "test": "Invitation responses form a monotonic funnel",
+    "passed": true
+  },
+  {
+    "test": "Invitation cohort confirmed bounded",
+    "passed": true
+  },
+  {
+    "test": "Invitation cohort actual attendance bounded",
+    "passed": true
+  },
+  {
+    "test": "Previous registration timeline returned",
+    "passed": true
+  },
+  {
+    "test": "Previous period data returned",
+    "passed": true
+  },
+  {
+    "test": "Recorded country registrations bounded",
+    "passed": true
+  },
+  {
+    "test": "Participant club totals bounded",
+    "passed": true
+  },
+  {
+    "test": "Top event attendance bounded",
+    "passed": true
+  },
+  {
+    "test": "/events-dashboard?from=2026-01-01&to=2027-01-01&typeId=81fef70f-92c9-4d5b-8728-b00d282e4711 status 200",
+    "passed": true
+  },
+  {
+    "test": "Category filter aggregate Awards Ceremony",
+    "passed": true
+  },
+  {
+    "test": "/events-dashboard?from=2026-01-01&to=2027-01-01&venueType=Physical status 200",
+    "passed": true
+  },
+  {
+    "test": "Venue result bounded Physical",
+    "passed": true
+  },
+  {
+    "test": "/events-dashboard?from=2026-01-01&to=2027-01-01&venueType=Online status 200",
+    "passed": true
+  },
+  {
+    "test": "Venue result bounded Online",
+    "passed": true
+  },
+  {
+    "test": "/events-dashboard?from=2026-01-01&to=2027-01-01&venueType=Hybrid status 200",
+    "passed": true
+  },
+  {
+    "test": "Venue result bounded Hybrid",
+    "passed": true
+  },
+  {
+    "test": "/events-dashboard?from=2026-12-01&to=2026-01-01 status 400",
+    "passed": true
+  },
+  {
+    "test": "/events-dashboard?from=2020-01-01&to=2026-01-01 status 400",
+    "passed": true
+  },
+  {
+    "test": "/events-dashboard?from=2026-01-01&to=2027-01-01&orgId=00000000-0000-0000-0000-000000000001 status 403",
+    "passed": true
+  },
+  {
+    "test": "/events?size=1 status 200",
+    "passed": true
+  },
+  {
+    "test": "/events?size=10 status 200",
+    "passed": true
+  },
+  {
+    "test": "Discovery totals independent of pagination",
+    "passed": true
+  },
+  {
+    "test": "Discovery registrations never expose participant contacts",
+    "passed": true
+  },
+  {
+    "test": "Discovery category and organizer projected",
+    "passed": true
+  },
+  {
+    "test": "/events?size=1&after=7d967627-7ec9-4793-8db5-75fc34448f81 status 200",
+    "passed": true
+  },
+  {
+    "test": "Discovery cursor does not repeat event",
+    "passed": true
+  },
+  {
+    "test": "Cursor summary remains full range",
+    "passed": true
+  },
+  {
+    "test": "/workspaces status 200",
+    "passed": true
+  },
+  {
+    "test": "/my/registrations?summary=true status 200",
+    "passed": true
+  },
+  {
+    "test": "Personal summary covers all confirmed records",
+    "passed": true
+  },
+  {
+    "test": "Personal summary excludes attendee contacts",
+    "passed": true
+  },
+  {
+    "test": "/my/registrations?status=Upcoming status 200",
+    "passed": true
+  },
+  {
+    "test": "Personal status Upcoming",
+    "passed": true
+  },
+  {
+    "test": "/my/registrations?status=Completed status 200",
+    "passed": true
+  },
+  {
+    "test": "Personal status Completed",
+    "passed": true
+  },
+  {
+    "test": "/my/registrations?status=Cancelled status 200",
+    "passed": true
+  },
+  {
+    "test": "Personal status Cancelled",
+    "passed": true
+  },
+  {
+    "test": "/my/registrations?status=Waitlisted status 200",
+    "passed": true
+  },
+  {
+    "test": "Personal status Waitlisted",
+    "passed": true
+  },
+  {
+    "test": "/events-dashboard?from=2026-01-01&to=2027-01-01 status 403",
+    "passed": true
+  },
+  {
+    "test": "Save event reuses existing private filters API",
+    "passed": true
+  },
+  {
+    "test": "Other user cannot delete saved event",
+    "passed": true
+  },
+  {
+    "test": "Owner can remove saved event",
+    "passed": true
+  },
+  {
+    "test": "/events status 401",
+    "passed": true
+  },
+  {
+    "test": "/events-dashboard status 401",
+    "passed": true
+  },
+  {
+    "test": "/my/registrations?summary=true status 401",
+    "passed": true
+  },
+  {
+    "test": "/my/invitations status 401",
+    "passed": true
+  },
+  {
+    "test": "/my/event-duties status 401",
+    "passed": true
+  }
+]

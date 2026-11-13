@@ -1,0 +1,127 @@
+{
+  "date": "2026-11-13T14:48:11.109028+00:00",
+  "total": 24,
+  "passed": 24,
+  "scenarios": [
+    {
+      "scenario": "Desktop layout",
+      "result": "Navy sidebar, gold actions, six live KPIs and both charts rendered",
+      "passed": true
+    },
+    {
+      "scenario": "Dependent filters",
+      "result": "Region 01 -> District 01 -> Zone 01 -> Club 01; child lists each had five authorized choices",
+      "passed": true
+    },
+    {
+      "scenario": "Name and ID search",
+      "result": "QA tag search returned matching rows; generated ID search returned one card",
+      "passed": true
+    },
+    {
+      "scenario": "Bulk selection",
+      "result": "Context toolbar showed four selected memberships",
+      "passed": true
+    },
+    {
+      "scenario": "Bulk confirmation",
+      "result": "Popup showed exact selected count and required reason",
+      "passed": true
+    },
+    {
+      "scenario": "Bulk status mutation",
+      "result": "Three memberships updated; one already matched; live counts refreshed",
+      "passed": true
+    },
+    {
+      "scenario": "List/card modes",
+      "result": "Both displayed; card mode retained through navigation",
+      "passed": true
+    },
+    {
+      "scenario": "Saved view",
+      "result": "Browser QA Cards saved and reloaded filters and card mode",
+      "passed": true
+    },
+    {
+      "scenario": "Member photo",
+      "result": "Actual QA photo appeared in table/card and quick-preview popup",
+      "passed": true
+    },
+    {
+      "scenario": "Profile hierarchy",
+      "result": "International -> National -> Region -> District -> Zone -> Club displayed",
+      "passed": true
+    },
+    {
+      "scenario": "Add Member popup",
+      "result": "Photo picker, optional social fields and auto-ID description retained",
+      "passed": true
+    },
+    {
+      "scenario": "Create through browser",
+      "result": "Created QA member IM-000003142 through complete hierarchy and category form",
+      "passed": true
+    },
+    {
+      "scenario": "Edit through browser",
+      "result": "Preferred name changed to Browser Redesign QA Updated",
+      "passed": true
+    },
+    {
+      "scenario": "Import interface",
+      "result": "Eight-step guide, template, staged jobs and completed/cancelled history displayed",
+      "passed": true
+    },
+    {
+      "scenario": "Invite through browser",
+      "result": "Shareable invitation created; QR/link and invitation tracking available; no external recipient",
+      "passed": true
+    },
+    {
+      "scenario": "Status tabs and URL",
+      "result": "Inactive selection changed directory and preserved ?status=Inactive",
+      "passed": true
+    },
+    {
+      "scenario": "Regional chart interaction",
+      "result": "Clicking region legend selected corresponding directory filter",
+      "passed": true
+    },
+    {
+      "scenario": "Export through browser",
+      "result": "Filtered CSV download completed",
+      "passed": true
+    },
+    {
+      "scenario": "Desktop sidebar collapse",
+      "result": "Sidebar and main margin changed to 80 px; expanded successfully",
+      "passed": true
+    },
+    {
+      "scenario": "Light/dark themes",
+      "result": "Both inspected; light restored",
+      "passed": true
+    },
+    {
+      "scenario": "Mobile layout",
+      "result": "390 x 844; document width 375; no page overflow",
+      "passed": true
+    },
+    {
+      "scenario": "Mobile filter drawer",
+      "result": "Advanced filters displayed in focus-managed dialog; Escape closed it",
+      "passed": true
+    },
+    {
+      "scenario": "Mobile search/cards",
+      "result": "Top search by member ID produced one readable profile card",
+      "passed": true
+    },
+    {
+      "scenario": "Final desktop fit",
+      "result": "1680 px viewport; document1665, table viewport/content both1322; no table overflow",
+      "passed": true
+    }
+  ]
+}

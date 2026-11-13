@@ -61,6 +61,8 @@ public class PersonContact
 
 public class PersonAddress
 {
+    public string Type { get; set; } = "Residential";
+    public bool IsPrimary { get; set; }
     public Guid Id { get; set; } = Guid.NewGuid();
     public Guid PersonId { get; set; }
     public string Country { get; set; } = "";
@@ -549,6 +551,8 @@ public partial class Db
             })
             .IsUnique();
         b.Entity<PersonAddress>().HasIndex(x => new { x.City, x.PersonId });
+        b.Entity<PersonAddress>().HasIndex(x=>x.PersonId);
+        b.Entity<PersonAddress>().HasIndex(x=>x.PersonId,"PrimaryAddress").IsUnique().HasFilter("\"IsPrimary\"").HasDatabaseName("IX_PersonAddresses_Primary");
         foreach (
             var t in b
                 .Model.GetEntityTypes()

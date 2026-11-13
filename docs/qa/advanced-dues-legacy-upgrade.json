@@ -1,0 +1,31 @@
+{
+  "mockInvoices": 18,
+  "reportTypes": 25,
+  "summary": {
+    "group": "Total",
+    "groupId": "Total",
+    "currency": "INR",
+    "invoices": 12,
+    "billed": 12200.0,
+    "collected": 1850.0,
+    "credits": 0.0,
+    "pending": 10350.0,
+    "overdue": 8500.0,
+    "pendingVerification": 900,
+    "availableToCollect": 9450.0,
+    "members": 5,
+    "overdueInvoices": 9,
+    "dueToday": 650.0,
+    "collectionRate": 15.2
+  },
+  "ageFilters": "passed",
+  "search": "passed",
+  "invoiceHistory": "passed",
+  "promiseTracking": "passed",
+  "followupIdempotency": "passed",
+  "cancelAndResubmit": "passed",
+  "verifiedCancellation": "blocked",
+  "crossClubAccess": "blocked",
+  "allReportCsvExports": "passed",
+  "balancedBooks": "passed"
+}

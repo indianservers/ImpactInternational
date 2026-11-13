@@ -1,0 +1,118 @@
+[
+  {
+    "test": "budget uses shared engine",
+    "passed": true
+  },
+  {
+    "test": "self approval blocked FinanceBudget",
+    "passed": true
+  },
+  {
+    "test": "budget approved",
+    "passed": true
+  },
+  {
+    "test": "expense lines summed",
+    "passed": true
+  },
+  {
+    "test": "duplicate evidence rejected",
+    "passed": true
+  },
+  {
+    "test": "submitted is commitment",
+    "passed": true
+  },
+  {
+    "test": "self approval blocked FinanceExpense",
+    "passed": true
+  },
+  {
+    "test": "approval consumes commitment once",
+    "passed": true
+  },
+  {
+    "test": "partial reimbursement separate",
+    "passed": true
+  },
+  {
+    "test": "budget not double counted",
+    "passed": true
+  },
+  {
+    "test": "self approval blocked FinanceBudget",
+    "passed": true
+  },
+  {
+    "test": "original budget preserved",
+    "passed": true
+  },
+  {
+    "test": "revision retains prior actual",
+    "passed": true
+  },
+  {
+    "test": "entitlement is not bank transfer",
+    "passed": true
+  },
+  {
+    "test": "beneficiary books reconcile",
+    "passed": true
+  },
+  {
+    "test": "uncollected entitlement cannot settle",
+    "passed": true
+  },
+  {
+    "test": "explicit transfer posts both books",
+    "passed": true
+  },
+  {
+    "test": "pledge does not inflate bank",
+    "passed": true
+  },
+  {
+    "test": "donation uses central invoice",
+    "passed": true
+  },
+  {
+    "test": "organization sponsor receivable",
+    "passed": true
+  },
+  {
+    "test": "actual day proration",
+    "passed": true
+  },
+  {
+    "test": "overlapping same charge rejected",
+    "passed": true
+  },
+  {
+    "test": "bulk job creation idempotent",
+    "passed": true
+  },
+  {
+    "test": "durable billing completes safely",
+    "passed": true
+  },
+  {
+    "test": "historical rate exact",
+    "passed": true
+  },
+  {
+    "test": "rate does not rewrite native invoice",
+    "passed": true
+  },
+  {
+    "test": "concurrent allocations never overpay",
+    "passed": true
+  },
+  {
+    "test": "database rejects line free journal",
+    "passed": true
+  },
+  {
+    "test": "extended books reconcile",
+    "passed": true
+  }
+]

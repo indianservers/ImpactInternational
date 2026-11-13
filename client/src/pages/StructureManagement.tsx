@@ -27,8 +27,8 @@ export default function StructureManagement({ kind, international = false }: { k
   useEffect(() => { const t = setTimeout(() => { setTerm(search); setPage(1); }, 250); return () => clearTimeout(t); }, [search]);
   useEffect(() => { setPage(1); setSearch(""); setTerm(""); setForm(null); setDetail(null); setStatus(""); setNotice(""); }, [kind]);
   const units = useQuery({
-    queryKey: ["managed-units", w?.id, kind, term, status, page],
-    queryFn: () => api("/organizations?" + new URLSearchParams({ levelId: level!.id, search: term, status, page: String(page) })),
+    queryKey: ["managed-units", w?.id, kind, term, status, page, searchParams.get("scopeId")],
+    queryFn: () => api("/organizations?" + new URLSearchParams({ levelId: level!.id, search: term, status, ...(searchParams.get("scopeId")?{scopeId:searchParams.get("scopeId")!}:{}), page: String(page) })),
     enabled: !!level,
   });
   const parents = useQuery({
@@ -44,7 +44,7 @@ export default function StructureManagement({ kind, international = false }: { k
   }
   useEffect(() => {
     if (kind && level && searchParams.get("create") === "1" && canCreate) {
-      create(kind); setSearchParams({}, { replace: true });
+      create(kind, searchParams.get("parentId") || undefined); setSearchParams({}, { replace: true });
     }
   }, [kind, level?.id, searchParams, canCreate]);
   useEffect(() => {

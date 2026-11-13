@@ -119,7 +119,7 @@ public record FinanceBankRow(DateOnly Date, decimal Amount, string Reference, st
 
 public record FinanceBankImport(Guid BankAccountId, FinanceBankRow[] Rows);
 
-public record FinanceMatchInput(Guid PaymentId);
+public record FinanceMatchInput(Guid PaymentId, Guid[]? PaymentIds = null, Guid? ClubId = null);
 
 public record FinanceExpenseInput(
     Guid PersonId,
@@ -615,6 +615,7 @@ public static partial class FinanceEndpoints
         MapPayments(api);
         MapPlanning(api);
         MapReports(api);
+        MapCommand(api);
         MapGateway(app, api);
     }
 }

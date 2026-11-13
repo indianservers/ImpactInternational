@@ -1,6 +1,7 @@
-import { useEffect } from "react";
+import { useEffect, useEffectEvent } from "react";
 // Shared keyboard behavior for drawers and modals, including focus return.
 export function useDialog(open: boolean, onClose: () => void) {
+  const requestClose = useEffectEvent(onClose);
   useEffect(() => {
     if (!open) return;
     const previous = document.activeElement as HTMLElement;
@@ -11,12 +12,12 @@ export function useDialog(open: boolean, onClose: () => void) {
         dialog.querySelectorAll<HTMLElement>(
           'button:not(:disabled),a[href],input:not(:disabled),select:not(:disabled),textarea:not(:disabled),[tabindex="0"]',
         ),
-      );
+      ).filter((element) => element.getClientRects().length > 0);
     elements()[0]?.focus();
     const handler = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
         e.preventDefault();
-        onClose();
+        requestClose();
       }
       if (e.key === "Tab") {
         const nodes = elements();

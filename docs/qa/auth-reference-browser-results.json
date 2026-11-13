@@ -1,0 +1,23 @@
+{
+  "homeRoute": "/",
+  "loginRoute": "/login",
+  "publicInformationRoute": "/about",
+  "desktop": {
+    "width": 1280,
+    "overflow": false
+  },
+  "mobile": {
+    "width": 390,
+    "height": 844,
+    "overflow": false
+  },
+  "checks": {
+    "referenceLayout": "passed",
+    "actualLoginError": "passed",
+    "passwordToggle": "passed",
+    "platformAdminSignIn": "passed",
+    "recoveryNavigation": "passed",
+    "registrationNavigation": "passed",
+    "otpStillPaused": "passed"
+  }
+}

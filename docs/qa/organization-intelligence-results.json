@@ -1,0 +1,886 @@
+{
+  "total": 145,
+  "passed": 145,
+  "failed": [],
+  "timing": {
+    "coldMs": 173.6,
+    "warmMs": 12.3
+  },
+  "checks": [
+    {
+      "scenario": "Admin login",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Endpoint depth=5&refresh=1",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "error": null
+      }
+    },
+    {
+      "scenario": "Exactly one international root",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Every nested child uses actual parent and next level",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "No duplicate node identities",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "No cycles",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "International count matches database",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "International active and other reconcile",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "National count matches database",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "National active and other reconcile",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Region count matches database",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Region active and other reconcile",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "District count matches database",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "District active and other reconcile",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Zone count matches database",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Zone active and other reconcile",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Club count matches database",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Club active and other reconcile",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Immediate child and descendant club counts IMPACT-HQ",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Immediate child and descendant club counts DEMO-NAT-01",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Immediate child and descendant club counts DEMO-R01",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Immediate child and descendant club counts DEMO-R01-D01",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Immediate child and descendant club counts DEMO-R01-D01-Z01",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Immediate child and descendant club counts DEMO-R01-D01-Z01-C01",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Immediate child and descendant club counts DEMO-R01-D01-Z01-C02",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Immediate child and descendant club counts DEMO-R01-D01-Z01-C03",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Immediate child and descendant club counts DEMO-R01-D01-Z01-C04",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Immediate child and descendant club counts DEMO-R01-D01-Z01-C05",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Immediate child and descendant club counts ORG-QA-C83C22BBAD",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Immediate child and descendant club counts ORG-QA-8811EF8B29",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Immediate child and descendant club counts ORG-QA-B8C30839B4",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Immediate child and descendant club counts DEMO-R01-D01-Z02",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Immediate child and descendant club counts DEMO-R01-D01-Z02-C01",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Immediate child and descendant club counts DEMO-R01-D01-Z02-C02",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Immediate child and descendant club counts DEMO-R01-D01-Z02-C03",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Immediate child and descendant club counts DEMO-R01-D01-Z02-C04",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Immediate child and descendant club counts DEMO-R01-D01-Z02-C05",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Immediate child and descendant club counts DEMO-R01-D01-Z03",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Immediate child and descendant club counts DEMO-R01-D01-Z03-C01",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Immediate child and descendant club counts DEMO-R01-D01-Z03-C02",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Immediate child and descendant club counts DEMO-R01-D01-Z03-C03",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Immediate child and descendant club counts DEMO-R01-D01-Z03-C04",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Immediate child and descendant club counts DEMO-R01-D01-Z03-C05",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Immediate child and descendant club counts DEMO-R01-D01-Z04",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Immediate child and descendant club counts DEMO-R01-D01-Z04-C01",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Immediate child and descendant club counts DEMO-R01-D01-Z04-C02",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Immediate child and descendant club counts DEMO-R01-D01-Z04-C03",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Immediate child and descendant club counts DEMO-R01-D01-Z04-C04",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Immediate child and descendant club counts DEMO-R01-D01-Z04-C05",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Immediate child and descendant club counts DEMO-R01-D01-Z05",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Immediate child and descendant club counts DEMO-R01-D01-Z05-C01",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Immediate child and descendant club counts DEMO-R01-D01-Z05-C02",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Immediate child and descendant club counts DEMO-R01-D01-Z05-C03",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Immediate child and descendant club counts DEMO-R01-D01-Z05-C04",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Members match distinct database persons",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Active people bounded by total",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Payload contains no contact fields",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Endpoint ",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "error": null
+      }
+    },
+    {
+      "scenario": "Default progressive load omits deeper clubs",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Endpoint depth=1",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "error": null
+      }
+    },
+    {
+      "scenario": "Depth one only immediate children",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Endpoint depth=5&unitId=a8afbe4a-f20b-4ff2-8bed-774c6c6a3b21",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "error": null
+      }
+    },
+    {
+      "scenario": "National scope root selection",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "National breadcrumb preserves recorded path",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Endpoint depth=5&unitId=a1539f3d-35f5-45cf-9a27-f8ad14d71c41",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "error": null
+      }
+    },
+    {
+      "scenario": "Region scope root selection",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Region breadcrumb preserves recorded path",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Endpoint depth=5&unitId=7c722b24-66f1-4123-85b5-8eda42bf4ab4",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "error": null
+      }
+    },
+    {
+      "scenario": "District scope root selection",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "District breadcrumb preserves recorded path",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Endpoint depth=5&unitId=3417509a-736c-44aa-804e-9b5ea9204a46",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "error": null
+      }
+    },
+    {
+      "scenario": "Zone scope root selection",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Zone breadcrumb preserves recorded path",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Endpoint depth=5&unitId=18ee9a12-bcc5-464f-bae4-1377038a0162",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "error": null
+      }
+    },
+    {
+      "scenario": "Club scope root selection",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Club breadcrumb preserves recorded path",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Endpoint unitId=invalid",
+      "passed": true,
+      "detail": {
+        "status": 400,
+        "error": {
+          "detail": "Invalid unit ID.",
+          "status": 400
+        }
+      }
+    },
+    {
+      "scenario": "Endpoint unitId=543f5d58-1a43-4cc9-a43a-32ac961854ee",
+      "passed": true,
+      "detail": {
+        "status": 404,
+        "error": {
+          "detail": "Unit not found.",
+          "status": 404
+        }
+      }
+    },
+    {
+      "scenario": "Endpoint from=2030-01-01&to=2020-01-01",
+      "passed": true,
+      "detail": {
+        "status": 400,
+        "error": {
+          "detail": "Invalid date range.",
+          "status": 400
+        }
+      }
+    },
+    {
+      "scenario": "Endpoint from=no-date",
+      "passed": true,
+      "detail": {
+        "status": 400,
+        "error": {
+          "detail": "Invalid date.",
+          "status": 400
+        }
+      }
+    },
+    {
+      "scenario": "Endpoint depth=no",
+      "passed": true,
+      "detail": {
+        "status": 400,
+        "error": {
+          "detail": "Invalid depth.",
+          "status": 400
+        }
+      }
+    },
+    {
+      "scenario": "Endpoint search=Region%2001",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "error": null
+      }
+    },
+    {
+      "scenario": "Search responds after cached unfiltered request",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Endpoint search=zz-never-exists",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "error": null
+      }
+    },
+    {
+      "scenario": "Empty search meaningful",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "international login",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Endpoint depth=5",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "error": null
+      }
+    },
+    {
+      "scenario": "international no ancestor leakage",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "national login",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Endpoint depth=5",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "error": null
+      }
+    },
+    {
+      "scenario": "national no ancestor leakage",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "regional login",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Endpoint depth=5",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "error": null
+      }
+    },
+    {
+      "scenario": "regional no ancestor leakage",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Endpoint unitId=f70567b8-7f74-479b-8c8f-c3d813f560a9",
+      "passed": true,
+      "detail": {
+        "status": 404,
+        "error": {
+          "detail": "Unit not found.",
+          "status": 404
+        }
+      }
+    },
+    {
+      "scenario": "regional foreign detail blocked",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "district login",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Endpoint depth=5",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "error": null
+      }
+    },
+    {
+      "scenario": "district no ancestor leakage",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Endpoint unitId=f70567b8-7f74-479b-8c8f-c3d813f560a9",
+      "passed": true,
+      "detail": {
+        "status": 404,
+        "error": {
+          "detail": "Unit not found.",
+          "status": 404
+        }
+      }
+    },
+    {
+      "scenario": "district foreign detail blocked",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "zonal login",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Endpoint depth=5",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "error": null
+      }
+    },
+    {
+      "scenario": "zonal no ancestor leakage",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Endpoint unitId=f70567b8-7f74-479b-8c8f-c3d813f560a9",
+      "passed": true,
+      "detail": {
+        "status": 404,
+        "error": {
+          "detail": "Unit not found.",
+          "status": 404
+        }
+      }
+    },
+    {
+      "scenario": "zonal foreign detail blocked",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "club login",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Endpoint depth=5",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "error": null
+      }
+    },
+    {
+      "scenario": "club no ancestor leakage",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Endpoint unitId=f70567b8-7f74-479b-8c8f-c3d813f560a9",
+      "passed": true,
+      "detail": {
+        "status": 404,
+        "error": {
+          "detail": "Unit not found.",
+          "status": 404
+        }
+      }
+    },
+    {
+      "scenario": "club foreign detail blocked",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Unit details reuse original identity",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Authorized officer dataset present",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Authorized history dataset present",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Create club under actual Zone",
+      "passed": true,
+      "detail": {
+        "description": "",
+        "clubType": "Community",
+        "registration": "",
+        "postalCode": "",
+        "latitude": null,
+        "longitude": null,
+        "meetingDay": "",
+        "meetingSchedule": "",
+        "meetingVenue": "",
+        "fiscalStartMonth": 1,
+        "preferredLanguage": "en",
+        "brandingColor": "#302b78",
+        "operatingPolicies": "",
+        "id": "08c823be-13e7-4fc0-b59b-d778e7ec939a",
+        "tenantId": "fc7e4011-35d1-4c83-bc7b-c24282885850",
+        "levelId": "daf95b6b-b373-4e34-928d-d559d99396bd",
+        "parentId": "3417509a-736c-44aa-804e-9b5ea9204a46",
+        "name": "Organization intelligence QA club",
+        "shortName": "",
+        "code": "ORG-QA-32D2EE780C",
+        "country": "India",
+        "state": "",
+        "city": "",
+        "address": "",
+        "email": "",
+        "phone": "",
+        "website": "",
+        "logo": "",
+        "timeZone": "Asia/Kolkata",
+        "currency": "INR",
+        "charterDate": null,
+        "status": "Active",
+        "version": 2,
+        "createdAt": "2026-11-13T17:05:07.2761368+00:00",
+        "updatedAt": "2026-11-13T17:05:07.27753+00:00"
+      }
+    },
+    {
+      "scenario": "Creation keeps parent",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Edit unit supported",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Stale version rejected",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Duplicate code rejected",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "QA club archive supported",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Endpoint refresh=1&depth=5",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "error": null
+      }
+    },
+    {
+      "scenario": "Wrong parent level rejected",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Invalid parent reference rejected",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Second root rejected",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Independent branch create National",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Independent branch create Region",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Independent branch create District",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Independent branch create Zone",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Independent branch create Club",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Endpoint unitId=2e2a06b4-3f75-4266-ad3f-af1ee969e001&depth=5&refresh=1",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "error": null
+      }
+    },
+    {
+      "scenario": "Second National branch has one actual descendant club",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Identical names do not infer parents ORG-BRANCH-E2378FD96536",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Identical names do not infer parents ORG-BRANCH-D0D47EEEC22B",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Identical names do not infer parents ORG-BRANCH-789D2A97D6FA",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Identical names do not infer parents ORG-BRANCH-FCC4B26594CF",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Identical names do not infer parents ORG-BRANCH-3DFED77EBA93",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Empty leaf has no child and no members",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Cyclic or wrong-level reparent rejected",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Scoped existing club listing preserves branch",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Existing listing cannot bypass scope filter",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Endpoint depth=5&refresh=1",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "error": null
+      }
+    },
+    {
+      "scenario": "Anonymous endpoint blocked",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Ordinary member sees only own permitted club",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Ordinary member private aggregates restricted",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Endpoint depth=5",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "error": null
+      }
+    }
+  ]
+}

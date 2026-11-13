@@ -1,0 +1,1069 @@
+{
+  "total": 122,
+  "passed": 122,
+  "failed": 0,
+  "database": "clubs_impact_dues_upgrade_20261113",
+  "fixtures": [
+    {
+      "id": "4d8c1dea-4155-477d-b8d3-87ad4e5066f9",
+      "number": "IM-000003159",
+      "personId": "100e3f26-5655-46d3-8bf2-cc1e2a77b6ea",
+      "version": 1,
+      "status": "Active"
+    },
+    {
+      "id": "12d432f7-548d-4cfa-98e2-a0c287fadc36",
+      "number": "IM-000003160",
+      "personId": "41d1ddea-3890-46b5-8754-7252170beae1",
+      "version": 1,
+      "status": "Active"
+    },
+    {
+      "id": "637426a6-9cc6-457c-aa5e-517b62601da5",
+      "number": "IM-000003161",
+      "personId": "0330a1e2-a3d5-4e66-8247-211be7115a14",
+      "version": 1,
+      "status": "Active"
+    },
+    {
+      "id": "aacf9d7b-8cfc-4850-bd41-20d136fa5756",
+      "number": "IM-000003162",
+      "personId": "026713df-cdb5-41b4-9fe0-b60ce88d2247",
+      "version": 1,
+      "status": "Active"
+    }
+  ],
+  "tag": "a79e6513",
+  "scenarios": [
+    {
+      "scenario": "Platform administrator login",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Club president login",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Ordinary member login",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Existing options endpoint",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "elapsedMs": 13,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Create member 0",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "elapsedMs": 525,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Create member 1",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "elapsedMs": 48,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Create member 2",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "elapsedMs": 55,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Create member 3",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "elapsedMs": 57,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Generated member IDs unique",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Profile read",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "elapsedMs": 404,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Profile photo persisted",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Protected photo read",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Privacy-protected directory photo",
+      "passed": true,
+      "detail": {
+        "status": 404,
+        "elapsedMs": 26,
+        "response": {
+          "detail": "Photo is private.",
+          "status": 404
+        }
+      }
+    },
+    {
+      "scenario": "Edit member profile",
+      "passed": true,
+      "detail": {
+        "status": 204,
+        "elapsedMs": 68,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Profile edit persisted",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Filter search",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "elapsedMs": 124,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Filtered results bounded search",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Filter regionId",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "elapsedMs": 75,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Filtered results bounded regionId",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Filter districtId",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "elapsedMs": 89,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Filtered results bounded districtId",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Filter zoneId",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "elapsedMs": 99,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Filtered results bounded zoneId",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Filter clubId",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "elapsedMs": 66,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Filtered results bounded clubId",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Filter categoryId",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "elapsedMs": 63,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Filtered results bounded categoryId",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Filter membershipType",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "elapsedMs": 71,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Filtered results bounded membershipType",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Combined hierarchy filters",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "elapsedMs": 104,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Search by generated member ID",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "elapsedMs": 35,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Exact ID returns created member",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Server sort name",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "elapsedMs": 37,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Server sort name-desc",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "elapsedMs": 20,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Server sort number",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "elapsedMs": 21,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Server sort number-desc",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "elapsedMs": 23,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Server sort club",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "elapsedMs": 19,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Server sort category",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "elapsedMs": 24,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Server sort joined",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "elapsedMs": 18,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Server sort joined-asc",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "elapsedMs": 18,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Server sort renewal",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "elapsedMs": 19,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Server sort status",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "elapsedMs": 18,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Server sort status-desc",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "elapsedMs": 19,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Server sort updated",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "elapsedMs": 19,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Pagination first page",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "elapsedMs": 15,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Pagination second page",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "elapsedMs": 18,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Pages do not overlap",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Bulk-equivalent Inactive validates record",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "elapsedMs": 56,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Stale version rejected Inactive",
+      "passed": true,
+      "detail": {
+        "status": 409,
+        "elapsedMs": 12,
+        "response": {
+          "detail": "Membership changed. Refresh.",
+          "status": 409
+        }
+      }
+    },
+    {
+      "scenario": "Bulk-equivalent Suspended validates record",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "elapsedMs": 17,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Stale version rejected Suspended",
+      "passed": true,
+      "detail": {
+        "status": 409,
+        "elapsedMs": 10,
+        "response": {
+          "detail": "Membership changed. Refresh.",
+          "status": 409
+        }
+      }
+    },
+    {
+      "scenario": "Status tab Active",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "elapsedMs": 36,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Status tab Inactive",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "elapsedMs": 20,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Status tab matches Inactive",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Status tab Suspended",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "elapsedMs": 23,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Status tab matches Suspended",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Status tab Transferred",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "elapsedMs": 21,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Status tab Expired",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "elapsedMs": 16,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Status tab Renewal Due",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "elapsedMs": 33,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Renew member",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "elapsedMs": 48,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Renewal idempotency",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "elapsedMs": 16,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Joined date filter",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "elapsedMs": 42,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Renewal date filter",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "elapsedMs": 29,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Invalid joined range rejected",
+      "passed": true,
+      "detail": {
+        "status": 400,
+        "elapsedMs": 4,
+        "response": {
+          "detail": "Joined date range is reversed.",
+          "status": 400
+        }
+      }
+    },
+    {
+      "scenario": "Invalid renewal range rejected",
+      "passed": true,
+      "detail": {
+        "status": 400,
+        "elapsedMs": 4,
+        "response": {
+          "detail": "Renewal date range is reversed.",
+          "status": 400
+        }
+      }
+    },
+    {
+      "scenario": "Assign category",
+      "passed": true,
+      "detail": {
+        "status": 204,
+        "elapsedMs": 20,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Create reviewed club transfer",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "elapsedMs": 84,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Save filter view",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "elapsedMs": 32,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Read saved views",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "elapsedMs": 12,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Saved view preserves settings",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Saved views isolated by user",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "elapsedMs": 8,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Other user cannot see private saved view",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Filtered csv export",
+      "passed": true,
+      "detail": 200
+    },
+    {
+      "scenario": "Export matches filters and hierarchy",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Filtered xlsx export",
+      "passed": true,
+      "detail": 200
+    },
+    {
+      "scenario": "Export selected only",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Create individual invitation",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "elapsedMs": 44,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Track invitation status",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "elapsedMs": 24,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Pending acceptance tracked",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Revoke test invitation",
+      "passed": true,
+      "detail": {
+        "status": 204,
+        "elapsedMs": 25,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Membership intelligence 30d",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "elapsedMs": 237,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Chart and status totals reconcile 30d",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Membership intelligence 3m",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "elapsedMs": 82,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Chart and status totals reconcile 3m",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Membership intelligence 6m",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "elapsedMs": 67,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Chart and status totals reconcile 6m",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Membership intelligence 12m",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "elapsedMs": 79,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Chart and status totals reconcile 12m",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Custom intelligence dates",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "elapsedMs": 68,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Invalid intelligence range",
+      "passed": true,
+      "detail": {
+        "status": 400,
+        "elapsedMs": 11,
+        "response": {
+          "detail": "Choose a supported membership period.",
+          "status": 400
+        }
+      }
+    },
+    {
+      "scenario": "Future intelligence range",
+      "passed": true,
+      "detail": {
+        "status": 400,
+        "elapsedMs": 11,
+        "response": {
+          "detail": "Choose a valid membership date range of at most two years, ending today or earlier.",
+          "status": 400
+        }
+      }
+    },
+    {
+      "scenario": "Foreign districtId list denied",
+      "passed": true,
+      "detail": {
+        "status": 404,
+        "elapsedMs": 13,
+        "response": {
+          "detail": "District outside authorized scope.",
+          "status": 404
+        }
+      }
+    },
+    {
+      "scenario": "Foreign districtId options denied",
+      "passed": true,
+      "detail": {
+        "status": 404,
+        "elapsedMs": 8,
+        "response": {
+          "detail": "District outside authorized scope.",
+          "status": 404
+        }
+      }
+    },
+    {
+      "scenario": "Foreign districtId export denied",
+      "passed": true,
+      "detail": {
+        "status": 404,
+        "elapsedMs": 7,
+        "response": {
+          "detail": "District outside authorized scope.",
+          "status": 404
+        }
+      }
+    },
+    {
+      "scenario": "Foreign zoneId list denied",
+      "passed": true,
+      "detail": {
+        "status": 404,
+        "elapsedMs": 10,
+        "response": {
+          "detail": "Zone outside authorized scope.",
+          "status": 404
+        }
+      }
+    },
+    {
+      "scenario": "Foreign zoneId options denied",
+      "passed": true,
+      "detail": {
+        "status": 404,
+        "elapsedMs": 7,
+        "response": {
+          "detail": "Zone outside authorized scope.",
+          "status": 404
+        }
+      }
+    },
+    {
+      "scenario": "Foreign zoneId export denied",
+      "passed": true,
+      "detail": {
+        "status": 404,
+        "elapsedMs": 10,
+        "response": {
+          "detail": "Zone outside authorized scope.",
+          "status": 404
+        }
+      }
+    },
+    {
+      "scenario": "Other club profile direct URL denied",
+      "passed": true,
+      "detail": {
+        "status": 404,
+        "elapsedMs": 23,
+        "response": {
+          "detail": "Membership not found in your authorized scope.",
+          "status": 404
+        }
+      }
+    },
+    {
+      "scenario": "Other club photo denied",
+      "passed": true,
+      "detail": {
+        "status": 404,
+        "elapsedMs": 10,
+        "response": {
+          "detail": "Membership not found in your authorized scope.",
+          "status": 404
+        }
+      }
+    },
+    {
+      "scenario": "Ordinary member administrative API denied /members",
+      "passed": true,
+      "detail": {
+        "status": 403,
+        "elapsedMs": 5,
+        "response": {
+          "detail": "Action not permitted in this workspace.",
+          "status": 403
+        }
+      }
+    },
+    {
+      "scenario": "Ordinary member administrative API denied /membership/metrics",
+      "passed": true,
+      "detail": {
+        "status": 403,
+        "elapsedMs": 5,
+        "response": {
+          "detail": "Action not permitted in this workspace.",
+          "status": 403
+        }
+      }
+    },
+    {
+      "scenario": "Ordinary member administrative API denied /membership/imports",
+      "passed": true,
+      "detail": {
+        "status": 403,
+        "elapsedMs": 7,
+        "response": {
+          "detail": "Action not permitted in this workspace.",
+          "status": 403
+        }
+      }
+    },
+    {
+      "scenario": "Ordinary member administrative API denied /membership/views",
+      "passed": true,
+      "detail": {
+        "status": 403,
+        "elapsedMs": 5,
+        "response": {
+          "detail": "Action not permitted in this workspace.",
+          "status": 403
+        }
+      }
+    },
+    {
+      "scenario": "Ordinary member cannot export",
+      "passed": true,
+      "detail": {
+        "status": 403,
+        "elapsedMs": 6,
+        "response": {
+          "detail": "Action not permitted in this workspace.",
+          "status": 403
+        }
+      }
+    },
+    {
+      "scenario": "Ordinary member directory uses privacy",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "elapsedMs": 29,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Private profile direct URL denied",
+      "passed": true,
+      "detail": {
+        "status": 403,
+        "elapsedMs": 8,
+        "response": {
+          "detail": "Action not permitted in this workspace.",
+          "status": 403
+        }
+      }
+    },
+    {
+      "scenario": "Private directory profile denied",
+      "passed": true,
+      "detail": {
+        "status": 404,
+        "elapsedMs": 11,
+        "response": {
+          "detail": "Member is not listed in the directory.",
+          "status": 404
+        }
+      }
+    },
+    {
+      "scenario": "Import upload redesign-review.csv",
+      "passed": true,
+      "detail": 200
+    },
+    {
+      "scenario": "Map import columns",
+      "passed": true,
+      "detail": {
+        "status": 202,
+        "elapsedMs": 13,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Import detects duplicates and invalid rows",
+      "passed": true,
+      "detail": {
+        "status": "NeedsReview",
+        "errors": 1,
+        "review": 1
+      }
+    },
+    {
+      "scenario": "Import blocked before valid review",
+      "passed": true,
+      "detail": {
+        "status": 409,
+        "elapsedMs": 6,
+        "response": {
+          "detail": "Every row must be valid and duplicate-reviewed before import.",
+          "status": 409
+        }
+      }
+    },
+    {
+      "scenario": "Cancel invalid staged import",
+      "passed": true,
+      "detail": {
+        "status": 204,
+        "elapsedMs": 7,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Import upload redesign-valid.csv",
+      "passed": true,
+      "detail": 200
+    },
+    {
+      "scenario": "Map valid import",
+      "passed": true,
+      "detail": {
+        "status": 202,
+        "elapsedMs": 5,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Valid import preview ready",
+      "passed": true,
+      "detail": "Ready"
+    },
+    {
+      "scenario": "Confirm valid import",
+      "passed": true,
+      "detail": {
+        "status": 202,
+        "elapsedMs": 9,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Import summary completed",
+      "passed": true,
+      "detail": "Completed"
+    },
+    {
+      "scenario": "Import commit idempotent",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "elapsedMs": 5,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Import does not create duplicate records",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Member import mutation forbidden",
+      "passed": true,
+      "detail": {
+        "status": 403,
+        "elapsedMs": 6,
+        "response": {
+          "detail": "Action not permitted in this workspace.",
+          "status": 403
+        }
+      }
+    },
+    {
+      "scenario": "Duplicate identity preview",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "elapsedMs": 6,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Duplicate identity requires explicit review",
+      "passed": true,
+      "detail": null
+    }
+  ]
+}

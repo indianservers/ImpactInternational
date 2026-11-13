@@ -70,6 +70,7 @@ public static class MemberOtp
     {
         api.MapPost("/auth/otp/request", async (OtpRequest input, Db db, Access access, IDataProtectionProvider dp, IConfiguration config, IHostEnvironment env) =>
         {
+            Check(config.GetValue("Authentication:MemberOtpEnabled", true), "Email OTP login is temporarily paused. Sign in using your password.", 503);
             Check((input.Identifier?.Length ?? 0) is > 2 and <= 200, "Enter your registered email or phone number.");
             Check(!string.IsNullOrWhiteSpace(config["Smtp:Host"]) || env.IsDevelopment(), "Email OTP is awaiting Amazon SES setup. Please contact your administrator.", 503);
             var identifier = Normalize(input.Identifier!);
@@ -101,8 +102,9 @@ public static class MemberOtp
                 deliveryConfigured = !string.IsNullOrWhiteSpace(config["Smtp:Host"]) });
         }).RequireRateLimiting("auth");
 
-        api.MapPost("/auth/otp/verify", async (OtpVerify input, Db db, Access access, MembershipService membership, IDataProtectionProvider dp, HttpContext http, IHostEnvironment env) =>
+        api.MapPost("/auth/otp/verify", async (OtpVerify input, Db db, Access access, MembershipService membership, IDataProtectionProvider dp, HttpContext http, IHostEnvironment env, IConfiguration config) =>
         {
+            Check(config.GetValue("Authentication:MemberOtpEnabled", true), "Email OTP login is temporarily paused. Sign in using your password.", 503);
             await using var tx = await db.Database.BeginTransactionAsync();
             await db.Database.ExecuteSqlInterpolatedAsync($"SELECT pg_advisory_xact_lock(hashtext({input.ChallengeId.ToString()}))");
             var c = await db.LoginChallenges.SingleOrDefaultAsync(c => c.Id == input.ChallengeId);

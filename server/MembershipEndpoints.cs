@@ -10,7 +10,7 @@ public record ManualMember(
     Guid? PersonId = null,
     DateTimeOffset? JoinedAt = null,
     string DuplicateDecision = "",
-    string? PhotoBase64 = null
+    string? PhotoBase64 = null, string Status = "Active", string RequestKey = ""
 );
 
 public record StatusInput(
@@ -92,7 +92,7 @@ public static class MembershipEndpoints
         );
         api.MapGet(
             "/membership/options",
-            async (MembershipService s, string? search, Guid? regionId) =>
+            async (MembershipService s, string? search, Guid? regionId, Guid? districtId, Guid? zoneId) =>
             {
                 var w = await s.Access.WorkspaceAny(
                     "members.view",
@@ -113,6 +113,8 @@ public static class MembershipEndpoints
                     await RegionalDirectory.Filter(s, w, s.Scoped(w), regionId);
                     clubs = clubs.Where(c => s.Access.Tree(w.TenantId, regionId.Value).Any(o => o.Id == c.Id));
                 }
+                await MembershipPresentation.Filter(s,w,s.Scoped(w),districtId,zoneId,null,null,null,null,null);
+                foreach(var branchId in new[]{districtId,zoneId}) if(branchId!=null){var branch=branchId.Value;clubs=clubs.Where(c=>s.Access.Tree(w.TenantId,branch).Any(o=>o.Id==c.Id));}
                 if (!string.IsNullOrWhiteSpace(search))
                     clubs = clubs.Where(x => EF.Functions.ILike(x.Name, "%" + search + "%"));
                 return new
@@ -124,9 +126,10 @@ public static class MembershipEndpoints
                         {
                             x.Id,
                             x.Name,
-                            x.TenantId,
+                            x.TenantId, x.ClubType,
                         })
                         .ToListAsync(),
+                    membershipTypes = await s.Access.Visible(w).Where(o=>s.Db.Levels.Any(l=>l.Id==o.LevelId&&l.IsClub)).Select(o=>o.ClubType).Distinct().OrderBy(x=>x).ToListAsync(),
                     categories = await s
                         .Db.MembershipCategories.Where(x => x.TenantId == w.TenantId && x.Active)
                         .Select(x => new { x.Id, x.Name })
@@ -151,7 +154,7 @@ public static class MembershipEndpoints
                 int page = 1,
                 int size = 20,
                 string? after = null,
-                Guid? regionId = null
+                Guid? regionId = null, Guid? districtId = null, Guid? zoneId = null, string? membershipType = null, DateOnly? joinedFrom = null, DateOnly? joinedTo = null, DateOnly? renewalFrom = null, DateOnly? renewalTo = null, Guid? nationalId=null,string? country=null,string? state=null
             ) =>
                 await List(
                     s,
@@ -169,7 +172,7 @@ public static class MembershipEndpoints
                     page,
                     size,
                     after,
-                    regionId
+                    regionId, districtId, zoneId, membershipType, joinedFrom, joinedTo, renewalFrom, renewalTo, nationalId,country,state
                 )
         );
         api.MapGet(
@@ -189,7 +192,7 @@ public static class MembershipEndpoints
                 int page = 1,
                 int size = 20,
                 string? after = null,
-                Guid? regionId = null
+                Guid? regionId = null, Guid? districtId = null, Guid? zoneId = null, string? membershipType = null, DateOnly? joinedFrom = null, DateOnly? joinedTo = null, DateOnly? renewalFrom = null, DateOnly? renewalTo = null, Guid? nationalId=null,string? country=null,string? state=null
             ) =>
                 await List(
                     s,
@@ -207,7 +210,7 @@ public static class MembershipEndpoints
                     page,
                     size,
                     after,
-                    regionId
+                    regionId, districtId, zoneId, membershipType, joinedFrom, joinedTo, renewalFrom, renewalTo, nationalId,country,state
                 )
         );
         api.MapGet(
@@ -505,7 +508,14 @@ public static class MembershipEndpoints
                     "Club outside scope.",
                     403
                 );
+                Check(new[]{"Active","Inactive","Suspended"}.Contains(r.Status),"Choose an active, inactive or suspended initial membership status.");
+                Check(r.RequestKey!=null && (r.RequestKey==""||r.RequestKey.Length is >=8 and <=100),"Invalid registration request key.");
+                var hash=Hash(System.Text.Json.JsonSerializer.Serialize(r));
                 await using var tx = await s.Access.Mutation(w);
+                if(r.RequestKey!="") {
+                    var recorded=await s.Db.Audits.SingleOrDefaultAsync(x=>x.TenantId==w.TenantId&&x.ActorId==w.UserId&&x.Action=="member.registration.create"&&x.Resource==r.RequestKey);
+                    if(recorded!=null){var saved=System.Text.Json.JsonDocument.Parse(recorded.Changes);Check(saved.RootElement.GetProperty("hash").GetString()==hash,"Registration request key was used with different details.",409);return Results.Ok(saved.RootElement.GetProperty("result").Clone());}
+                }
                 var club = await s.Club(r.ClubId, w.TenantId);
                 var category = await s.Category(r.CategoryId, w.TenantId);
                 Person person;
@@ -541,18 +551,12 @@ public static class MembershipEndpoints
                     person.PhotoType = image.Type;
                 }
                 var member = await s.Activate(person, club, category, w.UserId, r.JoinedAt);
+                if(r.Status!="Active")await s.ChangeStatus(member,r.Status,"Initial member registration",w.UserId);
+                var result=new { id=member.Id,number=member.Number,personId=member.PersonId,version=member.Version,status=member.Status };
+                if(r.RequestKey!="")await s.Access.Log(w,"member.registration.create",r.RequestKey,System.Text.Json.JsonSerializer.Serialize(new{hash,result}));
                 await s.Db.SaveChangesAsync();
                 await tx.CommitAsync();
-                return Results.Ok(
-                    new
-                    {
-                        member.Id,
-                        member.Number,
-                        member.PersonId,
-                        member.Version,
-                        member.Status,
-                    }
-                );
+                return Results.Ok(result);
             }
         );
         api.MapPost(
@@ -890,7 +894,7 @@ public static class MembershipEndpoints
         string? profession,
         string? industry,
         string? expertise,
-        string? office
+        string? office, Assignment w
     )
     {
         if (!string.IsNullOrWhiteSpace(search))
@@ -950,15 +954,7 @@ public static class MembershipEndpoints
                 )
             );
         if (!string.IsNullOrWhiteSpace(office))
-            q = q.Where(x =>
-                s.Db.Assignments.Any(a =>
-                    a.UserId == x.Person.UserId
-                    && a.TenantId == x.TenantId
-                    && s.Db.Roles.Any(r =>
-                        r.Id == a.RoleId && EF.Functions.ILike(r.Name, "%" + office + "%")
-                    )
-                )
-            );
+            q = q.Where(x => GovernanceService.Current(s.Db).Any(o=>o.PersonId==x.PersonId&&o.TenantId==x.TenantId&&s.Access.Visible(w).Any(v=>v.Id==o.OrgId)&&EF.Functions.ILike(o.PositionTitle,"%"+office+"%")));
         return q;
     }
 
@@ -978,13 +974,14 @@ public static class MembershipEndpoints
         int page,
         int size,
         string? after,
-        Guid? regionId = null
+        Guid? regionId = null, Guid? districtId = null, Guid? zoneId = null, string? membershipType = null, DateOnly? joinedFrom = null, DateOnly? joinedTo = null, DateOnly? renewalFrom = null, DateOnly? renewalTo = null, Guid? nationalId=null,string? country=null,string? state=null
     )
     {
         var w = await s.Access.Workspace(directory ? "directory.view" : "members.view");
         var grants = await s.Access.Grants(w);
         var q = (await s.ScopedList(w)).AsNoTracking();
         q = await RegionalDirectory.Filter(s, w, q, regionId);
+        q = await MembershipPresentation.Filter(s,w,q,districtId,zoneId,membershipType,joinedFrom,joinedTo,renewalFrom,renewalTo,nationalId,country,state);
         if (directory)
             q = q.Where(x =>
                 s.Db.PersonPrivacy.Any(p => p.PersonId == x.PersonId && p.DirectoryVisible)
@@ -1002,7 +999,7 @@ public static class MembershipEndpoints
             profession,
             industry,
             expertise,
-            office
+            office, w
         );
         var total = await q.CountAsync();
         if (!string.IsNullOrEmpty(after))
@@ -1010,14 +1007,7 @@ public static class MembershipEndpoints
             Check(sort == "number", "Cursor pagination requires number sort.");
             q = q.Where(x => x.Number.CompareTo(after) > 0);
         }
-        var ordered = sort switch
-        {
-            "number" => q.OrderBy(x => x.Number),
-            "joined" => q.OrderByDescending(x => x.JoinedAt),
-            "status" => q.OrderBy(x => x.Status),
-            "updated" => q.OrderByDescending(x => x.UpdatedAt),
-            _ => q.OrderBy(x => x.Person.DisplayName),
-        };
+        var ordered = MembershipPresentation.Sort(q,sort);
         size = Math.Clamp(size, 1, 100);
         page = Math.Clamp(page, 1, 10000);
         var pageIds = await ordered
@@ -1039,16 +1029,7 @@ public static class MembershipEndpoints
             .ToDictionary(x => x.id, x => x.index);
         rows = rows.OrderBy(x => order[x.Id]).ToList();
         var ids = rows.Select(x => x.PersonId).ToArray();
-        var offices = await (
-            from a in s.Db.Assignments
-            join p in s.Db.Persons on a.UserId equals p.UserId
-            join r in s.Db.Roles on a.RoleId equals r.Id
-            where
-                ids.Contains(p.Id)
-                && a.TenantId == w.TenantId
-                && s.Access.Visible(w).Any(o => o.Id == a.OrgId)
-            select new { PersonId = p.Id, r.Name }
-        ).ToListAsync();
+        var offices = await GovernanceService.Current(s.Db).Where(a=>ids.Contains(a.PersonId)&&a.TenantId==w.TenantId&&s.Access.Visible(w).Any(o=>o.Id==a.OrgId)).Select(a=>new {a.PersonId,Name=a.PositionTitle}).ToListAsync();
         var places = await RegionalDirectory.Places(s, w.TenantId, rows.Select(r => r.ClubId).ToArray());
         return Results.Ok(
             new
@@ -1095,7 +1076,7 @@ public static class MembershipEndpoints
         );
     }
 
-    private static async Task<IResult> Metrics(MembershipService s)
+    private static async Task<IResult> Metrics(MembershipService s, string? range, DateOnly? from, DateOnly? to)
     {
         var w = await s.Access.Workspace("members.view");
         var q = s.Scoped(w);
@@ -1111,6 +1092,7 @@ public static class MembershipEndpoints
         return Results.Ok(
             new
             {
+                Intelligence = await MembershipPresentation.Intelligence(s,w,range,from,to),
                 TotalMembers = await q.Select(x => x.PersonId).Distinct().CountAsync(),
                 Memberships = await q.CountAsync(),
                 ActiveMembers = totalActive,

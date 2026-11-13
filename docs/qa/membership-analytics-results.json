@@ -1,0 +1,1138 @@
+{
+  "total": 142,
+  "passed": 142,
+  "results": [
+    {
+      "scenario": "Admin login",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Historical controlled scope",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "ms": 143.9,
+        "error": null
+      }
+    },
+    {
+      "scenario": "Distinct people correct",
+      "passed": true,
+      "detail": {
+        "new": 3,
+        "total": 4,
+        "active": 2,
+        "opening": 1,
+        "yearNew": 3,
+        "monthNew": 0,
+        "retained": 1,
+        "previousNew": 1,
+        "tenureYears": 0.66,
+        "affiliations": 4,
+        "earliestJoin": "2025-12-01T05:30:00+05:30",
+        "oldestHistory": "2025-12-01T05:30:00+05:30",
+        "unknownHistory": 0,
+        "pendingApplications": 0
+      }
+    },
+    {
+      "scenario": "Active honors historical expiry",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Opening cohort excludes new people",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Retained opening cohort",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Period acquisitions exclude pre-period member",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Recorded renewal events",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Eligibility uses previous expiry",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Snapshot expiry counted in trend",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Transfer history bucket",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Inactive status at May boundary",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Cohort workspace",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "ms": 24.2,
+        "error": null
+      }
+    },
+    {
+      "scenario": "Observed retained cohort",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Observed churn cohort",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Incomplete observation null",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Org opening and retention reconcile",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Org renewal evidence",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Lifecycle workspace",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "ms": 21.9,
+        "error": null
+      }
+    },
+    {
+      "scenario": "Real transitions preserved",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "No invented application flow",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Period 7d",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "ms": 165.3,
+        "error": null
+      }
+    },
+    {
+      "scenario": "Reconciled categories 7d",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Period 30d",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "ms": 150.7,
+        "error": null
+      }
+    },
+    {
+      "scenario": "Reconciled categories 30d",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Period 90d",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "ms": 162.4,
+        "error": null
+      }
+    },
+    {
+      "scenario": "Reconciled categories 90d",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Period quarter",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "ms": 156.7,
+        "error": null
+      }
+    },
+    {
+      "scenario": "Reconciled categories quarter",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Period previous-quarter",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "ms": 77.4,
+        "error": null
+      }
+    },
+    {
+      "scenario": "Reconciled categories previous-quarter",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Period year",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "ms": 150.2,
+        "error": null
+      }
+    },
+    {
+      "scenario": "Reconciled categories year",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Period previous-year",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "ms": 64.6,
+        "error": null
+      }
+    },
+    {
+      "scenario": "Reconciled categories previous-year",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Period all",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "ms": 167.5,
+        "error": null
+      }
+    },
+    {
+      "scenario": "Reconciled categories all",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Aggregation day",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "ms": 37.8,
+        "error": null
+      }
+    },
+    {
+      "scenario": "Trend bounded day",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Aggregation week",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "ms": 28.2,
+        "error": null
+      }
+    },
+    {
+      "scenario": "Trend bounded week",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Aggregation month",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "ms": 40.4,
+        "error": null
+      }
+    },
+    {
+      "scenario": "Trend bounded month",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Aggregation quarter",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "ms": 35.4,
+        "error": null
+      }
+    },
+    {
+      "scenario": "Trend bounded quarter",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Aggregation year",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "ms": 34.5,
+        "error": null
+      }
+    },
+    {
+      "scenario": "Trend bounded year",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Workspace overview",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "ms": 9.7,
+        "error": null
+      }
+    },
+    {
+      "scenario": "Same global filters overview",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Workspace growth",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "ms": 8.4,
+        "error": null
+      }
+    },
+    {
+      "scenario": "Same global filters growth",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Workspace organization",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "ms": 8.9,
+        "error": null
+      }
+    },
+    {
+      "scenario": "Same global filters organization",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Workspace cohorts",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "ms": 28.3,
+        "error": null
+      }
+    },
+    {
+      "scenario": "Same global filters cohorts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Workspace lifecycle",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "ms": 8.5,
+        "error": null
+      }
+    },
+    {
+      "scenario": "Same global filters lifecycle",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Workspace renewals",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "ms": 7.3,
+        "error": null
+      }
+    },
+    {
+      "scenario": "Same global filters renewals",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Workspace categories",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "ms": 8.6,
+        "error": null
+      }
+    },
+    {
+      "scenario": "Same global filters categories",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Workspace geography",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "ms": 8.4,
+        "error": null
+      }
+    },
+    {
+      "scenario": "Same global filters geography",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Workspace engagement",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "ms": 9.3,
+        "error": null
+      }
+    },
+    {
+      "scenario": "Same global filters engagement",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Workspace forecasting",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "ms": 9.9,
+        "error": null
+      }
+    },
+    {
+      "scenario": "Same global filters forecasting",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Workspace actions",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "ms": 7.6,
+        "error": null
+      }
+    },
+    {
+      "scenario": "Same global filters actions",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Workspace network",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "ms": 37.5,
+        "error": null
+      }
+    },
+    {
+      "scenario": "Same global filters network",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Hierarchy nationalId",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "ms": 162.6,
+        "error": null
+      }
+    },
+    {
+      "scenario": "Parent total reference nationalId",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "ms": 148.4,
+        "error": null
+      }
+    },
+    {
+      "scenario": "Hierarchy narrows nationalId",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Hierarchy regionId",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "ms": 57.7,
+        "error": null
+      }
+    },
+    {
+      "scenario": "Parent total reference regionId",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "ms": 14.1,
+        "error": null
+      }
+    },
+    {
+      "scenario": "Hierarchy narrows regionId",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Hierarchy districtId",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "ms": 31.6,
+        "error": null
+      }
+    },
+    {
+      "scenario": "Parent total reference districtId",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "ms": 14.6,
+        "error": null
+      }
+    },
+    {
+      "scenario": "Hierarchy narrows districtId",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Hierarchy zoneId",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "ms": 28.5,
+        "error": null
+      }
+    },
+    {
+      "scenario": "Parent total reference zoneId",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "ms": 13.4,
+        "error": null
+      }
+    },
+    {
+      "scenario": "Hierarchy narrows zoneId",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Hierarchy clubId",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "ms": 20.2,
+        "error": null
+      }
+    },
+    {
+      "scenario": "Parent total reference clubId",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "ms": 14.6,
+        "error": null
+      }
+    },
+    {
+      "scenario": "Hierarchy narrows clubId",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Dimension categoryId",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "ms": 26.2,
+        "error": null
+      }
+    },
+    {
+      "scenario": "Dimension status",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "ms": 25.8,
+        "error": null
+      }
+    },
+    {
+      "scenario": "Dimension country",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "ms": 29.6,
+        "error": null
+      }
+    },
+    {
+      "scenario": "Dimension state",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "ms": 41.4,
+        "error": null
+      }
+    },
+    {
+      "scenario": "Dimension membershipType",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "ms": 18.9,
+        "error": null
+      }
+    },
+    {
+      "scenario": "Dimension joinedFrom",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "ms": 25.9,
+        "error": null
+      }
+    },
+    {
+      "scenario": "Dimension joinedTo",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "ms": 20.1,
+        "error": null
+      }
+    },
+    {
+      "scenario": "Dimension renewalFrom",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "ms": 18.4,
+        "error": null
+      }
+    },
+    {
+      "scenario": "Dimension renewalTo",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "ms": 17.8,
+        "error": null
+      }
+    },
+    {
+      "scenario": "Empty filter",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "ms": 60.7,
+        "error": null
+      }
+    },
+    {
+      "scenario": "Empty totals remain zero",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Invalid period",
+      "passed": true,
+      "detail": {
+        "status": 400,
+        "ms": 6.0,
+        "error": {
+          "detail": "Unsupported analytics period.",
+          "status": 400
+        }
+      }
+    },
+    {
+      "scenario": "Invalid bucket",
+      "passed": true,
+      "detail": {
+        "status": 400,
+        "ms": 3.8,
+        "error": {
+          "detail": "Unsupported aggregation interval.",
+          "status": 400
+        }
+      }
+    },
+    {
+      "scenario": "Invalid date",
+      "passed": true,
+      "detail": {
+        "status": 400,
+        "ms": 6.0,
+        "error": {
+          "detail": "Invalid from.",
+          "status": 400
+        }
+      }
+    },
+    {
+      "scenario": "Future end",
+      "passed": true,
+      "detail": {
+        "status": 400,
+        "ms": 6.5,
+        "error": {
+          "detail": "Choose a valid range from 1900 through today.",
+          "status": 400
+        }
+      }
+    },
+    {
+      "scenario": "Reversed dates",
+      "passed": true,
+      "detail": {
+        "status": 400,
+        "ms": 6.0,
+        "error": {
+          "detail": "Choose a valid range from 1900 through today.",
+          "status": 400
+        }
+      }
+    },
+    {
+      "scenario": "Invalid id",
+      "passed": true,
+      "detail": {
+        "status": 400,
+        "ms": 5.0,
+        "error": {
+          "detail": "Invalid regionId.",
+          "status": 400
+        }
+      }
+    },
+    {
+      "scenario": "Invalid status",
+      "passed": true,
+      "detail": {
+        "status": 400,
+        "ms": 6.5,
+        "error": {
+          "detail": "Unsupported status.",
+          "status": 400
+        }
+      }
+    },
+    {
+      "scenario": "Daily too large",
+      "passed": true,
+      "detail": {
+        "status": 400,
+        "ms": 5.9,
+        "error": {
+          "detail": "Choose a coarser aggregation interval for this date range.",
+          "status": 400
+        }
+      }
+    },
+    {
+      "scenario": "Reversed joining dates",
+      "passed": true,
+      "detail": {
+        "status": 400,
+        "ms": 6.5,
+        "error": {
+          "detail": "Reversed joinedFrom range.",
+          "status": 400
+        }
+      }
+    },
+    {
+      "scenario": "Unknown workspace",
+      "passed": true,
+      "detail": {
+        "status": 400,
+        "ms": 3.6,
+        "error": {
+          "detail": "Unknown analytical workspace.",
+          "status": 400
+        }
+      }
+    },
+    {
+      "scenario": "No private contact payload",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Login international.president@example.test",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Role analytics international.president@example.test",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "ms": 155.2,
+        "error": null
+      }
+    },
+    {
+      "scenario": "Login national.president@example.test",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Role analytics national.president@example.test",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "ms": 153.4,
+        "error": null
+      }
+    },
+    {
+      "scenario": "Login regional.president@example.test",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Role analytics regional.president@example.test",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "ms": 55.8,
+        "error": null
+      }
+    },
+    {
+      "scenario": "Reject foreign scope regional.president@example.test",
+      "passed": true,
+      "detail": {
+        "status": 404,
+        "ms": 14.7,
+        "error": {
+          "detail": "Club outside authorized scope.",
+          "status": 404
+        }
+      }
+    },
+    {
+      "scenario": "No foreign org metadata regional.president@example.test",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Scoped export regional.president@example.test",
+      "passed": true,
+      "detail": {
+        "status": 403,
+        "ms": 34.7,
+        "error": {
+          "detail": "Action not permitted in this workspace.",
+          "status": 403
+        }
+      }
+    },
+    {
+      "scenario": "Login district.president@example.test",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Role analytics district.president@example.test",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "ms": 37.1,
+        "error": null
+      }
+    },
+    {
+      "scenario": "Reject foreign scope district.president@example.test",
+      "passed": true,
+      "detail": {
+        "status": 404,
+        "ms": 7.8,
+        "error": {
+          "detail": "Club outside authorized scope.",
+          "status": 404
+        }
+      }
+    },
+    {
+      "scenario": "No foreign org metadata district.president@example.test",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Scoped export district.president@example.test",
+      "passed": true,
+      "detail": {
+        "status": 403,
+        "ms": 8.6,
+        "error": {
+          "detail": "Action not permitted in this workspace.",
+          "status": 403
+        }
+      }
+    },
+    {
+      "scenario": "Login zonal.president@example.test",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Role analytics zonal.president@example.test",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "ms": 26.2,
+        "error": null
+      }
+    },
+    {
+      "scenario": "Reject foreign scope zonal.president@example.test",
+      "passed": true,
+      "detail": {
+        "status": 404,
+        "ms": 7.2,
+        "error": {
+          "detail": "Club outside authorized scope.",
+          "status": 404
+        }
+      }
+    },
+    {
+      "scenario": "No foreign org metadata zonal.president@example.test",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Scoped export zonal.president@example.test",
+      "passed": true,
+      "detail": {
+        "status": 403,
+        "ms": 5.9,
+        "error": {
+          "detail": "Action not permitted in this workspace.",
+          "status": 403
+        }
+      }
+    },
+    {
+      "scenario": "Login club.president@example.test",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Role analytics club.president@example.test",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "ms": 35.8,
+        "error": null
+      }
+    },
+    {
+      "scenario": "Reject foreign scope club.president@example.test",
+      "passed": true,
+      "detail": {
+        "status": 404,
+        "ms": 9.6,
+        "error": {
+          "detail": "Club outside authorized scope.",
+          "status": 404
+        }
+      }
+    },
+    {
+      "scenario": "No foreign org metadata club.president@example.test",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Scoped export club.president@example.test",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "ms": 19.3,
+        "error": null
+      }
+    },
+    {
+      "scenario": "Export has no foreign unit club.president@example.test",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Login member.club1@example.test",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Role analytics member.club1@example.test",
+      "passed": true,
+      "detail": {
+        "status": 403,
+        "ms": 5.4,
+        "error": {
+          "detail": "Action not permitted in this workspace.",
+          "status": 403
+        }
+      }
+    },
+    {
+      "scenario": "Member export denied",
+      "passed": true,
+      "detail": {
+        "status": 403,
+        "ms": 5.8,
+        "error": {
+          "detail": "Action not permitted in this workspace.",
+          "status": 403
+        }
+      }
+    },
+    {
+      "scenario": "Unauthenticated analytics denied",
+      "passed": true,
+      "detail": {
+        "status": 401,
+        "ms": 2.5,
+        "error": {
+          "detail": "Sign in to continue.",
+          "status": 401
+        }
+      }
+    },
+    {
+      "scenario": "Invalid category tenant",
+      "passed": true,
+      "detail": {
+        "status": 404,
+        "ms": 5.8,
+        "error": {
+          "detail": "Category outside scope.",
+          "status": 404
+        }
+      }
+    },
+    {
+      "scenario": "Authorized filtered CSV",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "ms": 10.9,
+        "error": null
+      }
+    },
+    {
+      "scenario": "CSV content and headers",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Payload bounded",
+      "passed": true,
+      "detail": 9136
+    },
+    {
+      "scenario": "Database membership count preserved outside QA",
+      "passed": true,
+      "detail": null
+    }
+  ],
+  "fixtureClub": "2df03cf4-96f9-46e0-9e92-fa526eb32365",
+  "fixtureMembers": [
+    {
+      "id": "18ecbfcc-110c-46e0-bc09-c74a210ce08f",
+      "number": "IM-000003155",
+      "personId": "e04d50d9-6fea-4c26-b7b6-4f4adbe72249",
+      "version": 1,
+      "status": "Active"
+    },
+    {
+      "id": "921b2827-a37d-4a58-8e47-cfc728494493",
+      "number": "IM-000003156",
+      "personId": "f3939658-8d96-4ddd-ac68-9191d509495b",
+      "version": 1,
+      "status": "Active"
+    },
+    {
+      "id": "db94594e-f7fb-47d0-ae86-69874f52aa2d",
+      "number": "IM-000003157",
+      "personId": "3257c0b2-a9e9-4314-a73a-2e787ca16cb4",
+      "version": 1,
+      "status": "Active"
+    },
+    {
+      "id": "628152c6-867e-4f19-a90d-f43f24de6a69",
+      "number": "IM-000003158",
+      "personId": "4286fbca-d9a1-4830-9db0-15254c8cbe31",
+      "version": 1,
+      "status": "Active"
+    }
+  ],
+  "timings": {
+    "minMs": 2.5,
+    "maxMs": 167.5,
+    "medianMs": 19.3
+  }
+}

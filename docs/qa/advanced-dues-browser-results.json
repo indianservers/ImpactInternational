@@ -1,0 +1,106 @@
+[
+  {
+    "test": "Dues center uses eight live KPI cards",
+    "passed": true
+  },
+  {
+    "test": "No desktop horizontal overflow",
+    "passed": true
+  },
+  {
+    "test": "Organization View workspace is selectable",
+    "passed": true
+  },
+  {
+    "test": "Member Dues workspace is selectable",
+    "passed": true
+  },
+  {
+    "test": "Club Dues workspace is selectable",
+    "passed": true
+  },
+  {
+    "test": "Collections workspace is selectable",
+    "passed": true
+  },
+  {
+    "test": "Outstanding & Overdue workspace is selectable",
+    "passed": true
+  },
+  {
+    "test": "Renewals workspace is selectable",
+    "passed": true
+  },
+  {
+    "test": "Waivers & Discounts workspace is selectable",
+    "passed": true
+  },
+  {
+    "test": "Reminders workspace is selectable",
+    "passed": true
+  },
+  {
+    "test": "Reports workspace is selectable",
+    "passed": true
+  },
+  {
+    "test": "Overview workspace is selectable",
+    "passed": true
+  },
+  {
+    "test": "Member ledger shows invoice history",
+    "passed": true
+  },
+  {
+    "test": "Member ledger has PDF/Excel/CSV statements",
+    "passed": true
+  },
+  {
+    "test": "Generation wizard opens",
+    "passed": true
+  },
+  {
+    "test": "Preview exposes duplicate and exemption state",
+    "passed": true
+  },
+  {
+    "test": "Draft visibly saved without issuing invoices",
+    "passed": true
+  },
+  {
+    "test": "Read-only preview and draft do not change invoices",
+    "passed": true
+  },
+  {
+    "test": "Existing collection workflow remains available",
+    "passed": true
+  },
+  {
+    "test": "Bulk entry shows independent amount/reference fields",
+    "passed": true
+  },
+  {
+    "test": "Overdue KPI drills into reports",
+    "passed": true
+  },
+  {
+    "test": "Region drills into actual districts",
+    "passed": true
+  },
+  {
+    "test": "768px responsive no page overflow",
+    "passed": true
+  },
+  {
+    "test": "390px responsive no page overflow",
+    "passed": true
+  },
+  {
+    "test": "No JavaScript runtime errors",
+    "passed": true
+  },
+  {
+    "test": "No server errors during user workflows",
+    "passed": true
+  }
+]

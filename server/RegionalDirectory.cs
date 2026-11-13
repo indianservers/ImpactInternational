@@ -30,7 +30,7 @@ public static class RegionalDirectory
         return q.Where(m => s.Access.Tree(w.TenantId, regionId.Value).Any(o => o.Id == m.ClubId));
     }
 
-    public record Place(string Region = "", string District = "", string Zone = "");
+    public record Place(string Region = "", string District = "", string Zone = "", Guid RegionId = default);
     public static async Task<Dictionary<Guid, Place>> Places(MembershipService s, Guid tenant, Guid[] clubs)
     {
         var nodes = new Dictionary<Guid, (Guid? Parent, string Name, string Level)>();
@@ -44,14 +44,14 @@ public static class RegionalDirectory
         }
         return clubs.Distinct().ToDictionary(club => club, club =>
         {
-            string region = "", district = "", zone = ""; Guid? id = club;
+            Guid regionId=Guid.Empty; string region = "", district = "", zone = ""; Guid? id = club;
             for (var depth = 0; id != null && depth < 16 && nodes.TryGetValue(id.Value, out var node); depth++, id = node.Parent)
             {
-                if (node.Level == "Region") region = node.Name;
+                if (node.Level == "Region") { region = node.Name; regionId=id.Value; }
                 if (node.Level == "District") district = node.Name;
                 if (node.Level == "Zone") zone = node.Name;
             }
-            return new Place(region, district, zone);
+            return new Place(region, district, zone, regionId);
         });
     }
 }

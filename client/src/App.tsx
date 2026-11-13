@@ -7,6 +7,7 @@ import {
 } from "react";
 import {
   Link,
+  Navigate,
   Outlet,
   Route,
   Routes,
@@ -23,26 +24,29 @@ import {
   Menu,
   X,
   LogOut,
+  Bell,
 } from "lucide-react";
 import "./mobile.css";
-import { navigationSections, canOpenTab, matchesTab, taskGroups } from "./navigation";
+import { navigationSections, canOpenTab, matchesTab, taskGroups, financeMenu } from "./navigation";
 import { TenantBrand } from "./TenantBrand";
-import ImpactSetupGuide from "./ImpactSetupGuide";
 import { impact, impactRole, ImpactDocumentTitle, ImpactPageContext } from "./brand";
 import { api, type Workspace } from "./api";
 // Lazy pages keep the same context even when this shell is hot-reloaded.
-import { WorkspaceContext as Context, useWorkspace } from "./WorkspaceContext";
+import { WorkspaceContext as Context } from "./WorkspaceContext";
 export { useWorkspace } from "./WorkspaceContext";
 const IdCards = lazy(() => import("./cards/IdCards"));
 const MyIdCard = lazy(() =>
   import("./cards/IdCards").then((m) => ({ default: m.MyIdCard })),
 );
+const PlatformAdminDashboard = lazy(() => import("./pages/PlatformAdminDashboard"));
+const RoleHome = lazy(() => import("./pages/RoleHome"));
 const IdVerification = lazy(() =>
   import("./cards/IdCards").then((m) => ({ default: m.IdVerification })),
 );
 const RequestOrganization = lazy(() => import("./pages/RequestOrganization"));
 const Dashboard = lazy(() => import("./pages/Dashboard"));
 const Organizations = lazy(() => import("./pages/StructureManagement"));
+const OrganizationIntelligence = lazy(() => import("./pages/Organizations"));
 const Administration = lazy(() => import("./pages/Administration"));
 const SettingsPage = lazy(() => import("./pages/Settings"));
 const Audit = lazy(() => import("./pages/Audit"));
@@ -77,7 +81,7 @@ const GovernanceDashboard = lazy(() =>
     default: m.GovernanceDashboard,
   })),
 );
-const LeadershipDirectory = lazy(() => import("./pages/GovernanceLeadership"));
+const LeadershipDirectory = lazy(() => import("./pages/LeadershipCenter"));
 const LeadershipCalendar = lazy(() =>
   import("./pages/GovernanceLeadership").then((m) => ({
     default: m.LeadershipCalendar,
@@ -146,15 +150,7 @@ const EventInvitation = lazy(() =>
   })),
 );
 function WorkspaceHome() {
-  const { w } = useWorkspace();
-  const home = w?.permissions.includes("governance.reports") ? (
-    <GovernanceDashboard />
-  ) : w?.permissions.includes("members.view") ? (
-    <Dashboard />
-  ) : (
-    <MemberPortal />
-  );
-  return <><ImpactSetupGuide />{home}</>;
+  return <RoleHome />;
 }
 export function Skeleton() {
   return (
@@ -189,6 +185,8 @@ function Shell() {
   const qc = useQueryClient(),
     nav = useNavigate(),
     location = useLocation();
+  const membershipMode = ["/app/members","/app/directory","/app/imports","/app/approvals","/app/transfers","/app/membership-settings","/app/membership-insights","/app/organizations","/app/international","/app/national","/app/regions","/app/districts","/app/zones","/app/clubs","/app/leadership","/app/handovers","/app/committees"].some(p=>location.pathname.startsWith(p));
+  const [compactSidebar,setCompactSidebar]=useState(false);
   const [open, setOpen] = useState(false),
     [active, setActive] = useState(""),
     [error, setError] = useState<unknown>();
@@ -288,20 +286,12 @@ function Shell() {
   const groups = taskGroups(activeSection?.tabs || []);
   const activeGroup = groups.find(group => group.tabs.some(tab => matchesTab(location.pathname, tab.to)));
   if (me.isPending) return <Skeleton />;
-  if (me.error)
-    return (
-      <div className="auth-wrap">
-        <h1>Your Impact International account awaits.</h1>
-        <p>Sign in to access Impact International.</p>
-        <Link className="button" to="/login">
-          Sign in
-        </Link>
-      </div>
-    );
+  if (me.data && workspaces.isPending) return <Skeleton />;
+  if (me.error) return <Navigate to="/login" replace />;
   return (
     <Context.Provider value={{ w, me: me.data }}>
       <div
-        className="app-shell"
+        className={"app-shell" + (me.data.platformAdmin ? " platform-admin-shell" : "") + (membershipMode?" membership-shell":"") + (compactSidebar?" compact-sidebar":"") + (location.pathname.startsWith("/app/finance") ? " finance-mode" : "")}
         style={
           {
             "--brand-accent": impact.color,
@@ -328,8 +318,12 @@ function Shell() {
                 className={selected ? "active" : undefined}
                 aria-current={selected ? "true" : undefined}
                 onClick={() => setOpen(false)}>
-                <Icon size={19} />{section.label}
-              </Link>{section.id === "organization" && selected && <div className="impact-sidebar-submenu" aria-label="Impact structure submenus">{section.tabs.filter(tab => ["/app/organizations", "/app/international", "/app/national", "/app/regions", "/app/districts", "/app/zones", "/app/clubs"].includes(tab.to)).map(tab => <Link key={tab.to} to={tab.to} onClick={() => setOpen(false)} className={location.pathname === tab.to ? "active" : undefined} aria-current={location.pathname === tab.to ? "page" : undefined}>{tab.label}</Link>)}</div>}</div>;
+                <Icon size={19} />{membershipMode&&section.id==="home"?"Dashboard":membershipMode&&section.id==="people"?"Members":section.label}
+              </Link>{section.id === "tools" && location.pathname.startsWith("/app/finance") && section.tabs.some(tab => tab.to === "/app/finance") && <nav className="impact-sidebar-submenu" aria-label="Finance pages">{financeMenu.map(([path, label]) => {
+                const to = "/app/finance" + (path ? "/" + path : "");
+                const current = path ? matchesTab(location.pathname, to) : location.pathname === to;
+                return <Link key={to} to={to} className={current ? "active" : undefined} aria-current={current ? "page" : undefined} onClick={() => setOpen(false)}>{label}</Link>;
+              })}</nav>}{membershipMode&&section.id==="people"&&selected&&<div className="mm-sidebar-submenu" aria-label="People and membership">{[["Members","/app/members","members.view"],["Membership Insights","/app/membership-insights","members.view"],["Applications & transfers","/app/approvals","members.approve"],["Transfer requests","/app/transfers","members.transfer.approve"],["Directory","/app/directory","directory.view"],["Membership plans & categories","/app/membership-settings","members.workflow.manage"]].filter(([,url,permission])=>canOpenTab({to:url,label:"",permissions:[permission]},w?.permissions||[],experience.data?.disabledFeatures||[])).map(([label,url])=><Link key={url} to={url} className={location.pathname===url?"active":""} onClick={()=>setOpen(false)}>{label}</Link>)}</div>}{section.id === "leadership" && selected && <div className="impact-sidebar-submenu" aria-label="Leadership pages">{section.tabs.map(tab=><Link key={tab.to} to={tab.to} onClick={()=>setOpen(false)} className={location.pathname===tab.to?"active":undefined}>{tab.label}</Link>)}</div>}{section.id === "organization" && selected && <div className="impact-sidebar-submenu" aria-label="Impact structure submenus">{section.tabs.filter(tab => ["/app/organizations", "/app/international", "/app/national", "/app/regions", "/app/districts", "/app/zones", "/app/clubs"].includes(tab.to)).map(tab => <Link key={tab.to} to={tab.to} onClick={() => setOpen(false)} className={location.pathname === tab.to ? "active" : undefined} aria-current={location.pathname === tab.to ? "page" : undefined}>{tab.label}</Link>)}</div>}</div>;
             })}
           </nav>
           <div className="mobile-account-actions"><button className="secondary" onClick={toggleTheme}><Moon size={17} />{me.data.theme === "dark" ? "Light theme" : "Dark theme"}</button><button className="secondary" onClick={signOut}><LogOut size={17} />Sign out</button></div>
@@ -354,7 +348,7 @@ function Shell() {
           </div>
         </aside>
         <div className="main-column">
-          <header className="topbar">
+          <header className="topbar">{membershipMode&&<button className="icon-button mm-sidebar-toggle" aria-label={compactSidebar?"Expand sidebar":"Collapse sidebar"} onClick={()=>setCompactSidebar(!compactSidebar)}><Menu size={19}/></button>}
             <button
               className="icon-button mobile-menu"
               aria-label="Toggle menu"
@@ -371,9 +365,10 @@ function Shell() {
               <Suspense fallback={null}>
                 <SearchLauncher />
               </Suspense>
+              {me.data.platformAdmin && <Link className="icon-button platform-priority-bell" aria-label="Open administrative priorities" to="/app/governance"><Bell size={19} /></Link>}
               <span className="environment">
                 <i />
-                Impact International
+                {me.data.platformAdmin ? "Platform Administration" : "Impact International"}
               </span>
               <Link
                 aria-label="Profile and security"
@@ -441,7 +436,7 @@ function Shell() {
               </div>
             ) : (
               <Suspense fallback={<Skeleton />}>
-                {activeSection && <section className="section-navigation" aria-label={activeSection.label}>
+                {activeSection && !location.pathname.startsWith("/app/finance") && <section className="section-navigation" aria-label={activeSection.label}>
                   <div className="section-navigation-heading">{activeSection.label}</div>
                   {groups.length > 1 && <nav aria-label={`${activeSection.label} tabs`} className="section-tabs">
                     {groups.map(group => <Link key={group.id} to={group.tabs[0].to}
@@ -559,7 +554,8 @@ export default function App() {
         />
         <Route path="/event/:id" element={<PublicEvent />} />
         <Route path="/event-invitation" element={<EventInvitation />} />
-        <Route path="/" element={<Landing />} />
+        <Route path="/" element={<Auth mode="login" />} />
+        <Route path="/about" element={<Landing />} />
         <Route path="/join" element={<JoinInvitation />} />
         <Route path="/verify" element={<VerifyMembershipCard />} />
         <Route path="/request-organization" element={<RequestOrganization />} />
@@ -574,6 +570,7 @@ export default function App() {
         ))}
         <Route path="/app" element={<Shell />}>
           <Route index element={<WorkspaceHome />} />
+          <Route path="platform-dashboard" element={<PlatformAdminDashboard />} />
           <Route path="members" element={<Members />} />
           <Route path="directory" element={<Members directory />} />
           <Route path="members/:id" element={<MemberProfile />} />
@@ -582,9 +579,10 @@ export default function App() {
           <Route path="approvals" element={<MembershipApplications review />} />
           <Route path="imports" element={<MemberImports />} />
           <Route path="membership-insights" element={<MembershipInsights />} />
+          <Route path="membership-insights/:workspace" element={<MembershipInsights />} />
           <Route path="membership-settings" element={<MembershipSettings />} />
           <Route path="transfers" element={<MembershipOperations />} />
-          <Route path="organizations" element={<Organizations />} />
+          <Route path="organizations" element={<OrganizationIntelligence />} />
           <Route path="international" element={<Organizations international />} />
           <Route path="national" element={<Organizations kind="National" />} />
           <Route path="regions" element={<Organizations kind="Region" />} />
@@ -608,6 +606,7 @@ export default function App() {
           <Route path="clubs/:id" element={<ClubWorkspace />} />
           <Route path="club-administration" element={<GovernanceDashboard />} />
           <Route path="leadership" element={<LeadershipDirectory />} />
+          <Route path="leadership/:workspace" element={<LeadershipDirectory />} />
           <Route path="leadership-calendar" element={<LeadershipCalendar />} />
           <Route path="handovers" element={<LeadershipHandovers />} />
           <Route path="committees" element={<CommitteeDirectory />} />

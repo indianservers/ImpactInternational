@@ -1,0 +1,42 @@
+[
+  {
+    "test": "No invented empty-history forecast",
+    "passed": true
+  },
+  {
+    "test": "Insufficient completed history withheld",
+    "passed": true
+  },
+  {
+    "test": "Three projected months",
+    "passed": true
+  },
+  {
+    "test": "Projection dates start after selected period",
+    "passed": true
+  },
+  {
+    "test": "Projection extends three months",
+    "passed": true
+  },
+  {
+    "test": "Income uses trailing three active months",
+    "passed": true
+  },
+  {
+    "test": "Expense uses separate posted series",
+    "passed": true
+  },
+  {
+    "test": "Incomplete selected month excluded",
+    "passed": true
+  },
+  {
+    "test": "Input order does not change forecast",
+    "passed": true
+  },
+  {
+    "test": "Actual input records are not modified",
+    "passed": true
+  }
+]

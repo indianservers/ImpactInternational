@@ -53,6 +53,9 @@ public static partial class EventEndpoints
                         x.Capability,
                         x.StartsAt,
                         x.EndsAt,
+                        x.TaskStatus,
+                        x.Responsibilities,
+                        x.Version,
                         title = s
                             .Db.Events.Where(e => e.Id == x.EventId)
                             .Select(e => e.Title)
@@ -426,7 +429,7 @@ public static partial class EventEndpoints
         );
         api.MapGet(
             "/events-dashboard",
-            async (EventService s, DateTimeOffset? from = null, DateTimeOffset? to = null) =>
+            async (EventService s, DateTimeOffset? from = null, DateTimeOffset? to = null, Guid? typeId = null, Guid? orgId = null, string venueType = "", string status = "") =>
             {
                 var w = await s.A.Workspace("events.reports");
                 var begin = (from ?? DateTimeOffset.UtcNow.AddMonths(-6)).ToUniversalTime();
@@ -439,6 +442,26 @@ public static partial class EventEndpoints
                     && e.StartsAt >= begin
                     && e.StartsAt < end
                 );
+                if (typeId != null) events = events.Where(e => e.TypeId == typeId);
+                if (orgId != null) {
+                    Check(orgs.Contains(orgId.Value), "Organization is outside your report scope.", 403);
+                    var descendants = s.A.Tree(w.TenantId, orgId.Value).Select(o => o.Id);
+                    events = events.Where(e => descendants.Contains(e.OrgId));
+                }
+                if (venueType != "") events = events.Where(e => e.VenueType == venueType);
+                if (status != "") events = events.Where(e => e.Lifecycle == status || e.Publication == status);
+                var previousStart = begin - (end - begin);
+                var previousEvents = s.Db.Events.Where(e => e.TenantId == w.TenantId && orgs.Contains(e.OrgId) && e.StartsAt >= previousStart && e.StartsAt < begin);
+                if (typeId != null) previousEvents = previousEvents.Where(e => e.TypeId == typeId);
+                if (orgId != null) {
+                    var descendants = s.A.Tree(w.TenantId, orgId.Value).Select(o => o.Id);
+                    previousEvents = previousEvents.Where(e => descendants.Contains(e.OrgId));
+                }
+                if (venueType != "") previousEvents = previousEvents.Where(e => e.VenueType == venueType);
+                if (status != "") previousEvents = previousEvents.Where(e => e.Lifecycle == status || e.Publication == status);
+                var previousIds = previousEvents.Select(e => e.Id);
+                var previousConfirmed = await s.Db.EventRegistrations.CountAsync(r => previousIds.Contains(r.EventId) && r.Status == "Confirmed");
+                var previousAttended = await s.Db.EventCheckins.Where(c => previousIds.Contains(c.EventId) && c.SessionId == null && !c.Voided).Select(c => c.RegistrationId).Distinct().CountAsync();
                 var ids = events.Select(x => x.Id);
                 var confirmed = s.Db.EventRegistrations.Where(x =>
                     ids.Contains(x.EventId) && x.Status == "Confirmed"
@@ -450,9 +473,38 @@ public static partial class EventEndpoints
                 var count = await invitations.CountAsync();
                 var responded = await invitations.CountAsync(x => x.Rsvp != "Awaiting Response");
                 var reg = await confirmed.CountAsync();
-                var att = await attended.CountAsync();
+                var att = await attended.Select(c => c.RegistrationId).Distinct().CountAsync();
                 return new
                 {
+                    previous = new {
+                        eventsCreated = await previousEvents.CountAsync(),
+                        confirmed = previousConfirmed,
+                        attended = previousAttended,
+                        invitations = await s.Db.EventInvitations.CountAsync(i => previousIds.Contains(i.EventId)),
+                        organizations = await previousEvents.Select(e => e.OrgId).Distinct().CountAsync(),
+                        attendanceRate = previousConfirmed == 0 ? 0 : Math.Round(100d * previousAttended / previousConfirmed, 1)
+                    },
+                    funnel = new {
+                        invitations = count,
+                        responses = responded,
+                        confirmed = await invitations.CountAsync(i => i.Rsvp != "Awaiting Response" && s.Db.EventRegistrations.Any(r => r.InvitationId == i.Id && r.Status == "Confirmed")),
+                        attended = await invitations.CountAsync(i => i.Rsvp != "Awaiting Response" && s.Db.EventRegistrations.Any(r => r.InvitationId == i.Id && r.Status == "Confirmed" && s.Db.EventCheckins.Any(c => c.RegistrationId == r.Id && c.SessionId == null && !c.Voided)))
+                    },
+                    participantClubs = await confirmed.Where(r => r.MembershipId != null)
+                        .Join(s.Db.Memberships, r => r.MembershipId, m => (Guid?)m.Id, (r,m) => new { r.Id, m.ClubId })
+                        .GroupBy(r => r.ClubId).Select(g => new { orgId = g.Key, name = s.Db.Orgs.Where(o => o.Id == g.Key).Select(o => o.Name).First(), registered = g.Count(), attended = g.Count(r => s.Db.EventCheckins.Any(c => c.RegistrationId == r.Id && c.SessionId == null && !c.Voided)) }).OrderByDescending(g => g.attended).ThenByDescending(g => g.registered).Take(10).ToListAsync(),
+                    noShows = await confirmed.CountAsync(r => s.Db.Events.Any(e => e.Id == r.EventId && e.EndsAt < DateTimeOffset.UtcNow && e.Lifecycle != "Cancelled") && !s.Db.EventCheckins.Any(c => c.RegistrationId == r.Id && c.SessionId == null && !c.Voided)),
+                    organizations = await events.Select(e => e.OrgId).Distinct().CountAsync(),
+                    responses = responded,
+                    previousRegistrationTrend = await s.Db.EventRegistrations.Where(r => previousIds.Contains(r.EventId)).GroupBy(r => new { r.CreatedAt.Year, r.CreatedAt.Month, r.CreatedAt.Day }).Select(g => new { g.Key.Year, g.Key.Month, g.Key.Day, registered = g.Count() }).OrderBy(g => g.Year).ThenBy(g => g.Month).ThenBy(g => g.Day).ToListAsync(),
+                    registrationTrend = await s.Db.EventRegistrations.Where(r => ids.Contains(r.EventId))
+                        .GroupBy(r => new { r.CreatedAt.Year, r.CreatedAt.Month, r.CreatedAt.Day })
+                        .Select(g => new { g.Key.Year, g.Key.Month, g.Key.Day, registered = g.Count(), confirmed = g.Count(r => r.Status == "Confirmed"), cancelled = g.Count(r => r.Status == "Cancelled"), waitlisted = g.Count(r => r.Status == "Waitlisted") })
+                        .OrderBy(g => g.Year).ThenBy(g => g.Month).ThenBy(g => g.Day).ToListAsync(),
+                    topEvents = await events.Select(e => new { e.Id, e.Title, e.StartsAt, e.Capacity,
+                        registered = s.Db.EventRegistrations.Count(r => r.EventId == e.Id && r.Status == "Confirmed"),
+                        attended = s.Db.EventCheckins.Where(c => c.EventId == e.Id && c.SessionId == null && !c.Voided).Select(c => c.RegistrationId).Distinct().Count()
+                    }).OrderByDescending(e => e.registered).ThenBy(e => e.Id).Take(10).ToListAsync(),
                     eventsCreated = await events.CountAsync(),
                     upcoming = await events.CountAsync(x =>
                         x.StartsAt > DateTimeOffset.UtcNow
@@ -487,6 +539,7 @@ public static partial class EventEndpoints
                                 && g.Select(x => x.Id).Contains(c.EventId)
                             ),
                         })
+                        .OrderByDescending(x => x.attended).ThenByDescending(x => x.confirmed)
                         .Take(100)
                         .ToListAsync(),
                     byCountry = await confirmed
@@ -673,6 +726,14 @@ public static partial class EventEndpoints
                 return f;
             }
         );
+        api.MapDelete("/event-filters/{id:guid}", async (Guid id, EventService s) => {
+            var user = await s.A.User();
+            var filter = await s.Db.EventSavedFilters.SingleOrDefaultAsync(f => f.Id == id && f.UserId == user.Id);
+            Check(filter != null, "Saved filter not found.", 404);
+            s.Db.EventSavedFilters.Remove(filter!);
+            await s.Db.SaveChangesAsync();
+            return Results.NoContent();
+        });
         MapEventMedia(api);
     }
 

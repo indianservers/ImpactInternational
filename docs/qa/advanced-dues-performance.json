@@ -1,0 +1,11 @@
+{
+  "milliseconds": [
+    16.00000000325963,
+    30.999999995401595,
+    16.00000000325963,
+    30.999999995401595,
+    16.00000000325963
+  ],
+  "median": 16.00000000325963,
+  "scope": "Isolated functional QA snapshot; not a million-row benchmark"
+}

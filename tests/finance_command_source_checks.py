@@ -1,0 +1,29 @@
+"""Real PostgreSQL finance workflow tests. Fictional records; no live payments."""
+from support import Client,sql
+import os
+assert os.environ.get("CLUBS_TEST_DATABASE","").startswith("clubs_finance_workflows_")
+import uuid,json,pathlib,datetime,concurrent.futures,subprocess
+results=[];tag=uuid.uuid4().hex[:8];today=datetime.date.today();date=today.isoformat();start=f'{today.year}-01-01';end=f'{today.year}-12-31'
+def check(name,ok,data=None):
+ results.append({'test':name,'passed':bool(ok)});pathlib.Path('docs/qa/finance-command-source-results.json').write_text(json.dumps(results,indent=2));print(('PASS ' if ok else 'FAIL ')+name,flush=True);assert ok,(name,data)
+def good(c,p,m='GET',d=None):
+ code,b=c.req(p,m,d);assert code in (200,204),(p,code,b);return b
+def login(email,role,org=None):
+ c=Client();assert c.login(email)[0]==200;ws=good(c,'/workspaces');w=next(w for w in ws if w['role']==role and (not org or w['orgId']==org) and (role!='Association Super Admin' or w['association'].startswith('Global')));c.activate(w);return c,w
+admin,w=login('admin@example.test','Association Super Admin');review,rw=login('secretary@example.test','Association Super Admin',w['orgId']);club=sql('SELECT "Id" FROM "Orgs" WHERE "Code"=\'GC-006\'');member,mw=login('member@example.test','Club Member',club)
+pid=sql('SELECT "Id" FROM "Persons" WHERE "UserId"=(SELECT "Id" FROM "Users" WHERE "Email"=\'member@example.test\')');mid=sql(f'SELECT "Id" FROM "Memberships" WHERE "PersonId"=\'{pid}\' AND "ClubId"=\'{club}\' AND "Status"=\'Active\' LIMIT 1');reviewid=sql('SELECT "Id" FROM "Users" WHERE "Email"=\'secretary@example.test\'')
+def entity(name):
+ e=good(admin,'/finance/entities','POST',{'orgId':club,'name':name+' '+tag,'country':'US','currency':'USD','decimals':2,'collectionAuthority':'Fictional QA independent club collection'});p='/finance/entities/'+e['id'];good(admin,p+'/periods','POST',{'name':'Fiscal year','startsOn':start,'endsOn':end});good(admin,p+'/grants','POST',{'userId':reviewid,'role':'Owner'});return e,p
+
+f=json.loads(pathlib.Path('test-results/phase7-fixture.json').read_text());e=f['entity'];p=f['path'];now=datetime.datetime.now(datetime.timezone.utc);at=lambda hours:(now+datetime.timedelta(hours=hours)).isoformat();kind=good(admin,'/event-types')[0]['id']
+ev=good(admin,'/events','POST',{'orgId':club,'typeId':kind,'title':'Paid finance QA '+tag,'description':'Fictional paid event integration','startsAt':at(1),'endsAt':at(5),'registrationStartsAt':at(-2),'registrationEndsAt':at(2),'timeZone':'UTC','venue':'Community room','capacity':10,'maxCompanions':0,'visibility':'Public'})
+good(admin,'/finance/entities/'+e['id']+'/event-prices','POST',{'eventId':ev['id'],'category':'Member','amount':'15'});check('central finance enables paid event',good(admin,'/events/'+ev['id'])['eventInfo']['paid'])
+def status(action):
+ current=good(admin,'/events/'+ev['id'])['eventInfo'];return good(admin,'/events/'+ev['id']+'/status','POST',{'action':action,'version':current['version'],'reason':'Finance QA event lifecycle'})
+sub=status('Submit');r=good(admin,'/governance/requests/'+sub['approvalRequestId'])['request'];good(review,'/governance/requests/'+r['id']+'/decisions','POST',{'decision':'Approve','comment':'Reviewed event','version':r['version']});status('Publish')
+r=good(member,'/events/'+ev['id']+'/registrations','POST',{});check('paid registration never fabricates confirmation',r['status']=='Pending Payment');check('unpaid paid-event pass denied',member.request('/events/'+ev['id']+'/registrations/'+r['id']+'/pass')[0] in (404,409))
+i=good(member,'/finance/registrations/'+r['id']+'/invoice','POST',{});check('paid booking uses central invoice',i['purpose']=='Event' and i['total']==15 and i['registrationId']==r['id']);check('unpaid event confirm remains pending',good(admin,'/finance/registrations/'+r['id']+'/confirm','POST',{})['status']=='Pending Payment')
+pa=good(admin,p+'/payments','POST',{'personId':pid,'payer':'Fictional member','reference':'EVENT-'+tag,'method':'BankTransfer','currency':'USD','amount':'15','date':date,'key':uuid.uuid4().hex});good(review,'/finance/payments/'+pa['id']+'/verify','POST',{});good(review,'/finance/payments/'+pa['id']+'/allocate','POST',{'invoiceId':i['id'],'amount':'15','key':uuid.uuid4().hex});check('verified manual alternative confirms booking',good(admin,'/finance/registrations/'+r['id']+'/confirm','POST',{})['status']=='Confirmed')
+good(review,'/finance/payments/'+pa['id']+'/refunds','POST',{'invoiceId':i['id'],'amount':'5','reason':'Completed partial event refund','reference':'EV-REF-'+tag});check('partial refund removes paid confirmation',sql(f'SELECT "Status" FROM "EventRegistrations" WHERE "Id"=\'{r["id"]}\'')=='Pending Payment')
+project=sql(f"""SELECT "Id" FROM "ServiceProjects" WHERE "OrgId"='{club}' ORDER BY "Id" LIMIT 1""");estimate=sql(f'SELECT "EstimatedBudget" FROM "ServiceProjects" WHERE "Id"=\'{project}\'');pi=good(admin,p+'/invoices','POST',{'personId':pid,'customer':'Fictional member','purpose':'Project','projectId':project,'date':date,'dueOn':date,'key':uuid.uuid4().hex,'lines':[{'description':'Project contribution','quantity':1,'rate':'45'}]});good(admin,'/finance/invoices/'+pi['id']+'/issue','POST',{});rep=good(admin,p+'/reports/project?projectId='+project);check('project finance shares journal engine',rep['income']>=45);check('planning estimate remains separate from ledger',sql(f'SELECT "EstimatedBudget" FROM "ServiceProjects" WHERE "Id"=\'{project}\'')==estimate)
+check('source finance books reconcile',good(admin,p+'/reports/trial-balance')['trialDifference']==0);print(len(results),'source integration checks passed')

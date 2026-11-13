@@ -244,8 +244,18 @@ public class FinanceBank : FinancialRecord
     public string AccountCode { get; set; } = "1010";
 }
 
+public class FinanceBankPaymentMatch : FinancialRecord
+{
+    public Guid BankTransactionId { get; set; }
+    public Guid PaymentId { get; set; }
+    public Guid? ClubId { get; set; }
+    public decimal BankAmount { get; set; }
+}
+
 public class FinanceBankTransaction : FinancialRecord
 {
+    public Guid[] MatchedPaymentIds { get; set; } = [];
+    public Guid? RemittanceClubId { get; set; }
     public Guid BankAccountId { get; set; }
     public DateOnly Date { get; set; }
     public decimal Amount { get; set; }
@@ -395,6 +405,7 @@ public partial class Db
     public DbSet<FinanceWebhook> FinanceWebhooks => Set<FinanceWebhook>();
     public DbSet<FinanceBank> FinanceBanks => Set<FinanceBank>();
     public DbSet<FinanceBankTransaction> FinanceBankTransactions => Set<FinanceBankTransaction>();
+    public DbSet<FinanceBankPaymentMatch> FinanceBankPaymentMatches => Set<FinanceBankPaymentMatch>();
     public DbSet<FinanceExpense> FinanceExpenses => Set<FinanceExpense>();
     public DbSet<FinanceReimbursement> FinanceReimbursements => Set<FinanceReimbursement>();
     public DbSet<FinanceBudget> FinanceBudgets => Set<FinanceBudget>();
@@ -407,6 +418,17 @@ public partial class Db
 
     private void ConfigureFinance(ModelBuilder b)
     {
+        b.Entity<FinanceBankPaymentMatch>(e => {
+            e.HasBaseType((Type?)null); e.HasKey(x=>x.Id);
+            e.Property(x=>x.Version).IsConcurrencyToken();
+            e.Property(x=>x.BankAmount).HasPrecision(20,4);
+            e.HasIndex(x=>x.PaymentId).IsUnique();
+            e.HasIndex(x=>x.BankTransactionId);
+            e.HasOne<FinanceBankTransaction>().WithMany().HasForeignKey(x=>new{x.TenantId,x.EntityId,x.BankTransactionId}).HasPrincipalKey(x=>new{x.TenantId,x.EntityId,x.Id}).OnDelete(DeleteBehavior.Restrict);
+            e.HasOne<FinancePayment>().WithMany().HasForeignKey(x=>new{x.TenantId,x.EntityId,x.PaymentId}).HasPrincipalKey(x=>new{x.TenantId,x.EntityId,x.Id}).OnDelete(DeleteBehavior.Restrict);
+            e.HasOne<Org>().WithMany().HasForeignKey(x=>new{x.TenantId,x.ClubId}).HasPrincipalKey(x=>new{x.TenantId,x.Id}).OnDelete(DeleteBehavior.Restrict);
+            e.ToTable(t=>t.HasCheckConstraint("CK_FinanceBankPaymentMatch_Amount","\"BankAmount\" > 0"));
+        });
         b.Entity<FinanceInvoiceLine>().HasIndex(x => x.InvoiceId);
         b.Entity<FinanceJournalLine>().HasIndex(x => x.JournalId);
         b.Entity<FinanceAllocation>().HasIndex(x => x.InvoiceId);
@@ -831,6 +853,10 @@ public partial class Db
         });
         b.Entity<FinanceBankTransaction>(e =>
         {
+            e.Property(x => x.MatchedPaymentIds).HasColumnType("uuid[]").HasDefaultValueSql("'{}'::uuid[]");
+            e.HasIndex(x => x.MatchedPaymentIds).HasMethod("gin");
+            e.HasOne<Org>().WithMany().HasForeignKey(x => new { x.TenantId, x.RemittanceClubId })
+                .HasPrincipalKey(x => new { x.TenantId, x.Id }).OnDelete(DeleteBehavior.Restrict);
             e.HasBaseType((Type?)null);
             e.HasKey(x => x.Id);
             e.HasAlternateKey(x => new

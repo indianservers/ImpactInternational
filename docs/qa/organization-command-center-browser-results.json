@@ -1,0 +1,87 @@
+{
+  "checks": [
+    {
+      "scenario": "Treemap rectangles contained in recorded parents",
+      "passed": true
+    },
+    {
+      "scenario": "Circle packing contains every rendered child circle",
+      "passed": true
+    },
+    {
+      "scenario": "Tree expands actual district zones",
+      "passed": true
+    },
+    {
+      "scenario": "Create child modal preserves selected parent",
+      "passed": true
+    },
+    {
+      "scenario": "Browser create generates ID and selects new unit",
+      "passed": true
+    },
+    {
+      "scenario": "Browser edits and archives QA unit",
+      "passed": true
+    },
+    {
+      "scenario": "History panel displays recorded changes",
+      "passed": true
+    },
+    {
+      "scenario": "Scoped search returns matching descendant units",
+      "passed": true
+    },
+    {
+      "scenario": "D3 zoom changes transform to scale 1.4",
+      "passed": true
+    },
+    {
+      "scenario": "Sunburst drill-down updates all metrics to Region 02",
+      "passed": true
+    },
+    {
+      "scenario": "Breadcrumb returns to actual parent",
+      "passed": true
+    },
+    {
+      "scenario": "Tree expand loaded branches and collapse all",
+      "passed": true
+    },
+    {
+      "scenario": "Zoom reset preserves scope",
+      "passed": true
+    },
+    {
+      "scenario": "Scoped activity tab uses existing event API",
+      "passed": true
+    },
+    {
+      "scenario": "KPI club navigation forwards selected Region scope to management list",
+      "passed": true
+    },
+    {
+      "scenario": "Mobile document has no horizontal overflow at 390px",
+      "passed": true
+    },
+    {
+      "scenario": "SVG chart export downloads organization-labeled file",
+      "passed": true
+    },
+    {
+      "scenario": "Scoped club management list shows 125 Region 02 clubs",
+      "passed": true
+    }
+  ],
+  "recorded": "2026-11-13T17:08:24.308Z",
+  "geometry": {
+    "treemapRectangles": 784,
+    "treemapContainment": true,
+    "packedCircles": 784,
+    "circleContainment": true
+  },
+  "mobile": {
+    "viewport": 390,
+    "documentScrollWidth": 375
+  }
+}

@@ -1,0 +1,2444 @@
+{
+  "database": "clubs_impact_dues_upgrade_20261113",
+  "runAt": "2026-11-13T14:33:21.119724+00:00",
+  "total": 286,
+  "passed": 286,
+  "failed": 0,
+  "roleAccounts": [
+    {
+      "email": "qa.dashboard.association-super-admin@example.test",
+      "user": "8d992809-679b-5f6e-b4bf-bcb263750d6a",
+      "assignment": "b5a64703-fca7-5c97-8419-50d1ec556039",
+      "role": "Association Super Admin",
+      "scope": "25d4dafc-cb6a-47b5-9918-43b7f230ee5e",
+      "kind": "organization"
+    },
+    {
+      "email": "qa.dashboard.club-manager@example.test",
+      "user": "e54e61aa-701d-5e42-aad3-651b765d6393",
+      "assignment": "9ac38eb1-4afc-5cfe-93e6-58cf7157f7ae",
+      "role": "Club Manager",
+      "scope": "18ee9a12-bcc5-464f-bae4-1377038a0162",
+      "kind": "club"
+    },
+    {
+      "email": "qa.dashboard.club-member@example.test",
+      "user": "bc439cc3-f3f2-528f-861a-b096147a5f95",
+      "assignment": "dccf4475-6b72-5fb6-8df2-1e857417fe08",
+      "role": "Club Member",
+      "scope": "18ee9a12-bcc5-464f-bae4-1377038a0162",
+      "kind": "member"
+    },
+    {
+      "email": "qa.dashboard.club-president@example.test",
+      "user": "1f19d03b-62c3-5ccb-995b-6146d25fdef9",
+      "assignment": "2427ff53-d3fd-551e-a030-739e0c9d69d8",
+      "role": "Club President",
+      "scope": "18ee9a12-bcc5-464f-bae4-1377038a0162",
+      "kind": "club"
+    },
+    {
+      "email": "qa.dashboard.club-secretary@example.test",
+      "user": "df053753-e514-5c7e-bda7-960a03ae3d70",
+      "assignment": "5201464b-05da-5ea0-b286-f53dbe913de9",
+      "role": "Club Secretary",
+      "scope": "18ee9a12-bcc5-464f-bae4-1377038a0162",
+      "kind": "club-operations"
+    },
+    {
+      "email": "qa.dashboard.club-treasurer@example.test",
+      "user": "cb8e074d-d4d9-5c8f-b981-651889e3dfa8",
+      "assignment": "2d945c76-122f-5b70-b985-cd720579284b",
+      "role": "Club Treasurer",
+      "scope": "18ee9a12-bcc5-464f-bae4-1377038a0162",
+      "kind": "finance"
+    },
+    {
+      "email": "qa.dashboard.district-administrator@example.test",
+      "user": "035b62f7-c7b7-5e63-8ef3-ddbbe20a35ed",
+      "assignment": "f4124654-a822-5788-a44b-200bb08fad71",
+      "role": "District Administrator",
+      "scope": "7c722b24-66f1-4123-85b5-8eda42bf4ab4",
+      "kind": "district"
+    },
+    {
+      "email": "qa.dashboard.district-president@example.test",
+      "user": "279c079a-963e-50a0-9e87-afca66166b6f",
+      "assignment": "73fff95c-2045-580a-be6f-42f0d7b28301",
+      "role": "District President",
+      "scope": "7c722b24-66f1-4123-85b5-8eda42bf4ab4",
+      "kind": "district"
+    },
+    {
+      "email": "qa.dashboard.guest-applicant@example.test",
+      "user": "6613b057-1cf0-5251-8dbe-47ce3be31d92",
+      "assignment": "4928e69c-07e1-5791-b89f-9a4b6f30b1fc",
+      "role": "Guest / Applicant",
+      "scope": "18ee9a12-bcc5-464f-bae4-1377038a0162",
+      "kind": "member"
+    },
+    {
+      "email": "qa.dashboard.international-administrator@example.test",
+      "user": "42109644-2164-532c-a676-75157daae3f5",
+      "assignment": "f4f9f6b6-1a4e-509e-945d-5a5ed289d94e",
+      "role": "International Administrator",
+      "scope": "25d4dafc-cb6a-47b5-9918-43b7f230ee5e",
+      "kind": "organization"
+    },
+    {
+      "email": "qa.dashboard.international-president@example.test",
+      "user": "5e0142f0-7a5f-5749-9fe0-2c497bd7d681",
+      "assignment": "1236d6bc-3736-5d67-8481-8018238ef758",
+      "role": "International President",
+      "scope": "25d4dafc-cb6a-47b5-9918-43b7f230ee5e",
+      "kind": "organization"
+    },
+    {
+      "email": "qa.dashboard.national-administrator@example.test",
+      "user": "4bc84714-4c07-5cd2-945c-b6982b478e4e",
+      "assignment": "e4ca4937-4cc3-564e-8bbf-63c6d906a6db",
+      "role": "National Administrator",
+      "scope": "a8afbe4a-f20b-4ff2-8bed-774c6c6a3b21",
+      "kind": "national"
+    },
+    {
+      "email": "qa.dashboard.national-president@example.test",
+      "user": "0ff990eb-8f7d-54d4-8f34-bd647d64f986",
+      "assignment": "109d9b0f-c259-582d-a7f3-15f0ad03cc63",
+      "role": "National President",
+      "scope": "a8afbe4a-f20b-4ff2-8bed-774c6c6a3b21",
+      "kind": "national"
+    },
+    {
+      "email": "qa.dashboard.regional-administrator@example.test",
+      "user": "f1108b6b-83e2-5352-8be4-8c02c3e99907",
+      "assignment": "5cf1f23d-3bcd-5adf-ae0c-16d477473483",
+      "role": "Regional Administrator",
+      "scope": "a1539f3d-35f5-45cf-9a27-f8ad14d71c41",
+      "kind": "regional"
+    },
+    {
+      "email": "qa.dashboard.regional-president@example.test",
+      "user": "16348d7e-cef6-5a78-975c-ac0e75fb7fb1",
+      "assignment": "bfdf1c46-579a-5c84-b364-b2c9ba6ec38e",
+      "role": "Regional President",
+      "scope": "a1539f3d-35f5-45cf-9a27-f8ad14d71c41",
+      "kind": "regional"
+    },
+    {
+      "email": "qa.dashboard.zonal-president@example.test",
+      "user": "5a2604c0-54e6-529c-9540-9fdb0dd455b7",
+      "assignment": "be4f46ab-9157-582b-96b0-0271d69ab8e7",
+      "role": "Zonal President",
+      "scope": "3417509a-736c-44aa-804e-9b5ea9204a46",
+      "kind": "zonal"
+    },
+    {
+      "email": "qa.dashboard.zone-administrator@example.test",
+      "user": "60305621-771b-5474-a301-ecc2b499ca3c",
+      "assignment": "1644e7a9-b697-5d8f-af1c-8ee25894ce70",
+      "role": "Zone Administrator",
+      "scope": "3417509a-736c-44aa-804e-9b5ea9204a46",
+      "kind": "zonal"
+    }
+  ],
+  "scenarios": [
+    {
+      "scenario": "Platform administrator password login",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Platform intelligence authorized",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Club KPI reconciles to SQL",
+      "passed": true,
+      "detail": 625
+    },
+    {
+      "scenario": "Registered member KPI reconciles to SQL",
+      "passed": true,
+      "detail": 3141
+    },
+    {
+      "scenario": "All ten KPI comparisons explicit",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Zero baseline has no fabricated percentage",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Region distribution reconciles",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "District distribution reconciles",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Status distribution reconciles",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Cumulative membership chart reconciles",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Officer vacancies and coverage consistent",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Date filter 7d",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Date filter preserves current snapshot 7d",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Date filter 30d",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Date filter preserves current snapshot 30d",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Date filter 90d",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Date filter preserves current snapshot 90d",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Date filter 6m",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Date filter preserves current snapshot 6m",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Date filter 12m",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Date filter preserves current snapshot 12m",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Custom date range",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Reject invalid filter range=nope",
+      "passed": true,
+      "detail": {
+        "status": 400,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Reject invalid filter range=custom&from=1900-01-01",
+      "passed": true,
+      "detail": {
+        "status": 400,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Reject invalid filter range=custom&from=1800-01-01",
+      "passed": true,
+      "detail": {
+        "status": 400,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Reject invalid filter range=custom&to=2099-01-01",
+      "passed": true,
+      "detail": {
+        "status": 400,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Reject invalid filter range=custom&from=2026-11-13&to=2026-01-01",
+      "passed": true,
+      "detail": {
+        "status": 400,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Reject invalid filter format=pdf",
+      "passed": true,
+      "detail": {
+        "status": 400,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Platform CSV export authorized",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Privileged export logged",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Association Super Admin: login",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Association Super Admin: dashboard route",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Association Super Admin: exact scoped experience",
+      "passed": true,
+      "detail": {
+        "kind": "organization",
+        "title": "Organization dashboard",
+        "role": "Association Super Admin",
+        "scope": {
+          "id": "25d4dafc-cb6a-47b5-9918-43b7f230ee5e",
+          "name": "Impact International",
+          "level": "International"
+        },
+        "platformAdmin": false,
+        "committees": [],
+        "workspaceId": "b5a64703-fca7-5c97-8419-50d1ec556039"
+      }
+    },
+    {
+      "scenario": "Association Super Admin: platform direct API denied",
+      "passed": true,
+      "detail": {
+        "status": 403,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Association Super Admin: platform export denied",
+      "passed": true,
+      "detail": {
+        "status": 403,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Association Super Admin: export without platform view denied",
+      "passed": true,
+      "detail": {
+        "status": 403,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Association Super Admin: forged role ID denied",
+      "passed": true,
+      "detail": {
+        "status": 403,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Association Super Admin: scoped dashboard",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Association Super Admin: subtree count reconciles",
+      "passed": true,
+      "detail": {
+        "expected": 782,
+        "actual": 782
+      }
+    },
+    {
+      "scenario": "Club Manager: login",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Club Manager: dashboard route",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Club Manager: exact scoped experience",
+      "passed": true,
+      "detail": {
+        "kind": "club",
+        "title": "Club dashboard",
+        "role": "Club Manager",
+        "scope": {
+          "id": "18ee9a12-bcc5-464f-bae4-1377038a0162",
+          "name": "Demo Region 01 District 01 Zone 01 Club 01",
+          "level": "Club"
+        },
+        "platformAdmin": false,
+        "committees": [],
+        "workspaceId": "9ac38eb1-4afc-5cfe-93e6-58cf7157f7ae"
+      }
+    },
+    {
+      "scenario": "Club Manager: platform direct API denied",
+      "passed": true,
+      "detail": {
+        "status": 403,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Club Manager: platform export denied",
+      "passed": true,
+      "detail": {
+        "status": 403,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Club Manager: export without platform view denied",
+      "passed": true,
+      "detail": {
+        "status": 403,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Club Manager: forged role ID denied",
+      "passed": true,
+      "detail": {
+        "status": 403,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Club Manager: scoped dashboard",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Club Manager: audit data not leaked",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Club Manager: subtree count reconciles",
+      "passed": true,
+      "detail": {
+        "expected": 1,
+        "actual": 1
+      }
+    },
+    {
+      "scenario": "Club Manager: ancestor parameter denied",
+      "passed": true,
+      "detail": {
+        "status": 404,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Club Manager: foreign branch record denied",
+      "passed": true,
+      "detail": {
+        "status": 404,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Club Manager: another user workspace denied",
+      "passed": true,
+      "detail": {
+        "status": 403,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Club Member: login",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Club Member: dashboard route",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Club Member: exact scoped experience",
+      "passed": true,
+      "detail": {
+        "kind": "member",
+        "title": "My Impact dashboard",
+        "role": "Club Member",
+        "scope": {
+          "id": "18ee9a12-bcc5-464f-bae4-1377038a0162",
+          "name": "Demo Region 01 District 01 Zone 01 Club 01",
+          "level": "Club"
+        },
+        "platformAdmin": false,
+        "committees": [],
+        "workspaceId": "dccf4475-6b72-5fb6-8df2-1e857417fe08"
+      }
+    },
+    {
+      "scenario": "Club Member: platform direct API denied",
+      "passed": true,
+      "detail": {
+        "status": 403,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Club Member: platform export denied",
+      "passed": true,
+      "detail": {
+        "status": 403,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Club Member: export without platform view denied",
+      "passed": true,
+      "detail": {
+        "status": 403,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Club Member: forged role ID denied",
+      "passed": true,
+      "detail": {
+        "status": 403,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Club Member: scoped dashboard",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Club Member: audit data not leaked",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Club Member: aggregate data not leaked",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Club Member: ancestor parameter denied",
+      "passed": true,
+      "detail": {
+        "status": 404,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Club Member: foreign branch record denied",
+      "passed": true,
+      "detail": {
+        "status": 404,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Club Member: another user workspace denied",
+      "passed": true,
+      "detail": {
+        "status": 403,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Club President: login",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Club President: dashboard route",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Club President: exact scoped experience",
+      "passed": true,
+      "detail": {
+        "kind": "club",
+        "title": "Club dashboard",
+        "role": "Club President",
+        "scope": {
+          "id": "18ee9a12-bcc5-464f-bae4-1377038a0162",
+          "name": "Demo Region 01 District 01 Zone 01 Club 01",
+          "level": "Club"
+        },
+        "platformAdmin": false,
+        "committees": [],
+        "workspaceId": "2427ff53-d3fd-551e-a030-739e0c9d69d8"
+      }
+    },
+    {
+      "scenario": "Club President: platform direct API denied",
+      "passed": true,
+      "detail": {
+        "status": 403,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Club President: platform export denied",
+      "passed": true,
+      "detail": {
+        "status": 403,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Club President: export without platform view denied",
+      "passed": true,
+      "detail": {
+        "status": 403,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Club President: forged role ID denied",
+      "passed": true,
+      "detail": {
+        "status": 403,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Club President: scoped dashboard",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Club President: audit data not leaked",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Club President: subtree count reconciles",
+      "passed": true,
+      "detail": {
+        "expected": 1,
+        "actual": 1
+      }
+    },
+    {
+      "scenario": "Club President: ancestor parameter denied",
+      "passed": true,
+      "detail": {
+        "status": 404,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Club President: foreign branch record denied",
+      "passed": true,
+      "detail": {
+        "status": 404,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Club President: another user workspace denied",
+      "passed": true,
+      "detail": {
+        "status": 403,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Club Secretary: login",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Club Secretary: dashboard route",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Club Secretary: exact scoped experience",
+      "passed": true,
+      "detail": {
+        "kind": "club-operations",
+        "title": "Club operations dashboard",
+        "role": "Club Secretary",
+        "scope": {
+          "id": "18ee9a12-bcc5-464f-bae4-1377038a0162",
+          "name": "Demo Region 01 District 01 Zone 01 Club 01",
+          "level": "Club"
+        },
+        "platformAdmin": false,
+        "committees": [],
+        "workspaceId": "5201464b-05da-5ea0-b286-f53dbe913de9"
+      }
+    },
+    {
+      "scenario": "Club Secretary: platform direct API denied",
+      "passed": true,
+      "detail": {
+        "status": 403,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Club Secretary: platform export denied",
+      "passed": true,
+      "detail": {
+        "status": 403,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Club Secretary: export without platform view denied",
+      "passed": true,
+      "detail": {
+        "status": 403,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Club Secretary: forged role ID denied",
+      "passed": true,
+      "detail": {
+        "status": 403,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Club Secretary: scoped dashboard",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Club Secretary: audit data not leaked",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Club Secretary: subtree count reconciles",
+      "passed": true,
+      "detail": {
+        "expected": 1,
+        "actual": 1
+      }
+    },
+    {
+      "scenario": "Club Secretary: ancestor parameter denied",
+      "passed": true,
+      "detail": {
+        "status": 404,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Club Secretary: foreign branch record denied",
+      "passed": true,
+      "detail": {
+        "status": 404,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Club Secretary: another user workspace denied",
+      "passed": true,
+      "detail": {
+        "status": 403,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Club Treasurer: login",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Club Treasurer: dashboard route",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Club Treasurer: exact scoped experience",
+      "passed": true,
+      "detail": {
+        "kind": "finance",
+        "title": "Club finance dashboard",
+        "role": "Club Treasurer",
+        "scope": {
+          "id": "18ee9a12-bcc5-464f-bae4-1377038a0162",
+          "name": "Demo Region 01 District 01 Zone 01 Club 01",
+          "level": "Club"
+        },
+        "platformAdmin": false,
+        "committees": [],
+        "workspaceId": "2d945c76-122f-5b70-b985-cd720579284b"
+      }
+    },
+    {
+      "scenario": "Club Treasurer: platform direct API denied",
+      "passed": true,
+      "detail": {
+        "status": 403,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Club Treasurer: platform export denied",
+      "passed": true,
+      "detail": {
+        "status": 403,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Club Treasurer: export without platform view denied",
+      "passed": true,
+      "detail": {
+        "status": 403,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Club Treasurer: forged role ID denied",
+      "passed": true,
+      "detail": {
+        "status": 403,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Club Treasurer: scoped dashboard",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Club Treasurer: audit data not leaked",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Club Treasurer: subtree count reconciles",
+      "passed": true,
+      "detail": {
+        "expected": 1,
+        "actual": 1
+      }
+    },
+    {
+      "scenario": "Club Treasurer: ancestor parameter denied",
+      "passed": true,
+      "detail": {
+        "status": 404,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Club Treasurer: foreign branch record denied",
+      "passed": true,
+      "detail": {
+        "status": 404,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Club Treasurer: another user workspace denied",
+      "passed": true,
+      "detail": {
+        "status": 403,
+        "response": null
+      }
+    },
+    {
+      "scenario": "District Administrator: login",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "response": null
+      }
+    },
+    {
+      "scenario": "District Administrator: dashboard route",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "response": null
+      }
+    },
+    {
+      "scenario": "District Administrator: exact scoped experience",
+      "passed": true,
+      "detail": {
+        "kind": "district",
+        "title": "District dashboard",
+        "role": "District Administrator",
+        "scope": {
+          "id": "7c722b24-66f1-4123-85b5-8eda42bf4ab4",
+          "name": "Demo Region 01 District 01",
+          "level": "District"
+        },
+        "platformAdmin": false,
+        "committees": [],
+        "workspaceId": "f4124654-a822-5788-a44b-200bb08fad71"
+      }
+    },
+    {
+      "scenario": "District Administrator: platform direct API denied",
+      "passed": true,
+      "detail": {
+        "status": 403,
+        "response": null
+      }
+    },
+    {
+      "scenario": "District Administrator: platform export denied",
+      "passed": true,
+      "detail": {
+        "status": 403,
+        "response": null
+      }
+    },
+    {
+      "scenario": "District Administrator: export without platform view denied",
+      "passed": true,
+      "detail": {
+        "status": 403,
+        "response": null
+      }
+    },
+    {
+      "scenario": "District Administrator: forged role ID denied",
+      "passed": true,
+      "detail": {
+        "status": 403,
+        "response": null
+      }
+    },
+    {
+      "scenario": "District Administrator: scoped dashboard",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "response": null
+      }
+    },
+    {
+      "scenario": "District Administrator: audit data not leaked",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "District Administrator: subtree count reconciles",
+      "passed": true,
+      "detail": {
+        "expected": 31,
+        "actual": 31
+      }
+    },
+    {
+      "scenario": "District Administrator: ancestor parameter denied",
+      "passed": true,
+      "detail": {
+        "status": 404,
+        "response": null
+      }
+    },
+    {
+      "scenario": "District Administrator: foreign branch record denied",
+      "passed": true,
+      "detail": {
+        "status": 404,
+        "response": null
+      }
+    },
+    {
+      "scenario": "District Administrator: another user workspace denied",
+      "passed": true,
+      "detail": {
+        "status": 403,
+        "response": null
+      }
+    },
+    {
+      "scenario": "District President: login",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "response": null
+      }
+    },
+    {
+      "scenario": "District President: dashboard route",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "response": null
+      }
+    },
+    {
+      "scenario": "District President: exact scoped experience",
+      "passed": true,
+      "detail": {
+        "kind": "district",
+        "title": "District dashboard",
+        "role": "District President",
+        "scope": {
+          "id": "7c722b24-66f1-4123-85b5-8eda42bf4ab4",
+          "name": "Demo Region 01 District 01",
+          "level": "District"
+        },
+        "platformAdmin": false,
+        "committees": [],
+        "workspaceId": "73fff95c-2045-580a-be6f-42f0d7b28301"
+      }
+    },
+    {
+      "scenario": "District President: platform direct API denied",
+      "passed": true,
+      "detail": {
+        "status": 403,
+        "response": null
+      }
+    },
+    {
+      "scenario": "District President: platform export denied",
+      "passed": true,
+      "detail": {
+        "status": 403,
+        "response": null
+      }
+    },
+    {
+      "scenario": "District President: export without platform view denied",
+      "passed": true,
+      "detail": {
+        "status": 403,
+        "response": null
+      }
+    },
+    {
+      "scenario": "District President: forged role ID denied",
+      "passed": true,
+      "detail": {
+        "status": 403,
+        "response": null
+      }
+    },
+    {
+      "scenario": "District President: scoped dashboard",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "response": null
+      }
+    },
+    {
+      "scenario": "District President: audit data not leaked",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "District President: subtree count reconciles",
+      "passed": true,
+      "detail": {
+        "expected": 31,
+        "actual": 31
+      }
+    },
+    {
+      "scenario": "District President: ancestor parameter denied",
+      "passed": true,
+      "detail": {
+        "status": 404,
+        "response": null
+      }
+    },
+    {
+      "scenario": "District President: foreign branch record denied",
+      "passed": true,
+      "detail": {
+        "status": 404,
+        "response": null
+      }
+    },
+    {
+      "scenario": "District President: another user workspace denied",
+      "passed": true,
+      "detail": {
+        "status": 403,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Guest / Applicant: login",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Guest / Applicant: dashboard route",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Guest / Applicant: exact scoped experience",
+      "passed": true,
+      "detail": {
+        "kind": "member",
+        "title": "My Impact dashboard",
+        "role": "Guest / Applicant",
+        "scope": {
+          "id": "18ee9a12-bcc5-464f-bae4-1377038a0162",
+          "name": "Demo Region 01 District 01 Zone 01 Club 01",
+          "level": "Club"
+        },
+        "platformAdmin": false,
+        "committees": [],
+        "workspaceId": "4928e69c-07e1-5791-b89f-9a4b6f30b1fc"
+      }
+    },
+    {
+      "scenario": "Guest / Applicant: platform direct API denied",
+      "passed": true,
+      "detail": {
+        "status": 403,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Guest / Applicant: platform export denied",
+      "passed": true,
+      "detail": {
+        "status": 403,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Guest / Applicant: export without platform view denied",
+      "passed": true,
+      "detail": {
+        "status": 403,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Guest / Applicant: forged role ID denied",
+      "passed": true,
+      "detail": {
+        "status": 403,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Guest / Applicant: scoped dashboard",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Guest / Applicant: audit data not leaked",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Guest / Applicant: aggregate data not leaked",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Guest / Applicant: ancestor parameter denied",
+      "passed": true,
+      "detail": {
+        "status": 404,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Guest / Applicant: foreign branch record denied",
+      "passed": true,
+      "detail": {
+        "status": 404,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Guest / Applicant: another user workspace denied",
+      "passed": true,
+      "detail": {
+        "status": 403,
+        "response": null
+      }
+    },
+    {
+      "scenario": "International Administrator: login",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "response": null
+      }
+    },
+    {
+      "scenario": "International Administrator: dashboard route",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "response": null
+      }
+    },
+    {
+      "scenario": "International Administrator: exact scoped experience",
+      "passed": true,
+      "detail": {
+        "kind": "organization",
+        "title": "Organization dashboard",
+        "role": "International Administrator",
+        "scope": {
+          "id": "25d4dafc-cb6a-47b5-9918-43b7f230ee5e",
+          "name": "Impact International",
+          "level": "International"
+        },
+        "platformAdmin": false,
+        "committees": [],
+        "workspaceId": "f4f9f6b6-1a4e-509e-945d-5a5ed289d94e"
+      }
+    },
+    {
+      "scenario": "International Administrator: platform direct API denied",
+      "passed": true,
+      "detail": {
+        "status": 403,
+        "response": null
+      }
+    },
+    {
+      "scenario": "International Administrator: platform export denied",
+      "passed": true,
+      "detail": {
+        "status": 403,
+        "response": null
+      }
+    },
+    {
+      "scenario": "International Administrator: export without platform view denied",
+      "passed": true,
+      "detail": {
+        "status": 403,
+        "response": null
+      }
+    },
+    {
+      "scenario": "International Administrator: forged role ID denied",
+      "passed": true,
+      "detail": {
+        "status": 403,
+        "response": null
+      }
+    },
+    {
+      "scenario": "International Administrator: scoped dashboard",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "response": null
+      }
+    },
+    {
+      "scenario": "International Administrator: audit data not leaked",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "International Administrator: subtree count reconciles",
+      "passed": true,
+      "detail": {
+        "expected": 782,
+        "actual": 782
+      }
+    },
+    {
+      "scenario": "International President: login",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "response": null
+      }
+    },
+    {
+      "scenario": "International President: dashboard route",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "response": null
+      }
+    },
+    {
+      "scenario": "International President: exact scoped experience",
+      "passed": true,
+      "detail": {
+        "kind": "organization",
+        "title": "Organization dashboard",
+        "role": "International President",
+        "scope": {
+          "id": "25d4dafc-cb6a-47b5-9918-43b7f230ee5e",
+          "name": "Impact International",
+          "level": "International"
+        },
+        "platformAdmin": false,
+        "committees": [],
+        "workspaceId": "1236d6bc-3736-5d67-8481-8018238ef758"
+      }
+    },
+    {
+      "scenario": "International President: platform direct API denied",
+      "passed": true,
+      "detail": {
+        "status": 403,
+        "response": null
+      }
+    },
+    {
+      "scenario": "International President: platform export denied",
+      "passed": true,
+      "detail": {
+        "status": 403,
+        "response": null
+      }
+    },
+    {
+      "scenario": "International President: export without platform view denied",
+      "passed": true,
+      "detail": {
+        "status": 403,
+        "response": null
+      }
+    },
+    {
+      "scenario": "International President: forged role ID denied",
+      "passed": true,
+      "detail": {
+        "status": 403,
+        "response": null
+      }
+    },
+    {
+      "scenario": "International President: scoped dashboard",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "response": null
+      }
+    },
+    {
+      "scenario": "International President: audit data not leaked",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "International President: subtree count reconciles",
+      "passed": true,
+      "detail": {
+        "expected": 782,
+        "actual": 782
+      }
+    },
+    {
+      "scenario": "National Administrator: login",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "response": null
+      }
+    },
+    {
+      "scenario": "National Administrator: dashboard route",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "response": null
+      }
+    },
+    {
+      "scenario": "National Administrator: exact scoped experience",
+      "passed": true,
+      "detail": {
+        "kind": "national",
+        "title": "National leadership dashboard",
+        "role": "National Administrator",
+        "scope": {
+          "id": "a8afbe4a-f20b-4ff2-8bed-774c6c6a3b21",
+          "name": "Demo India National Unit",
+          "level": "National"
+        },
+        "platformAdmin": false,
+        "committees": [],
+        "workspaceId": "e4ca4937-4cc3-564e-8bbf-63c6d906a6db"
+      }
+    },
+    {
+      "scenario": "National Administrator: platform direct API denied",
+      "passed": true,
+      "detail": {
+        "status": 403,
+        "response": null
+      }
+    },
+    {
+      "scenario": "National Administrator: platform export denied",
+      "passed": true,
+      "detail": {
+        "status": 403,
+        "response": null
+      }
+    },
+    {
+      "scenario": "National Administrator: export without platform view denied",
+      "passed": true,
+      "detail": {
+        "status": 403,
+        "response": null
+      }
+    },
+    {
+      "scenario": "National Administrator: forged role ID denied",
+      "passed": true,
+      "detail": {
+        "status": 403,
+        "response": null
+      }
+    },
+    {
+      "scenario": "National Administrator: scoped dashboard",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "response": null
+      }
+    },
+    {
+      "scenario": "National Administrator: audit data not leaked",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "National Administrator: subtree count reconciles",
+      "passed": true,
+      "detail": {
+        "expected": 781,
+        "actual": 781
+      }
+    },
+    {
+      "scenario": "National Administrator: ancestor parameter denied",
+      "passed": true,
+      "detail": {
+        "status": 404,
+        "response": null
+      }
+    },
+    {
+      "scenario": "National Administrator: another user workspace denied",
+      "passed": true,
+      "detail": {
+        "status": 403,
+        "response": null
+      }
+    },
+    {
+      "scenario": "National President: login",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "response": null
+      }
+    },
+    {
+      "scenario": "National President: dashboard route",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "response": null
+      }
+    },
+    {
+      "scenario": "National President: exact scoped experience",
+      "passed": true,
+      "detail": {
+        "kind": "national",
+        "title": "National leadership dashboard",
+        "role": "National President",
+        "scope": {
+          "id": "a8afbe4a-f20b-4ff2-8bed-774c6c6a3b21",
+          "name": "Demo India National Unit",
+          "level": "National"
+        },
+        "platformAdmin": false,
+        "committees": [],
+        "workspaceId": "109d9b0f-c259-582d-a7f3-15f0ad03cc63"
+      }
+    },
+    {
+      "scenario": "National President: platform direct API denied",
+      "passed": true,
+      "detail": {
+        "status": 403,
+        "response": null
+      }
+    },
+    {
+      "scenario": "National President: platform export denied",
+      "passed": true,
+      "detail": {
+        "status": 403,
+        "response": null
+      }
+    },
+    {
+      "scenario": "National President: export without platform view denied",
+      "passed": true,
+      "detail": {
+        "status": 403,
+        "response": null
+      }
+    },
+    {
+      "scenario": "National President: forged role ID denied",
+      "passed": true,
+      "detail": {
+        "status": 403,
+        "response": null
+      }
+    },
+    {
+      "scenario": "National President: scoped dashboard",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "response": null
+      }
+    },
+    {
+      "scenario": "National President: audit data not leaked",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "National President: subtree count reconciles",
+      "passed": true,
+      "detail": {
+        "expected": 781,
+        "actual": 781
+      }
+    },
+    {
+      "scenario": "National President: ancestor parameter denied",
+      "passed": true,
+      "detail": {
+        "status": 404,
+        "response": null
+      }
+    },
+    {
+      "scenario": "National President: another user workspace denied",
+      "passed": true,
+      "detail": {
+        "status": 403,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Regional Administrator: login",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Regional Administrator: dashboard route",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Regional Administrator: exact scoped experience",
+      "passed": true,
+      "detail": {
+        "kind": "regional",
+        "title": "Regional dashboard",
+        "role": "Regional Administrator",
+        "scope": {
+          "id": "a1539f3d-35f5-45cf-9a27-f8ad14d71c41",
+          "name": "Demo Region 01",
+          "level": "Region"
+        },
+        "platformAdmin": false,
+        "committees": [],
+        "workspaceId": "5cf1f23d-3bcd-5adf-ae0c-16d477473483"
+      }
+    },
+    {
+      "scenario": "Regional Administrator: platform direct API denied",
+      "passed": true,
+      "detail": {
+        "status": 403,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Regional Administrator: platform export denied",
+      "passed": true,
+      "detail": {
+        "status": 403,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Regional Administrator: export without platform view denied",
+      "passed": true,
+      "detail": {
+        "status": 403,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Regional Administrator: forged role ID denied",
+      "passed": true,
+      "detail": {
+        "status": 403,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Regional Administrator: scoped dashboard",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Regional Administrator: audit data not leaked",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Regional Administrator: subtree count reconciles",
+      "passed": true,
+      "detail": {
+        "expected": 156,
+        "actual": 156
+      }
+    },
+    {
+      "scenario": "Regional Administrator: ancestor parameter denied",
+      "passed": true,
+      "detail": {
+        "status": 404,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Regional Administrator: foreign branch record denied",
+      "passed": true,
+      "detail": {
+        "status": 404,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Regional Administrator: another user workspace denied",
+      "passed": true,
+      "detail": {
+        "status": 403,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Regional President: login",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Regional President: dashboard route",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Regional President: exact scoped experience",
+      "passed": true,
+      "detail": {
+        "kind": "regional",
+        "title": "Regional dashboard",
+        "role": "Regional President",
+        "scope": {
+          "id": "a1539f3d-35f5-45cf-9a27-f8ad14d71c41",
+          "name": "Demo Region 01",
+          "level": "Region"
+        },
+        "platformAdmin": false,
+        "committees": [],
+        "workspaceId": "bfdf1c46-579a-5c84-b364-b2c9ba6ec38e"
+      }
+    },
+    {
+      "scenario": "Regional President: platform direct API denied",
+      "passed": true,
+      "detail": {
+        "status": 403,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Regional President: platform export denied",
+      "passed": true,
+      "detail": {
+        "status": 403,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Regional President: export without platform view denied",
+      "passed": true,
+      "detail": {
+        "status": 403,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Regional President: forged role ID denied",
+      "passed": true,
+      "detail": {
+        "status": 403,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Regional President: scoped dashboard",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Regional President: audit data not leaked",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Regional President: subtree count reconciles",
+      "passed": true,
+      "detail": {
+        "expected": 156,
+        "actual": 156
+      }
+    },
+    {
+      "scenario": "Regional President: ancestor parameter denied",
+      "passed": true,
+      "detail": {
+        "status": 404,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Regional President: foreign branch record denied",
+      "passed": true,
+      "detail": {
+        "status": 404,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Regional President: another user workspace denied",
+      "passed": true,
+      "detail": {
+        "status": 403,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Zonal President: login",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Zonal President: dashboard route",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Zonal President: exact scoped experience",
+      "passed": true,
+      "detail": {
+        "kind": "zonal",
+        "title": "Zonal dashboard",
+        "role": "Zonal President",
+        "scope": {
+          "id": "3417509a-736c-44aa-804e-9b5ea9204a46",
+          "name": "Demo Region 01 District 01 Zone 01",
+          "level": "Zone"
+        },
+        "platformAdmin": false,
+        "committees": [],
+        "workspaceId": "be4f46ab-9157-582b-96b0-0271d69ab8e7"
+      }
+    },
+    {
+      "scenario": "Zonal President: platform direct API denied",
+      "passed": true,
+      "detail": {
+        "status": 403,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Zonal President: platform export denied",
+      "passed": true,
+      "detail": {
+        "status": 403,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Zonal President: export without platform view denied",
+      "passed": true,
+      "detail": {
+        "status": 403,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Zonal President: forged role ID denied",
+      "passed": true,
+      "detail": {
+        "status": 403,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Zonal President: scoped dashboard",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Zonal President: audit data not leaked",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Zonal President: subtree count reconciles",
+      "passed": true,
+      "detail": {
+        "expected": 6,
+        "actual": 6
+      }
+    },
+    {
+      "scenario": "Zonal President: ancestor parameter denied",
+      "passed": true,
+      "detail": {
+        "status": 404,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Zonal President: foreign branch record denied",
+      "passed": true,
+      "detail": {
+        "status": 404,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Zonal President: another user workspace denied",
+      "passed": true,
+      "detail": {
+        "status": 403,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Zone Administrator: login",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Zone Administrator: dashboard route",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Zone Administrator: exact scoped experience",
+      "passed": true,
+      "detail": {
+        "kind": "zonal",
+        "title": "Zonal dashboard",
+        "role": "Zone Administrator",
+        "scope": {
+          "id": "3417509a-736c-44aa-804e-9b5ea9204a46",
+          "name": "Demo Region 01 District 01 Zone 01",
+          "level": "Zone"
+        },
+        "platformAdmin": false,
+        "committees": [],
+        "workspaceId": "1644e7a9-b697-5d8f-af1c-8ee25894ce70"
+      }
+    },
+    {
+      "scenario": "Zone Administrator: platform direct API denied",
+      "passed": true,
+      "detail": {
+        "status": 403,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Zone Administrator: platform export denied",
+      "passed": true,
+      "detail": {
+        "status": 403,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Zone Administrator: export without platform view denied",
+      "passed": true,
+      "detail": {
+        "status": 403,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Zone Administrator: forged role ID denied",
+      "passed": true,
+      "detail": {
+        "status": 403,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Zone Administrator: scoped dashboard",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Zone Administrator: audit data not leaked",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Zone Administrator: subtree count reconciles",
+      "passed": true,
+      "detail": {
+        "expected": 6,
+        "actual": 6
+      }
+    },
+    {
+      "scenario": "Zone Administrator: ancestor parameter denied",
+      "passed": true,
+      "detail": {
+        "status": 404,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Zone Administrator: foreign branch record denied",
+      "passed": true,
+      "detail": {
+        "status": 404,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Zone Administrator: another user workspace denied",
+      "passed": true,
+      "detail": {
+        "status": 403,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Club Member: protected module /roles",
+      "passed": true,
+      "detail": {
+        "status": 403,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Club Member: protected module /assignments",
+      "passed": true,
+      "detail": {
+        "status": 403,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Club Member: protected module /audit-logs",
+      "passed": true,
+      "detail": {
+        "status": 403,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Club Member: protected module /administration/dashboard",
+      "passed": true,
+      "detail": {
+        "status": 403,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Club Member: profile cannot elevate authority",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Guest / Applicant: protected module /roles",
+      "passed": true,
+      "detail": {
+        "status": 403,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Guest / Applicant: protected module /assignments",
+      "passed": true,
+      "detail": {
+        "status": 403,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Guest / Applicant: protected module /audit-logs",
+      "passed": true,
+      "detail": {
+        "status": 403,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Guest / Applicant: protected module /administration/dashboard",
+      "passed": true,
+      "detail": {
+        "status": 403,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Guest / Applicant: profile cannot elevate authority",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "District Administrator: sibling unit detail denied",
+      "passed": true,
+      "detail": {
+        "status": 404,
+        "response": null
+      }
+    },
+    {
+      "scenario": "District Administrator: sibling unit analytics parameter denied",
+      "passed": true,
+      "detail": {
+        "status": 404,
+        "response": null
+      }
+    },
+    {
+      "scenario": "District President: sibling unit detail denied",
+      "passed": true,
+      "detail": {
+        "status": 404,
+        "response": null
+      }
+    },
+    {
+      "scenario": "District President: sibling unit analytics parameter denied",
+      "passed": true,
+      "detail": {
+        "status": 404,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Regional Administrator: sibling unit detail denied",
+      "passed": true,
+      "detail": {
+        "status": 404,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Regional Administrator: sibling unit analytics parameter denied",
+      "passed": true,
+      "detail": {
+        "status": 404,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Regional President: sibling unit detail denied",
+      "passed": true,
+      "detail": {
+        "status": 404,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Regional President: sibling unit analytics parameter denied",
+      "passed": true,
+      "detail": {
+        "status": 404,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Member accounting report export denied",
+      "passed": true,
+      "detail": {
+        "status": 403,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Missing CSRF mutation rejected",
+      "passed": true,
+      "detail": 400
+    },
+    {
+      "scenario": "Anonymous platform API denied",
+      "passed": true,
+      "detail": {
+        "status": 401,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Loaded grants prevent stronger role delegation",
+      "passed": true,
+      "detail": {
+        "status": 403,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Delegation outside own subtree denied",
+      "passed": true,
+      "detail": {
+        "status": 403,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Switch to owned alternate region",
+      "passed": true,
+      "detail": {
+        "status": 204,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Role switch changes active scope",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Old region inaccessible after switching",
+      "passed": true,
+      "detail": {
+        "status": 404,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Switch never grants platform authority",
+      "passed": true,
+      "detail": {
+        "status": 403,
+        "response": null
+      }
+    },
+    {
+      "scenario": "committee-chair: login",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "committee-chair: committee dashboard",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "response": null
+      }
+    },
+    {
+      "scenario": "committee-chair: own relationship only",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "committee-chair: committee detail",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "response": null
+      }
+    },
+    {
+      "scenario": "committee-chair: exact management authority",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "committee-chair: no platform authority",
+      "passed": true,
+      "detail": {
+        "status": 403,
+        "response": null
+      }
+    },
+    {
+      "scenario": "committee-chair: inactive role blocks detail",
+      "passed": true,
+      "detail": {
+        "status": 404,
+        "response": null
+      }
+    },
+    {
+      "scenario": "committee-chair: inactive role omitted from mine",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "committee-chair: inactive role removed from dashboard",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "committee-member: login",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "committee-member: committee dashboard",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "response": null
+      }
+    },
+    {
+      "scenario": "committee-member: own relationship only",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "committee-member: committee detail",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "response": null
+      }
+    },
+    {
+      "scenario": "committee-member: exact management authority",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "committee-member: no platform authority",
+      "passed": true,
+      "detail": {
+        "status": 403,
+        "response": null
+      }
+    },
+    {
+      "scenario": "committee-member: inactive role blocks detail",
+      "passed": true,
+      "detail": {
+        "status": 404,
+        "response": null
+      }
+    },
+    {
+      "scenario": "committee-member: inactive role omitted from mine",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "committee-member: inactive role removed from dashboard",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Revoked assignment blocks dashboard",
+      "passed": true,
+      "detail": {
+        "status": 403,
+        "response": null
+      }
+    },
+    {
+      "scenario": "Expired session cannot retrieve analytics",
+      "passed": true,
+      "detail": {
+        "status": 401,
+        "response": null
+      }
+    }
+  ]
+}

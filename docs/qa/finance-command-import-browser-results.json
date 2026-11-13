@@ -1,0 +1,34 @@
+[
+  {
+    "test": "CSV invoice preview",
+    "passed": true
+  },
+  {
+    "test": "Draft import completed",
+    "passed": true
+  },
+  {
+    "test": "Import creates one draft",
+    "passed": true
+  },
+  {
+    "test": "Repeated import does not duplicate invoices",
+    "passed": true
+  },
+  {
+    "test": "Custom report view saved",
+    "passed": true
+  },
+  {
+    "test": "CSV contains selected columns",
+    "passed": true
+  },
+  {
+    "test": "Excel export has numeric amounts",
+    "passed": true
+  },
+  {
+    "test": "Excel export has no formulas",
+    "passed": true
+  }
+]

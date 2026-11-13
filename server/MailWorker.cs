@@ -41,11 +41,12 @@ public class MailWorker(
                         stoppingToken
                     );
                 var hasSmtp = !string.IsNullOrEmpty(config["Smtp:Host"]);
+                var otpEnabled = config.GetValue("Authentication:MemberOtpEnabled", true);
                 var committed = false;
                 var mail = await db
                     .Mails.FromSqlInterpolated(
                         $"""
-                        SELECT * FROM "Mails" WHERE "SentAt" IS NULL AND NOT "Used" AND NOT "Suppressed" AND NOT "DeadLetter" AND "DeliveryStatus" NOT IN ('Dispatching','Draft') AND "Channel"<>'InApp' AND ("Channel"<>'Email' OR {hasSmtp}) AND "ExpiresAt">now() AND "NextAttemptAt"<=now() ORDER BY CASE WHEN "Kind" IN ('verify','reset') THEN 0 ELSE 1 END, "NextAttemptAt" FOR UPDATE SKIP LOCKED LIMIT 1
+                        SELECT * FROM "Mails" WHERE "SentAt" IS NULL AND NOT "Used" AND NOT "Suppressed" AND NOT "DeadLetter" AND "DeliveryStatus" NOT IN ('Dispatching','Draft') AND "Channel"<>'InApp' AND ("Channel"<>'Email' OR {hasSmtp}) AND ("Kind"<>'login-otp' OR {otpEnabled}) AND "ExpiresAt">now() AND "NextAttemptAt"<=now() ORDER BY CASE WHEN "Kind" IN ('verify','reset') THEN 0 ELSE 1 END, "NextAttemptAt" FOR UPDATE SKIP LOCKED LIMIT 1
                         """
                     )
                     .FirstOrDefaultAsync(stoppingToken);

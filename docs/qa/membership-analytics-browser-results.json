@@ -1,0 +1,93 @@
+{
+  "recorded": "2026-11-13T16:36:59.725Z",
+  "checks": [
+    {
+      "scenario": "Growth workspace renders distinct analytical content",
+      "passed": true
+    },
+    {
+      "scenario": "Organization workspace renders distinct analytical content",
+      "passed": true
+    },
+    {
+      "scenario": "Cohorts & Retention workspace renders distinct analytical content",
+      "passed": true
+    },
+    {
+      "scenario": "Lifecycle workspace renders distinct analytical content",
+      "passed": true
+    },
+    {
+      "scenario": "Renewals workspace renders distinct analytical content",
+      "passed": true
+    },
+    {
+      "scenario": "Categories workspace renders distinct analytical content",
+      "passed": true
+    },
+    {
+      "scenario": "Distribution switches donut, treemap and packed circles",
+      "passed": true
+    },
+    {
+      "scenario": "Category segment cross-filters global scope",
+      "passed": true
+    },
+    {
+      "scenario": "Geography workspace renders distinct analytical content",
+      "passed": true
+    },
+    {
+      "scenario": "Engagement workspace renders distinct analytical content",
+      "passed": true
+    },
+    {
+      "scenario": "Forecasting workspace renders distinct analytical content",
+      "passed": true
+    },
+    {
+      "scenario": "Key Insights workspace renders distinct analytical content",
+      "passed": true
+    },
+    {
+      "scenario": "Network workspace renders distinct analytical content",
+      "passed": true
+    },
+    {
+      "scenario": "Category cross-filter persists across analytical routes",
+      "passed": true
+    },
+    {
+      "scenario": "Growth legend toggles series visibility",
+      "passed": true
+    },
+    {
+      "scenario": "Growth zoom changes the visible time axis",
+      "passed": true
+    },
+    {
+      "scenario": "Brush drag selects a real date interval",
+      "passed": false
+    },
+    {
+      "scenario": "National to club cascading filters narrow all datasets",
+      "passed": true
+    }
+  ],
+  "additional": [
+    "Single club network displays actual member names",
+    "390px mobile has no horizontal document overflow",
+    "Geographic map zoom control responds",
+    "12 month forecast selection retained",
+    "Excel download succeeds",
+    "CSV download succeeds",
+    "SVG export responds"
+  ],
+  "desktop": {
+    "width": 1672
+  },
+  "mobile": {
+    "width": 390,
+    "scrollWidth": 375
+  }
+}
