@@ -63,7 +63,7 @@ export default function MembershipSettings() {
       <PageHeader
         eyebrow="CONFIGURE YOUR MEMBERSHIP JOURNEY"
         title="Membership settings"
-        description="Association-level categories, approval versions, and transfer policy."
+        description="Impact membership categories, approval stages, and club transfer policies."
       />
       <ErrorBox error={error || q.error} />
       {message && (
@@ -275,7 +275,7 @@ export default function MembershipSettings() {
                 ["sourceReviewRequired", "Require source-club transfer review"],
                 [
                   "associationReviewRequired",
-                  "Require association transfer approval",
+                  "Require Impact International transfer approval",
                 ],
                 [
                   "financialClearanceRequired",

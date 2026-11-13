@@ -55,8 +55,8 @@ export default function MembershipOperations() {
     <>
       <PageHeader
         eyebrow="TRUST THROUGH EVERY TRANSITION"
-        title="Membership operations"
-        description="Review transfers, verify account links, and track transactional delivery."
+        title="Impact membership operations"
+        description="Manage Impact club transfers, member account links, and membership notifications."
       />
       <ErrorBox error={error || q.error} />
       {message && (

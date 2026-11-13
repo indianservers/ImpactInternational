@@ -10,52 +10,13 @@ public static class Operations
     {
         var user = await a.User();
         Check(user.PlatformAdmin, "Platform administrator required.", 403);
-        Check((name?.Trim().Length ?? 0) is >= 3 and <= 200, "Organization name required.");
-        var tenant = new Tenant { Name = name!.Trim() };
-        var level = new Level { TenantId = tenant.Id, Name = "Headquarters" };
-        var org = new Org
-        {
-            TenantId = tenant.Id,
-            LevelId = level.Id,
-            Name = tenant.Name,
-            Code = "HQ",
-        };
-        var role = new Role
-        {
-            TenantId = tenant.Id,
-            Name = "Association Super Admin",
-            Permissions = All,
-        };
-        a.Db.AddRange(
-            tenant,
-            level,
-            org,
-            role,
-            new Assignment
-            {
-                UserId = user.Id,
-                TenantId = tenant.Id,
-                RoleId = role.Id,
-                OrgId = org.Id,
-            },
-            new Audit
-            {
-                TenantId = tenant.Id,
-                OrgId = org.Id,
-                ActorId = user.Id,
-                Action = "association.provisioned",
-                Resource = tenant.Name,
-            }
-        );
-        await a.Db.SaveChangesAsync();
-        await MembershipSetup.Tenant(a.Db, tenant.Id);
-        await GovernanceSetup.Tenant(a.Db, tenant.Id);
-        return tenant;
+        throw new ApiError(409, "This app is dedicated to Impact International. Create clubs and units within the existing organization.");
     }
 
     public static async Task<IResult> Save(Org r, Guid? id, Access a, GovernanceService governance)
     {
         var w = await a.Workspace(id == null ? "organization.create" : "organization.update");
+        if (id == null && string.IsNullOrWhiteSpace(r.Code)) r.Code = "IM-" + Guid.NewGuid().ToString("N")[..12].ToUpperInvariant();
         Check(
             (r.Name?.Trim().Length ?? 0) is >= 2 and <= 200
                 && (r.Code?.Length ?? 0) is > 0 and <= 40,
@@ -74,6 +35,8 @@ public static class Operations
             x.Id == r.LevelId && x.TenantId == w.TenantId
         );
         Check(level != null, "Invalid level.");
+        var platformAdmin = (await a.User()).PlatformAdmin;
+        Check(r.ParentId == null || ImpactStructure.Kinds.Contains(level!.Name), "Only National units, Regions, Districts, Zones, and Clubs can be created within Impact International.");
         if (r.ParentId != null)
         {
             var p = await a.Visible(w).AsNoTracking().SingleOrDefaultAsync(x => x.Id == r.ParentId);
@@ -93,9 +56,9 @@ public static class Operations
                 var needsApproval = await a.Db.ClubHealthConfigurations.AnyAsync(c =>
                     c.TenantId == w.TenantId && c.RequireClubChangeApproval
                 );
-                Check(!needsApproval, "Submit club changes through governance approval.", 409);
+                Check(platformAdmin || !needsApproval, "Submit club changes through governance approval.", 409);
                 Check(
-                    entity.ParentId == r.ParentId,
+                    platformAdmin || entity.ParentId == r.ParentId,
                     "Use the controlled organization restructuring workflow.",
                     409
                 );
@@ -103,7 +66,7 @@ public static class Operations
             Check(entity.Version == r.Version, "Record changed. Refresh.", 409);
             Check(entity.LevelId == r.LevelId, "Existing level cannot be changed.");
             Check(
-                entity.ParentId == r.ParentId,
+                platformAdmin || entity.ParentId == r.ParentId,
                 "Use the controlled organization restructuring workflow.",
                 409
             );
@@ -120,7 +83,7 @@ public static class Operations
         }
         else
         {
-            Check(r.ParentId != null, "Create roots through association provisioning.");
+            Check(r.ParentId != null, "Impact International is already configured. Create a National unit, Region, District, Zone, or Club.");
             entity = new() { TenantId = w.TenantId };
             a.Db.Orgs.Add(entity);
         }
@@ -131,6 +94,8 @@ public static class Operations
             entity.Status,
             entity.ParentId,
         };
+        Check(id == null || entity.ParentId != null || r.Name?.Trim() == ImpactSetup.Name,
+            "The root organization must remain Impact International.");
         entity.Name = r.Name!.Trim();
         entity.Code = r.Code!.Trim().ToUpperInvariant();
         entity.ParentId = r.ParentId;
@@ -163,13 +128,13 @@ public static class Operations
                 403
             );
         }
-        if (id != null && level.IsClub)
+        if (id != null && level.IsClub && !platformAdmin)
             Check(
                 entity.Status == r.Status,
                 "Submit club lifecycle changes through governance approval.",
                 409
             );
-        entity.Status = id == null && level.IsClub ? "Pending" : r.Status;
+        entity.Status = id == null && level.IsClub && !platformAdmin ? "Pending" : r.Status;
         entity.Version++;
         entity.UpdatedAt = DateTimeOffset.UtcNow;
         await a.Log(
@@ -190,7 +155,7 @@ public static class Operations
                 }
             )
         );
-        if (id == null && level.IsClub)
+        if (id == null && level.IsClub && !platformAdmin)
         {
             await governance.Request(
                 w,

@@ -270,7 +270,7 @@ function Dashboard() {
   return (
     <>
       <Header
-        title="Identity, beautifully connected."
+        title="Impact ID Card Studio"
         description="Design, review and deliver membership cards across your authorized community."
         action={
           <Link className="card-primary" to={root + "/templates"}>
@@ -1519,7 +1519,7 @@ function Settings() {
     <>
       <Header
         title="Identity with clear boundaries."
-        description="Association-wide card policies, controlled by authorized root administrators."
+        description="Impact International card policies, controlled by authorized root administrators."
       />
       {p && (
         <Panel title="Issuance & member access">
@@ -1607,8 +1607,8 @@ export function MyIdCard() {
   return (
     <div className="id-cards">
       <Header
-        title="Your identity. Your community."
-        description="View your official membership card and download protected copies when your association permits."
+        title="My Impact membership card"
+        description="View your official membership card and download protected copies when Impact International permits."
       />
       <ErrorBox error={q.error} />
       {q.data?.length ? (

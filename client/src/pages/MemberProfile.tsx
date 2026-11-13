@@ -93,8 +93,8 @@ export default function MemberProfile() {
         Back to {directory ? "directory" : "members"}
       </Link>
       <PageHeader
-        eyebrow="A PERSON. A STORY. A COMMUNITY."
-        title="Member profile"
+        eyebrow="A MEMBER OF THE IMPACT COMMUNITY"
+        title="Impact member profile"
         description={"Person reference · " + p.reference}
       >
         <div className="header-actions">
@@ -146,7 +146,7 @@ export default function MemberProfile() {
             </span>
           </div>
         </div>
-        {own && (
+        {d.canEditPerson && (
           <label className="photo-upload">
             <Upload size={15} />
             Update photo
@@ -159,9 +159,9 @@ export default function MemberProfile() {
                 const data = new FormData();
                 data.append("file", f);
                 try {
-                  await apiForm("/persons/me/photo", data);
+                  await apiForm(own ? "/persons/me/photo" : "/members/" + id + "/photo", data);
                   refresh();
-                  setMessage("Photo saved with metadata removed.");
+                  setMessage("Member photo updated.");
                 } catch (e) {
                   setError(e);
                 }
@@ -362,6 +362,7 @@ export default function MemberProfile() {
               )}
             </>
           )}
+          {tab === "Personal details" && p.socialLinks && Object.keys(p.socialLinks).length > 0 && <section className="member-social-links"><h3>Social profiles</h3>{Object.entries(p.socialLinks).map(([platform, url]) => <a key={platform} href={String(url)} target="_blank" rel="noopener noreferrer">{platform} ↗</a>)}</section>}
           {tab === "Membership history" && (
             <>
               <h2>A continuous membership story</h2>
@@ -782,7 +783,7 @@ export function TransferForm({ membership: m, onDone }: any) {
       }}
     >
       <p>
-        Source and destination reviews follow association policy. Independent
+        Source and destination reviews follow Impact International policy. Independent
         officer roles remain separate from membership access.
       </p>
       <ClubCategoryFields

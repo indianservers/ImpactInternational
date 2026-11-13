@@ -16,6 +16,9 @@ public class MaintenanceWorker(IServiceScopeFactory scopes, ILogger<MaintenanceW
                 await db
                     .Sessions.Where(x => x.ExpiresAt < DateTimeOffset.UtcNow)
                     .ExecuteDeleteAsync(token);
+                await db.LoginChallenges.Where(x => x.ExpiresAt < DateTimeOffset.UtcNow || x.Used)
+                    .ExecuteUpdateAsync(s => s.SetProperty(x => x.CodeProtected, "").SetProperty(x => x.Identifier, "").SetProperty(x => x.Email, ""), token);
+                await db.LoginChallenges.Where(x => x.CreatedAt < DateTimeOffset.UtcNow.AddDays(-1)).ExecuteDeleteAsync(token);
                 await db
                     .Mails.Where(x => x.ExpiresAt < DateTimeOffset.UtcNow || x.Used)
                     .ExecuteUpdateAsync(

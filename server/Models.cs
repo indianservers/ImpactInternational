@@ -11,7 +11,7 @@ public class User
     public string PasswordHash { get; set; } = "";
     public string Theme { get; set; } = "light";
     public string Locale { get; set; } = "en";
-    public string TimeZone { get; set; } = "UTC";
+    public string TimeZone { get; set; } = "Asia/Kolkata";
     public string Name { get; set; } = "";
     public string Phone { get; set; } = "";
     public bool Verified { get; set; }
@@ -34,10 +34,10 @@ public class Tenant
     public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
     public Guid Id { get; set; } = Guid.NewGuid();
     public string Name { get; set; } = "";
-    public string Currency { get; set; } = "USD";
-    public string TimeZone { get; set; } = "UTC";
+    public string Currency { get; set; } = "INR";
+    public string TimeZone { get; set; } = "Asia/Kolkata";
     public string Language { get; set; } = "en";
-    public string Color { get; set; } = "#2463eb";
+    public string Color { get; set; } = "#302b78";
 }
 
 public class Level
@@ -62,7 +62,7 @@ public class Org
     public string MeetingVenue { get; set; } = "";
     public int FiscalStartMonth { get; set; } = 1;
     public string PreferredLanguage { get; set; } = "en";
-    public string BrandingColor { get; set; } = "#2563eb";
+    public string BrandingColor { get; set; } = "#302b78";
     public string OperatingPolicies { get; set; } = "";
     public Guid Id { get; set; } = Guid.NewGuid();
     public Guid TenantId { get; set; }
@@ -79,8 +79,8 @@ public class Org
     public string Phone { get; set; } = "";
     public string Website { get; set; } = "";
     public string Logo { get; set; } = "";
-    public string TimeZone { get; set; } = "UTC";
-    public string Currency { get; set; } = "USD";
+    public string TimeZone { get; set; } = "Asia/Kolkata";
+    public string Currency { get; set; } = "INR";
     public DateOnly? CharterDate { get; set; }
     public string Status { get; set; } = "Active";
     public long Version { get; set; } = 1;
@@ -238,6 +238,8 @@ public partial class Db(DbContextOptions<Db> options) : DbContext(options)
     public DbSet<Assignment> Assignments => Set<Assignment>();
     public DbSet<Audit> Audits => Set<Audit>();
     public DbSet<Mail> Mails => Set<Mail>();
+    public DbSet<LoginChallenge> LoginChallenges => Set<LoginChallenge>();
+    public DbSet<DuesCollection> DuesCollections => Set<DuesCollection>();
     public DbSet<SystemSetting> SystemSettings => Set<SystemSetting>();
     public DbSet<TenantSetting> TenantSettings => Set<TenantSetting>();
     public DbSet<OrganizationSetting> OrganizationSettings => Set<OrganizationSetting>();
@@ -392,6 +394,13 @@ public partial class Db(DbContextOptions<Db> options) : DbContext(options)
         b.Entity<Role>().HasIndex(x => new { x.TenantId, x.Name }).IsUnique();
         b.Entity<Audit>().HasIndex(x => new { x.TenantId, x.At });
         b.Entity<Mail>().HasIndex(x => x.TokenHash).IsUnique();
+        b.Entity<LoginChallenge>().HasIndex(x => new { x.IdentifierHash, x.CreatedAt });
+        b.Entity<DuesCollection>().HasIndex(x => new { x.TenantId, x.RecorderId, x.RequestKey }).IsUnique();
+        b.Entity<DuesCollection>().HasIndex(x => new { x.TenantId, x.ClubId, x.Reference }).IsUnique();
+        b.Entity<DuesCollection>().HasIndex(x => new { x.InvoiceId, x.Status });
+        b.Entity<DuesCollection>().HasOne<FinanceInvoice>().WithMany().HasForeignKey(x => x.InvoiceId).OnDelete(DeleteBehavior.Restrict);
+        b.Entity<DuesCollection>().HasOne<Org>().WithMany().HasForeignKey(x => x.ClubId).OnDelete(DeleteBehavior.Restrict);
+        b.Entity<DuesCollection>().HasOne<User>().WithMany().HasForeignKey(x => x.RecorderId).OnDelete(DeleteBehavior.Restrict);
         b.Entity<Mail>()
             .HasOne<User>()
             .WithMany()

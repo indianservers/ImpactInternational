@@ -85,7 +85,7 @@ public class TenantExperience(
 
     public static bool Asset(string text) =>
         text == ""
-        || text.StartsWith("/assets/") && !text.Contains("..")
+        || (text.StartsWith("/assets/") || text.StartsWith("/brand/")) && !text.Contains("..")
         || Uri.TryCreate(text, UriKind.Absolute, out var uri)
             && uri.Scheme == "https"
             && uri.UserInfo == "";
@@ -95,13 +95,13 @@ public class TenantExperience(
         if (tenantId == null)
             return new
             {
-                displayName = "Impact International",
-                accent = "#2563eb",
+                displayName = ImpactSetup.Name,
+                accent = ImpactSetup.Color,
                 clubTerm = "Club",
                 districtTerm = "District",
                 welcome = "Connected leadership. Meaningful impact.",
-                logo = "",
-                favicon = "",
+                logo = "/brand/impact-logo.webp",
+                favicon = "/brand/impact-logo.webp",
                 languages = "en",
                 customDomain = false,
             };
@@ -110,13 +110,13 @@ public class TenantExperience(
         var b = await a.Db.TenantBrandings.SingleOrDefaultAsync(b => b.TenantId == tenantId);
         return new
         {
-            displayName = b?.DisplayName is { Length: > 0 } ? b.DisplayName : t.Name,
+            displayName = ImpactSetup.Name,
             accent = b?.Accent ?? t.Color,
             clubTerm = b?.ClubTerm ?? "Club",
             districtTerm = b?.DistrictTerm ?? "District",
             welcome = b?.Welcome ?? "Connected leadership. Meaningful impact.",
-            logo = b?.Logo ?? "",
-            favicon = b?.Favicon ?? "",
+            logo = "/brand/impact-logo.webp",
+            favicon = "/brand/impact-logo.webp",
             languages = b?.Languages ?? t.Language,
             customDomain = true,
         };
@@ -124,6 +124,7 @@ public class TenantExperience(
 
     public async Task<TenantBranding> Save(IntelligenceBrandingInput i)
     {
+        Check(i.DisplayName == ImpactSetup.Name, "The organization name is Impact International.");
         var w = await a.TenantWorkspace("settings.manage");
         var b = await a.Db.TenantBrandings.SingleOrDefaultAsync(x => x.TenantId == w.TenantId);
         Check(

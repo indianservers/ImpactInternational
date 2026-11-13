@@ -174,12 +174,12 @@ public class CommunicationService(
             AppointmentId = w.AppointmentId,
         };
 
-    public async Task Scope(Assignment w, Guid org) =>
-        Check(
-            await A.Visible(w).AnyAsync(x => x.Id == org && x.Status == "Active"),
-            "Organization outside authorized scope.",
-            404
-        );
+    public async Task Scope(Assignment w, Guid org)
+    {
+        await LeaderCommunications.CheckAssignment(this, w);
+        Check(await A.Visible(w).AnyAsync(x => x.Id == org && x.Status == "Active"),
+            "Organization outside authorized scope.", 404);
+    }
 
     public async Task<Guid?> PersonId(Guid user) =>
         await Db
@@ -551,7 +551,7 @@ public class CommunicationService(
         );
         var promotional = purpose == "Promotional";
         var allowed =
-            channel == "InApp" ? (pref?.Transactional ?? true)
+            channel == "InApp" ? u.Verified && (pref?.Transactional ?? true)
             : channel == "Email"
                 ? (
                     u.Verified

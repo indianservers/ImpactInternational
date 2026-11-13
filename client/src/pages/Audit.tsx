@@ -23,8 +23,8 @@ export default function Audit() {
     <>
       <PageHeader
         eyebrow="TRANSPARENCY BY DESIGN"
-        title="Audit trail"
-        description="A traceable record of changes within your authorized scope."
+        title="Impact audit trail"
+        description="A traceable record of Impact changes and decisions within your authorized scope."
       />
       <section className="panel">
         <div className="filter-bar">

@@ -1,0 +1,14 @@
+{
+  "emailDelivery": "passed",
+  "phoneIdentifier": "passed",
+  "provisioning": "passed",
+  "memberPasswordBlocked": "passed",
+  "staffPassword": "passed",
+  "replay": "passed",
+  "throttle": "passed",
+  "attemptLimit": "passed",
+  "expiry": "passed",
+  "unknown": "passed",
+  "resendInvalidation": "passed",
+  "concurrentVerification": "passed"
+}

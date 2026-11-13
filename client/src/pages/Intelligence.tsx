@@ -57,7 +57,7 @@ function Header({ title, description, action }: any) {
   return (
     <header className="op-header">
       <div>
-        <p className="op-eyebrow">IMPACT INTERNATIONAL / GLOBAL INTELLIGENCE</p>
+        <p className="op-eyebrow">IMPACT INTERNATIONAL / INTELLIGENCE</p>
         <h1>{title}</h1>
         <p>{description}</p>
       </div>
@@ -183,7 +183,7 @@ function Overview() {
     return (
       <>
         <Header
-          title="Your club intelligence"
+          title="My Impact club insights"
           description="Ask authorized questions about your membership, events, documents and certificates."
         />
         <Link className="op-primary" to={root + "/assistant"}>
@@ -194,7 +194,7 @@ function Overview() {
   return (
     <>
       <Header
-        title="A global view. A local impact."
+        title="Impact International intelligence"
         description="Understand your community through verified records and explicitly authorized organizational scope."
         action={
           <Link className="op-primary" to={root + "/assistant"}>
@@ -453,7 +453,7 @@ function Metrics() {
   return (
     <>
       <Header
-        title="A shared language for your metrics"
+        title="Impact metrics catalog"
         description="Definitions, denominators, freshness and privacy boundaries. Unknown values remain unavailable."
       />
       <input
@@ -600,7 +600,7 @@ function Assistant() {
   return (
     <>
       <Header
-        title="Your community, in conversation"
+        title="Ask Impact intelligence"
         description="Read-only tools, scoped to your active role. Facts stay connected to their sources."
       />
       <div className="intel-assistant-layout">
@@ -735,7 +735,7 @@ function Knowledge() {
   return (
     <>
       <Header
-        title="Knowledge, with its sources"
+        title="Impact knowledge library"
         description="Search authorized text-bearing PDFs. Every result is checked against the current version, permissions and retention."
       />
       <form
@@ -832,7 +832,7 @@ function Workflows() {
   return (
     <>
       <Header
-        title="Thoughtful automation. Human control."
+        title="Impact follow-up workflows"
         description="Versioned follow-ups in the existing communication engine, with independent review and a visible execution trail."
         action={
           <button
@@ -1245,12 +1245,12 @@ function Branding() {
     if (q.data)
       setForm(
         q.data.branding ?? {
-          displayName: "",
-          accent: "#2563eb",
+          displayName: "Impact International",
+          accent: "#302b78",
           clubTerm: "Club",
           districtTerm: "District",
-          logo: "",
-          favicon: "",
+          logo: "/brand/impact-logo.webp",
+          favicon: "/brand/impact-logo.webp",
           welcome: "Connected leadership. Meaningful impact.",
           languages: "en",
           disabledFeatures: "[]",
@@ -1266,8 +1266,8 @@ function Branding() {
   return (
     <>
       <Header
-        title="An identity of your own"
-        description="Association branding, terminology and controlled custom-domain onboarding."
+        title="Impact International experience"
+        description="Impact terminology, feature availability, and website configuration."
       />
       <ErrorBox error={q.error ?? a.error} />
       {form && (
@@ -1288,7 +1288,7 @@ function Branding() {
               } catch {}
             }}
           >
-            <h2>Association identity</h2>
+            <h2>Impact identity</h2>
             <div className="op-form-grid">
               {[
                 ["displayName", "Display name"],
@@ -1303,6 +1303,7 @@ function Branding() {
                 <Field key={k} label={label}>
                   <input
                     value={form[k]}
+                    readOnly={["displayName", "logo", "favicon"].includes(k)}
                     type={k === "accent" ? "color" : "text"}
                     onChange={(e) => set(k, e.target.value)}
                     required={[
@@ -1349,7 +1350,7 @@ function Branding() {
               />
               Permit configured OpenAI question routing
             </label>
-            <Field label="Tenant data-processing policy">
+            <Field label="Impact data-processing policy">
               <textarea
                 value={form.aiPolicy}
                 onChange={(e) => set("aiPolicy", e.target.value)}
@@ -1362,7 +1363,7 @@ function Branding() {
               on the server.
             </p>
             <button className="op-primary" disabled={a.busy}>
-              Save association identity
+              Save Impact experience
             </button>
           </form>
           <div>
@@ -1372,9 +1373,9 @@ function Branding() {
             >
               <p>IDENTITY PREVIEW</p>
               {form.logo && (
-                <img src={form.logo} alt="Association logo preview" />
+                <img src={form.logo} alt="Impact International logo preview" />
               )}
-              <h2>{form.displayName || "Your association"}</h2>
+              <h2>{form.displayName || "Impact International"}</h2>
               <p>{form.welcome}</p>
               <Badge>
                 {form.clubTerm} / {form.districtTerm}
@@ -1400,7 +1401,7 @@ function Branding() {
               >
                 <input
                   aria-label="Custom public hostname"
-                  placeholder="members.your-association.org"
+                  placeholder="members.impactinternational.in"
                   value={host}
                   onChange={(e) => setHost(e.target.value)}
                   required
@@ -1480,7 +1481,7 @@ function ReleaseOperations() {
   return (
     <>
       <Header
-        title="Release operations"
+        title="Impact system diagnostics"
         description="Observed health and explicit release gates. A successful build is not production approval."
       />
       <aside className="intel-notice warning">

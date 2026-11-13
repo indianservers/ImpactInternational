@@ -1,4 +1,6 @@
 import ModuleNavigation from "../ModuleNavigation";
+import DuesReports from "./DuesReports";
+import "./DuesReports.css";
 import { createContext, useContext, useState, useEffect } from "react";
 import {
   Link,
@@ -52,7 +54,7 @@ function useAction() {
   }
   return { run, error, busy };
 }
-function money(v: any, currency = "USD") {
+function money(v: any, currency = "INR") {
   return new Intl.NumberFormat(undefined, {
     style: "currency",
     currency,
@@ -280,7 +282,7 @@ export default function Finance() {
   const path = e ? "/finance/entities/" + e.id : "";
   const navigate = useNavigate();
   return (
-    <ctx.Provider value={{ e, path, currency: e?.currency ?? "USD", a }}>
+    <ctx.Provider value={{ e, path, currency: e?.currency ?? "INR", a }}>
       <div className="operations finance">
         <div className="fin-context">
           <span>
@@ -310,8 +312,11 @@ export default function Finance() {
           )}
         </div>
         <ModuleNavigation root={root} label="Finance" items={[["", "Overview"], ["invoices", "Invoices"], ["dues", "Membership dues"], ["payments", "Payments"], ["reconciliation", "Reconciliation"], ["accounts", "Accounting"], ["budgets", "Budgets"], ["expenses", "Expenses"], ["funding", "Donations & sponsors"], ["sources", "Events & projects"], ["allocations", "Inter-entity"], ["reports", "Reports"], ["settings", "Settings"], ["member", "My finances"]]} groups={{"Overview": ["", "reports", "member"], "Billing": ["invoices", "dues", "payments", "expenses", "funding", "sources", "allocations"], "Books & settings": ["accounts", "reconciliation", "budgets", "settings"]}} />
+        {w?.permissions.includes("finance.dues.reports") && <nav className="header-actions" aria-label="Dues and collection tools"><Link className="button secondary" to={root + "/dues-reports"}>Dues & collection reports</Link>{w.permissions.includes("finance.dues.collect") && <Link className="button secondary" to={root + "/club-collections"}>Record club collections</Link>}</nav>}
         <ErrorBox error={q.error ?? a.error} />
         <Routes>
+          <Route path="dues-reports" element={<DuesReports />} />
+          <Route path="club-collections" element={<DuesReports collecting />} />
           <Route path="member" element={<MemberFinance />} />
           <Route path="invoices/:id" element={<Invoice />} />
           <Route
@@ -322,7 +327,7 @@ export default function Finance() {
               ) : !e ? (
                 <>
                   <Header
-                    title="Finance, with clarity"
+                    title="Impact International finance"
                     description="Create a financial entity to establish its own currency, accounts and collection authority."
                   />
                   <Empty>
@@ -359,7 +364,7 @@ export default function Finance() {
               { key: "orgId", label: "Owning organization", value: w?.orgId },
               { key: "name", label: "Legal / financial entity name" },
               { key: "country", label: "Country" },
-              { key: "currency", label: "Currency code", value: "USD" },
+              { key: "currency", label: "Currency code", value: "INR" },
               {
                 key: "decimals",
                 label: "Currency decimal places",
@@ -408,7 +413,7 @@ function Dashboard() {
   return (
     <>
       <Header
-        title="Financial overview"
+        title="Impact finance overview"
         description={
           e.name + " · Independent entity books, connected to your club."
         }
@@ -511,6 +516,7 @@ function PickerFields(options: Row) {
       options: options.people,
       required: false,
     },
+    { key: "membershipId", label: "Membership / club for dues reports (optional)", options: options.memberships, required: false },
     { key: "customer", label: "Billed name" },
     {
       key: "purpose",
@@ -519,6 +525,8 @@ function PickerFields(options: Row) {
         "ClubDues",
         "AssociationDues",
         "DistrictDues",
+        "RegionalDues",
+        "ZonalDues",
         "NationalDues",
         "InternationalDues",
         "JoiningFee",
@@ -563,7 +571,7 @@ function Invoices() {
   return (
     <>
       <Header
-        title="Invoices"
+        title="Impact invoices"
         description="Frozen financial documents, with balances backed by verified allocations."
         action={
           <button className="op-primary" onClick={() => setOpen(true)}>
@@ -791,7 +799,7 @@ function MemberFinance() {
   return (
     <>
       <Header
-        title="My finances"
+        title="My Impact dues & payments"
         description="Your dues, verified payments and receipts. Each currency is reported separately."
       />
       {!q.data ? (
@@ -870,7 +878,7 @@ function Dues() {
   return (
     <>
       <Header
-        title="Membership dues"
+        title="Impact membership dues"
         description="Effective-dated fee schedules and repeat-safe billing. Issued dues keep their original terms."
         action={
           <button className="op-primary" onClick={() => setForm("plan")}>
@@ -1103,7 +1111,7 @@ function Payments() {
   return (
     <>
       <Header
-        title="Payments & receipts"
+        title="Impact payments & receipts"
         description="Record, independently verify, allocate and reconcile. Collection and bank settlement remain distinct."
         action={
           <button className="op-primary" onClick={() => setForm("record")}>
@@ -1319,7 +1327,7 @@ function Reconciliation() {
   return (
     <>
       <Header
-        title="Bank reconciliation"
+        title="Impact bank reconciliation"
         description="Match imported evidence to settled collections without posting the bank transaction twice."
         action={
           <button className="op-primary" onClick={() => setForm("import")}>
@@ -1417,7 +1425,7 @@ function Accounting() {
   return (
     <>
       <Header
-        title="Accounting"
+        title="Impact accounts & journals"
         description="Balanced, immutable journals in open accounting periods. Corrections create reversing entries."
         action={
           <div className="fin-actions">
@@ -1567,7 +1575,7 @@ function Budgets() {
   return (
     <>
       <Header
-        title="Budgets & commitments"
+        title="Impact budgets & commitments"
         description="Preserve approved revisions. Approval turns an expense commitment into an actual accrual."
         action={
           <button
@@ -1729,7 +1737,7 @@ function Expenses() {
   return (
     <>
       <Header
-        title="Expenses & reimbursements"
+        title="Impact expenses & reimbursements"
         description="Evidence-backed claims, independent approval, and separate payment records."
         action={
           <button className="op-primary" onClick={() => setForm("claim")}>
@@ -1891,7 +1899,7 @@ function Funding() {
   return (
     <>
       <Header
-        title="Donations & sponsorships"
+        title="Support Impact International"
         description="A pledge is an intention. An invoice is a receivable. A verified payment is collection."
         action={
           <button className="op-primary" onClick={() => setOpen(true)}>
@@ -1979,7 +1987,7 @@ function Allocations() {
   return (
     <>
       <Header
-        title="Inter-entity allocations"
+        title="Impact fund allocations"
         description="Entitlements, collections and bank settlements are separate records. No automatic fund transfer is initiated."
       />
       <Table
@@ -2078,7 +2086,7 @@ function Reports() {
   return (
     <>
       <Header
-        title="Financial reports"
+        title="Impact financial reports"
         description="Reconciled entity books, transparent formulas and native currency. Independent entity bank balances are never silently consolidated."
       />
       <section className="op-card fin-filters">
@@ -2259,7 +2267,7 @@ function Sources() {
   return (
     <>
       <Header
-        title="Event & project finance"
+        title="Impact event & project finance"
         description="Central invoices, accrued expenses and verified collections. Service estimates and uncollected pledges stay separate."
         action={
           <button className="op-primary" onClick={() => setForm(true)}>
@@ -2369,7 +2377,7 @@ function Settings() {
   return (
     <>
       <Header
-        title="Financial settings"
+        title="Impact finance settings"
         description="Separate financial authority, periods, banking and collection configuration."
       />
       <section className="op-card">
@@ -2429,7 +2437,7 @@ function Settings() {
               <Table
                 rows={q.data.grants}
                 cols={[
-                  ["userId", "Association user"],
+                  ["userId", "Impact member account"],
                   ["role", "Financial role"],
                   [
                     "action",
@@ -2492,7 +2500,7 @@ function Settings() {
           fields={
             form === "grant"
               ? [
-                  { key: "userId", label: "Existing association user ID" },
+                  { key: "userId", label: "Existing Impact account ID" },
                   {
                     key: "role",
                     label: "Financial authority",

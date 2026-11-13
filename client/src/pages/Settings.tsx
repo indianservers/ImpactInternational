@@ -21,9 +21,9 @@ export default function Settings() {
   return (
     <>
       <PageHeader
-        eyebrow="MAKE IT YOUR OWN"
-        title="Workspace settings"
-        description="Your identity, organizational structure, and shared preferences."
+        eyebrow="IMPACT INTERNATIONAL PREFERENCES"
+        title="Impact settings"
+        description="Shared identity, hierarchy, and preferences for Impact International."
       />
       <ErrorBox error={error || q.error} />
       {message && (
@@ -37,7 +37,7 @@ export default function Settings() {
         <section className="panel">
           <div className="section-heading">
             <div>
-              <h2>Association identity</h2>
+              <h2>Impact identity</h2>
               <p>A consistent identity across your community.</p>
             </div>
           </div>
@@ -50,7 +50,7 @@ export default function Settings() {
               try {
                 const d = Object.fromEntries(new FormData(e.currentTarget));
                 await api("/settings", "PUT", { ...q.data, ...d });
-                setMessage("Association settings saved.");
+                setMessage("Impact settings saved.");
                 qc.invalidateQueries({ queryKey: ["settings"] });
                 qc.invalidateQueries({ queryKey: ["workspaces"] });
               } catch (e) {
@@ -62,8 +62,8 @@ export default function Settings() {
           >
             <fieldset disabled={!can || busy}>
               <label>
-                Association name
-                <input name="name" required defaultValue={q.data?.name} />
+                Organization name
+                <input name="name" required value="Impact International" readOnly aria-describedby="foundation-name-help" /><small id="foundation-name-help">This app is dedicated to Impact International.</small>
               </label>
               <div className="form-grid">
                 <label>
@@ -110,8 +110,7 @@ export default function Settings() {
           <div>
             <h2>Organizational levels</h2>
             <p>
-              Configure permitted relationships. Existing levels remain stable
-              to protect hierarchy integrity.
+              Impact International has one fixed hierarchy. Each region contains districts, each district contains zones, and each zone contains clubs.
             </p>
           </div>
         </div>
@@ -122,57 +121,14 @@ export default function Settings() {
               <span>
                 Parent:{" "}
                 {levels.data?.find((x) => x.id === l.parentLevelId)?.name ||
-                  "Association root"}
+                  "Impact International headquarters"}
               </span>
               {l.isClub && <span className="badge">Club / chapter</span>}
             </div>
           ))}
         </div>
-        {can && (
-          <form
-            className="form-stack settings-form"
-            onSubmit={async (e) => {
-              e.preventDefault();
-              const f = e.currentTarget;
-              const d = Object.fromEntries(new FormData(f));
-              try {
-                await api("/levels", "POST", {
-                  name: d.name,
-                  parentLevelId: d.parentLevelId || null,
-                  isClub: d.isClub === "on",
-                });
-                qc.invalidateQueries({ queryKey: ["levels"] });
-                f.reset();
-                setMessage("Organizational level added.");
-              } catch (e) {
-                setError(e);
-              }
-            }}
-          >
-            <div className="form-grid">
-              <label>
-                New level name
-                <input name="name" required />
-              </label>
-              <label>
-                Permitted parent
-                <select name="parentLevelId">
-                  <option value="">Association root</option>
-                  {levels.data?.map((l) => (
-                    <option key={l.id} value={l.id}>
-                      {l.name}
-                    </option>
-                  ))}
-                </select>
-              </label>
-            </div>
-            <label className="checkbox">
-              <input type="checkbox" name="isClub" />
-              Represents a club or chapter
-            </label>
-            <button>Add level</button>
-          </form>
-        )}
+        <p className="privacy-notice">International → National → Regions → Districts → Zones → Clubs. Use the structure submenus to create and manage them.</p>
+        <Link className="panel-link" to="/app/organizations">Manage Impact structure →</Link>
       </section>
       <Link className="panel-link" to="/app/administration">
         Manage roles and permissions →

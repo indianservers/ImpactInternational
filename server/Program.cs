@@ -211,6 +211,10 @@ api.MapMembershipWorkflows();
 api.MapGovernance();
 api.MapEvents();
 api.MapCommunications();
+api.MapLeaderCommunications();
+api.MapMemberOtp();
+api.MapRegionalDirectory();
+api.MapDuesCenter();
 api.MapOperations();
 app.MapIntelligence();
 app.MapIdCards();
@@ -219,6 +223,7 @@ app.MapFinanceMembers();
 api.MapMembershipLifecycle();
 api.MapMemberMedia();
 api.MapMemberImports();
+api.MapImpactStructure();
 api.MapGet(
     "/auth/csrf",
     (HttpContext c, IAntiforgery a) => new { token = a.GetAndStoreTokens(c).RequestToken }
@@ -257,7 +262,7 @@ api.MapPost(
     .RequireRateLimiting("auth");
 api.MapPost(
         "/auth/login",
-        async (Login r, Db db, IPasswordHasher<User> h, HttpContext c) =>
+        async (Login r, Db db, IPasswordHasher<User> h, HttpContext c, Access access) =>
         {
             var u = await db.Users.SingleOrDefaultAsync(x =>
                 x.Email == (r.Email ?? "").Trim().ToLowerInvariant()
@@ -265,6 +270,8 @@ api.MapPost(
             var valid =
                 h.VerifyHashedPassword(u ?? new(), u?.PasswordHash ?? Dummy, r.Password ?? "")
                 != PasswordVerificationResult.Failed;
+            if (u != null && valid && u.Verified && !(u.LockedUntil > DateTimeOffset.UtcNow) && !u.PlatformAdmin && await db.Assignments.AnyAsync(a => a.UserId == u.Id && db.Roles.Any(role => role.Id == a.RoleId && role.Name == "Club Member")))
+                throw new ApiError(403, "Members sign in with an email OTP. Request a code to continue.");
             if (u == null || !valid || !u.Verified || u.LockedUntil > DateTimeOffset.UtcNow)
             {
                 if (u != null)
@@ -297,11 +304,22 @@ api.MapPost(
             u.FailedAttempts = 0;
             u.LockedUntil = null;
             var raw = Token();
+            Guid? defaultWorkspace = null;
+            foreach (var assignment in await db.Assignments.Where(x => x.UserId == u.Id)
+                .OrderBy(x => db.Roles.Any(r => r.Id == x.RoleId && LeaderCommunications.SendingRoles.Contains(r.Name)) ? 0 : 1)
+                .ThenBy(x => x.Id).ToListAsync())
+            {
+                if (access.BoundTenant != null && assignment.TenantId != access.BoundTenant) continue;
+                if (!await access.Effective(assignment)) continue;
+                defaultWorkspace = assignment.Id;
+                break;
+            }
             db.Sessions.Add(
                 new()
                 {
                     Id = Hash(raw),
                     UserId = u.Id,
+                    WorkspaceId = defaultWorkspace,
                     ExpiresAt = DateTimeOffset.UtcNow.AddHours(8),
                 }
             );
@@ -541,7 +559,7 @@ api.MapGet(
             x.Association,
             x.Color,
             Role = x.RoleEntity.Name,
-            x.RoleEntity.Permissions,
+            Permissions = u.PlatformAdmin ? Access.All : x.RoleEntity.Permissions,
         });
     }
 );
@@ -673,7 +691,7 @@ api.MapGet(
     async (Access a) =>
     {
         var w = await a.Workspace("organization.view");
-        return await a.Db.Levels.Where(x => x.TenantId == w.TenantId).ToListAsync();
+        return await a.Db.Levels.Where(x => x.TenantId == w.TenantId && (ImpactStructure.Kinds.Contains(x.Name) || x.ParentLevelId == null)).ToListAsync();
     }
 );
 api.MapPost(
@@ -681,19 +699,7 @@ api.MapPost(
     async (Level r, Access a) =>
     {
         var w = await a.TenantWorkspace("settings.manage");
-        Check((r.Name?.Trim().Length ?? 0) > 0, "Name required.");
-        if (r.ParentLevelId != null)
-            Check(
-                await a.Db.Levels.AnyAsync(x =>
-                    x.Id == r.ParentLevelId && x.TenantId == w.TenantId
-                ),
-                "Invalid parent level."
-            );
-        r.Id = Guid.NewGuid();
-        r.TenantId = w.TenantId;
-        a.Db.Levels.Add(r);
-        await a.Log(w, "level.create", r.Name!);
-        return Results.Ok(r);
+        throw new ApiError(409, "Impact International uses National units, Regions, Districts, Zones, and Clubs. Manage them from the structure submenus.");
     }
 );
 api.MapGet(
@@ -852,7 +858,8 @@ api.MapPut(
             throw new ApiError(400, "Invalid time zone.");
         }
         var t = await a.Db.Tenants.SingleAsync(x => x.Id == w.TenantId);
-        t.Name = r.Name!;
+        Check(r.Name == ImpactSetup.Name, "The organization is Impact International.");
+        t.Name = ImpactSetup.Name;
         t.Currency = r.Currency!;
         t.TimeZone = r.TimeZone;
         t.Language = r.Language;
@@ -981,23 +988,8 @@ api.MapPost(
         "/registration-requests",
         async (RegistrationRequest r, Db db) =>
         {
-            Check(
-                r.Name.Length is >= 3 and <= 200
-                    && System.Net.Mail.MailAddress.TryCreate(r.Email, out _)
-                    && (r.Description?.Length ?? 0) <= 2000,
-                "Provide an organization name, valid email, and short description."
-            );
-            r.Id = Guid.NewGuid();
-            r.Status = "Pending";
-            r.At = DateTimeOffset.UtcNow;
-            db.RegistrationRequests.Add(r);
-            await db.SaveChangesAsync();
-            return Results.Accepted(
-                value: new
-                {
-                    message = "Your registration request has been recorded for platform review.",
-                }
-            );
+            await Task.CompletedTask;
+            throw new ApiError(409, "Impact International is the only organization. Sign in and apply to an Impact club.");
         }
     )
     .RequireRateLimiting("auth");
@@ -1020,6 +1012,21 @@ if (args.Contains("--seed-phase2") && !args.Contains("--migrate"))
 {
     using var scope = app.Services.CreateScope();
     await MembershipSetup.Demo(scope.ServiceProvider);
+    return;
+}
+if (args.Contains("--seed-leader-logins"))
+{
+    await LeaderDemoLogins.Run(app.Services);
+    return;
+}
+if (args.Contains("--seed-crud-demo"))
+{
+    await ImpactDemoData.Run(app.Services);
+    return;
+}
+if (args.Contains("--initialize-impact"))
+{
+    await ImpactSetup.Initialize(app.Services);
     return;
 }
 if (args.Contains("--grant-platform-admin"))
@@ -1061,6 +1068,12 @@ if (args.Contains("--seed-phase3"))
 {
     await GovernanceSetup.Initialize(app.Services);
     return;
+}
+using (var structureScope = app.Services.CreateScope())
+{
+    var setupDb = structureScope.ServiceProvider.GetRequiredService<Db>();
+    await ImpactStructure.Configure(setupDb);
+    await LeaderCommunications.Configure(setupDb);
 }
 app.Run();
 

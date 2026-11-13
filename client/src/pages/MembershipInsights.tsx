@@ -16,8 +16,8 @@ export default function MembershipInsights() {
     <>
       <PageHeader
         eyebrow="MEMBERSHIP, UNDERSTOOD"
-        title="Community insights"
-        description="Live aggregations for your active organizational scope, with clear metric definitions."
+        title="Impact membership insights"
+        description="Track membership growth, retention, and participation across your Impact International scope."
       />
       <div className="member-kpis">
         {[

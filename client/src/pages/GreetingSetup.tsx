@@ -9,12 +9,12 @@ const presets = {
   Birthday: {
     name: "Birthday greetings",
     subject: "Happy birthday, {{member_name}}!",
-    body: "Dear {{member_name}}, happy birthday! Wishing you a wonderful year of happiness, good health, and success. Warm wishes from everyone at {{club_name}}.",
+    body: "Dear {{member_name}}, happy birthday! Wishing you a wonderful year of happiness, good health, and success. Warm wishes from {{club_name}} and the Impact International community.",
   },
   Anniversary: {
     name: "Marriage anniversary greetings",
     subject: "Happy marriage anniversary, {{member_name}}!",
-    body: "Dear {{member_name}}, wishing you and your spouse a very happy marriage anniversary! May your journey together be filled with love and happiness. Warm wishes from everyone at {{club_name}}.",
+    body: "Dear {{member_name}}, wishing you and your spouse a very happy marriage anniversary! May your journey together be filled with love and happiness. Warm wishes from {{club_name}} and the Impact International community.",
   },
 };
 

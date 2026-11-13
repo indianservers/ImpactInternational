@@ -1,0 +1,462 @@
+{
+  "date": "2026-11-13",
+  "database": "Disposable copy of clubs_impact",
+  "hierarchyCrud": [
+    {
+      "kind": "National",
+      "autoId": "IM-83B6665BB208",
+      "created": true,
+      "read": true,
+      "updatedPersisted": true,
+      "archived": true
+    },
+    {
+      "kind": "Region",
+      "autoId": "IM-3E01322FF7A1",
+      "created": true,
+      "read": true,
+      "updatedPersisted": true,
+      "archived": true
+    },
+    {
+      "kind": "District",
+      "autoId": "IM-D75D47682528",
+      "created": true,
+      "read": true,
+      "updatedPersisted": true,
+      "archived": true
+    },
+    {
+      "kind": "Zone",
+      "autoId": "IM-6623D175EEA6",
+      "created": true,
+      "read": true,
+      "updatedPersisted": true,
+      "archived": true
+    },
+    {
+      "kind": "Club",
+      "autoId": "IM-AD2B6FA117EC",
+      "created": true,
+      "read": true,
+      "updatedPersisted": true,
+      "archived": true
+    }
+  ],
+  "memberCrud": {
+    "created": true,
+    "photoUploaded": true,
+    "photoRead": true,
+    "socialLinksNormalized": true,
+    "generatedId": "IM-000003136",
+    "updatedPersisted": true,
+    "terminatedPersisted": true
+  },
+  "mainScreens": [
+    {
+      "errors": [],
+      "overflow": false,
+      "path": "/app",
+      "title": "Impact International dashboard"
+    },
+    {
+      "errors": [],
+      "overflow": false,
+      "path": "/app/members",
+      "title": "Impact members"
+    },
+    {
+      "errors": [],
+      "overflow": false,
+      "path": "/app/directory",
+      "title": "Impact member directory"
+    },
+    {
+      "errors": [],
+      "overflow": false,
+      "path": "/app/approvals",
+      "title": "Impact membership approvals"
+    },
+    {
+      "errors": [],
+      "overflow": false,
+      "path": "/app/transfers",
+      "title": "Impact membership operations"
+    },
+    {
+      "errors": [],
+      "overflow": false,
+      "path": "/app/imports",
+      "title": "Member import"
+    },
+    {
+      "errors": [],
+      "overflow": false,
+      "path": "/app/membership-insights",
+      "title": "Impact membership insights"
+    },
+    {
+      "errors": [],
+      "overflow": false,
+      "path": "/app/membership-settings",
+      "title": "Membership settings"
+    },
+    {
+      "errors": [],
+      "overflow": false,
+      "path": "/app/organizations",
+      "title": "Impact International structure"
+    },
+    {
+      "errors": [],
+      "overflow": false,
+      "path": "/app/international",
+      "title": "International headquarters"
+    },
+    {
+      "errors": [],
+      "overflow": false,
+      "path": "/app/national",
+      "title": "Manage national units"
+    },
+    {
+      "errors": [],
+      "overflow": false,
+      "path": "/app/regions",
+      "title": "Manage regions"
+    },
+    {
+      "errors": [],
+      "overflow": false,
+      "path": "/app/districts",
+      "title": "Manage districts"
+    },
+    {
+      "errors": [],
+      "overflow": false,
+      "path": "/app/zones",
+      "title": "Manage zones"
+    },
+    {
+      "errors": [],
+      "overflow": false,
+      "path": "/app/clubs",
+      "title": "Manage clubs"
+    },
+    {
+      "errors": [],
+      "overflow": false,
+      "path": "/app/clubs/directory",
+      "title": "Impact club directory"
+    },
+    {
+      "errors": [],
+      "overflow": false,
+      "path": "/app/leadership",
+      "title": "Impact leadership"
+    },
+    {
+      "errors": [],
+      "overflow": false,
+      "path": "/app/leadership-calendar",
+      "title": "Impact leadership calendar"
+    },
+    {
+      "errors": [],
+      "overflow": false,
+      "path": "/app/handovers",
+      "title": "Impact leadership handovers"
+    },
+    {
+      "errors": [],
+      "overflow": false,
+      "path": "/app/committees",
+      "title": "Committee directory"
+    },
+    {
+      "errors": [],
+      "overflow": false,
+      "path": "/app/governance",
+      "title": "Impact approval center"
+    },
+    {
+      "errors": [],
+      "overflow": false,
+      "path": "/app/resolutions",
+      "title": "Impact resolutions"
+    },
+    {
+      "errors": [],
+      "overflow": false,
+      "path": "/app/governance-documents",
+      "title": "Impact governance documents"
+    },
+    {
+      "errors": [],
+      "overflow": false,
+      "path": "/app/governance-settings",
+      "title": "Impact governance settings"
+    },
+    {
+      "errors": [],
+      "overflow": false,
+      "path": "/app/events",
+      "title": "Impact events & programs"
+    },
+    {
+      "errors": [],
+      "overflow": false,
+      "path": "/app/my-events",
+      "title": "My Impact events"
+    },
+    {
+      "errors": [],
+      "overflow": false,
+      "path": "/app/event-intelligence",
+      "title": "Impact event reports"
+    },
+    {
+      "errors": [],
+      "overflow": false,
+      "path": "/app/event-settings",
+      "title": "Impact event types"
+    },
+    {
+      "errors": [],
+      "overflow": false,
+      "path": "/app/operations",
+      "title": "Impact International operations"
+    },
+    {
+      "errors": [],
+      "overflow": false,
+      "path": "/app/communications",
+      "title": "Impact Communication Center"
+    },
+    {
+      "errors": [],
+      "overflow": false,
+      "path": "/app/finance",
+      "title": "Impact International finance"
+    },
+    {
+      "errors": [],
+      "overflow": false,
+      "path": "/app/id-cards",
+      "title": "Impact ID Card Studio"
+    },
+    {
+      "errors": [],
+      "overflow": false,
+      "path": "/app/intelligence",
+      "title": "Impact International intelligence"
+    },
+    {
+      "errors": [],
+      "overflow": false,
+      "path": "/app/administration",
+      "title": "Roles & permissions"
+    },
+    {
+      "errors": [],
+      "overflow": false,
+      "path": "/app/audit",
+      "title": "Impact audit trail"
+    },
+    {
+      "errors": [],
+      "overflow": false,
+      "path": "/app/settings",
+      "title": "Impact settings"
+    },
+    {
+      "errors": [],
+      "overflow": false,
+      "path": "/app/profile",
+      "title": "My Impact profile & security"
+    },
+    {
+      "errors": [],
+      "overflow": false,
+      "path": "/app/my-membership",
+      "title": "Hello, Impact."
+    },
+    {
+      "errors": [],
+      "overflow": false,
+      "path": "/app/my-id",
+      "title": "My Impact membership card"
+    },
+    {
+      "errors": [],
+      "overflow": false,
+      "path": "/app/apply",
+      "title": "Join an Impact club"
+    }
+  ],
+  "nestedScreens": [
+    {
+      "errors": [],
+      "overflow": false,
+      "path": "/app/operations/meetings"
+    },
+    {
+      "errors": [],
+      "overflow": false,
+      "path": "/app/operations/tasks"
+    },
+    {
+      "errors": [],
+      "overflow": false,
+      "path": "/app/operations/projects"
+    },
+    {
+      "errors": [],
+      "overflow": false,
+      "path": "/app/operations/volunteers"
+    },
+    {
+      "errors": [],
+      "overflow": false,
+      "path": "/app/operations/impact"
+    },
+    {
+      "errors": [],
+      "overflow": false,
+      "path": "/app/operations/documents"
+    },
+    {
+      "errors": [],
+      "overflow": false,
+      "path": "/app/operations/certificates"
+    },
+    {
+      "errors": [],
+      "overflow": false,
+      "path": "/app/intelligence/assistant"
+    },
+    {
+      "errors": [],
+      "overflow": false,
+      "path": "/app/intelligence/knowledge"
+    },
+    {
+      "errors": [],
+      "overflow": false,
+      "path": "/app/intelligence/workflows"
+    },
+    {
+      "errors": [],
+      "overflow": false,
+      "path": "/app/intelligence/metrics"
+    },
+    {
+      "errors": [],
+      "overflow": false,
+      "path": "/app/intelligence/branding"
+    },
+    {
+      "errors": [],
+      "overflow": false,
+      "path": "/app/intelligence/operations"
+    },
+    {
+      "errors": [],
+      "overflow": false,
+      "path": "/app/finance/member"
+    },
+    {
+      "errors": [],
+      "overflow": false,
+      "path": "/app/finance/dues"
+    },
+    {
+      "errors": [],
+      "overflow": false,
+      "path": "/app/finance/invoices"
+    },
+    {
+      "errors": [],
+      "overflow": false,
+      "path": "/app/finance/payments"
+    },
+    {
+      "errors": [],
+      "overflow": false,
+      "path": "/app/finance/reconciliation"
+    },
+    {
+      "errors": [],
+      "overflow": false,
+      "path": "/app/finance/accounts"
+    },
+    {
+      "errors": [],
+      "overflow": false,
+      "path": "/app/finance/budgets"
+    },
+    {
+      "errors": [],
+      "overflow": false,
+      "path": "/app/finance/expenses"
+    },
+    {
+      "errors": [],
+      "overflow": false,
+      "path": "/app/finance/funding"
+    },
+    {
+      "errors": [],
+      "overflow": false,
+      "path": "/app/finance/sources"
+    },
+    {
+      "errors": [],
+      "overflow": false,
+      "path": "/app/finance/allocations"
+    },
+    {
+      "errors": [],
+      "overflow": false,
+      "path": "/app/finance/reports"
+    },
+    {
+      "errors": [],
+      "overflow": false,
+      "path": "/app/finance/settings"
+    },
+    {
+      "errors": [],
+      "overflow": false,
+      "path": "/app/id-cards/templates"
+    },
+    {
+      "errors": [],
+      "overflow": false,
+      "path": "/app/id-cards/issuances"
+    },
+    {
+      "errors": [],
+      "overflow": false,
+      "path": "/app/id-cards/bulk"
+    },
+    {
+      "errors": [],
+      "overflow": false,
+      "path": "/app/id-cards/print"
+    },
+    {
+      "errors": [],
+      "overflow": false,
+      "path": "/app/id-cards/settings"
+    }
+  ],
+  "demoData": {
+    "national": 1,
+    "regions": 5,
+    "districts": 25,
+    "zones": 125,
+    "clubs": 625,
+    "members": 3125
+  }
+}

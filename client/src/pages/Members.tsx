@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
@@ -39,6 +39,7 @@ export default function Members({
     [term, setTerm] = useState(""),
     [statuses, setStatuses] = useState<string[]>([]),
     [clubId, setClub] = useState(""),
+    [regionId, setRegion] = useState(""),
     [categoryId, setCategory] = useState(""),
     [city, setCity] = useState(""),
     [profession, setProfession] = useState(""),
@@ -60,6 +61,9 @@ export default function Members({
         "name",
         "number",
         "club",
+        "region",
+        "district",
+        "zone",
         "category",
         "offices",
         "city",
@@ -73,7 +77,7 @@ export default function Members({
         "industry",
         "actions",
       ],
-      hidden: ["updatedAt", "email", "phone", "profession", "industry"],
+      hidden: ["updatedAt", "email", "phone", "profession", "industry", "district", "zone"],
       widths: {
         name: 230,
         club: 210,
@@ -100,6 +104,7 @@ export default function Members({
   }, [
     statuses,
     clubId,
+    regionId,
     categoryId,
     city,
     profession,
@@ -121,6 +126,7 @@ export default function Members({
     office,
   });
   if (clubId) params.set("clubId", clubId);
+  if (regionId) params.set("regionId", regionId);
   if (categoryId) params.set("categoryId", categoryId);
   const q = useQuery({
     queryKey: ["members", directory, w?.id, params.toString()],
@@ -133,10 +139,12 @@ export default function Members({
     enabled: !directory,
   });
   const choices = useQuery({
-    queryKey: ["member-choices", w?.id],
-    queryFn: () => api("/membership/options"),
+    queryKey: ["member-choices", w?.id, regionId],
+    queryFn: () => api("/membership/options" + (regionId ? "?regionId=" + regionId : "")),
     enabled: !!w,
   });
+  const regions = useQuery<any[]>({ queryKey: ["directory-regions", w?.id], queryFn: () => api("/directory/regions"), enabled: !!w });
+  useEffect(() => { setRegion(""); setClub(""); setQuick(null); setSelected(new Set()); }, [w?.id]);
   const saved = useQuery({
     queryKey: ["member-views", w?.id],
     queryFn: () => api("/membership/views"),
@@ -164,6 +172,9 @@ export default function Members({
     ...[
       "number",
       "club",
+      "region",
+      "district",
+      "zone",
       "category",
       "offices",
       "city",
@@ -222,7 +233,7 @@ export default function Members({
             .filter(
               (k) =>
                 !config.hidden.includes(k) &&
-                !["offices", "actions", "updatedAt", "renewalStatus"].includes(
+                !["offices", "actions", "updatedAt", "renewalStatus", "region", "district", "zone"].includes(
                   k,
                 ),
             ),
@@ -230,6 +241,7 @@ export default function Members({
           search: term,
           statuses: statuses.join(","),
           clubId: clubId || null,
+          regionId: regionId || null,
           categoryId: categoryId || null,
           city,
           profession,
@@ -253,6 +265,7 @@ export default function Members({
       setConfig(c.grid);
       setStatuses(c.statuses || []);
       setClub(c.clubId || "");
+      setRegion(c.regionId || "");
       setCategory(c.categoryId || "");
       setCity(c.city || "");
       setProfession(c.profession || "");
@@ -269,13 +282,13 @@ export default function Members({
     <>
       <PageHeader
         eyebrow={
-          directory ? "YOUR COMMUNITY, CONNECTED" : "MEMBERSHIP INTELLIGENCE"
+          directory ? "YOUR IMPACT COMMUNITY" : "IMPACT MEMBERSHIP"
         }
-        title={directory ? "Member directory" : "Members"}
+        title={directory ? "Impact member directory" : "Impact members"}
         description={
           directory
-            ? "Discover people, shared expertise, and new ways to make an impact."
-            : "One person. Every affiliation. A clearer view of your community."
+            ? "Connect with Impact members, shared expertise, and opportunities to serve."
+            : "Member profiles and club affiliations across Impact International."
         }
       >
         <div className="header-actions">
@@ -293,7 +306,8 @@ export default function Members({
           )}
         </div>
       </PageHeader>
-      {!directory &&
+      <section className="panel" aria-label="Region-wise member directory"><div className="form-grid"><label>Region<select value={regionId} onChange={e => { setRegion(e.target.value); setClub(""); setPage(1); setSelected(new Set()); }}><option value="">All authorized regions</option>{regions.data?.map(r => <option key={r.id} value={r.id}>{r.name} · {r.code}</option>)}</select></label><div><h3>{regionId ? regions.data?.find(r => r.id === regionId)?.name : "Region-wise members"}</h3><p>{q.data?.total ?? 0} memberships in the current view. Select a region, search members, then open a member to see their details.</p></div></div><ErrorBox error={regions.error} /><small>Results remain within your login’s hierarchy. Directory contact details follow each member’s sharing preferences.</small></section>
+      {!directory && !regionId &&
         (metrics.isPending ? (
           <Skeleton />
         ) : (
@@ -547,6 +561,7 @@ export default function Members({
                       grid: config,
                       statuses,
                       clubId,
+                      regionId,
                       categoryId,
                       city,
                       profession,
@@ -638,6 +653,7 @@ export default function Members({
                   <h3>{m.name}</h3>
                   <p>{m.profession || m.category}</p>
                   <span>{m.club}</span>
+                  <small>{[m.region, m.district, m.zone].filter(Boolean).join(" → ")}</small>
                   <small>{m.city || m.country || "Location not shared"}</small>
                   <button className="secondary" onClick={() => setQuick(m)}>
                     View member <ArrowUpRight size={14} />
@@ -686,6 +702,9 @@ export default function Members({
           </div>
           {[
             ["Club", quick.club],
+            ["Region", quick.region || "Not assigned"],
+            ["District", quick.district || "Not assigned"],
+            ["Zone", quick.zone || "Not assigned"],
             ["Category", quick.category],
             ["Current office", quick.offices?.join(", ") || "—"],
             [
@@ -722,7 +741,8 @@ export default function Members({
           onClose={() => setDrawer("")}
         >
           <CreateMember
-            onDone={() => {
+            onDone={(member: any) => {
+              if (member?.number) setMessage("Member " + member.number + " created.");
               setDrawer("");
               qc.invalidateQueries({ queryKey: ["members"] });
               qc.invalidateQueries({ queryKey: ["member-metrics"] });
@@ -746,7 +766,10 @@ function CreateMember({ onDone }: any) {
     [draft, setDraft] = useState<any>(null),
     [duplicates, setDuplicates] = useState<any[]>([]),
     [error, setError] = useState<unknown>(),
-    [busy, setBusy] = useState(false);
+    [busy, setBusy] = useState(false),
+    [photo, setPhoto] = useState(""),
+    [photoLoading, setPhotoLoading] = useState(false);
+  const photoInput = useRef<HTMLInputElement>(null);
   async function create(
     person: any,
     decision = "",
@@ -757,13 +780,14 @@ function CreateMember({ onDone }: any) {
     try {
       if (!target.clubId || !target.categoryId)
         throw new Error("Choose a club and category.");
-      await api("/members", "POST", {
+      const created = await api("/members", "POST", {
+        photoBase64: photo ? photo.split(",")[1] : null,
         person,
         ...target,
         personId,
         duplicateDecision: decision,
       });
-      onDone();
+      onDone(created);
     } catch (e) {
       setError(e);
     } finally {
@@ -773,6 +797,14 @@ function CreateMember({ onDone }: any) {
   return (
     <>
       <div className="form-stack">
+        <div className="member-entry-intro"><label>Member ID<input value="Auto-generated when saved" readOnly /></label><p>Only the member’s name, community, and membership category are required. Other details can be added later.</p></div>
+        <div className="member-photo-picker">{photo ? <img src={photo} alt="Selected member photo preview" /> : <div className="member-photo-placeholder" aria-hidden="true">Photo</div>}<div><label>Member photo (optional)<input ref={photoInput} type="file" accept="image/png,image/jpeg" onChange={async e => {
+          const file = e.target.files?.[0]; if (!file) return;
+          if (!["image/png", "image/jpeg"].includes(file.type) || file.size > 2097152) { setError(new Error("Choose a PNG or JPEG photo smaller than 2 MB.")); e.target.value = ""; return; }
+          setPhotoLoading(true); setError(null);
+          try { const data = await new Promise<string>((resolve, reject) => { const reader = new FileReader(); reader.onload = () => resolve(String(reader.result)); reader.onerror = () => reject(new Error("Unable to read photo.")); reader.readAsDataURL(file); }); setPhoto(data); }
+          catch (e) { setError(e); } finally { setPhotoLoading(false); }
+        }} /></label><small>PNG or JPEG, up to 2 MB.</small>{photo && <button type="button" className="text-button" onClick={() => { setPhoto(""); if (photoInput.current) photoInput.current.value = ""; }}>Remove photo</button>}</div></div>
         <ClubCategoryFields
           {...target}
           onChange={(v: any) => setTarget({ ...target, ...v })}
@@ -824,7 +856,8 @@ function CreateMember({ onDone }: any) {
         </section>
       ) : (
         <PersonEditor
-          busy={busy}
+          submitLabel="Add member"
+          busy={busy || photoLoading}
           onCancel={onDone}
           onSave={async (person: any) => {
             setBusy(true);

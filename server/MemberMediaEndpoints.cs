@@ -10,6 +10,24 @@ public static class MemberMediaEndpoints
 {
     public static void MapMemberMedia(this RouteGroupBuilder api)
     {
+        api.MapPost("/members/{id:guid}/photo", async (Guid id, IFormFile file, MembershipService s) =>
+        {
+            var member = await s.Find(id, "members.manage");
+            var user = await s.Access.User();
+            Check(member.Person.UserId == null || member.Person.UserId == user.Id,
+                "A linked member controls their own profile photo.", 403);
+            Check(file.Length is > 0 and <= 2097152, "Photo must be a PNG or JPEG smaller than 2 MB.");
+            using var ms = new MemoryStream();
+            await file.CopyToAsync(ms);
+            var image = StripPhoto(ms.ToArray());
+            member.Person.Photo = image.Bytes;
+            member.Person.PhotoType = image.Type;
+            member.Person.Version++;
+            member.Person.UpdatedAt = DateTimeOffset.UtcNow;
+            s.Activity(member, user.Id, "photo.updated", "Member profile photo updated");
+            await s.Db.SaveChangesAsync();
+            return Results.Ok(new { member.Person.Version });
+        }).DisableAntiforgery();
         api.MapPost(
                 "/persons/me/photo",
                 async (IFormFile file, MembershipService s) =>

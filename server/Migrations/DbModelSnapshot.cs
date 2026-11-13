@@ -1815,6 +1815,98 @@ namespace Clubs.Api.Migrations
                     b.ToTable("DocumentVersions");
                 });
 
+            modelBuilder.Entity("Clubs.DuesCollection", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("AccountHolder")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("numeric");
+
+                    b.Property<Guid>("ClubId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Currency")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateOnly>("Date")
+                        .HasColumnType("date");
+
+                    b.Property<string>("Destination")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Evidence")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("InvoiceId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Method")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Notes")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid?>("PaymentId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("RecorderId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Reference")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("RequestKey")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("ReviewNote")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTimeOffset?>("ReviewedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("ReviewerId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ClubId");
+
+                    b.HasIndex("RecorderId");
+
+                    b.HasIndex("InvoiceId", "Status");
+
+                    b.HasIndex("TenantId", "ClubId", "Reference")
+                        .IsUnique();
+
+                    b.HasIndex("TenantId", "RecorderId", "RequestKey")
+                        .IsUnique();
+
+                    b.ToTable("DuesCollections");
+                });
+
             modelBuilder.Entity("Clubs.DuesPlan", b =>
                 {
                     b.Property<Guid>("Id")
@@ -5339,6 +5431,59 @@ namespace Clubs.Api.Migrations
                     b.ToTable("Levels");
                 });
 
+            modelBuilder.Entity("Clubs.LoginChallenge", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("Attempts")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("CodeProtected")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTimeOffset>("ExpiresAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Identifier")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("IdentifierHash")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid?>("MailId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("PersonId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("TenantId")
+                        .HasColumnType("uuid");
+
+                    b.Property<bool>("Used")
+                        .HasColumnType("boolean");
+
+                    b.Property<Guid?>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("IdentifierHash", "CreatedAt");
+
+                    b.ToTable("LoginChallenges");
+                });
+
             modelBuilder.Entity("Clubs.Mail", b =>
                 {
                     b.Property<Guid>("Id")
@@ -7514,6 +7659,14 @@ namespace Clubs.Api.Migrations
                         },
                         new
                         {
+                            Id = "finance.dues.reports"
+                        },
+                        new
+                        {
+                            Id = "finance.dues.collect"
+                        },
+                        new
+                        {
                             Id = "operations.view"
                         },
                         new
@@ -7617,6 +7770,10 @@ namespace Clubs.Api.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("SearchName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("SocialLinksJson")
                         .IsRequired()
                         .HasColumnType("text");
 
@@ -9385,6 +9542,27 @@ namespace Clubs.Api.Migrations
                         .WithMany()
                         .HasForeignKey("TenantId", "OrgId")
                         .HasPrincipalKey("TenantId", "Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Clubs.DuesCollection", b =>
+                {
+                    b.HasOne("Clubs.Org", null)
+                        .WithMany()
+                        .HasForeignKey("ClubId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Clubs.FinanceInvoice", null)
+                        .WithMany()
+                        .HasForeignKey("InvoiceId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Clubs.User", null)
+                        .WithMany()
+                        .HasForeignKey("RecorderId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });

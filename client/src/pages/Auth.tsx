@@ -1,7 +1,7 @@
 import {TenantBrand} from "../TenantBrand";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Globe2, Eye, EyeOff, ArrowRight } from "lucide-react";
+import { Eye, EyeOff, ArrowRight } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { api } from "../api";
 import { ErrorBox } from "../App";
@@ -12,6 +12,10 @@ export default function Auth({ mode }: { mode: string }) {
     [busy, setBusy] = useState(false),
     [error, setError] = useState<unknown>(),
     [message, setMessage] = useState("");
+  const [staff, setStaff] = useState(false);
+  const [identifier, setIdentifier] = useState("");
+  const [challenge, setChallenge] = useState<string>();
+  const [resendAt, setResendAt] = useState(0);
   const signup = mode === "signup",
     forgot = mode === "forgot-password" || mode === "resend-verification",
     complete = mode === "complete",
@@ -24,7 +28,13 @@ export default function Auth({ mode }: { mode: string }) {
     const data = Object.fromEntries(new FormData(e.currentTarget));
     try {
       if (mode === "login") {
-        await api("/auth/login", "POST", data);
+        if (!staff && !challenge) {
+          const result = await api("/auth/otp/request", "POST", { identifier });
+          setChallenge(result.challengeId); setResendAt(Date.now() + 60000);
+          setMessage(result.deliveryConfigured ? result.message : "Email OTP is ready, but Amazon SES delivery has not been configured yet. Contact your administrator to enable delivery.");
+          return;
+        }
+        await api(staff ? "/auth/login" : "/auth/otp/verify", "POST", staff ? data : { challengeId: challenge, code: data.code });
         qc.clear();
         const target = new URLSearchParams(location.search).get("returnTo");
         nav(
@@ -59,7 +69,6 @@ export default function Auth({ mode }: { mode: string }) {
     <div className="auth-page">
       <div className="auth-story">
         <Link className="brand" to="/">
-          <Globe2 />
           <TenantBrand/>
         </Link>
         <div>
@@ -72,11 +81,11 @@ export default function Auth({ mode }: { mode: string }) {
             <em>a difference.</em>
           </h1>
           <p>
-            Your communities. Your leadership.
+            Your Impact. Your leadership.
             <br />
-            One beautifully connected workspace.
+            Training. Business. Service. Leadership.
           </p>
-          <Globe2 size={160} strokeWidth={0.6} />
+          <figure className="impact-auth-founder"><img src="/brand/gampa-nageshwer-rao.webp" alt="Gampa Nageshwer Rao, founder of Impact International" width="800" height="800" /><figcaption>Gampa Nageshwer Rao<span>Founder, Impact International</span></figcaption></figure>
         </div>
         <small>Leadership without borders.</small>
       </div>
@@ -96,12 +105,12 @@ export default function Auth({ mode }: { mode: string }) {
         </h1>
         <p>
           {signup
-            ? "Create your personal account. Join an association when you’re ready."
+            ? "Create your Impact International account, then apply to an Impact club."
             : forgot
               ? "Enter your email to request a password reset."
               : complete
                 ? "Complete your secure account request."
-                : "Sign in to your connected world of impact."}
+                : "Members sign in with a one-time email code. Enter your registered email or phone number."}
         </p>
         <form onSubmit={submit} className="form-stack">
           {signup && (
@@ -110,7 +119,16 @@ export default function Auth({ mode }: { mode: string }) {
               <input name="name" autoComplete="name" required />
             </label>
           )}
-          {!complete && (
+          {mode === "login" && !staff && <>
+            <label>Email or phone number<input name="identifier" autoComplete="username" required maxLength={200} value={identifier} readOnly={!!challenge} onChange={e => setIdentifier(e.target.value)} placeholder="Email or phone with country code" /></label>
+            <small>The code is sent to your registered email. WhatsApp OTP will be available later.</small>
+            {challenge && <><label>One-time code<input name="code" inputMode="numeric" autoComplete="one-time-code" pattern="[0-9]{6}" maxLength={6} required placeholder="6-digit code" /></label><small>Codes expire in 10 minutes.</small><button type="button" className="secondary" disabled={busy} onClick={() => { setChallenge(undefined); setMessage(""); setError(null); }}>Change email or phone</button><button type="button" className="secondary" disabled={busy} onClick={async () => {
+              if (Date.now() < resendAt) { setError(new Error("Please wait 60 seconds before requesting another code.")); return; }
+              setBusy(true); setError(null);
+              try { const result = await api("/auth/otp/request", "POST", { identifier }); setChallenge(result.challengeId); setResendAt(Date.now() + 60000); setMessage(result.deliveryConfigured ? result.message : "Amazon SES email delivery is not configured yet."); } catch (e) { setError(e); } finally { setBusy(false); }
+            }}>Resend code</button></>}
+          </>}
+          {!complete && (mode !== "login" || staff) && (
             <label>
               Email address
               <input
@@ -139,7 +157,7 @@ export default function Auth({ mode }: { mode: string }) {
               </label>
             </div>
           )}
-          {!forgot && !verify && (
+          {!forgot && !verify && (mode !== "login" || staff) && (
             <label>
               {complete ? "New password" : "Password"}
               <div className="password-field">
@@ -182,21 +200,21 @@ export default function Auth({ mode }: { mode: string }) {
               <details>
                 <summary>Terms & privacy notice</summary>
                 <p>
-                  This development service stores your profile and security
+                  This Impact International test service stores your profile and security
                   activity to provide organizational access. Do not submit
-                  sensitive production data. Contact your association
+                  sensitive production data. Contact your Impact
                   administrator for account and data requests. Production legal
                   terms must be reviewed before launch.
                 </p>
               </details>
             </>
           )}
-          {mode === "login" && (
+          {mode === "login" && staff && (
             <Link className="forgot-link" to="/forgot-password">
               Forgot password?
             </Link>
           )}
-          {mode === "login" && (
+          {mode === "login" && staff && (
             <Link className="forgot-link" to="/resend-verification">
               Resend verification email
             </Link>
@@ -216,10 +234,11 @@ export default function Auth({ mode }: { mode: string }) {
                   ? "Send recovery instructions"
                   : complete
                     ? "Complete request"
-                    : "Sign in"}
+                    : staff ? "Sign in" : challenge ? "Verify code and sign in" : "Send email code"}
             <ArrowRight size={16} />
           </button>
         </form>
+        {mode === "login" && <button type="button" className="secondary" onClick={() => { setStaff(!staff); setChallenge(undefined); setMessage(""); setError(null); }}>{staff ? "Member sign in with OTP" : "Administrator / staff password sign in"}</button>}
         <p className="auth-bottom">
           {mode === "login" ? (
             <>

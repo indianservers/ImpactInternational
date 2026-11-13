@@ -70,6 +70,7 @@ public class Access(Db db, IHttpContextAccessor ctx)
         "communications.configure",
         "intelligence.view", "intelligence.assistant", "intelligence.knowledge", "intelligence.automations",
         "finance.view", "finance.manage", "finance.configure", "finance.reconcile", "finance.post", "finance.approve", "finance.self",
+        "finance.dues.reports", "finance.dues.collect",
         "operations.view", "operations.manage", "operations.verify", "operations.documents", "operations.certificates",
     ];
 
@@ -145,7 +146,7 @@ public class Access(Db db, IHttpContextAccessor ctx)
     public async Task<Assignment> TenantWorkspace(string permission)
     {
         var w = await Workspace(permission);
-        if (await db.Orgs.AnyAsync(x => x.Id == w.OrgId && x.ParentId != null))
+        if (!(await User()).PlatformAdmin && await db.Orgs.AnyAsync(x => x.Id == w.OrgId && x.ParentId != null))
             throw new ApiError(
                 403,
                 "Association-wide configuration requires a headquarters workspace."
@@ -153,7 +154,7 @@ public class Access(Db db, IHttpContextAccessor ctx)
         return w;
     }
 
-    public async Task<string[]> Grants(Assignment w){var grants=await db.RolePermissions.Where(x=>x.RoleId==w.RoleId).Select(x=>x.PermissionId).ToArrayAsync();var disabled=await db.TenantBrandings.Where(b=>b.TenantId==w.TenantId).Select(b=>b.DisabledFeatures).SingleOrDefaultAsync();if(disabled==null||disabled=="[]")return grants;var features=GovernanceService.Unpack<string[]>(disabled);var prefixes=features.Where(TenantExperience.PermissionPrefixes.ContainsKey).SelectMany(f=>TenantExperience.PermissionPrefixes[f]).ToArray();return grants.Where(p=>!prefixes.Any(prefix=>p.StartsWith(prefix,StringComparison.Ordinal))).ToArray();}
+    public async Task<string[]> Grants(Assignment w){if(await db.Users.AnyAsync(u=>u.Id==w.UserId&&u.PlatformAdmin))return All;var grants=await db.RolePermissions.Where(x=>x.RoleId==w.RoleId).Select(x=>x.PermissionId).ToArrayAsync();var disabled=await db.TenantBrandings.Where(b=>b.TenantId==w.TenantId).Select(b=>b.DisabledFeatures).SingleOrDefaultAsync();if(disabled==null||disabled=="[]")return grants;var features=GovernanceService.Unpack<string[]>(disabled);var prefixes=features.Where(TenantExperience.PermissionPrefixes.ContainsKey).SelectMany(f=>TenantExperience.PermissionPrefixes[f]).ToArray();return grants.Where(p=>!prefixes.Any(prefix=>p.StartsWith(prefix,StringComparison.Ordinal))).ToArray();}
 
 #pragma warning disable EF1002 // Only canonical typed GUID literals enter this SQL; see below.
     public IQueryable<Org> Tree(Guid tenant, Guid root) =>
@@ -171,14 +172,14 @@ public class Access(Db db, IHttpContextAccessor ctx)
         );
 #pragma warning restore EF1002
 
-    public IQueryable<Org> Visible(Assignment w) => Tree(w.TenantId, w.OrgId);
+    public IQueryable<Org> Visible(Assignment w) => db.Users.Any(u => u.Id == w.UserId && u.PlatformAdmin) ? db.Orgs.Where(o => o.TenantId == w.TenantId) : Tree(w.TenantId, w.OrgId);
 
     // Keep the narrow recursive projection parameter-free, just like Tree above.
     // EF/Npgsql can reuse raw-query parameter names for composed LINQ search
     // values. Only canonical, strongly typed GUID literals enter this SQL.
 #pragma warning disable EF1002
     public IQueryable<Guid> VisibleIds(Assignment w) =>
-        db.Database.SqlQueryRaw<Guid>(
+        db.Users.Any(u => u.Id == w.UserId && u.PlatformAdmin) ? db.Orgs.Where(o => o.TenantId == w.TenantId).Select(o => o.Id) : db.Database.SqlQueryRaw<Guid>(
             $"""
             WITH RECURSIVE tree AS (
               SELECT "Id","TenantId" FROM "Orgs" WHERE "TenantId"='{w.TenantId:D}'::uuid AND "Id"='{w.OrgId:D}'::uuid

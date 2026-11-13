@@ -1,3 +1,4 @@
+import { impactRole } from "../brand";
 import SectionTabs from "../SectionTabs";
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -9,7 +10,6 @@ import {
   Skeleton,
   ErrorBox,
   useWorkspace,
-  Provision,
 } from "../App";
 export default function Administration() {
   const [section, setSection] = useState("Roles");
@@ -30,11 +30,6 @@ export default function Administration() {
   const assignments = useQuery({
     queryKey: ["assignments", w?.id],
     queryFn: () => api("/assignments"),
-  });
-  const requests = useQuery({
-    queryKey: ["registration-requests"],
-    queryFn: () => api("/registration-requests"),
-    enabled: !!me.platformAdmin,
   });
   const orgs = useQuery({
     queryKey: ["scope-options", w?.id],
@@ -64,9 +59,9 @@ export default function Administration() {
   return (
     <>
       <PageHeader
-        eyebrow="TRUST & GOVERNANCE"
+        eyebrow="IMPACT ACCESS & GOVERNANCE"
         title="Roles & permissions"
-        description="The right access, for the right people, in the right place."
+        description="Manage Impact International roles and access for headquarters, units, and clubs."
       >
         {w?.permissions.includes("roles.manage") && (
           <button
@@ -81,7 +76,7 @@ export default function Administration() {
         )}
       </PageHeader>
       <ErrorBox error={roles.error || error} />
-      <SectionTabs id="access" label="Access management" tabs={me.platformAdmin ? ["Roles", "Assignments", "Registrations"] : ["Roles", "Assignments"]} value={section} onChange={setSection} />
+      <SectionTabs id="access" label="Access management" tabs={["Roles", "Assignments"]} value={section} onChange={setSection} />
       <section className="panel" role="tabpanel" id="access-panel-0" aria-labelledby="access-tab-0" hidden={section !== "Roles"}>
         <div className="section-heading">
           <div>
@@ -111,7 +106,7 @@ export default function Administration() {
                             setForm({ ...r, kind: "role" });
                           }}
                         >
-                          {r.name}
+                          {impactRole(r.name)}
                         </button>
                       ) : (
                         r.name
@@ -182,7 +177,7 @@ export default function Administration() {
                     {x.user}
                     <small>{x.email}</small>
                   </td>
-                  <td>{x.role}</td>
+                  <td>{impactRole(x.role)}</td>
                   <td>{x.organization}</td>
                   <td>
                     {w?.permissions.includes("roles.assign") &&
@@ -216,49 +211,6 @@ export default function Administration() {
           </table>
         </div>
       </section>
-      {me.platformAdmin && (
-        <section className="panel spaced" role="tabpanel" id="access-panel-2" aria-labelledby="access-tab-2" hidden={section !== "Registrations"}>
-          <h2>Organization registration requests</h2>
-          {requests.data?.map((r: any) => (
-            <div className="context-row" key={r.id}>
-              <span>
-                {r.name}
-                <small>{r.email}</small>
-              </span>
-              <span>{r.description}</span>
-              <span className="badge pending">{r.status}</span>
-              {r.status === "Pending" && (
-                <button
-                  className="secondary"
-                  onClick={async () => {
-                    try {
-                      await api(
-                        "/registration-requests/" + r.id + "/provision",
-                        "POST",
-                        {},
-                      );
-                      qc.invalidateQueries({
-                        queryKey: ["registration-requests"],
-                      });
-                      qc.invalidateQueries({ queryKey: ["workspaces"] });
-                    } catch (e) {
-                      setError(e);
-                    }
-                  }}
-                >
-                  Provision association
-                </button>
-              )}
-            </div>
-          ))}
-          {!requests.data?.length && <p>No registration requests.</p>}
-        </section>
-      )}
-      {me.platformAdmin && (
-        <Provision
-          onDone={() => qc.invalidateQueries({ queryKey: ["workspaces"] })}
-        />
-      )}
       {form && (
         <div className="modal-backdrop">
           <section
@@ -293,7 +245,7 @@ export default function Administration() {
                     <select name="roleId" required>
                       {roles.data?.map((r: any) => (
                         <option key={r.id} value={r.id}>
-                          {r.name}
+                          {impactRole(r.name)}
                         </option>
                       ))}
                     </select>

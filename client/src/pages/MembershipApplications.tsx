@@ -42,11 +42,11 @@ export default function MembershipApplications({
     <>
       <PageHeader
         eyebrow={review ? "THOUGHTFUL ADMISSIONS" : "YOUR NEXT CHAPTER"}
-        title={review ? "Membership approvals" : "Join a community"}
+        title={review ? "Impact membership approvals" : "Join an Impact club"}
         description={
           review
-            ? "Clear stages, accountable decisions, and no shortcuts through required checks."
-            : "Find a club, save your application, and follow every step of your journey."
+            ? "Review Impact International applications through the configured approval stages."
+            : "Find an Impact club, apply for membership, and track your Impact journey."
         }
       >
         {!review && (
@@ -61,7 +61,7 @@ export default function MembershipApplications({
           <div>
             <span>01</span>
             <b>Find your community</b>
-            <small>Choose an association and club.</small>
+            <small>Choose an Impact International club.</small>
           </div>
           <ArrowRight size={18} />
           <div>

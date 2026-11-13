@@ -34,6 +34,7 @@ public class Person
     public string WorkLocation { get; set; } = "";
     public string Website { get; set; } = "";
     public string Networking { get; set; } = "";
+    public string SocialLinksJson { get; set; } = "{}";
 
     [JsonIgnore]
     public byte[]? Photo { get; set; }

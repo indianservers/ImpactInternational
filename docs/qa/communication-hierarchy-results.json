@@ -1,0 +1,50 @@
+[
+  {
+    "role": "club",
+    "members": 5,
+    "delivered": 1,
+    "visibility": "passed",
+    "retry": "passed",
+    "scope": "passed"
+  },
+  {
+    "role": "zonal",
+    "members": 25,
+    "delivered": 2,
+    "visibility": "passed",
+    "retry": "passed",
+    "scope": "passed"
+  },
+  {
+    "role": "district",
+    "members": 125,
+    "delivered": 3,
+    "visibility": "passed",
+    "retry": "passed",
+    "scope": "passed"
+  },
+  {
+    "role": "regional",
+    "members": 625,
+    "delivered": 4,
+    "visibility": "passed",
+    "retry": "passed",
+    "scope": "passed"
+  },
+  {
+    "role": "national",
+    "members": 3125,
+    "delivered": 5,
+    "visibility": "passed",
+    "retry": "passed",
+    "scope": "passed"
+  },
+  {
+    "role": "international",
+    "members": 3125,
+    "delivered": 5,
+    "visibility": "passed",
+    "retry": "passed",
+    "scope": "passed"
+  }
+]

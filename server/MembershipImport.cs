@@ -32,7 +32,8 @@ public record ExportInput(
     string? Profession = null,
     string? Industry = null,
     string? Expertise = null,
-    string? Office = null
+    string? Office = null,
+    Guid? RegionId = null
 );
 
 public static class MembershipImport
@@ -546,6 +547,7 @@ public static class MembershipImport
             r.Expertise,
             r.Office
         );
+        q = await RegionalDirectory.Filter(s, w, q, r.RegionId);
         if (r.SelectedIds != null)
             q = q.Where(x => r.SelectedIds.Contains(x.Id));
         Check(await q.CountAsync() <= 10000, "Narrow the filters to 10,000 memberships or fewer.");

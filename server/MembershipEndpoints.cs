@@ -9,7 +9,8 @@ public record ManualMember(
     Guid CategoryId,
     Guid? PersonId = null,
     DateTimeOffset? JoinedAt = null,
-    string DuplicateDecision = ""
+    string DuplicateDecision = "",
+    string? PhotoBase64 = null
 );
 
 public record StatusInput(
@@ -37,6 +38,7 @@ public static class MembershipEndpoints
 {
     public static void MapMembership(this RouteGroupBuilder api)
     {
+        api.MapMembershipHierarchy();
         api.MapGet(
             "/membership/catalog",
             async (MembershipService s, Guid? tenantId, string? search, int page = 1) =>
@@ -90,7 +92,7 @@ public static class MembershipEndpoints
         );
         api.MapGet(
             "/membership/options",
-            async (MembershipService s, string? search) =>
+            async (MembershipService s, string? search, Guid? regionId) =>
             {
                 var w = await s.Access.WorkspaceAny(
                     "members.view",
@@ -106,13 +108,18 @@ public static class MembershipEndpoints
                     .Where(x =>
                         x.Status == "Active" && s.Db.Levels.Any(l => l.Id == x.LevelId && l.IsClub)
                     );
+                if (regionId != null)
+                {
+                    await RegionalDirectory.Filter(s, w, s.Scoped(w), regionId);
+                    clubs = clubs.Where(c => s.Access.Tree(w.TenantId, regionId.Value).Any(o => o.Id == c.Id));
+                }
                 if (!string.IsNullOrWhiteSpace(search))
                     clubs = clubs.Where(x => EF.Functions.ILike(x.Name, "%" + search + "%"));
                 return new
                 {
                     clubs = await clubs
                         .OrderBy(x => x.Name)
-                        .Take(100)
+                        .Take(1000)
                         .Select(x => new
                         {
                             x.Id,
@@ -143,7 +150,8 @@ public static class MembershipEndpoints
                 string sort = "name",
                 int page = 1,
                 int size = 20,
-                string? after = null
+                string? after = null,
+                Guid? regionId = null
             ) =>
                 await List(
                     s,
@@ -160,7 +168,8 @@ public static class MembershipEndpoints
                     sort,
                     page,
                     size,
-                    after
+                    after,
+                    regionId
                 )
         );
         api.MapGet(
@@ -179,7 +188,8 @@ public static class MembershipEndpoints
                 string sort = "name",
                 int page = 1,
                 int size = 20,
-                string? after = null
+                string? after = null,
+                Guid? regionId = null
             ) =>
                 await List(
                     s,
@@ -196,7 +206,8 @@ public static class MembershipEndpoints
                     sort,
                     page,
                     size,
-                    after
+                    after,
+                    regionId
                 )
         );
         api.MapGet(
@@ -410,7 +421,8 @@ public static class MembershipEndpoints
                 var m = await s.Find(id, directory ? "directory.view" : "members.view");
                 var u = await s.Access.User();
                 Check(
-                    m.Person.UserId == u.Id || m.Person.Privacy.PhotoVisible,
+                    m.Person.UserId == u.Id || m.Person.Privacy.PhotoVisible
+                        || !directory && (await s.Access.Grants(await s.Access.Workspace("members.view"))).Contains("members.personal.view"),
                     "Photo is private.",
                     404
                 );
@@ -515,6 +527,18 @@ public static class MembershipEndpoints
                         409
                     );
                     person = s.NewPerson(r.Person);
+                }
+                if (!string.IsNullOrEmpty(r.PhotoBase64))
+                {
+                    Check(r.PersonId == null, "Update an existing person's photo from their member profile.");
+                    Check(r.PhotoBase64.Length <= 2796204, "Photo must be smaller than 2 MB.");
+                    byte[] bytes;
+                    try { bytes = Convert.FromBase64String(r.PhotoBase64); }
+                    catch (FormatException) { throw new ApiError(400, "Invalid photo data."); }
+                    Check(bytes.Length is > 0 and <= 2097152, "Photo must be smaller than 2 MB.");
+                    var image = MemberMediaEndpoints.StripPhoto(bytes);
+                    person.Photo = image.Bytes;
+                    person.PhotoType = image.Type;
                 }
                 var member = await s.Activate(person, club, category, w.UserId, r.JoinedAt);
                 await s.Db.SaveChangesAsync();
@@ -953,12 +977,14 @@ public static class MembershipEndpoints
         string sort,
         int page,
         int size,
-        string? after
+        string? after,
+        Guid? regionId = null
     )
     {
         var w = await s.Access.Workspace(directory ? "directory.view" : "members.view");
         var grants = await s.Access.Grants(w);
         var q = (await s.ScopedList(w)).AsNoTracking();
+        q = await RegionalDirectory.Filter(s, w, q, regionId);
         if (directory)
             q = q.Where(x =>
                 s.Db.PersonPrivacy.Any(p => p.PersonId == x.PersonId && p.DirectoryVisible)
@@ -1023,6 +1049,7 @@ public static class MembershipEndpoints
                 && s.Access.Visible(w).Any(o => o.Id == a.OrgId)
             select new { PersonId = p.Id, r.Name }
         ).ToListAsync();
+        var places = await RegionalDirectory.Places(s, w.TenantId, rows.Select(r => r.ClubId).ToArray());
         return Results.Ok(
             new
             {
@@ -1038,6 +1065,9 @@ public static class MembershipEndpoints
                     x.Name,
                     x.ClubId,
                     x.Club,
+                    places[x.ClubId].Region,
+                    places[x.ClubId].District,
+                    places[x.ClubId].Zone,
                     x.CategoryId,
                     x.Category,
                     x.Status,

@@ -1,3 +1,4 @@
+import MembershipLocationPicker from "./MembershipLocationPicker";
 import { useEffect, useState } from "react";
 import { X, Plus, ArrowLeft } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
@@ -46,18 +47,18 @@ export function MemberStatus({ status }: any) {
 }
 export function MemberDrawer({
   title,
-  eyebrow = "MEMBERSHIP WORKSPACE",
+  eyebrow = "IMPACT INTERNATIONAL / MEMBERSHIP",
   onClose,
   children,
 }: any) {
   useDialog(true, onClose);
   return (
-    <div className="modal-backdrop">
+    <div className="modal-backdrop impact-popup-backdrop">
       <section
         role="dialog"
         aria-modal="true"
         aria-label={title}
-        className="drawer member-drawer"
+        className="drawer member-drawer impact-member-popup"
       >
         <div className="drawer-heading">
           <div>
@@ -87,84 +88,36 @@ export function ClubCategoryFields({
   fixedTenant,
 }: any) {
   const { w } = useWorkspace();
-  const [search, setSearch] = useState(""),
-    [term, setTerm] = useState(""),
-    [association, setAssociation] = useState(tenantId || w?.tenantId || "");
-  useEffect(() => {
-    const t = setTimeout(() => setTerm(search), 250);
-    return () => clearTimeout(t);
-  }, [search]);
+  const [association, setAssociation] = useState(tenantId || w?.tenantId || "");
   const catalog = useQuery({
-    queryKey: ["member-catalog", publicCatalog, association, term, w?.id],
+    queryKey: ["member-catalog", publicCatalog, association, w?.id],
     queryFn: () =>
       publicCatalog
         ? api(
             "/membership/catalog?" +
               (association ? "tenantId=" + association + "&" : "") +
-              "search=" +
-              encodeURIComponent(term),
+              "search=",
           )
-        : api("/membership/options?search=" + encodeURIComponent(term)),
+        : api("/membership/options"),
   });
-  const clubs = catalog.data?.clubs;
   const categories = catalog.data?.categories;
   const associations = useQuery({
     queryKey: ["associations-catalog"],
     queryFn: () => api("/membership/catalog"),
     enabled: publicCatalog,
   });
+  useEffect(() => {
+    const id = tenantId || w?.tenantId || associations.data?.associations?.[0]?.id;
+    if (id && !association) {
+      setAssociation(id);
+      onChange({ clubId: "", categoryId: "", tenantId: id });
+    }
+  }, [tenantId, w?.tenantId, associations.data, association, onChange]);
   return (
     <>
-      {publicCatalog && !fixedTenant && (
-        <label>
-          Association
-          <select
-            required
-            value={association}
-            onChange={(e) => {
-              setAssociation(e.target.value);
-              onChange({
-                clubId: "",
-                categoryId: "",
-                tenantId: e.target.value,
-              });
-            }}
-          >
-            <option value="">Choose an association</option>
-            {associations.data?.associations.map((a: any) => (
-              <option key={a.id} value={a.id}>
-                {a.name}
-              </option>
-            ))}
-          </select>
-        </label>
-      )}
-      <label>
-        Find a club
-        <input
-          value={search}
-          placeholder="Search club names…"
-          onChange={(e) => setSearch(e.target.value)}
-        />
-      </label>
+      {publicCatalog && !fixedTenant && <label>Organization<input value="Impact International" readOnly /></label>}
+      <MembershipLocationPicker clubId={clubId} onChange={onChange} publicCatalog={publicCatalog} tenantId={association} excludeClub={excludeClub} />
       <div className="form-grid">
-        <label>
-          Club
-          <select
-            required
-            value={clubId || ""}
-            onChange={(e) => onChange({ clubId: e.target.value })}
-          >
-            <option value="">Choose club</option>
-            {clubs
-              ?.filter((c: any) => c.id !== excludeClub)
-              .map((c: any) => (
-                <option key={c.id} value={c.id}>
-                  {c.name}
-                </option>
-              ))}
-          </select>
-        </label>
         <label>
           Membership category
           <select
@@ -187,10 +140,11 @@ export function ClubCategoryFields({
     </>
   );
 }
-export function PersonEditor({ person, onSave, onCancel, busy = false }: any) {
+export function PersonEditor({ person, onSave, onCancel, busy = false, submitLabel = "Save profile" }: any) {
   const [tab, setTab] = useState("Personal");
   const [form, setForm] = useState<any>(() => ({
     legalName: person?.legalName || person?.name || "",
+    socialLinks: person?.socialLinks || {},
     displayName: person?.displayName || person?.name || "",
     birthDate: person?.birthDate || "",
     gender: person?.gender || "",
@@ -253,6 +207,7 @@ export function PersonEditor({ person, onSave, onCancel, busy = false }: any) {
         e.preventDefault();
         onSave({
           ...form,
+          contacts: form.contacts.filter((contact: any) => String(contact.value || "").trim()),
           ...Object.fromEntries(
             ["skills", "expertise", "interests", "languages"].map((k) => [
               k,
@@ -272,7 +227,7 @@ export function PersonEditor({ person, onSave, onCancel, busy = false }: any) {
         role="tablist"
         aria-label="Profile editing sections"
       >
-        {["Personal", "Contact", "Education", "Professional"].map((t) => (
+        {["Personal", "Contact", "Education", "Professional", "Social links"].map((t) => (
           <button
             type="button"
             role="tab"
@@ -289,7 +244,7 @@ export function PersonEditor({ person, onSave, onCancel, busy = false }: any) {
         <>
           <div className="form-grid">
             {input("legalName", "Full legal name", "text", true)}
-            {input("displayName", "Preferred display name", "text", true)}
+            {input("displayName", "Preferred display name (optional)", "text")}
             {input("birthDate", "Date of birth", "date")}
             {input("gender", "Gender (optional)")}
             <label>
@@ -523,12 +478,13 @@ export function PersonEditor({ person, onSave, onCancel, busy = false }: any) {
           ))}
         </>
       )}
+      {tab === "Social links" && <><p>All social profiles are optional. Enter a handle (for example, @yourname) or a full HTTPS profile link.</p><div className="form-grid">{["LinkedIn", "Facebook", "Instagram", "X", "YouTube", "Threads", "Telegram"].map(platform => <label key={platform}>{platform} (optional)<input maxLength={500} value={form.socialLinks[platform] || ""} placeholder={platform === "LinkedIn" ? "https://www.linkedin.com/in/yourname" : "@yourname or HTTPS profile link"} onChange={e => setForm({ ...form, socialLinks: { ...form.socialLinks, [platform]: e.target.value } })} /></label>)}</div></>}
       <div className="drawer-footer">
         <button type="button" className="secondary" onClick={onCancel}>
           <ArrowLeft size={14} />
           Cancel
         </button>
-        <button disabled={busy}>{busy ? "Saving…" : "Save profile"}</button>
+        <button disabled={busy}>{busy ? "Saving…" : submitLabel}</button>
       </div>
     </form>
   );

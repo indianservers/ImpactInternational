@@ -36,9 +36,9 @@ export default function Profile() {
   return (
     <>
       <PageHeader
-        eyebrow="YOUR PERSONAL SPACE"
-        title="Profile & security"
-        description="Manage your account and stay in control of your sessions."
+        eyebrow="YOUR IMPACT ACCOUNT"
+        title="My Impact profile & security"
+        description="Manage your Impact International profile, preferences, password, and sessions."
       />
       <ErrorBox error={error} />
       {message && (

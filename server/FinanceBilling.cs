@@ -41,9 +41,17 @@ public static partial class FinanceEndpoints
                 var w = await s.Workspace();
                 await using var tx = await s.Db.Database.BeginTransactionAsync();
                 await s.Lock(entity);
+                var personId = i.PersonId;
+                if (i.MembershipId != null)
+                {
+                    var member = await s.Db.Memberships.SingleOrDefaultAsync(m => m.Id == i.MembershipId && m.TenantId == e.TenantId);
+                    Check(member != null && (personId == null || personId == member.PersonId)
+                        && await s.Db.FinanceOrganizations.AnyAsync(o => o.EntityId == e.Id && o.ServedOrgId == member.ClubId), "Choose a membership served by this entity and its matching payer.");
+                    personId = member.PersonId;
+                }
                 var r = await s.CreateInvoice(
                     e,
-                    i.PersonId,
+                    personId,
                     i.Customer,
                     i.Purpose,
                     i.Date,
@@ -51,6 +59,7 @@ public static partial class FinanceEndpoints
                     i.Key,
                     i.Lines,
                     w.UserId,
+                    membership: i.MembershipId,
                     eventId: i.EventId,
                     projectId: i.ProjectId,
                     notes: i.Notes

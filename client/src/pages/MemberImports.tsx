@@ -55,9 +55,9 @@ export default function MemberImports() {
   return (
     <>
       <PageHeader
-        eyebrow="MAKE YOUR DATA A BETTER START"
+        eyebrow="BUILD YOUR IMPACT DIRECTORY"
         title="Member import"
-        description="Map, validate, review duplicates, and commit with a complete audit trail."
+        description="Import Impact International members, review duplicates, and keep a complete audit trail."
       />
       <div className="import-steps">
         {[

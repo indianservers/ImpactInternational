@@ -25,6 +25,7 @@ public static class MembershipSetup
     {
         var add =
             role.Name == "Association Super Admin" ? All
+            : LeaderCommunications.PresidentLevels.ContainsKey(role.Name) && role.Name != "Club President" ? ["members.view", "directory.view"]
             : role.Name is "Club Member" or "Guest / Applicant" ? ["directory.view"]
             : MemberPermissions
                 .Concat(
@@ -63,6 +64,10 @@ public static class MembershipSetup
         if (role.Name is "Club President" or "Club Secretary" or "Club Manager") add=add.Concat(new[]{"finance.view"}).ToArray();
         add=add.Concat(new[]{"intelligence.assistant","intelligence.knowledge"}).ToArray();
         if(role.Name is "Association Super Admin" or "Club President" or "Club Secretary" or "Club Treasurer" or "Club Manager")add=add.Concat(new[]{"intelligence.view","intelligence.automations"}).ToArray();
+        if (LeaderCommunications.SendingRoles.Contains(role.Name))
+            add = add.Concat(CommunicationService.Permissions.Where(p => p != "communications.configure")).ToArray();
+        if (LeaderCommunications.SendingRoles.Contains(role.Name) || role.Name == "Club Treasurer") add = add.Concat(new[] { DuesCenter.View }).ToArray();
+        if (role.Name is "Club President" or "Club Treasurer" or "Club Secretary" or "Club Manager") add = add.Concat(new[] { DuesCenter.Collect }).ToArray();
         role.Permissions = role.Permissions.Concat(add).Distinct().ToArray();
     }
 

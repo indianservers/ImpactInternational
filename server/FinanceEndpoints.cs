@@ -39,7 +39,8 @@ public record FinanceInvoiceInput(
     FinanceLineInput[] Lines,
     Guid? EventId = null,
     Guid? ProjectId = null,
-    string Notes = ""
+    string Notes = "",
+    Guid? MembershipId = null
 );
 
 public record FinanceCreditInput(decimal Amount, string Reason, string Key);
@@ -181,10 +182,11 @@ public static partial class FinanceEndpoints
             async (FinanceService s) =>
             {
                 var w = await s.Workspace();
+                var platformAdmin = (await s.A.User()).PlatformAdmin;
                 return await s
                     .Db.FinanceEntitys.Where(e =>
                         e.TenantId == w.TenantId
-                        && s.Db.FinanceGrants.Any(g => g.EntityId == e.Id && g.UserId == w.UserId)
+                        && (platformAdmin || s.Db.FinanceGrants.Any(g => g.EntityId == e.Id && g.UserId == w.UserId))
                     )
                     .OrderBy(e => e.Name)
                     .Take(100)

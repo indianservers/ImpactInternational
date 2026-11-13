@@ -23,11 +23,12 @@ import {
   Menu,
   X,
   LogOut,
-  ChevronDown,
 } from "lucide-react";
 import "./mobile.css";
 import { navigationSections, canOpenTab, matchesTab, taskGroups } from "./navigation";
 import { TenantBrand } from "./TenantBrand";
+import ImpactSetupGuide from "./ImpactSetupGuide";
+import { impact, impactRole, ImpactDocumentTitle, ImpactPageContext } from "./brand";
 import { api, type Workspace } from "./api";
 // Lazy pages keep the same context even when this shell is hot-reloaded.
 import { WorkspaceContext as Context, useWorkspace } from "./WorkspaceContext";
@@ -41,7 +42,7 @@ const IdVerification = lazy(() =>
 );
 const RequestOrganization = lazy(() => import("./pages/RequestOrganization"));
 const Dashboard = lazy(() => import("./pages/Dashboard"));
-const Organizations = lazy(() => import("./pages/Organizations"));
+const Organizations = lazy(() => import("./pages/StructureManagement"));
 const Administration = lazy(() => import("./pages/Administration"));
 const SettingsPage = lazy(() => import("./pages/Settings"));
 const Audit = lazy(() => import("./pages/Audit"));
@@ -146,13 +147,14 @@ const EventInvitation = lazy(() =>
 );
 function WorkspaceHome() {
   const { w } = useWorkspace();
-  return w?.permissions.includes("governance.reports") ? (
+  const home = w?.permissions.includes("governance.reports") ? (
     <GovernanceDashboard />
   ) : w?.permissions.includes("members.view") ? (
     <Dashboard />
   ) : (
     <MemberPortal />
   );
+  return <><ImpactSetupGuide />{home}</>;
 }
 export function Skeleton() {
   return (
@@ -174,7 +176,7 @@ export function PageHeader({ eyebrow, title, description, children }: any) {
   return (
     <div className="page-header">
       <div>
-        <div className="eyebrow">{eyebrow}</div>
+        <div className="eyebrow">IMPACT INTERNATIONAL{eyebrow ? " / " + eyebrow : ""}</div>
         <h1>{title}</h1>
         <p>{description}</p>
       </div>
@@ -233,6 +235,15 @@ function Shell() {
     staleTime: 30000,
   });
   const identity = experience.data?.identity;
+  useEffect(() => {
+    if (me.data && !me.data.workspaceId && !active && workspaces.data?.length) {
+      const first = workspaces.data[0];
+      api("/workspaces/" + first.id + "/activate", "POST").then(() => {
+        setActive(first.id);
+        qc.invalidateQueries({ queryKey: ["me"] });
+      }).catch(setError);
+    }
+  }, [me.data?.workspaceId, active, workspaces.data, qc]);
   async function activate(id: string) {
     try {
       await api("/workspaces/" + id + "/activate", "POST");
@@ -280,8 +291,8 @@ function Shell() {
   if (me.error)
     return (
       <div className="auth-wrap">
-        <h1>Your workspace awaits.</h1>
-        <p>Sign in to securely access your organizations.</p>
+        <h1>Your Impact International account awaits.</h1>
+        <p>Sign in to access Impact International.</p>
         <Link className="button" to="/login">
           Sign in
         </Link>
@@ -293,7 +304,7 @@ function Shell() {
         className="app-shell"
         style={
           {
-            "--brand-accent": identity?.accent || w?.color || "#2563eb",
+            "--brand-accent": impact.color,
           } as React.CSSProperties
         }
       >
@@ -301,59 +312,42 @@ function Shell() {
         <aside id="organization-navigation" ref={sidebarRef} className={open ? "sidebar open" : "sidebar"}>
           <button className="icon-button mobile-sidebar-close" aria-label="Close navigation menu" onClick={() => setOpen(false)}><X size={20} /></button>
           <Link to="/" className="brand">
-            <span className="brand-icon">
-              <Globe2 size={23} />
-            </span>
             <TenantBrand identity={identity} />
             <span className="brand-dot" />
           </Link>
           <div className="sidebar-label">YOUR ORGANIZATION</div>
-          <div className="workspace-select">
-            <span className="workspace-avatar">GC</span>
-            <select
-              aria-label="Active organization"
-              value={active || me.data?.workspaceId || ""}
-              onChange={(e) => activate(e.target.value)}
-            >
-              <option value="">Choose organization</option>
-              {workspaces.data?.map((x) => (
-                <option key={x.id} value={x.id}>
-                  {[x.organization, x.organizationType, x.role].filter(Boolean).join(" · ")}
-                </option>
-              ))}
-            </select>
-            <ChevronDown size={14} />
-          </div>
-          {w && <div className="organization-context"><strong>{w.organization}</strong><span>{[w.organizationType, w.role].filter(Boolean).join(" · ")}</span></div>}
+          <div className="foundation-organization" aria-label="Your organization"><img src={impact.logo} alt="" width="38" height="38" /><strong>Impact International</strong></div>
+          {workspaces.data && workspaces.data.length > 1 && <label className="foundation-scope-picker">Your role and unit<select aria-label="Active role and unit" value={active || me.data?.workspaceId || ""} onChange={e => activate(e.target.value)}>{workspaces.data.map(x => <option key={x.id} value={x.id}>{x.organization} · {impactRole(x.role)}</option>)}</select></label>}
+          {w && <div className="organization-context"><strong>{w.organization}</strong><span>{impactRole(w.role)}</span></div>}
           <div className="sidebar-label">ORGANIZATION</div>
           <nav>
             {visibleSections.map((section) => {
               const Icon = section.icon;
               const selected = activeSection?.id === section.id;
-              return <Link key={section.id} to={section.tabs[0].to}
+              return <div key={section.id}><Link to={section.tabs[0].to}
                 className={selected ? "active" : undefined}
                 aria-current={selected ? "true" : undefined}
                 onClick={() => setOpen(false)}>
                 <Icon size={19} />{section.label}
-              </Link>;
+              </Link>{section.id === "organization" && selected && <div className="impact-sidebar-submenu" aria-label="Impact structure submenus">{section.tabs.filter(tab => ["/app/organizations", "/app/international", "/app/national", "/app/regions", "/app/districts", "/app/zones", "/app/clubs"].includes(tab.to)).map(tab => <Link key={tab.to} to={tab.to} onClick={() => setOpen(false)} className={location.pathname === tab.to ? "active" : undefined} aria-current={location.pathname === tab.to ? "page" : undefined}>{tab.label}</Link>)}</div>}</div>;
             })}
           </nav>
           <div className="mobile-account-actions"><button className="secondary" onClick={toggleTheme}><Moon size={17} />{me.data.theme === "dark" ? "Light theme" : "Dark theme"}</button><button className="secondary" onClick={signOut}><LogOut size={17} />Sign out</button></div>
           <div className="sidebar-bottom">
             <div className="help-card">
               <span className="gold-dot" />
-              Built for a world of impact
+              Together, we create impact
               <p>
-                One connected community.
+                Training. Business.
                 <br />
-                Limitless possibilities.
+                Service. Leadership.
               </p>
             </div>
             <Link to="/app/profile" className="profile-mini">
               <span className="avatar">{me.data.name[0]}</span>
               <span>
                 <b>{me.data.name}</b>
-                <small>{w?.role || "Personal account"}</small>
+                <small>{impactRole(w?.role)}</small>
               </span>
               <Settings size={16} />
             </Link>
@@ -371,7 +365,7 @@ function Shell() {
               <Menu />
             </button>
             <div className="top-crumb">
-              Organization <span>/</span> <b>{w ? [w.organization, w.organizationType].filter(Boolean).join(" · ") : "Your account"}</b>
+              Impact International <span>/</span> <b>{w ? [w.organization, w.organizationType].filter(Boolean).join(" · ") : "Your account"}</b>
             </div>
             <div className="top-actions">
               <Suspense fallback={null}>
@@ -379,7 +373,7 @@ function Shell() {
               </Suspense>
               <span className="environment">
                 <i />
-                Connected organization
+                Impact International
               </span>
               <Link
                 aria-label="Profile and security"
@@ -413,6 +407,7 @@ function Shell() {
             </div>
           </header>
           <main>
+            <ImpactPageContext />
             <ErrorBox error={error} />
             {!w &&
             ![
@@ -428,7 +423,7 @@ function Shell() {
                 <Globe2 size={48} />
                 <h1>Find your place. Make an impact.</h1>
                 <p>
-                  Select an authorized organization in the sidebar to get started.
+                  Your Impact International role will be selected automatically. If you are new, apply to an Impact club.
                 </p>
                 {workspaces.data?.length === 0 && (
                   <p>
@@ -442,13 +437,7 @@ function Shell() {
                 <Link className="panel-link" to="/app/my-membership">
                   Open my membership portal →
                 </Link>
-                {me.data.platformAdmin && (
-                  <Provision
-                    onDone={() =>
-                      qc.invalidateQueries({ queryKey: ["workspaces"] })
-                    }
-                  />
-                )}
+
               </div>
             ) : (
               <Suspense fallback={<Skeleton />}>
@@ -477,108 +466,64 @@ function Shell() {
           <footer>
             Impact International{" "}
             <span>Connected leadership. Meaningful impact.</span>
-            <span>Connected community · Phase 08</span>
+            <span>Training · Business · Service · Leadership</span>
           </footer>
         </div>
       </div>
     </Context.Provider>
   );
 }
-export function Provision({ onDone }: any) {
-  const [name, setName] = useState(""),
-    [error, setError] = useState<unknown>(),
-    [busy, setBusy] = useState(false);
-  return (
-    <form
-      className="panel form-stack"
-      onSubmit={async (e) => {
-        e.preventDefault();
-        setBusy(true);
-        try {
-          await api("/associations", "POST", { name });
-          setName("");
-          onDone();
-        } catch (e) {
-          setError(e);
-        } finally {
-          setBusy(false);
-        }
-      }}
-    >
-      <h3>Register an association</h3>
-      <label>
-        Association name
-        <input
-          required
-          minLength={3}
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-        />
-      </label>
-      <ErrorBox error={error} />
-      <button disabled={busy}>Create association</button>
-    </form>
-  );
+export function Provision(_props: any) {
+  return <p className="privacy-notice">Impact International is your organization. Add clubs and organizational units from Impact structure.</p>;
 }
 function Landing() {
   return (
     <div className="landing">
       <header>
         <Link className="brand" to="/">
-          <Globe2 />
-          Impact International
+          <TenantBrand />
         </Link>
         <nav>
-          <a href="#possibilities">Possibilities</a>
+          <a href="#about-impact">About Impact</a><a href="#possibilities">Our focus</a>
           <Link to="/login">Sign in</Link>
           <Link className="button" to="/signup">
             Get started <ArrowUpRight size={16} />
           </Link>
         </nav>
       </header>
-      <section className="landing-hero">
-        <div className="eyebrow">ONE PLATFORM. A WORLD OF POSSIBILITY.</div>
+      <section className="landing-hero impact-home-hero">
+        <div className="impact-home-copy">
+        <div className="eyebrow">WELCOME TO IMPACT INTERNATIONAL</div>
         <h1>
-          Great communities.
+          Learn. Lead.
           <br />
-          <em>Greater impact.</em>
+          <em>Create impact.</em>
         </h1>
         <p>
-          The connected home for your clubs, chapters, and associations.
+          Impact International brings people together through training,
+          business, service, and leadership.
           <br />
-          Bring your people together. Give your leadership room to grow.
+          Connect with your community and turn your potential into action.
         </p>
         <div className="hero-actions">
           <Link className="button" to="/signup">
-            Join your community <ArrowUpRight size={17} />
+            Join Impact International <ArrowUpRight size={17} />
           </Link>
-          <Link to="/request-organization">
-            Request organization registration →
+          <Link to="/#about-impact">
+            Explore Impact International →
           </Link>
         </div>
-        <div className="orbit">
-          <Globe2 size={160} strokeWidth={0.6} />
-          <span className="orbit-tag a">◉ Connected communities</span>
-          <span className="orbit-tag b">↗ Leadership without borders</span>
         </div>
+        <figure className="impact-home-emblem">
+          <img src="/brand/impact-logo.webp" alt="Impact International official logo" width="360" height="360" />
+        </figure>
       </section>
       <section id="possibilities" className="landing-features">
         {[
-          [
-            "01",
-            "Every structure. One home.",
-            "Build a hierarchy that reflects your association, from international headquarters to your local club.",
-          ],
-          [
-            "02",
-            "The right access. Everywhere.",
-            "Work confidently with organizational scopes, secure sessions, and permission-based access.",
-          ],
-          [
-            "03",
-            "Less administration. More impact.",
-            "Find your organizations, manage your clubs, and switch workspaces in one connected experience.",
-          ],
+          ["01", "Training", "Build communication, life skills, and confidence through a progressive learning journey from Speaker to Coach."],
+          ["02", "Business", "Connect through the Impact Business Network, share expertise, and find opportunities for professional growth."],
+          ["03", "Service", "Support communities through student welfare, youth guidance, and local service initiatives."],
+          ["04", "Leadership", "Develop as a community leader, with opportunities to contribute from local clubs to national roles."],
         ].map(([n, t, d]) => (
           <article key={n}>
             <span>{n}</span>
@@ -587,9 +532,17 @@ function Landing() {
           </article>
         ))}
       </section>
+      <section id="about-impact" className="impact-about">
+        <div className="impact-about-heading"><div className="eyebrow">OUR PURPOSE</div><h2>Opportunity. Growth. Community.</h2><p>Based in Hyderabad, Impact International grew from Impact Foundation to support personal and professional development through training, business, service, and leadership.</p></div>
+        <div className="impact-founder">
+          <img src="/brand/gampa-nageshwer-rao.webp" alt="Gampa Nageshwer Rao, founder of Impact International" width="800" height="800" loading="lazy" />
+          <div><div className="eyebrow">MEET OUR FOUNDER</div><h2>Gampa Nageshwer Rao</h2><p className="impact-founder-role">Founder, Impact International</p><p>His vision brings people together to develop their abilities, learn practical skills, and create positive change in their communities.</p><div className="impact-purpose"><div><h3>Our vision</h3><p>A knowledgeable speaker in every home and dedicated trainers serving every village, contributing to a harmonious and prosperous India.</p></div><div><h3>Our mission</h3><p>Help younger generations develop life skills and soft skills so they can contribute responsibly to society.</p></div></div><a href="https://impactinternational.in/about-us/" target="_blank" rel="noopener noreferrer">Explore our story →</a></div>
+        </div>
+        <figure className="impact-community"><img src="/brand/impact-community.webp" alt="Community gathering featured on the Impact International website" width="1600" height="1068" loading="lazy" /><figcaption>Learning together. Growing together. Creating impact.</figcaption></figure>
+      </section>
       <footer>
-        © {new Date().getFullYear()} Impact International · Independent
-        community management platform
+        © {new Date().getFullYear()} Impact International · Training · Business · Service · Leadership
+        <a href="https://impactinternational.in/" target="_blank" rel="noopener noreferrer">Visit our official website ↗</a>
       </footer>
     </div>
   );
@@ -597,6 +550,7 @@ function Landing() {
 export default function App() {
   return (
     <Suspense fallback={<Skeleton />}>
+      <ImpactDocumentTitle />
       <Routes>
         <Route path="/verify/id/:token" element={<IdVerification />} />
         <Route
@@ -631,6 +585,11 @@ export default function App() {
           <Route path="membership-settings" element={<MembershipSettings />} />
           <Route path="transfers" element={<MembershipOperations />} />
           <Route path="organizations" element={<Organizations />} />
+          <Route path="international" element={<Organizations international />} />
+          <Route path="national" element={<Organizations kind="National" />} />
+          <Route path="regions" element={<Organizations kind="Region" />} />
+          <Route path="districts" element={<Organizations kind="District" />} />
+          <Route path="zones" element={<Organizations kind="Zone" />} />
           <Route path="intelligence/*" element={<Intelligence />} />
           <Route path="id-cards/*" element={<IdCards />} />
           <Route path="my-id" element={<MyIdCard />} />
@@ -644,7 +603,8 @@ export default function App() {
           <Route path="my-events" element={<MyEvents />} />
           <Route path="event-settings" element={<EventSettings />} />
           <Route path="event-intelligence" element={<EventDashboard />} />
-          <Route path="clubs" element={<ClubDirectory />} />
+          <Route path="clubs" element={<Organizations kind="Club" />} />
+          <Route path="clubs/directory" element={<ClubDirectory />} />
           <Route path="clubs/:id" element={<ClubWorkspace />} />
           <Route path="club-administration" element={<GovernanceDashboard />} />
           <Route path="leadership" element={<LeadershipDirectory />} />
@@ -669,8 +629,10 @@ export default function App() {
           path="*"
           element={
             <div className="auth-wrap">
+              <Link className="brand" to="/"><TenantBrand /></Link>
               <h1>Page not found</h1>
-              <Link to="/">Return home</Link>
+              <p>This page is not available in the Impact International portal.</p>
+              <Link to="/app">Open your Impact dashboard</Link>
             </div>
           }
         />

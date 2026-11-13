@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { ChevronRight, ChevronDown, Network, Plus } from "lucide-react";
-import { api, type Org } from "./api";
+import { api, type Org, type Level } from "./api";
 import { useWorkspace, ErrorBox } from "./App";
 export default function HierarchyTree({ onOpen, onCreate }: any) {
   const { w } = useWorkspace();
@@ -13,7 +13,7 @@ export default function HierarchyTree({ onOpen, onCreate }: any) {
     <section className="panel hierarchy-panel">
       <div className="section-heading">
         <div>
-          <h2>Organizational structure</h2>
+          <h2>Impact International hierarchy</h2>
           <p>Expand a branch to load its immediate children.</p>
         </div>
         <Network size={20} />
@@ -25,6 +25,8 @@ export default function HierarchyTree({ onOpen, onCreate }: any) {
 }
 function TreeNode({ org, onOpen, onCreate }: any) {
   const { w } = useWorkspace();
+  const levels = useQuery({ queryKey: ["levels", w?.id], queryFn: () => api<Level[]>("/levels") });
+  const childLevel = levels.data?.find(l => l.parentLevelId === org.levelId);
   const [expanded, setExpanded] = useState(false),
     [page, setPage] = useState(1);
   const q = useQuery({
@@ -48,10 +50,10 @@ function TreeNode({ org, onOpen, onCreate }: any) {
           {org.name}
         </button>
         <small>{org.code}</small>
-        {w?.permissions.includes("organization.create") && (
+        {w?.permissions.includes("organization.create") && childLevel && (
           <button
             className="icon-button"
-            aria-label={"Create child of " + org.name}
+            aria-label={"Create " + childLevel.name.toLowerCase() + " within " + org.name}
             onClick={() => onCreate(org.id)}
           >
             <Plus size={15} />

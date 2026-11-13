@@ -5,15 +5,15 @@ const tab = (label: string, path: string, ...permissions: string[]): Tab => ({ l
 
 // Keep feature URLs stable: bookmarks, detail links and browser history select the same tab.
 const featureSections = [
-  { id: "home", label: "Dashboard", icon: LayoutDashboard, tabs: [tab("Overview", "", "organization.view"), tab("Foundation overview", "/foundation-overview", "organization.view")] },
+  { id: "home", label: "Dashboard", icon: LayoutDashboard, tabs: [tab("Overview", "", "organization.view"), tab("Impact overview", "/foundation-overview", "organization.view")] },
   { id: "membership", label: "Membership", icon: Users, tabs: [
     tab("Members", "/members", "members.view"), tab("Directory", "/directory", "directory.view"),
     tab("Applications", "/approvals", "members.approve"), tab("Transfers & requests", "/transfers", "members.transfer.approve"),
     tab("Import", "/imports", "members.import"), tab("Insights", "/membership-insights", "members.view"),
     tab("Settings", "/membership-settings", "members.workflow.manage"),
   ] },
-  { id: "organizations", label: "Organizations", icon: Network, tabs: [
-    tab("Structure", "/organizations", "organization.view"), tab("Clubs", "/clubs", "clubs.view"),
+  { id: "organizations", label: "Impact structure", icon: Network, tabs: [
+    tab("Structure overview", "/organizations", "organization.view"), tab("International", "/international", "organization.view"), tab("National", "/national", "organization.view"), tab("Regions", "/regions", "organization.view"), tab("Districts", "/districts", "organization.view"), tab("Zones", "/zones", "organization.view"), tab("Clubs", "/clubs", "organization.view"),
     tab("Club overview", "/club-administration", "governance.reports"),
   ] },
   { id: "leadership", label: "Leadership", icon: ShieldCheck, tabs: [
@@ -35,9 +35,9 @@ const featureSections = [
   { id: "cards", label: "ID Card Studio", icon: CreditCard, tabs: [tab("ID Card Studio", "/id-cards", "members.cards")] },
   { id: "intelligence", label: "Intelligence", icon: ChartNoAxesCombined, tabs: [tab("Intelligence", "/intelligence", "intelligence.assistant")] },
   { id: "administration", label: "Administration", icon: Settings, tabs: [
-    tab("Roles & access", "/administration", "roles.view"), tab("Audit trail", "/audit", "audit.view"), tab("Organization settings", "/settings", "settings.view"),
+    tab("Roles & access", "/administration", "roles.view"), tab("Audit trail", "/audit", "audit.view"), tab("Impact settings", "/settings", "settings.view"),
   ] },
-  { id: "community", label: "My community", icon: UserRound, tabs: [
+  { id: "community", label: "My Impact community", icon: UserRound, tabs: [
     tab("My membership", "/my-membership"), tab("My digital ID", "/my-id"), tab("Join a club", "/apply"), tab("Profile & security", "/profile"),
   ] },
 ];

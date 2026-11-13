@@ -1,6 +1,7 @@
 using System.Net;
 using System.Net.Mail;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.DataProtection;
 
 namespace Clubs;
 
@@ -81,7 +82,7 @@ public class MailWorker(
                     {
                         var communications =
                             scope.ServiceProvider.GetRequiredService<CommunicationService>();
-                        if (mail.TenantId != null && mail.Kind is not "verify" and not "reset")
+                        if (mail.TenantId != null && mail.Kind is not "verify" and not "reset" and not "login-otp")
                         {
                             if (mail.UserId != null)
                             {
@@ -324,7 +325,7 @@ public class MailWorker(
                                             : "reset your password"
                                     ),
                             !string.IsNullOrEmpty(mail.Body)
-                                ? mail.Body
+                                ? (mail.Kind == "login-otp" ? scope.ServiceProvider.GetRequiredService<IDataProtectionProvider>().CreateProtector("Impact.LoginOtpMail.v1").Unprotect(mail.Body) : mail.Body)
                                     + (
                                         string.IsNullOrEmpty(mail.Link)
                                             ? ""
@@ -409,6 +410,7 @@ public class MailWorker(
                         mail.DeliveryStatus = "Accepted";
                         mail.ProviderId = mail.Id.ToString();
                         mail.Link = "";
+                        if (mail.Kind == "login-otp") mail.Body = "";
                     }
                     catch (Exception e) when (e is not OperationCanceledException)
                     {

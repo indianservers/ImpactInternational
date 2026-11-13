@@ -66,7 +66,7 @@ export default function MemberPortal() {
       <PageHeader
         eyebrow="YOUR COMMUNITY. YOUR IMPACT."
         title={"Hello, " + me.name.split(" ")[0] + "."}
-        description="A simpler home for your memberships, identity, and the people around you."
+        description="Your home for Impact International membership, digital identity, and club connections."
       >
         <Link className="button secondary" to="/app/apply">
           <Plus size={14} />

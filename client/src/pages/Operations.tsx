@@ -105,7 +105,7 @@ function Header({ title, description, action }: any) {
   return (
     <header className="op-header">
       <div>
-        <p className="op-eyebrow">CLUB OPERATIONS</p>
+        <p className="op-eyebrow">IMPACT INTERNATIONAL / OPERATIONS</p>
         <h1>{title}</h1>
         <p>{description}</p>
       </div>
@@ -263,7 +263,7 @@ function Dashboard() {
   return (
     <>
       <Header
-        title="Small actions. Lasting impact."
+        title="Impact International operations"
         description={
           "Your " +
           (w?.organization ?? "community") +
@@ -423,7 +423,7 @@ function Meetings() {
   return (
     <>
       <Header
-        title="Meet with purpose."
+        title="Impact meetings & agendas"
         description="A shared rhythm for decisions, connection and follow-through."
         action={
           manager && (
@@ -1272,7 +1272,7 @@ function Tasks({ sourceType = "Administrative", sourceId, orgId }: any) {
   return (
     <>
       <Header
-        title="Good intentions. Clear next steps."
+        title="Impact tasks & follow-ups"
         description="Keep every action connected to its source and its owner."
         action={
           manager && (
@@ -1483,7 +1483,7 @@ function Projects() {
   return (
     <>
       <Header
-        title="Serve together. Change lives."
+        title="Impact service projects"
         description="One shared project, many helping hands, a single trusted record of impact."
         action={
           manager && (
@@ -1908,7 +1908,7 @@ function Volunteers({ projectId }: any) {
   return (
     <>
       <Header
-        title="Many hands. One community."
+        title="Impact volunteers"
         description="Find a role, show up with purpose and record service with care."
         action={
           <button onClick={() => setProfile(true)}>My volunteer profile</button>
@@ -2146,7 +2146,7 @@ function Impact({ projectId }: any) {
   return (
     <>
       <Header
-        title="The difference we make."
+        title="Impact service outcomes"
         description="Configurable measures. Evidence-backed outcomes. A single count for joint projects."
         action={
           manager && (
@@ -2319,7 +2319,7 @@ function Documents({ operationId }: any) {
   return (
     <>
       <Header
-        title="Knowledge, kept with care."
+        title="Impact document library"
         description="Protected documents, preserved versions and deliberate sharing."
         action={
           can && (
@@ -2691,7 +2691,7 @@ function Certificates() {
   return (
     <>
       <Header
-        title="Recognize a meaningful contribution."
+        title="Impact certificates & recognition"
         description="Design with care. Issue with authority. Verify with confidence."
         action={
           can && (
@@ -3275,7 +3275,7 @@ export function VerifyCertificate() {
     <div className="operations op-public">
       <ShieldCheck size={44} />
       <Header
-        title="Certificate verification"
+        title="Impact certificate verification"
         description="A trusted record of community contribution."
       />
       {q.isPending ? (

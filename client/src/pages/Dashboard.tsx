@@ -1,3 +1,4 @@
+import { impactRole } from "../brand";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import {
@@ -20,9 +21,9 @@ export default function Dashboard() {
   return (
     <>
       <PageHeader
-        eyebrow="YOUR COMMUNITY AT A GLANCE"
-        title="Overview"
-        description="A connected view of your organization and the work that matters."
+        eyebrow="IMPACT INTERNATIONAL AT A GLANCE"
+        title="Impact International overview"
+        description="Membership, clubs, leadership, and service across Impact International."
       >
         <span className="date-label">
           {new Date().toLocaleDateString("en-IN", {
@@ -40,16 +41,16 @@ export default function Dashboard() {
           </span>
           <h2>Welcome back, {me.name.split(" ")[0]}.</h2>
           <p>
-            Great things happen when communities come together.
+            Great things happen when Impact communities come together.
             <br />
-            Here’s what’s happening across your workspace.
+            Here’s what’s happening across Impact International.
           </p>
           <Link to="/app/organizations">
             Explore your organization <ArrowRight size={16} />
           </Link>
         </div>
         <div className="banner-art">
-          <Globe2 size={170} strokeWidth={0.7} />
+          <img src="/brand/impact-logo.webp" alt="Impact International" width="170" height="170" />
           <span className="art-circle" />
         </div>
       </section>
@@ -96,16 +97,16 @@ export default function Dashboard() {
           <div className="section-heading">
             <div>
               <h2>Your organization</h2>
-              <p>The community you’re connected to.</p>
+              <p>Your place in the Impact International community.</p>
             </div>
             <Network size={20} />
           </div>
           <div className="organization-summary">
             <span className="org-logo">
-              <Globe2 size={34} />
+              <img src="/brand/impact-logo.webp" alt="" width="40" height="40" />
             </span>
             <div>
-              <span className="eyebrow">ACTIVE ASSOCIATION</span>
+              <span className="eyebrow">IMPACT INTERNATIONAL</span>
               <h3>{w?.association}</h3>
               <span className="badge">Active workspace</span>
             </div>
@@ -118,7 +119,7 @@ export default function Dashboard() {
             <span>Your role</span>
             <b>
               <ShieldCheck size={14} />
-              {w?.role}
+              {impactRole(w?.role)}
             </b>
           </div>
           <Link className="panel-link" to="/app/organizations">
@@ -157,7 +158,7 @@ export default function Dashboard() {
               ],
               [
                 "Workspace settings",
-                "Make it your own",
+                "Impact preferences",
                 "/app/settings",
                 Globe2,
                 "settings.view",

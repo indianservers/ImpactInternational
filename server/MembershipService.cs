@@ -41,7 +41,8 @@ public record PersonInput(
     string Qualification = "",
     string Institution = "",
     string EmploymentStatus = "",
-    string AdditionalInformation = ""
+    string AdditionalInformation = "",
+    Dictionary<string, string>? SocialLinks = null
 );
 
 public record MemberRow(
@@ -193,6 +194,7 @@ public class MembershipService(
 
     public void Validate(PersonInput r)
     {
+        SocialProfiles.Normalize(r.SocialLinks);
         Check(
             !string.IsNullOrWhiteSpace(r.LegalName) && r.LegalName.Length <= 200,
             "Legal name is required (maximum 200 characters)."
@@ -322,6 +324,7 @@ public class MembershipService(
         p.WorkLocation = r.WorkLocation;
         p.Website = r.Website;
         p.Networking = r.Networking;
+        if (r.SocialLinks != null) p.SocialLinksJson = System.Text.Json.JsonSerializer.Serialize(SocialProfiles.Normalize(r.SocialLinks));
         p.UpdatedAt = DateTimeOffset.UtcNow;
     }
 
@@ -480,9 +483,10 @@ public class MembershipService(
                 }
                 : null,
             Languages = p.Tags.Where(x => x.Kind == "Language").Select(x => x.Value),
+            SocialLinks = owner || personal || professional ? SocialProfiles.Read(p.SocialLinksJson) : null,
             Privacy = owner ? p.Privacy : null,
             p.Version,
-            HasPhoto = p.Photo != null && (owner || p.Privacy.PhotoVisible),
+            HasPhoto = p.Photo != null && (owner || personal && !directory || p.Privacy.PhotoVisible),
             ContactAllowed = p.Privacy.AllowContactRequests && p.Privacy.DirectoryVisible,
             Roles = owner ? roles : null,
         };
@@ -541,7 +545,7 @@ public class MembershipService(
             professional && (m.Person.Privacy.ProfessionalVisible || m.Person.UserId == user)
                 ? m.Person.Industry
                 : null,
-            m.Person.Photo != null && (m.Person.Privacy.PhotoVisible || m.Person.UserId == user),
+            m.Person.Photo != null && (!directory || m.Person.Privacy.PhotoVisible || m.Person.UserId == user),
             m.Person.Privacy.DirectoryVisible && m.Person.Privacy.AllowContactRequests
         ));
     }
@@ -552,7 +556,7 @@ public class MembershipService(
         );
 
     public async Task<string> Number() =>
-        "CS-"
+        "IM-"
         + (
             await Db
                 .Database.SqlQuery<long>($"SELECT nextval('membership_numbers') AS \"Value\"")

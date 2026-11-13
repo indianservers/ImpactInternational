@@ -102,7 +102,7 @@ public static class GovernanceEndpoints
                     new
                     {
                         levels = await s
-                            .Db.Levels.Where(x => x.TenantId == w.TenantId)
+                            .Db.Levels.Where(x => x.TenantId == w.TenantId && (ImpactStructure.Kinds.Contains(x.Name) || x.ParentLevelId == null))
                             .Select(x => new
                             {
                                 x.Id,

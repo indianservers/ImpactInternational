@@ -425,7 +425,7 @@ public static partial class CommunicationEndpoints
                         && b.SendAt <= DateTimeOffset.UtcNow
                         && (b.ExpiresAt == null || b.ExpiresAt > DateTimeOffset.UtcNow)
                         && s.Db.CommunicationRecipients.Any(r =>
-                            r.BroadcastId == b.Id && r.UserId == u.Id
+                            r.BroadcastId == b.Id && r.UserId == u.Id && r.Exclusion == ""
                         )
                     )
                     .OrderByDescending(b => b.Pinned)
@@ -454,7 +454,7 @@ public static partial class CommunicationEndpoints
                             .Select(u => u.Name)
                             .First(),
                         acknowledged = s.Db.CommunicationRecipients.Any(r =>
-                            r.BroadcastId == b.Id && r.UserId == u.Id && r.AcknowledgedAt != null
+                            r.BroadcastId == b.Id && r.UserId == u.Id && r.Exclusion == "" && r.AcknowledgedAt != null
                         ),
                     })
                     .ToListAsync();
@@ -475,7 +475,7 @@ public static partial class CommunicationEndpoints
                 );
                 Check(b != null, "Announcement unavailable.", 404);
                 var r = await s.Db.CommunicationRecipients.SingleOrDefaultAsync(r =>
-                    r.BroadcastId == id && r.UserId == u.Id
+                    r.BroadcastId == id && r.UserId == u.Id && r.Exclusion == ""
                 );
                 Check(r != null, "Announcement is outside your audience.", 404);
                 r.SeenAt ??= DateTimeOffset.UtcNow;

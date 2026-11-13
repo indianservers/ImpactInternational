@@ -1,0 +1,42 @@
+{
+  "reports": {
+    "overview": 2,
+    "club": 2,
+    "zone": 2,
+    "district": 2,
+    "region": 2,
+    "national": 2,
+    "member": 22,
+    "pending": 19,
+    "overdue": 2,
+    "unpaid": 15,
+    "partial": 4,
+    "paid": 3,
+    "ageing": 3,
+    "purpose": 2,
+    "billing-month": 2,
+    "collection-month": 1,
+    "cash": 13,
+    "personal": 4,
+    "verification": 7,
+    "rejected": 3,
+    "collector": 2
+  },
+  "recordVerifyAllocate": "passed",
+  "personalAccountUnsettled": "passed",
+  "scope": "passed",
+  "overpayment": "blocked",
+  "selfApproval": "blocked",
+  "retries": "passed",
+  "multiCurrency": "separate",
+  "balancedBooks": "passed",
+  "fixture": {
+    "entity": "282fe428-1cc5-4387-b2f7-94981c7bf583",
+    "invoices": [
+      "96f9e799-bb63-4fd0-8a11-18ab1005d5a0",
+      "618bc2e3-1ceb-4e4f-8350-6e1b841925ce",
+      "2194f13b-7cd1-480e-9a20-58e4adbaa059"
+    ],
+    "pending": "86dd9f5b-0324-42e3-b2b0-d7eed0636100"
+  }
+}

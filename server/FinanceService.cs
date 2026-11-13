@@ -58,6 +58,8 @@ public class FinanceService(
         "ClubDues",
         "AssociationDues",
         "DistrictDues",
+        "RegionalDues",
+        "ZonalDues",
         "NationalDues",
         "InternationalDues",
         "JoiningFee",
@@ -101,7 +103,7 @@ public class FinanceService(
             : permission == "finance.approve" ? new[] { "Reviewer", "Treasurer", "Owner" }
             : new[] { "Treasurer", "Owner" };
         Check(
-            role != null && allowed.Contains(role),
+            (await A.User()).PlatformAdmin || role != null && allowed.Contains(role),
             "Explicit financial entity authority required; hierarchy alone does not grant access.",
             403
         );
@@ -407,7 +409,7 @@ public class FinanceService(
         if (old != null)
         {
             Check(
-                old.RequestHash == requestHash,
+                old.RequestHash == requestHash && old.MembershipId == membership,
                 "Invoice idempotency key belongs to different details.",
                 409
             );

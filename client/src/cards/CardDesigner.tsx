@@ -684,7 +684,7 @@ export default function CardDesigner() {
               )}
               {tab === "Logos" && (
                 <p className="card-muted">
-                  Upload licensed association/club artwork. A published version
+                  Upload official Impact International or club artwork. A published version
                   freezes the exact image; remote image URLs are not rendered.
                 </p>
               )}

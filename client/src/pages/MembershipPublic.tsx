@@ -1,7 +1,8 @@
+import { TenantBrand } from "../TenantBrand";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Globe2, ShieldCheck, ShieldX, ArrowRight } from "lucide-react";
+import { ShieldCheck, ShieldX, ArrowRight } from "lucide-react";
 import { api } from "../api";
 import { ErrorBox, Skeleton } from "../App";
 export function JoinInvitation() {
@@ -20,14 +21,13 @@ export function JoinInvitation() {
     <div className="verification-page">
       <section className="panel">
         <Link className="brand" to="/">
-          <Globe2 />
-          Impact International
+          <TenantBrand />
         </Link>
         <div className="verification-icon">
           <ShieldCheck size={42} />
         </div>
         <div className="eyebrow">YOU’RE INVITED</div>
-        <h1>A new community is waiting.</h1>
+        <h1>Your Impact International journey starts here.</h1>
         <p>
           Accept a secure invitation to start a membership application, or
           request a reviewed link to an existing membership. Required approvals
@@ -107,8 +107,7 @@ export function VerifyMembershipCard() {
     <div className="verification-page">
       <section className="panel">
         <Link className="brand" to="/">
-          <Globe2 />
-          Impact International
+          <TenantBrand />
         </Link>
         {q.isPending && token.length === 64 ? (
           <Skeleton />
