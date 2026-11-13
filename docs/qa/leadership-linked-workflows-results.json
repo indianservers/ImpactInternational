@@ -1,0 +1,72 @@
+{
+  "total": 13,
+  "passed": 13,
+  "failed": [],
+  "checks": [
+    {
+      "scenario": "GET /governance/options",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "GET /officer-appointments/55734579-08f0-4b64-8ce4-f23cd731475c",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "GET /committees/7c195746-92c0-4739-ae18-36efca588062",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "GET /committees/7c195746-92c0-4739-ae18-36efca588062",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "GET /leadership/people/b60f8a97-0b08-41c1-aff2-0150aafb2e8a",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Committee and appointment share central person",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "GET /leadership/center?orgId=18ee9a12-bcc5-464f-bae4-1377038a0162",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Participation counts real active members",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "GET /leadership/center?termId=048e3cb4-e0e0-4aca-85d9-90fba8e1a557",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Term filter matches appointment",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "GET /leadership/people?termId=048e3cb4-e0e0-4aca-85d9-90fba8e1a557",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "People term filter follows actual appointments",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "POST /leadership-handovers",
+      "passed": true,
+      "detail": null
+    }
+  ]
+}

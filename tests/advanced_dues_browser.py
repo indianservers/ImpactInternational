@@ -32,6 +32,12 @@ with sync_playwright() as p:
  page.screenshot(path='docs/qa/advanced-dues-generation-preview.png',full_page=True);page.get_by_role('button',name='Close drawer',exact=True).click()
  page.locator('.dm-header').get_by_role('button',name='Record Collection',exact=True).click();page.get_by_role('dialog',name='Record member payment').wait_for();check('Existing collection workflow remains available',page.get_by_role('button',name='Close drawer',exact=True).count()==1);page.get_by_role('button',name='Close drawer',exact=True).click()
  page.locator('.dm-tabs').get_by_role('button',name='Collections',exact=True).click();page.get_by_role('button',name='Bulk member collections',exact=True).click();page.get_by_role('dialog',name='Record bulk member collections').wait_for();check('Bulk entry shows independent amount/reference fields',page.get_by_role('columnheader',name='Transaction reference').count()==1);page.get_by_role('button',name='Close drawer',exact=True).click()
+ bankFixture=json.loads(pathlib.Path('docs/qa/dues-club-bank-fixture.json').read_text())
+ page.get_by_role('button',name='Club Bank Remittance',exact=True).click();page.get_by_role('dialog',name='Club Bank Remittance',exact=True).wait_for()
+ page.locator('.dm-bank-remittance select').nth(0).select_option(bankFixture['entity']);page.locator('.dm-bank-remittance select').nth(1).select_option(bankFixture['club'])
+ page.get_by_role('heading',name='Matched club remittances',exact=True).wait_for();page.locator('.dm-bank-remittance details').first.locator('summary').click()
+ check('Combined club bank record links separate member receipts',page.locator('.dm-bank-remittance a[href="/api/v1/finance/payments/'+bankFixture['payments'][0]+'/receipt"]').count()==1)
+ page.screenshot(path='docs/qa/advanced-dues-club-bank-remittance.png',full_page=True);page.get_by_role('button',name='Close drawer',exact=True).click()
  page.locator('.dm-tabs').get_by_role('button',name='Overview',exact=True).click();page.locator('.dm-kpi').nth(3).click();check('Overdue KPI drills into reports',page.locator('.dm-tabs').get_by_role('button',name='Reports',exact=True).get_attribute('aria-current')=='page')
  page.locator('.dm-tabs').get_by_role('button',name='Overview',exact=True).click();page.locator('.dm-level-tabs').get_by_role('button',name='Region',exact=True).click();page.locator('.dm-table-link').first.click();check('Region drills into actual districts',page.locator('.dm-level-tabs').get_by_role('button',name='District',exact=True).get_attribute('class')=='active')
  for width in [768,390]:

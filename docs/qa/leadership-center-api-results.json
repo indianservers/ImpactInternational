@@ -1,0 +1,946 @@
+{
+  "total": 132,
+  "passed": 132,
+  "failed": [],
+  "checks": [
+    {
+      "scenario": "Platform admin login",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Independent admin login",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "GET /governance/options",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "error": null
+      }
+    },
+    {
+      "scenario": "GET /structure/intelligence?depth=5",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "error": null
+      }
+    },
+    {
+      "scenario": "GET /officer-appointments/8630f86a-f94d-4bc2-8b93-1404ceb677b0",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "error": null
+      }
+    },
+    {
+      "scenario": "International existing person ID preserved",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "International effective title-only appointment",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "International no automatic mapped access",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "GET /officer-appointments/d335f2de-6f81-4eec-b15a-42c517d92b48",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "error": null
+      }
+    },
+    {
+      "scenario": "National existing person ID preserved",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "National effective title-only appointment",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "National no automatic mapped access",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "GET /officer-appointments/fad733b6-f05b-4dd7-9249-9aaf09d0566a",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "error": null
+      }
+    },
+    {
+      "scenario": "Region existing person ID preserved",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Region effective title-only appointment",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Region no automatic mapped access",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "GET /officer-appointments/a6c79093-81da-43b9-9813-9be1e813b6f4",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "error": null
+      }
+    },
+    {
+      "scenario": "District existing person ID preserved",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "District effective title-only appointment",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "District no automatic mapped access",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "GET /officer-appointments/8e4b08b9-9290-467e-b05d-94dbeee3407b",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "error": null
+      }
+    },
+    {
+      "scenario": "Zone existing person ID preserved",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Zone effective title-only appointment",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Zone no automatic mapped access",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "GET /officer-appointments/55734579-08f0-4b64-8ce4-f23cd731475c",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "error": null
+      }
+    },
+    {
+      "scenario": "Club existing person ID preserved",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Club effective title-only appointment",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Club no automatic mapped access",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Multiple appointments create no people",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "GET /leadership/center",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "error": null
+      }
+    },
+    {
+      "scenario": "One person with multiple offices counted once",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "At least six effective assignments",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "GET /leadership/people/b60f8a97-0b08-41c1-aff2-0150aafb2e8a",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "error": null
+      }
+    },
+    {
+      "scenario": "Consolidated profile has all six offices",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Profile reuses central person identity",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Appointment history retained",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Membership affiliation remains attached",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "GET /leadership/center?status=Current&orgId=18ee9a12-bcc5-464f-bae4-1377038a0162",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "error": null
+      }
+    },
+    {
+      "scenario": "GET /leadership/center?status=Expiring&orgId=18ee9a12-bcc5-464f-bae4-1377038a0162",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "error": null
+      }
+    },
+    {
+      "scenario": "GET /leadership/center?status=Upcoming&orgId=18ee9a12-bcc5-464f-bae4-1377038a0162",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "error": null
+      }
+    },
+    {
+      "scenario": "GET /leadership/center?status=Proposed&orgId=18ee9a12-bcc5-464f-bae4-1377038a0162",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "error": null
+      }
+    },
+    {
+      "scenario": "GET /leadership/center?status=Pending+approval&orgId=18ee9a12-bcc5-464f-bae4-1377038a0162",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "error": null
+      }
+    },
+    {
+      "scenario": "GET /leadership/center?status=Scheduled&orgId=18ee9a12-bcc5-464f-bae4-1377038a0162",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "error": null
+      }
+    },
+    {
+      "scenario": "GET /leadership/center?status=Active&orgId=18ee9a12-bcc5-464f-bae4-1377038a0162",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "error": null
+      }
+    },
+    {
+      "scenario": "GET /leadership/center?status=Completed&orgId=18ee9a12-bcc5-464f-bae4-1377038a0162",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "error": null
+      }
+    },
+    {
+      "scenario": "GET /leadership/center?status=Cancelled&orgId=18ee9a12-bcc5-464f-bae4-1377038a0162",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "error": null
+      }
+    },
+    {
+      "scenario": "GET /leadership/center?status=Revoked&orgId=18ee9a12-bcc5-464f-bae4-1377038a0162",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "error": null
+      }
+    },
+    {
+      "scenario": "GET /leadership/center?status=&orgId=18ee9a12-bcc5-464f-bae4-1377038a0162",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "error": null
+      }
+    },
+    {
+      "scenario": "GET /leadership/people?sort=name&orgId=18ee9a12-bcc5-464f-bae4-1377038a0162",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "error": null
+      }
+    },
+    {
+      "scenario": "People name deduplicated",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "GET /leadership/people?sort=name-desc&orgId=18ee9a12-bcc5-464f-bae4-1377038a0162",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "error": null
+      }
+    },
+    {
+      "scenario": "People name-desc deduplicated",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "GET /leadership/people?sort=newest&orgId=18ee9a12-bcc5-464f-bae4-1377038a0162",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "error": null
+      }
+    },
+    {
+      "scenario": "People newest deduplicated",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "GET /leadership/people?search=Demo",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "error": null
+      }
+    },
+    {
+      "scenario": "GET /leadership/people?search=Service",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "error": null
+      }
+    },
+    {
+      "scenario": "GET /leadership/people?search=IM-",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "error": null
+      }
+    },
+    {
+      "scenario": "GET /leadership/people?membershipStatus=Active",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "error": null
+      }
+    },
+    {
+      "scenario": "GET /leadership/people?page=2",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "error": null
+      }
+    },
+    {
+      "scenario": "GET /leadership/people?positionId=204b9691-6c6c-42a3-8516-70b65eed4c24",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "error": null
+      }
+    },
+    {
+      "scenario": "GET /leadership/center?status=invalid",
+      "passed": true,
+      "detail": {
+        "status": 400,
+        "error": {
+          "detail": "Unsupported appointment status.",
+          "status": 400
+        }
+      }
+    },
+    {
+      "scenario": "GET /leadership/center?from=wrong",
+      "passed": true,
+      "detail": {
+        "status": 400,
+        "error": {
+          "detail": "Use YYYY-MM-DD dates.",
+          "status": 400
+        }
+      }
+    },
+    {
+      "scenario": "GET /leadership/center?from=2026-11-01&to=2025-01-01",
+      "passed": true,
+      "detail": {
+        "status": 400,
+        "error": {
+          "detail": "Choose a valid period of up to ten years.",
+          "status": 400
+        }
+      }
+    },
+    {
+      "scenario": "GET /leadership/center?orgId=a4db6992-7c0c-49e2-a2f0-deeb95ec2f04",
+      "passed": true,
+      "detail": {
+        "status": 404,
+        "error": {
+          "detail": "Organizational scope not found.",
+          "status": 404
+        }
+      }
+    },
+    {
+      "scenario": "POST /officer-appointments",
+      "passed": true,
+      "detail": {
+        "status": 409,
+        "error": {
+          "detail": "This position has overlapping terms beyond its configured capacity.",
+          "status": 409
+        }
+      }
+    },
+    {
+      "scenario": "POST /officer-appointments",
+      "passed": true,
+      "detail": {
+        "status": 400,
+        "error": {
+          "detail": "Position is not active at this organizational level.",
+          "status": 400
+        }
+      }
+    },
+    {
+      "scenario": "POST /officer-appointments",
+      "passed": true,
+      "detail": {
+        "status": 400,
+        "error": {
+          "detail": "Invalid term dates.",
+          "status": 400
+        }
+      }
+    },
+    {
+      "scenario": "POST /officer-appointments",
+      "passed": true,
+      "detail": {
+        "status": 400,
+        "error": {
+          "detail": "Invalid appointment details.",
+          "status": 400
+        }
+      }
+    },
+    {
+      "scenario": "GET /officer-appointments/dd13986b-e10d-4ba3-bf38-6eb757a0dbed",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "error": null
+      }
+    },
+    {
+      "scenario": "Future term scheduled independently",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "GET /officer-appointments/55734579-08f0-4b64-8ce4-f23cd731475c",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "error": null
+      }
+    },
+    {
+      "scenario": "Original term preserved",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "GET /leadership/center?orgId=18ee9a12-bcc5-464f-bae4-1377038a0162",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "error": null
+      }
+    },
+    {
+      "scenario": "Term expiry identified",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Recorded future candidate linked by office/unit",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "GET /officer-appointments/2005b686-b312-4c06-93df-1bed49ad7c23",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "error": null
+      }
+    },
+    {
+      "scenario": "GET /officer-appointments/2005b686-b312-4c06-93df-1bed49ad7c23",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "error": null
+      }
+    },
+    {
+      "scenario": "Independent approval activates appointment",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "GET /officer-appointments/29865907-2490-493e-ad97-40f408974148",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "error": null
+      }
+    },
+    {
+      "scenario": "Interim method preserved",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "GET /leadership/center?orgId=18ee9a12-bcc5-464f-bae4-1377038a0162",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "error": null
+      }
+    },
+    {
+      "scenario": "PUT /leadership/vacancies/18ee9a12-bcc5-464f-bae4-1377038a0162/41987e49-4442-4dfd-8c70-c3a493652bb3",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "error": null
+      }
+    },
+    {
+      "scenario": "PUT /leadership/vacancies/18ee9a12-bcc5-464f-bae4-1377038a0162/41987e49-4442-4dfd-8c70-c3a493652bb3",
+      "passed": true,
+      "detail": {
+        "status": 409,
+        "error": {
+          "detail": "Vacancy note changed. Refresh before editing.",
+          "status": 409
+        }
+      }
+    },
+    {
+      "scenario": "GET /leadership/vacancies/18ee9a12-bcc5-464f-bae4-1377038a0162/41987e49-4442-4dfd-8c70-c3a493652bb3",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "error": null
+      }
+    },
+    {
+      "scenario": "Vacancy history retained",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Unknown vacancy age not fabricated",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "POST /leadership/reminders?orgId=18ee9a12-bcc5-464f-bae4-1377038a0162",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "error": null
+      }
+    },
+    {
+      "scenario": "POST /leadership/reminders?orgId=18ee9a12-bcc5-464f-bae4-1377038a0162",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "error": null
+      }
+    },
+    {
+      "scenario": "Daily reminder duplicate prevention",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Scoped CSV /leadership/export?orgId=18ee9a12-bcc5-464f-bae4-1377038a0162",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Scoped CSV /leadership/people/export?orgId=18ee9a12-bcc5-464f-bae4-1377038a0162",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "national login",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "GET /leadership/center",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "error": null
+      }
+    },
+    {
+      "scenario": "national units follow authorized root",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "regional login",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "GET /leadership/center",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "error": null
+      }
+    },
+    {
+      "scenario": "regional units follow authorized root",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "GET /leadership/center?orgId=f70567b8-7f74-479b-8c8f-c3d813f560a9",
+      "passed": true,
+      "detail": {
+        "status": 404,
+        "error": {
+          "detail": "Organizational scope not found.",
+          "status": 404
+        }
+      }
+    },
+    {
+      "scenario": "district login",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "GET /leadership/center",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "error": null
+      }
+    },
+    {
+      "scenario": "district units follow authorized root",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "GET /leadership/center?orgId=f70567b8-7f74-479b-8c8f-c3d813f560a9",
+      "passed": true,
+      "detail": {
+        "status": 404,
+        "error": {
+          "detail": "Organizational scope not found.",
+          "status": 404
+        }
+      }
+    },
+    {
+      "scenario": "zonal login",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "GET /leadership/center",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "error": null
+      }
+    },
+    {
+      "scenario": "zonal units follow authorized root",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "GET /leadership/center?orgId=f70567b8-7f74-479b-8c8f-c3d813f560a9",
+      "passed": true,
+      "detail": {
+        "status": 404,
+        "error": {
+          "detail": "Organizational scope not found.",
+          "status": 404
+        }
+      }
+    },
+    {
+      "scenario": "club login",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "GET /leadership/center",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "error": null
+      }
+    },
+    {
+      "scenario": "club units follow authorized root",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "GET /leadership/center?orgId=f70567b8-7f74-479b-8c8f-c3d813f560a9",
+      "passed": true,
+      "detail": {
+        "status": 404,
+        "error": {
+          "detail": "Organizational scope not found.",
+          "status": 404
+        }
+      }
+    },
+    {
+      "scenario": "GET /leadership/center",
+      "passed": true,
+      "detail": {
+        "status": 403,
+        "error": {
+          "detail": "Action not permitted in this workspace.",
+          "status": 403
+        }
+      }
+    },
+    {
+      "scenario": "GET /roles",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "error": null
+      }
+    },
+    {
+      "scenario": "Existing privacy reader assignment reused",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "GET /workspaces",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "error": null
+      }
+    },
+    {
+      "scenario": "Reader role activation",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "GET /leadership/people/b60f8a97-0b08-41c1-aff2-0150aafb2e8a",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "error": null
+      }
+    },
+    {
+      "scenario": "Explicit admin personal permission exposes QA DOB",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "GET /leadership/people/b60f8a97-0b08-41c1-aff2-0150aafb2e8a/photo",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "error": null
+      }
+    },
+    {
+      "scenario": "GET /leadership/people/b60f8a97-0b08-41c1-aff2-0150aafb2e8a/photo",
+      "passed": true,
+      "detail": {
+        "status": 404,
+        "error": {
+          "detail": "Photo unavailable.",
+          "status": 404
+        }
+      }
+    },
+    {
+      "scenario": "GET /leadership/people?search=leadership.private.canary",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "error": null
+      }
+    },
+    {
+      "scenario": "Private contacts cannot be searched by reader",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "GET /leadership/people",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "error": null
+      }
+    },
+    {
+      "scenario": "Reader sees office bearer without contacts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "GET /leadership/people/b60f8a97-0b08-41c1-aff2-0150aafb2e8a",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "error": null
+      }
+    },
+    {
+      "scenario": "Profile personal fields restricted",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Profile contacts restricted",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "GET /leadership/export",
+      "passed": true,
+      "detail": {
+        "status": 403,
+        "error": {
+          "detail": "Export permission required.",
+          "status": 403
+        }
+      }
+    },
+    {
+      "scenario": "GET /leadership/people/export",
+      "passed": true,
+      "detail": {
+        "status": 403,
+        "error": {
+          "detail": "Export permission required.",
+          "status": 403
+        }
+      }
+    },
+    {
+      "scenario": "POST /leadership/reminders",
+      "passed": true,
+      "detail": {
+        "status": 403,
+        "error": {
+          "detail": "Leadership management and communications sending permissions are required.",
+          "status": 403
+        }
+      }
+    },
+    {
+      "scenario": "GET /leadership/center",
+      "passed": true,
+      "detail": {
+        "status": 401,
+        "error": {
+          "detail": "Sign in to continue.",
+          "status": 401
+        }
+      }
+    },
+    {
+      "scenario": "GET /leadership/people",
+      "passed": true,
+      "detail": {
+        "status": 401,
+        "error": {
+          "detail": "Sign in to continue.",
+          "status": 401
+        }
+      }
+    },
+    {
+      "scenario": "All leadership operations preserve people count",
+      "passed": true,
+      "detail": null
+    }
+  ]
+}

@@ -1,0 +1,34 @@
+{
+  "route": "/app/finance/dues",
+  "qaPreview": "http://127.0.0.1:1238/app/finance/dues",
+  "workspaces": ["Overview", "Organization View", "Member Dues", "Club Dues", "Collections", "Outstanding & Overdue", "Renewals", "Waivers & Discounts", "Reminders", "Reports"],
+  "banking": {
+    "memberRecords": "Separate payments, payers, receipts, invoice allocations and settlement journals are preserved.",
+    "clubRemittance": "One club bank statement deposit links multiple member payments using exact posted bank amounts after fees.",
+    "integrity": "Matching creates no payment, collection or journal and does not alter dues balances. Unique payment links prevent reuse.",
+    "migration": "20261113173030_ClubBankRemittanceLinks",
+    "migrationAppliedTo": "Isolated QA database only; original application database was not migrated."
+  },
+  "reused": ["Configured dues plans and assessment keys", "Independent collection verification", "Payment settlement and journals", "Finance credits", "Finance notifications", "CSV, XLSX and PDF generators", "Organization visibility and finance permissions"],
+  "validation": {
+    "apiChecksPassed": 283,
+    "clubBankChecksPassed": 34,
+    "browserChecksPassed": 27,
+    "clientBuild": "passed",
+    "serverBuild": "passed with zero warnings and errors",
+    "responsiveWidths": [768, 390],
+    "evidenceDirectory": "docs/qa",
+    "dataIsolation": "All financial mutation tests ran against clubs_impact_dues_center_qa_20261113."
+  },
+  "definitions": ["Currencies are never summed together.", "Balances are current for invoices issued within the selected date cohort.", "Submitted collections are excluded from collected funds until verified.", "Reminder payment association does not prove delivery or causation."],
+  "limits": [
+    "Generation follows existing member-based club/category plans; no new direct organizational debtor or per-unit accounting model was introduced.",
+    "Reviewed generation accepts up to 500 assessments; full-plan generation uses the existing background job without page exclusions. Drafts are local browser drafts.",
+    "Notifications use existing finance notification channels; no new WhatsApp, mail-delivery or payment provider was added.",
+    "Proof uses existing references or secure links, rather than a new upload provider.",
+    "Fixed, percentage and full credits are supported; automatic early-payment discount rules were not introduced.",
+    "Legacy reports and exports retain a 20000-row bound. Bank candidates are bounded at 200 and matched history at 50.",
+    "Performance checks cover QA-scale data, not a million-row benchmark."
+  ],
+  "navigation": "ID cards and Intelligence remain separate main menu items, outside Finance."
+}

@@ -1,0 +1,138 @@
+[
+  {
+    "test": "Separate member collection 0",
+    "passed": true
+  },
+  {
+    "test": "Independent verification 0",
+    "passed": true
+  },
+  {
+    "test": "Separate member collection 1",
+    "passed": true
+  },
+  {
+    "test": "Independent verification 1",
+    "passed": true
+  },
+  {
+    "test": "Payments retain different member payers",
+    "passed": true
+  },
+  {
+    "test": "Separate receipt numbers preserved",
+    "passed": true
+  },
+  {
+    "test": "Configure QA receiving bank",
+    "passed": true
+  },
+  {
+    "test": "Import real-shaped bank statement rows",
+    "passed": true
+  },
+  {
+    "test": "Unsettled receipts cannot match a club deposit",
+    "passed": true
+  },
+  {
+    "test": "Duplicate receipt IDs rejected",
+    "passed": true
+  },
+  {
+    "test": "Collector cannot bypass bank reconciliation authority",
+    "passed": true
+  },
+  {
+    "test": "Post separate member settlement 0",
+    "passed": true
+  },
+  {
+    "test": "Post separate member settlement 1",
+    "passed": true
+  },
+  {
+    "test": "Club bank-remittance candidates",
+    "passed": true
+  },
+  {
+    "test": "Both separate receipts appear as candidates",
+    "passed": true
+  },
+  {
+    "test": "Protected bank account is never exposed",
+    "passed": true
+  },
+  {
+    "test": "Posted member bank amounts reconcile after fees",
+    "passed": true
+  },
+  {
+    "test": "Wrong combined bank amount rejected",
+    "passed": true
+  },
+  {
+    "test": "Receipts cannot be assigned to a different club",
+    "passed": true
+  },
+  {
+    "test": "Match one combined club deposit",
+    "passed": true
+  },
+  {
+    "test": "One bank row retains both member receipt links",
+    "passed": true
+  },
+  {
+    "test": "Matching creates no duplicate payment",
+    "passed": true
+  },
+  {
+    "test": "Matching creates no additional journal",
+    "passed": true
+  },
+  {
+    "test": "Member dues balances are unchanged by bank grouping",
+    "passed": true
+  },
+  {
+    "test": "Database stores separate immutable match links",
+    "passed": true
+  },
+  {
+    "test": "Reordered remittance retry is idempotent",
+    "passed": true
+  },
+  {
+    "test": "Retry reuses original group",
+    "passed": true
+  },
+  {
+    "test": "Grouped receipt cannot be reused as a single bank match",
+    "passed": true
+  },
+  {
+    "test": "Receipts cannot be grouped into a second deposit",
+    "passed": true
+  },
+  {
+    "test": "Matched club remittance history",
+    "passed": true
+  },
+  {
+    "test": "Matched receipts leave the candidate queue",
+    "passed": true
+  },
+  {
+    "test": "Club remittance history links member receipts",
+    "passed": true
+  },
+  {
+    "test": "Unique database constraint blocks duplicate payment-bank links",
+    "passed": true
+  },
+  {
+    "test": "Financial journals remain balanced",
+    "passed": true
+  }
+]

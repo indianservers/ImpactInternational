@@ -32,6 +32,13 @@ public static class LeaderCommunications
                 var role = new Role { TenantId = tenant.Id, Name = name, Permissions = ["organization.view", "members.view", "directory.view"] };
                 db.Roles.Add(role); roles.Add(role);
             }
+            // Explicit read policy for the predefined president roles; office titles never grant contacts or management.
+            foreach (var role in roles.Where(r => PresidentLevels.ContainsKey(r.Name)))
+                if (!role.Grants.Any(g => g.PermissionId == "leadership.view"))
+                {
+                    var grant = new RolePermission { RoleId = role.Id, PermissionId = "leadership.view" };
+                    role.Grants.Add(grant); db.RolePermissions.Add(grant);
+                }
             foreach (var role in roles.Where(r => SendingRoles.Contains(r.Name)))
                 foreach (var permission in CommunicationService.Permissions.Where(p => p != "communications.configure"))
                     if (!role.Grants.Any(g => g.PermissionId == permission))

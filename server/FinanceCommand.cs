@@ -92,7 +92,7 @@ public static partial class FinanceEndpoints
             where x.EntityId==entity && b.EntityId==entity select new FinanceCommandRow {
             Id=x.Id, RecordId=x.Id, Date=x.Date, Reference=x.Reference, Party=b.Name+" "+b.MaskedNumber, Type="Statement", Source=b.Name,
             Method="Bank", Status=x.Status, Category=b.Name, Amount=x.Amount, Paid=0, Outstanding=x.Status=="Matched"?0:x.Amount,
-            Fee=0, Allocated=0, ActorId=null, Detail=x.PaymentId==null?"No payment matched":"Verified payment matched", RelatedId=x.PaymentId };
+            Fee=0, Allocated=0, ActorId=null, Detail=x.RemittanceClubId!=null?x.MatchedPaymentIds.Length+" separate member receipts / club remittance":x.PaymentId==null?"No payment matched":"Verified payment matched", RelatedId=x.PaymentId };
         if(page=="budgets") return db.FinanceBudgets.Where(x=>x.EntityId==entity && !db.FinanceBudgets.Any(child=>child.EntityId==entity&&child.ReplacesId==x.Id&&child.Status=="Approved")).Select(x=>new FinanceCommandRow {
             Id=x.Id, RecordId=x.Id, Date=x.StartsOn, Reference=x.Name, Party=x.Name, Type="Budget", Source=x.Kind,
             Method="", Status=x.Status, Category=x.Kind, Amount=x.Amount,
@@ -137,10 +137,11 @@ public static partial class FinanceEndpoints
             await s.Entity(entity);
             var r=await s.Db.FinanceBankTransactions.SingleOrDefaultAsync(x=>x.EntityId==entity&&x.Id==id);
             Check(r!=null,"Statement row unavailable.",404);
-            var candidates=await s.Db.FinancePayments.Where(p=>r.Status=="Unmatched"&&p.EntityId==entity&&p.BankAccountId==r.BankAccountId&&p.Status=="Verified"&&p.SettlementStatus=="Settled"&&p.Date<=r.Date&&(from l in s.Db.FinanceJournalLines join j in s.Db.FinanceJournals on l.JournalId equals j.Id join bank in s.Db.FinanceBanks on p.BankAccountId equals bank.Id join account in s.Db.FinanceAccounts on l.AccountId equals account.Id where j.Source=="settlement:"+p.Id&&j.EntityId==entity&&account.Code==bank.AccountCode select l.Debit-l.Credit).Sum()==r.Amount&&!s.Db.FinanceBankTransactions.Any(t=>t.EntityId==entity&&t.PaymentId==p.Id&&t.Status=="Matched"))
+            var candidates=await s.Db.FinancePayments.Where(p=>r.Status=="Unmatched"&&p.EntityId==entity&&p.BankAccountId==r.BankAccountId&&p.Status=="Verified"&&p.SettlementStatus=="Settled"&&p.Date<=r.Date&&(from l in s.Db.FinanceJournalLines join j in s.Db.FinanceJournals on l.JournalId equals j.Id join bank in s.Db.FinanceBanks on p.BankAccountId equals bank.Id join account in s.Db.FinanceAccounts on l.AccountId equals account.Id where j.Source=="settlement:"+p.Id&&j.EntityId==entity&&account.Code==bank.AccountCode select l.Debit-l.Credit).Sum()==r.Amount&&!s.Db.FinanceBankTransactions.Any(t=>t.EntityId==entity&&(t.PaymentId==p.Id||t.MatchedPaymentIds.Contains(p.Id))&&t.Status=="Matched")&&!s.Db.FinanceBankPaymentMatches.Any(m=>m.PaymentId==p.Id))
                 .OrderByDescending(p=>p.Date).Take(20).Select(p=>new {p.Id,p.Reference,p.Payer,p.Amount,p.Fee,p.Date,netAmount=r.Amount}).ToListAsync();
             var duplicates=await s.Db.FinanceBankTransactions.CountAsync(t=>t.EntityId==entity&&t.Id!=id&&t.BankAccountId==r.BankAccountId&&t.Date==r.Date&&t.Amount==r.Amount&&t.Reference==r.Reference);
-            return Results.Ok(new {candidates,duplicates,rule="Exact bank and net amount, settled verified collection, not already matched. Confirm against statement evidence; this is a suggestion only."});
+            var matchedReceipts=await (from m in s.Db.FinanceBankPaymentMatches join p in s.Db.FinancePayments on m.PaymentId equals p.Id where m.BankTransactionId==id&&m.EntityId==entity select new{p.Id,p.Payer,p.ReceiptNumber,p.Reference,p.Amount,m.BankAmount}).ToListAsync();
+            return Results.Ok(new {status=r.Status,matchedReceipts,candidates,duplicates,rule="Exact bank and net amount, settled verified collection, not already matched. Confirm against statement evidence; this is a suggestion only."});
         });
     }
     static IQueryable<FinanceBudgetLineage> BudgetLineage(FinanceService s,Guid entity) => s.Db.Database.SqlQuery<FinanceBudgetLineage>($"""

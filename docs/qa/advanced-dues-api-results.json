@@ -1175,6 +1175,11 @@
     "detail": null
   },
   {
+    "test": "Configure fresh repeatable QA plan",
+    "passed": true,
+    "detail": null
+  },
+  {
     "test": "Hierarchy generation preview",
     "passed": true,
     "detail": null
@@ -1316,6 +1321,76 @@
   },
   {
     "test": "Unauthorized credit posting blocked",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Bulk collection records valid rows and reports invalid rows",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Bulk partial failure is explicit",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Unverified bulk collections never count as paid",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Bulk collection retry",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Bulk retry creates one collection only",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Bulk batch links to an audit record",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Bulk cannot cross club scope",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Unauthorized bulk row fails without recording",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Reminder fixture has an authenticated member",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Queue reminder through existing notification infrastructure",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Reminder has one queued or concurrently suppressed outcome",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Repeat reminder is suppressed",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Seven-day suppression prevents duplicate reminders",
+    "passed": true,
+    "detail": null
+  },
+  {
+    "test": "Reminder does not change financial balance",
     "passed": true,
     "detail": null
   },

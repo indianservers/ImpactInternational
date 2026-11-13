@@ -80,6 +80,10 @@
     "passed": true
   },
   {
+    "test": "Combined club bank record links separate member receipts",
+    "passed": true
+  },
+  {
     "test": "Overdue KPI drills into reports",
     "passed": true
   },
