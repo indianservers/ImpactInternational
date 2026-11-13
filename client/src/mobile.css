@@ -31,7 +31,7 @@
   .app-shell .top-crumb b { font-size: 12px; max-width: 100%; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; }
   .app-shell .top-actions { gap: 0; }
   .app-shell .top-actions > .icon-button { display: none; }
-  .app-shell .sidebar { width: min(320px, 88vw); z-index: 60; padding: 18px 16px; }
+  .app-shell .sidebar { width: min(320px, 88vw); z-index: 60; padding: 18px 16px; transition: none; }
   .app-shell .sidebar:not(.open) { visibility: hidden; }
   .app-shell .sidebar.open { visibility: visible; }
   .app-shell .sidebar .help-card { display: none; }

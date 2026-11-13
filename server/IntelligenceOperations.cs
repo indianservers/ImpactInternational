@@ -110,7 +110,7 @@ public static partial class IntelligenceEndpoints
                     {
                         productionReady = false,
                         localHealth = "See /health/ready",
-                        mfa = "Not implemented: privileged production access is blocked pending policy/implementation",
+                        mfa = "Optional: MFA is not required for login or production access; enrollment/challenges are not implemented",
                         tls = "Target ingress/TLS must be externally verified",
                         recovery = "Run the isolated recovery drill; same-host verification is not off-host recovery",
                         providers = "Credentials, merchant/sender authorization and external sandbox certification required",

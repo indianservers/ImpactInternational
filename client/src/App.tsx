@@ -4,8 +4,6 @@ import {
   useState,
   useEffect,
   useRef,
-  createContext,
-  useContext,
 } from "react";
 import {
   Link,
@@ -31,6 +29,9 @@ import "./mobile.css";
 import { navigationSections, canOpenTab, matchesTab, taskGroups } from "./navigation";
 import { TenantBrand } from "./TenantBrand";
 import { api, type Workspace } from "./api";
+// Lazy pages keep the same context even when this shell is hot-reloaded.
+import { WorkspaceContext as Context, useWorkspace } from "./WorkspaceContext";
+export { useWorkspace } from "./WorkspaceContext";
 const IdCards = lazy(() => import("./cards/IdCards"));
 const MyIdCard = lazy(() =>
   import("./cards/IdCards").then((m) => ({ default: m.MyIdCard })),
@@ -153,11 +154,6 @@ function WorkspaceHome() {
     <MemberPortal />
   );
 }
-const Context = createContext<{ w: Workspace | undefined; me: any }>({
-  w: undefined,
-  me: null,
-});
-export const useWorkspace = () => useContext(Context);
 export function Skeleton() {
   return (
     <div className="skeleton" aria-label="Loading content">

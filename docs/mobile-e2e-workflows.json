@@ -1,0 +1,73 @@
+{
+  "database": "clubs_mobile_e2e_20261112",
+  "suites": [
+    {
+      "suite": "phase2",
+      "checks": 127,
+      "passed": 127,
+      "resultFile": "test-results/phase2.json"
+    },
+    {
+      "suite": "phase3",
+      "checks": 126,
+      "passed": 126,
+      "resultFile": "test-results/phase3.json"
+    },
+    {
+      "suite": "phase4",
+      "checks": 55,
+      "passed": 55,
+      "resultFile": "test-results/phase4.json"
+    },
+    {
+      "suite": "phase4_security",
+      "checks": 28,
+      "passed": 28,
+      "resultFile": "test-results/phase4-security.json"
+    },
+    {
+      "suite": "phase5",
+      "checks": 42,
+      "passed": 42,
+      "resultFile": "test-results/phase5.json"
+    },
+    {
+      "suite": "phase6",
+      "checks": 62,
+      "passed": 62,
+      "resultFile": "test-results/phase6.json"
+    },
+    {
+      "suite": "phase6_workflows",
+      "checks": 14,
+      "passed": 14,
+      "resultFile": "test-results/phase6-workflows.json"
+    },
+    {
+      "suite": "phase7",
+      "checks": 51,
+      "passed": 51,
+      "resultFile": "test-results/phase7.json"
+    },
+    {
+      "suite": "id_cards",
+      "checks": 50,
+      "passed": 50,
+      "resultFile": "test-results/id-cards.json"
+    },
+    {
+      "suite": "id_cards_extended",
+      "checks": 30,
+      "passed": 30,
+      "resultFile": "test-results/idcard-extended.json"
+    },
+    {
+      "suite": "phase8",
+      "checks": 54,
+      "passed": 54,
+      "resultFile": "test-results/phase8.json"
+    }
+  ],
+  "checks": 639,
+  "passed": 639
+}

@@ -377,6 +377,7 @@ function ApplicationDetail({ id, review, onMessage }: any) {
       <h3 className="spaced">Application statement</h3>
       {!review && editable ? (
         <textarea
+          aria-label="Application statement"
           rows={6}
           maxLength={4000}
           value={statement ?? a.statement}
@@ -497,7 +498,11 @@ function ApplicationDetail({ id, review, onMessage }: any) {
       )}
       {review && !q.data.canDecide && (
         <div className="privacy-notice">
-          Your active role cannot decide this application at its current stage.
+          {["Approved", "Rejected", "Withdrawn", "Cancelled"].includes(a.status)
+            ? "This application is complete. No further review decision is required."
+            : ["Draft", "Changes Requested"].includes(a.status)
+              ? "The applicant must submit this application before review."
+              : "Your active role cannot decide this application at its current stage."}
         </div>
       )}
       <h3 className="spaced">Decision history</h3>

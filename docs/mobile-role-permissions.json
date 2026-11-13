@@ -1,0 +1,1222 @@
+{
+  "checks": 188,
+  "passed": 188,
+  "results": [
+    {
+      "role": "Association Super Admin",
+      "path": "/organizations?size=100",
+      "expected": 200,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "Association Super Admin",
+      "path": "/members?search=Ananya",
+      "expected": 200,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "Association Super Admin",
+      "path": "/roles",
+      "expected": 200,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "Association Super Admin",
+      "path": "/audit-logs",
+      "expected": 200,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "Association Super Admin",
+      "path": "/committees?search=",
+      "expected": 200,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "Association Super Admin",
+      "path": "/events?manage=true",
+      "expected": 200,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "Association Super Admin",
+      "path": "/meetings?from=2026-11-01T00:00:00Z&to=2026-12-01T00:00:00Z",
+      "expected": 200,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "Association Super Admin",
+      "path": "/id-cards/templates",
+      "expected": 200,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "Association Super Admin",
+      "path": "/membership/me",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "Association Super Admin",
+      "path": "/my/finance",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "Association Super Admin",
+      "path": "/committees?mine=true",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "Association Super Admin",
+      "path": "/events",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "Association Super Admin",
+      "path": "/events?mine=true",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "Association Super Admin",
+      "path": "/my/invitations",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "Association Super Admin",
+      "path": "/my/registrations",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "International Administrator",
+      "path": "/organizations?size=100",
+      "expected": 200,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "International Administrator",
+      "path": "/members?search=Ananya",
+      "expected": 200,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "International Administrator",
+      "path": "/roles",
+      "expected": 403,
+      "status": 403,
+      "passed": true
+    },
+    {
+      "role": "International Administrator",
+      "path": "/audit-logs",
+      "expected": 403,
+      "status": 403,
+      "passed": true
+    },
+    {
+      "role": "International Administrator",
+      "path": "/committees?search=",
+      "expected": 403,
+      "status": 403,
+      "passed": true
+    },
+    {
+      "role": "International Administrator",
+      "path": "/events?manage=true",
+      "expected": 403,
+      "status": 403,
+      "passed": true
+    },
+    {
+      "role": "International Administrator",
+      "path": "/meetings?from=2026-11-01T00:00:00Z&to=2026-12-01T00:00:00Z",
+      "expected": 403,
+      "status": 403,
+      "passed": true
+    },
+    {
+      "role": "International Administrator",
+      "path": "/id-cards/templates",
+      "expected": 200,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "International Administrator",
+      "path": "/membership/me",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "International Administrator",
+      "path": "/my/finance",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "International Administrator",
+      "path": "/committees?mine=true",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "International Administrator",
+      "path": "/events",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "International Administrator",
+      "path": "/events?mine=true",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "International Administrator",
+      "path": "/my/invitations",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "International Administrator",
+      "path": "/my/registrations",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "International Administrator",
+      "check": "discovery only exposes published public events to role-only accounts",
+      "passed": true
+    },
+    {
+      "role": "National Administrator",
+      "path": "/organizations?size=100",
+      "expected": 200,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "National Administrator",
+      "path": "/members?search=Ananya",
+      "expected": 200,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "National Administrator",
+      "path": "/roles",
+      "expected": 403,
+      "status": 403,
+      "passed": true
+    },
+    {
+      "role": "National Administrator",
+      "path": "/audit-logs",
+      "expected": 403,
+      "status": 403,
+      "passed": true
+    },
+    {
+      "role": "National Administrator",
+      "path": "/committees?search=",
+      "expected": 403,
+      "status": 403,
+      "passed": true
+    },
+    {
+      "role": "National Administrator",
+      "path": "/events?manage=true",
+      "expected": 403,
+      "status": 403,
+      "passed": true
+    },
+    {
+      "role": "National Administrator",
+      "path": "/meetings?from=2026-11-01T00:00:00Z&to=2026-12-01T00:00:00Z",
+      "expected": 403,
+      "status": 403,
+      "passed": true
+    },
+    {
+      "role": "National Administrator",
+      "path": "/id-cards/templates",
+      "expected": 200,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "National Administrator",
+      "path": "/membership/me",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "National Administrator",
+      "path": "/my/finance",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "National Administrator",
+      "path": "/committees?mine=true",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "National Administrator",
+      "path": "/events",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "National Administrator",
+      "path": "/events?mine=true",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "National Administrator",
+      "path": "/my/invitations",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "National Administrator",
+      "path": "/my/registrations",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "National Administrator",
+      "check": "discovery only exposes published public events to role-only accounts",
+      "passed": true
+    },
+    {
+      "role": "District Administrator",
+      "path": "/organizations?size=100",
+      "expected": 200,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "District Administrator",
+      "path": "/members?search=Ananya",
+      "expected": 200,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "District Administrator",
+      "path": "/roles",
+      "expected": 403,
+      "status": 403,
+      "passed": true
+    },
+    {
+      "role": "District Administrator",
+      "path": "/audit-logs",
+      "expected": 403,
+      "status": 403,
+      "passed": true
+    },
+    {
+      "role": "District Administrator",
+      "path": "/committees?search=",
+      "expected": 403,
+      "status": 403,
+      "passed": true
+    },
+    {
+      "role": "District Administrator",
+      "path": "/events?manage=true",
+      "expected": 403,
+      "status": 403,
+      "passed": true
+    },
+    {
+      "role": "District Administrator",
+      "path": "/meetings?from=2026-11-01T00:00:00Z&to=2026-12-01T00:00:00Z",
+      "expected": 403,
+      "status": 403,
+      "passed": true
+    },
+    {
+      "role": "District Administrator",
+      "path": "/id-cards/templates",
+      "expected": 200,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "District Administrator",
+      "path": "/membership/me",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "District Administrator",
+      "path": "/my/finance",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "District Administrator",
+      "path": "/committees?mine=true",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "District Administrator",
+      "path": "/events",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "District Administrator",
+      "path": "/events?mine=true",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "District Administrator",
+      "path": "/my/invitations",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "District Administrator",
+      "path": "/my/registrations",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "District Administrator",
+      "check": "discovery only exposes published public events to role-only accounts",
+      "passed": true
+    },
+    {
+      "role": "Regional Administrator",
+      "path": "/organizations?size=100",
+      "expected": 200,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "Regional Administrator",
+      "path": "/members?search=Ananya",
+      "expected": 200,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "Regional Administrator",
+      "path": "/roles",
+      "expected": 403,
+      "status": 403,
+      "passed": true
+    },
+    {
+      "role": "Regional Administrator",
+      "path": "/audit-logs",
+      "expected": 403,
+      "status": 403,
+      "passed": true
+    },
+    {
+      "role": "Regional Administrator",
+      "path": "/committees?search=",
+      "expected": 403,
+      "status": 403,
+      "passed": true
+    },
+    {
+      "role": "Regional Administrator",
+      "path": "/events?manage=true",
+      "expected": 403,
+      "status": 403,
+      "passed": true
+    },
+    {
+      "role": "Regional Administrator",
+      "path": "/meetings?from=2026-11-01T00:00:00Z&to=2026-12-01T00:00:00Z",
+      "expected": 403,
+      "status": 403,
+      "passed": true
+    },
+    {
+      "role": "Regional Administrator",
+      "path": "/id-cards/templates",
+      "expected": 200,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "Regional Administrator",
+      "path": "/membership/me",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "Regional Administrator",
+      "path": "/my/finance",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "Regional Administrator",
+      "path": "/committees?mine=true",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "Regional Administrator",
+      "path": "/events",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "Regional Administrator",
+      "path": "/events?mine=true",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "Regional Administrator",
+      "path": "/my/invitations",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "Regional Administrator",
+      "path": "/my/registrations",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "Regional Administrator",
+      "check": "discovery only exposes published public events to role-only accounts",
+      "passed": true
+    },
+    {
+      "role": "Zone Administrator",
+      "path": "/organizations?size=100",
+      "expected": 200,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "Zone Administrator",
+      "path": "/members?search=Ananya",
+      "expected": 200,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "Zone Administrator",
+      "path": "/roles",
+      "expected": 403,
+      "status": 403,
+      "passed": true
+    },
+    {
+      "role": "Zone Administrator",
+      "path": "/audit-logs",
+      "expected": 403,
+      "status": 403,
+      "passed": true
+    },
+    {
+      "role": "Zone Administrator",
+      "path": "/committees?search=",
+      "expected": 403,
+      "status": 403,
+      "passed": true
+    },
+    {
+      "role": "Zone Administrator",
+      "path": "/events?manage=true",
+      "expected": 403,
+      "status": 403,
+      "passed": true
+    },
+    {
+      "role": "Zone Administrator",
+      "path": "/meetings?from=2026-11-01T00:00:00Z&to=2026-12-01T00:00:00Z",
+      "expected": 403,
+      "status": 403,
+      "passed": true
+    },
+    {
+      "role": "Zone Administrator",
+      "path": "/id-cards/templates",
+      "expected": 200,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "Zone Administrator",
+      "path": "/membership/me",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "Zone Administrator",
+      "path": "/my/finance",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "Zone Administrator",
+      "path": "/committees?mine=true",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "Zone Administrator",
+      "path": "/events",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "Zone Administrator",
+      "path": "/events?mine=true",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "Zone Administrator",
+      "path": "/my/invitations",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "Zone Administrator",
+      "path": "/my/registrations",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "Zone Administrator",
+      "check": "discovery only exposes published public events to role-only accounts",
+      "passed": true
+    },
+    {
+      "role": "Club President",
+      "path": "/organizations?size=100",
+      "expected": 200,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "Club President",
+      "path": "/members?search=Ananya",
+      "expected": 200,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "Club President",
+      "path": "/roles",
+      "expected": 403,
+      "status": 403,
+      "passed": true
+    },
+    {
+      "role": "Club President",
+      "path": "/audit-logs",
+      "expected": 403,
+      "status": 403,
+      "passed": true
+    },
+    {
+      "role": "Club President",
+      "path": "/committees?search=",
+      "expected": 200,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "Club President",
+      "path": "/events?manage=true",
+      "expected": 200,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "Club President",
+      "path": "/meetings?from=2026-11-01T00:00:00Z&to=2026-12-01T00:00:00Z",
+      "expected": 200,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "Club President",
+      "path": "/id-cards/templates",
+      "expected": 200,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "Club President",
+      "path": "/membership/me",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "Club President",
+      "path": "/my/finance",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "Club President",
+      "path": "/committees?mine=true",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "Club President",
+      "path": "/events",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "Club President",
+      "path": "/events?mine=true",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "Club President",
+      "path": "/my/invitations",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "Club President",
+      "path": "/my/registrations",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "Club Secretary",
+      "path": "/organizations?size=100",
+      "expected": 200,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "Club Secretary",
+      "path": "/members?search=Ananya",
+      "expected": 200,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "Club Secretary",
+      "path": "/roles",
+      "expected": 403,
+      "status": 403,
+      "passed": true
+    },
+    {
+      "role": "Club Secretary",
+      "path": "/audit-logs",
+      "expected": 403,
+      "status": 403,
+      "passed": true
+    },
+    {
+      "role": "Club Secretary",
+      "path": "/committees?search=",
+      "expected": 200,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "Club Secretary",
+      "path": "/events?manage=true",
+      "expected": 200,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "Club Secretary",
+      "path": "/meetings?from=2026-11-01T00:00:00Z&to=2026-12-01T00:00:00Z",
+      "expected": 200,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "Club Secretary",
+      "path": "/id-cards/templates",
+      "expected": 200,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "Club Secretary",
+      "path": "/membership/me",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "Club Secretary",
+      "path": "/my/finance",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "Club Secretary",
+      "path": "/committees?mine=true",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "Club Secretary",
+      "path": "/events",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "Club Secretary",
+      "path": "/events?mine=true",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "Club Secretary",
+      "path": "/my/invitations",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "Club Secretary",
+      "path": "/my/registrations",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "Club Treasurer",
+      "path": "/organizations?size=100",
+      "expected": 200,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "Club Treasurer",
+      "path": "/members?search=Ananya",
+      "expected": 200,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "Club Treasurer",
+      "path": "/roles",
+      "expected": 403,
+      "status": 403,
+      "passed": true
+    },
+    {
+      "role": "Club Treasurer",
+      "path": "/audit-logs",
+      "expected": 403,
+      "status": 403,
+      "passed": true
+    },
+    {
+      "role": "Club Treasurer",
+      "path": "/committees?search=",
+      "expected": 403,
+      "status": 403,
+      "passed": true
+    },
+    {
+      "role": "Club Treasurer",
+      "path": "/events?manage=true",
+      "expected": 403,
+      "status": 403,
+      "passed": true
+    },
+    {
+      "role": "Club Treasurer",
+      "path": "/meetings?from=2026-11-01T00:00:00Z&to=2026-12-01T00:00:00Z",
+      "expected": 200,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "Club Treasurer",
+      "path": "/id-cards/templates",
+      "expected": 200,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "Club Treasurer",
+      "path": "/membership/me",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "Club Treasurer",
+      "path": "/my/finance",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "Club Treasurer",
+      "path": "/committees?mine=true",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "Club Treasurer",
+      "path": "/events",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "Club Treasurer",
+      "path": "/events?mine=true",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "Club Treasurer",
+      "path": "/my/invitations",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "Club Treasurer",
+      "path": "/my/registrations",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "Club Treasurer",
+      "check": "discovery only exposes published public events to role-only accounts",
+      "passed": true
+    },
+    {
+      "role": "Club Manager",
+      "path": "/organizations?size=100",
+      "expected": 200,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "Club Manager",
+      "path": "/members?search=Ananya",
+      "expected": 200,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "Club Manager",
+      "path": "/roles",
+      "expected": 403,
+      "status": 403,
+      "passed": true
+    },
+    {
+      "role": "Club Manager",
+      "path": "/audit-logs",
+      "expected": 403,
+      "status": 403,
+      "passed": true
+    },
+    {
+      "role": "Club Manager",
+      "path": "/committees?search=",
+      "expected": 200,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "Club Manager",
+      "path": "/events?manage=true",
+      "expected": 200,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "Club Manager",
+      "path": "/meetings?from=2026-11-01T00:00:00Z&to=2026-12-01T00:00:00Z",
+      "expected": 200,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "Club Manager",
+      "path": "/id-cards/templates",
+      "expected": 200,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "Club Manager",
+      "path": "/membership/me",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "Club Manager",
+      "path": "/my/finance",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "Club Manager",
+      "path": "/committees?mine=true",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "Club Manager",
+      "path": "/events",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "Club Manager",
+      "path": "/events?mine=true",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "Club Manager",
+      "path": "/my/invitations",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "Club Manager",
+      "path": "/my/registrations",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "Club Member",
+      "path": "/organizations?size=100",
+      "expected": 200,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "Club Member",
+      "path": "/members?search=Ananya",
+      "expected": 403,
+      "status": 403,
+      "passed": true
+    },
+    {
+      "role": "Club Member",
+      "path": "/roles",
+      "expected": 403,
+      "status": 403,
+      "passed": true
+    },
+    {
+      "role": "Club Member",
+      "path": "/audit-logs",
+      "expected": 403,
+      "status": 403,
+      "passed": true
+    },
+    {
+      "role": "Club Member",
+      "path": "/committees?search=",
+      "expected": 403,
+      "status": 403,
+      "passed": true
+    },
+    {
+      "role": "Club Member",
+      "path": "/events?manage=true",
+      "expected": 403,
+      "status": 403,
+      "passed": true
+    },
+    {
+      "role": "Club Member",
+      "path": "/meetings?from=2026-11-01T00:00:00Z&to=2026-12-01T00:00:00Z",
+      "expected": 200,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "Club Member",
+      "path": "/id-cards/templates",
+      "expected": 403,
+      "status": 403,
+      "passed": true
+    },
+    {
+      "role": "Club Member",
+      "path": "/membership/me",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "Club Member",
+      "path": "/my/finance",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "Club Member",
+      "path": "/committees?mine=true",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "Club Member",
+      "path": "/events",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "Club Member",
+      "path": "/events?mine=true",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "Club Member",
+      "path": "/my/invitations",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "Club Member",
+      "path": "/my/registrations",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "Club Member",
+      "check": "discovery only exposes published public events to role-only accounts",
+      "passed": true
+    },
+    {
+      "role": "Guest / Applicant",
+      "path": "/organizations?size=100",
+      "expected": 200,
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "Guest / Applicant",
+      "path": "/members?search=Ananya",
+      "expected": 403,
+      "status": 403,
+      "passed": true
+    },
+    {
+      "role": "Guest / Applicant",
+      "path": "/roles",
+      "expected": 403,
+      "status": 403,
+      "passed": true
+    },
+    {
+      "role": "Guest / Applicant",
+      "path": "/audit-logs",
+      "expected": 403,
+      "status": 403,
+      "passed": true
+    },
+    {
+      "role": "Guest / Applicant",
+      "path": "/committees?search=",
+      "expected": 403,
+      "status": 403,
+      "passed": true
+    },
+    {
+      "role": "Guest / Applicant",
+      "path": "/events?manage=true",
+      "expected": 403,
+      "status": 403,
+      "passed": true
+    },
+    {
+      "role": "Guest / Applicant",
+      "path": "/meetings?from=2026-11-01T00:00:00Z&to=2026-12-01T00:00:00Z",
+      "expected": 403,
+      "status": 403,
+      "passed": true
+    },
+    {
+      "role": "Guest / Applicant",
+      "path": "/id-cards/templates",
+      "expected": 403,
+      "status": 403,
+      "passed": true
+    },
+    {
+      "role": "Guest / Applicant",
+      "path": "/membership/me",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "Guest / Applicant",
+      "path": "/my/finance",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "Guest / Applicant",
+      "path": "/committees?mine=true",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "Guest / Applicant",
+      "path": "/events",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "Guest / Applicant",
+      "path": "/events?mine=true",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "Guest / Applicant",
+      "path": "/my/invitations",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "Guest / Applicant",
+      "path": "/my/registrations",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "role": "Guest / Applicant",
+      "check": "discovery only exposes published public events to role-only accounts",
+      "passed": true
+    }
+  ]
+}

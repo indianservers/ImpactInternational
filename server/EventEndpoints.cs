@@ -825,12 +825,15 @@ public static partial class EventEndpoints
         // Discovery is scoped to selected association; public events across associations remain discoverable.
         q = q.Where(e =>
             (w != null && e.TenantId == w.TenantId && scoped.Contains(e.OrgId))
-            || s.Db.EventStaff.Any(t =>
-                t.EventId == e.Id
-                && t.PersonId == person
-                && t.Active
-                && t.StartsAt <= DateTimeOffset.UtcNow
-                && t.EndsAt > DateTimeOffset.UtcNow
+            || (
+                person != null
+                && s.Db.EventStaff.Any(t =>
+                    t.EventId == e.Id
+                    && t.PersonId == person
+                    && t.Active
+                    && t.StartsAt <= DateTimeOffset.UtcNow
+                    && t.EndsAt > DateTimeOffset.UtcNow
+                )
             )
             || (
                 e.Publication == "Published"
@@ -838,13 +841,24 @@ public static partial class EventEndpoints
                 && (
                     e.Visibility == "Public"
                     || eligible.Contains(e.Id)
-                    || s.Db.EventInvitations.Any(i =>
-                        i.EventId == e.Id
-                        && i.PersonId == person
-                        && i.ExpiresAt > DateTimeOffset.UtcNow
+                    // Null person IDs belong to guest rows, not to every account
+                    // that has not created a person profile yet.
+                    || (
+                        person != null
+                        && (
+                            s.Db.EventInvitations.Any(i =>
+                                i.EventId == e.Id
+                                && i.PersonId == person
+                                && i.ExpiresAt > DateTimeOffset.UtcNow
+                            )
+                            || s.Db.EventRegistrations.Any(r =>
+                                r.EventId == e.Id && r.PersonId == person
+                            )
+                            || s.Db.EventAudiences.Any(r =>
+                                r.EventId == e.Id && r.PersonId == person
+                            )
+                        )
                     )
-                    || s.Db.EventRegistrations.Any(r => r.EventId == e.Id && r.PersonId == person)
-                    || s.Db.EventAudiences.Any(r => r.EventId == e.Id && r.PersonId == person)
                 )
             )
         );
@@ -861,7 +875,8 @@ public static partial class EventEndpoints
         }
         if (mine)
             q = q.Where(e =>
-                s.Db.EventRegistrations.Any(r =>
+                person != null
+                && s.Db.EventRegistrations.Any(r =>
                     r.EventId == e.Id && r.PersonId == person && r.Status != "Cancelled"
                 )
             );

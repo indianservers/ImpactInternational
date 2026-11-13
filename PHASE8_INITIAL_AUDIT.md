@@ -6,7 +6,7 @@ The supplied brief ends at section 9, “Support secure custom-domain onboarding
 
 Classification is based on source, migrations and the Phase 1–7 evidence, not the presence of prompts. “Complete and tested” refers to the stated core workflow, not every future aspiration.
 
-- Application shell, authentication/session/CSRF, tenant hierarchy, scoped RBAC: **complete and tested core**; production MFA/SSO, shared multi-replica rate limits and target TLS remain **missing/externally blocked**.
+- Application shell, authentication/session/CSRF, tenant hierarchy, scoped RBAC: **complete and tested core**; production SSO, shared multi-replica rate limits and target TLS remain **missing/externally blocked**.
 - Membership CRM, lifecycle/transfer approvals, privacy directory, import/export and identity cards: **complete and tested core**; some large selectors and full translation/a11y coverage **partial**.
 - Club administration, officer terms/handovers, committees and independent governance: **complete and tested core**; elections/secret ballots **missing**, never implied by appointments.
 - Events, invitation/RSVP, capacity/QR admission and participation: **complete and tested free-event core**; richer paid waitlists/cancellation/refund/guest lifecycle **partial**. Paid registration now has central finance guards and coverage.

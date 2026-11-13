@@ -1,0 +1,137 @@
+{
+  "origin": "http://127.0.0.1:2244",
+  "roleChecks": [
+    {
+      "role": "Association Super Admin",
+      "viewportWidth": 390,
+      "documentWidth": 375,
+      "visibleErrors": [],
+      "loginAndOrganizationSelection": "passed",
+      "homeNavigation": "passed"
+    },
+    {
+      "role": "International Administrator",
+      "viewportWidth": 390,
+      "documentWidth": 375,
+      "visibleErrors": [],
+      "loginAndOrganizationSelection": "passed",
+      "homeNavigation": "passed"
+    },
+    {
+      "role": "National Administrator",
+      "viewportWidth": 390,
+      "documentWidth": 375,
+      "visibleErrors": [],
+      "loginAndOrganizationSelection": "passed",
+      "homeNavigation": "passed"
+    },
+    {
+      "role": "District Administrator",
+      "viewportWidth": 390,
+      "documentWidth": 375,
+      "visibleErrors": [],
+      "loginAndOrganizationSelection": "passed",
+      "homeNavigation": "passed"
+    },
+    {
+      "role": "Regional Administrator",
+      "viewportWidth": 390,
+      "documentWidth": 375,
+      "visibleErrors": [],
+      "loginAndOrganizationSelection": "passed",
+      "homeNavigation": "passed"
+    },
+    {
+      "role": "Zone Administrator",
+      "viewportWidth": 390,
+      "documentWidth": 375,
+      "visibleErrors": [],
+      "loginAndOrganizationSelection": "passed",
+      "homeNavigation": "passed"
+    },
+    {
+      "role": "Club President",
+      "viewportWidth": 390,
+      "documentWidth": 375,
+      "visibleErrors": [],
+      "loginAndOrganizationSelection": "passed",
+      "homeNavigation": "passed"
+    },
+    {
+      "role": "Club Secretary",
+      "viewportWidth": 390,
+      "documentWidth": 375,
+      "visibleErrors": [],
+      "loginAndOrganizationSelection": "passed",
+      "homeNavigation": "passed"
+    },
+    {
+      "role": "Club Treasurer",
+      "viewportWidth": 390,
+      "documentWidth": 375,
+      "visibleErrors": [],
+      "loginAndOrganizationSelection": "passed",
+      "homeNavigation": "passed"
+    },
+    {
+      "role": "Club Manager",
+      "viewportWidth": 390,
+      "documentWidth": 375,
+      "visibleErrors": [],
+      "loginAndOrganizationSelection": "passed",
+      "homeNavigation": "passed"
+    },
+    {
+      "role": "Club Member",
+      "viewportWidth": 390,
+      "documentWidth": 375,
+      "visibleErrors": [],
+      "loginAndOrganizationSelection": "passed",
+      "homeNavigation": "passed"
+    },
+    {
+      "role": "Guest / Applicant",
+      "viewportWidth": 390,
+      "documentWidth": 375,
+      "visibleErrors": [],
+      "loginAndOrganizationSelection": "passed",
+      "homeNavigation": "passed"
+    }
+  ],
+  "extraWidths": [
+    {
+      "role": "Guest / Applicant",
+      "viewportWidth": 320,
+      "documentWidth": 305,
+      "visibleErrors": []
+    }
+  ],
+  "fixesObserved": [
+    "Mobile menu action stability after removing the sliding transition",
+    "Member/guest home remains mounted after shell hot reload with the shared context extracted"
+  ],
+  "completedJourneys": {
+    "personalApplicant": {
+      "viewport": 320,
+      "invitationAccepted": true,
+      "applicationSaved": true,
+      "applicationSubmitted": true,
+      "secretaryApproval": true,
+      "presidentApproval": true,
+      "activeMembershipVisible": true,
+      "errors": []
+    },
+    "managerTask": {
+      "viewport": 320,
+      "created": true,
+      "assigned": true,
+      "completed": true,
+      "persistedAfterReload": true
+    },
+    "platformAdministrator": {
+      "viewport": 320,
+      "registrationsTabAccessible": true,
+      "errors": []
+    }
+  }
+}

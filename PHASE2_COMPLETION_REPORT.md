@@ -84,7 +84,7 @@ Startup/hourly maintenance removes expired sessions; clears expired/consumed mai
 
 ## Remaining issues and operational gates
 
-- No production deployment is claimed. TLS/proxy topology, privileged MFA/OIDC policy, legal/privacy text, secrets, restricted database users, SMTP TLS/deliverability, backups/restores and concurrent/failure load tests remain rollout gates. The loopback trust-authenticated development cluster is not production configuration.
+- No production deployment is claimed. TLS/proxy topology, legal/privacy text, secrets, restricted database users, SMTP TLS/deliverability, backups/restores and concurrent/failure load tests remain rollout gates. The loopback trust-authenticated development cluster is not production configuration.
 - SMTP is at-least-once; a crash after acceptance but before commit may duplicate delivery. Scale-out needs shared rate limiting and securely persisted/shared ASP.NET Data Protection keys.
 - Document antivirus/content-disarm is not integrated. Add scanning before untrusted operational uploads. Bounded blobs currently reside in PostgreSQL.
 - Imports are bounded atomic jobs; split larger files. Permission revocation and retry are tested; production crash/replica chaos recovery remains unverified.
