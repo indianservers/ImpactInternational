@@ -78,7 +78,10 @@ public static partial class FinanceEndpoints
                 var q = s.Db.FinanceJournals.Where(x => x.EntityId == entity);
                 if (after != null)
                     q = q.Where(x => x.Id.CompareTo(after.Value) > 0);
-                return await q.OrderBy(x => x.Id).Take(100).ToListAsync();
+                return await q.OrderBy(x => x.Id).Take(100).Select(x => new {
+                    x.Id,x.TenantId,x.OrgId,x.EntityId,x.Version,x.Date,x.PeriodId,x.Source,x.Narration,x.CreatorId,x.ReversesId,x.PostedAt,
+                    reversed = s.Db.FinanceJournals.Any(r => r.EntityId == entity && r.ReversesId == x.Id)
+                }).ToListAsync();
             }
         );
         api.MapGet(

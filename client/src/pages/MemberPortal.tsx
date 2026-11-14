@@ -326,7 +326,7 @@ export default function MemberPortal() {
               Discover club events, respond to invitations and find your
               digital event passes.
             </p>
-            <Link to="/app/events">Explore events →</Link>
+            <Link to={w?.permissions.includes('events.view')?'/app/events':'/app/my-events'}>Explore events →</Link>
           </section>
         </aside>
       </div>

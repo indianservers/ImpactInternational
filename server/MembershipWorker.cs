@@ -487,7 +487,7 @@ public class MembershipWorker(IServiceScopeFactory scopes, ILogger<MembershipWor
             attached.Add((person.Id, club.Id));
             var joined = string.IsNullOrEmpty(v.GetValueOrDefault("joinedAt"))
                 ? DateTimeOffset.UtcNow
-                : DateTimeOffset.Parse(v["joinedAt"]);
+                : DateTimeOffset.Parse(v["joinedAt"]).ToUniversalTime();
             var m = new Membership
             {
                 TenantId = job.TenantId,

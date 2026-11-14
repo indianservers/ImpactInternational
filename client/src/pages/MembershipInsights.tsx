@@ -745,14 +745,14 @@ export default function MembershipInsights() {
                       "Submitted in selected period",
                     ],
                   ].map(([label, value, Icon, hint]: any, i) => (
-                    <Link
+                    <KpiDestination
                       className="a-kpi"
                       key={label}
                       to={
                         i === 4
                           ? link("renewals")
                           : i === 5
-                            ? "/app/approvals"
+                            ? (w?.permissions.includes("members.approve") ? "/app/approvals" : undefined)
                             : membersLink(i === 1 ? { status: "Active" } : {})
                       }
                     >
@@ -774,7 +774,7 @@ export default function MembershipInsights() {
                           strokeWidth="1.8"
                         />
                       </svg>}
-                    </Link>
+                    </KpiDestination>
                   ))}
                 </div>
                 <PageSections id="membership-summary" perPage={1} labels={["Footprint & Growth","Membership Details"]}><div className="a-overview-main">
@@ -1860,3 +1860,5 @@ function RenewalWindows({ data, onSelect }: any) {
     </div>
   );
 }
+
+function KpiDestination({to,children,className}: {to?:string;children:any;className:string}) {return to?<Link to={to} className={className}>{children}</Link>:<div className={className}>{children}</div>;}

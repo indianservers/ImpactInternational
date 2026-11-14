@@ -13,11 +13,11 @@ import DuesBankRemittance from './DuesBankRemittance';
 import './DuesManagement.css';
 const base='/finance/dues-center';
 const sections=['Overview','Organization View','Analysis','Member Dues','Club Dues','Collections','Outstanding & Overdue','Renewals','Waivers & Discounts','Reminders','Reports'];
-export default function DuesManagement(){
+export default function DuesManagement({initialOrg,initialFrom,initialTo}:{initialOrg?:string;initialFrom?:string;initialTo?:string}={}){
  const {w}=useWorkspace(),qc=useQueryClient(),[sp,setSp]=useSearchParams();
- const [section,setSection]=useState(sp.get('section')||'Overview'),[org,setOrg]=useState(sp.get('orgId')||''),[level,setLevel]=useState(sp.get('level')||'Region'),[currency,setCurrency]=useState(''),[plan,setPlan]=useState('');
+ const [section,setSection]=useState(sp.get('section')||'Overview'),[org,setOrg]=useState(initialOrg||sp.get('orgId')||''),[level,setLevel]=useState(sp.get('level')||'Region'),[currency,setCurrency]=useState(''),[plan,setPlan]=useState('');
  const year=new Date().getMonth()<3?new Date().getFullYear()-1:new Date().getFullYear();
- const [from,setFrom]=useState(year+'-04-01'),[to,setTo]=useState((year+1)+'-03-31'),[search,setSearch]=useState(''),[term,setTerm]=useState('');
+ const [from,setFrom]=useState(initialFrom||year+'-04-01'),[to,setTo]=useState(initialTo||(year+1)+'-03-31'),[search,setSearch]=useState(''),[term,setTerm]=useState('');
  const [modal,setModal]=useState(''),[registerKind,setRegisterKind]=useState('pending'),[trail,setTrail]=useState<{id:string;level:string;name:string}[]>([]);
  const allowed=!!w?.permissions.includes('finance.dues.reports');
  const options=useQuery<any>({queryKey:['dues-options',w?.id],queryFn:()=>api(base+'/options'),enabled:allowed,staleTime:30000});

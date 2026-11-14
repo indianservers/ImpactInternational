@@ -106,25 +106,10 @@ export default function MemberImports() {
                   setId(r.id);
                   setMapping(
                     Object.fromEntries(
-                      r.headers
-                        .map((h: string) => [
-                          h.toLowerCase().replaceAll(" ", ""),
-                          h,
-                        ])
-                        .filter(([k]: any) =>
-                          [
-                            "name",
-                            "email",
-                            "phone",
-                            "city",
-                            "country",
-                            "clubCode",
-                            "categoryCode",
-                            "joinedAt",
-                            "profession",
-                            "industry",
-                          ].includes(k),
-                        ),
+                      r.headers.map((h: string) => [
+                        ["name","email","phone","city","country","clubCode","categoryCode","joinedAt","profession","industry"].find(k => k.toLowerCase() === h.toLowerCase().replaceAll(" ", "")),
+                        h,
+                      ]).filter(([key]: [string | undefined, string]) => !!key),
                     ),
                   );
                   qc.invalidateQueries({ queryKey: ["import-jobs"] });

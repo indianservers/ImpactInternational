@@ -130,9 +130,9 @@ export default function Settings() {
         <p className="privacy-notice">International → National → Regions → Districts → Zones → Clubs. Use the structure submenus to create and manage them.</p>
         <Link className="panel-link" to="/app/organizations">Manage Impact structure →</Link>
       </section>
-      <Link className="panel-link" to="/app/administration">
+      {w?.permissions.includes("roles.view") && <Link className="panel-link" to="/app/administration">
         Manage roles and permissions →
-      </Link>
+      </Link>}
     </>
   );
 }

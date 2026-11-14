@@ -599,7 +599,7 @@ public class MembershipService(
                 "Association policy permits only one current club affiliation.",
                 409
             );
-        var start = joined ?? DateTimeOffset.UtcNow;
+        var start = joined?.ToUniversalTime() ?? DateTimeOffset.UtcNow;
         Check(start <= DateTimeOffset.UtcNow && start.Year >= 1900, "Invalid joining date.");
         var member = new Membership
         {

@@ -244,12 +244,13 @@ public class IntelligenceAssistant(
                 );
                 explanation =
                     "Current authorized entity balances and unsettled-payment counts. Budget variance and statement reconciliation require the Finance module; this view does not compute them.";
+                var platformFinance = (await s.A.User()).PlatformAdmin;
                 var es = await s
                     .Db.FinanceEntitys.Where(e =>
                         e.TenantId == w.TenantId
                         && e.Active
                         && s.A.VisibleIds(w).Contains(e.OrgId)
-                        && s.Db.FinanceGrants.Any(g => g.EntityId == e.Id && g.UserId == w.UserId)
+                        && (platformFinance || s.Db.FinanceGrants.Any(g => g.EntityId == e.Id && g.UserId == w.UserId))
                     )
                     .OrderBy(e => e.Name)
                     .Take(20)

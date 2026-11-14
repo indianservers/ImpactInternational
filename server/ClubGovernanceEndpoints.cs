@@ -365,7 +365,7 @@ public static class ClubGovernanceEndpoints
                         && x.EndsAt > now
                     ),
                     mandatoryVacancies = await (
-                        from o in clubs
+                        from o in clubs.Where(o => o.Status == "Active")
                         from p in s.Db.OfficerPositions
                         where
                             p.TenantId == w.TenantId

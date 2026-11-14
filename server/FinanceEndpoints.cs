@@ -616,6 +616,7 @@ public static partial class FinanceEndpoints
         MapPlanning(api);
         MapReports(api);
         MapCommand(api);
+        MapConsolidated(api);
         MapGateway(app, api);
     }
 }

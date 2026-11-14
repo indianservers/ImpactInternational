@@ -1,0 +1,481 @@
+{
+  "total": 92,
+  "passed": 92,
+  "checks": [
+    {
+      "scenario": "Platform admin login",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Consolidated Finance returns all authorized books",
+      "passed": true,
+      "detail": 200
+    },
+    {
+      "scenario": "QA preview identified",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "No financial entities created by audit",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "invoices consolidated register available",
+      "passed": true,
+      "detail": 200
+    },
+    {
+      "scenario": "invoices source register Mock Impact Dues \u00b7 DEMO-R01-D01-Z01-C01",
+      "passed": true,
+      "detail": 200
+    },
+    {
+      "scenario": "invoices source register Mock Impact Dues \u00b7 DEMO-R01-D02-Z01-C01",
+      "passed": true,
+      "detail": 200
+    },
+    {
+      "scenario": "invoices source register Mock Impact Dues \u00b7 DEMO-R02-D01-Z01-C01",
+      "passed": true,
+      "detail": 200
+    },
+    {
+      "scenario": "invoices consolidated record count agrees with source APIs",
+      "passed": true,
+      "detail": [
+        18,
+        18
+      ]
+    },
+    {
+      "scenario": "invoices stable original IDs",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "invoices rows retain ledger and currency identity",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "invoices CSV includes exactly authorized records",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "receipts consolidated register available",
+      "passed": true,
+      "detail": 200
+    },
+    {
+      "scenario": "receipts source register Mock Impact Dues \u00b7 DEMO-R01-D01-Z01-C01",
+      "passed": true,
+      "detail": 200
+    },
+    {
+      "scenario": "receipts source register Mock Impact Dues \u00b7 DEMO-R01-D02-Z01-C01",
+      "passed": true,
+      "detail": 200
+    },
+    {
+      "scenario": "receipts source register Mock Impact Dues \u00b7 DEMO-R02-D01-Z01-C01",
+      "passed": true,
+      "detail": 200
+    },
+    {
+      "scenario": "receipts consolidated record count agrees with source APIs",
+      "passed": true,
+      "detail": [
+        4,
+        4
+      ]
+    },
+    {
+      "scenario": "receipts stable original IDs",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "receipts rows retain ledger and currency identity",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "receipts CSV includes exactly authorized records",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "expenses consolidated register available",
+      "passed": true,
+      "detail": 200
+    },
+    {
+      "scenario": "expenses source register Mock Impact Dues \u00b7 DEMO-R01-D01-Z01-C01",
+      "passed": true,
+      "detail": 200
+    },
+    {
+      "scenario": "expenses source register Mock Impact Dues \u00b7 DEMO-R01-D02-Z01-C01",
+      "passed": true,
+      "detail": 200
+    },
+    {
+      "scenario": "expenses source register Mock Impact Dues \u00b7 DEMO-R02-D01-Z01-C01",
+      "passed": true,
+      "detail": 200
+    },
+    {
+      "scenario": "expenses consolidated record count agrees with source APIs",
+      "passed": true,
+      "detail": [
+        0,
+        0
+      ]
+    },
+    {
+      "scenario": "expenses stable original IDs",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "expenses rows retain ledger and currency identity",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "expenses CSV includes exactly authorized records",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "payments consolidated register available",
+      "passed": true,
+      "detail": 200
+    },
+    {
+      "scenario": "payments source register Mock Impact Dues \u00b7 DEMO-R01-D01-Z01-C01",
+      "passed": true,
+      "detail": 200
+    },
+    {
+      "scenario": "payments source register Mock Impact Dues \u00b7 DEMO-R01-D02-Z01-C01",
+      "passed": true,
+      "detail": 200
+    },
+    {
+      "scenario": "payments source register Mock Impact Dues \u00b7 DEMO-R02-D01-Z01-C01",
+      "passed": true,
+      "detail": 200
+    },
+    {
+      "scenario": "payments consolidated record count agrees with source APIs",
+      "passed": true,
+      "detail": [
+        0,
+        0
+      ]
+    },
+    {
+      "scenario": "payments stable original IDs",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "payments rows retain ledger and currency identity",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "payments CSV includes exactly authorized records",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "INR billed and outstanding reconcile to SQL",
+      "passed": true,
+      "detail": {
+        "billed": 19700.0,
+        "outstanding": 17850.0
+      }
+    },
+    {
+      "scenario": "Region branch filter Demo Region 01",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Region branch filter Demo Region 02",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Region branch filter Demo Region 03",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Region branch filter Demo Region 04",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Region branch filter Demo Region 05",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Region branch filter Organization QA shared display name",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Invalid finance request rejected: page=0",
+      "passed": true,
+      "detail": 400
+    },
+    {
+      "scenario": "Invalid finance request rejected: page=10001",
+      "passed": true,
+      "detail": 400
+    },
+    {
+      "scenario": "Invalid finance request rejected: kind=unknown",
+      "passed": true,
+      "detail": 400
+    },
+    {
+      "scenario": "Invalid finance request rejected: format=xml",
+      "passed": true,
+      "detail": 400
+    },
+    {
+      "scenario": "Invalid finance request rejected: balance=unknown",
+      "passed": true,
+      "detail": 400
+    },
+    {
+      "scenario": "Invalid finance request rejected: from=2027-01-01&to=2026-01-01",
+      "passed": true,
+      "detail": 400
+    },
+    {
+      "scenario": "Invalid finance request rejected: currency=INVALID",
+      "passed": true,
+      "detail": 400
+    },
+    {
+      "scenario": "Invalid finance request rejected: orgId=8c06c216-550e-485a-bd13-ea00c451219f",
+      "passed": true,
+      "detail": 404
+    },
+    {
+      "scenario": "outstanding KPI drill-down filters balances",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "overdue KPI drill-down filters balances",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Consolidated reference search",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Membership coverage matches current Leadership definition",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Club dashboard excludes inactive club vacancies",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Assistant includes Platform Admin authorized finance books",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "international.president@example.test login",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "international.president@example.test consolidated read stays within ledger grants",
+      "passed": true,
+      "detail": 200
+    },
+    {
+      "scenario": "international.president@example.test CSV contains no unauthorized records",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "national.president@example.test login",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "national.president@example.test consolidated read stays within ledger grants",
+      "passed": true,
+      "detail": 200
+    },
+    {
+      "scenario": "national.president@example.test CSV contains no unauthorized records",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "regional.president@example.test login",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "regional.president@example.test consolidated read stays within ledger grants",
+      "passed": true,
+      "detail": 200
+    },
+    {
+      "scenario": "regional.president@example.test foreign region rejected",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "regional.president@example.test CSV contains no unauthorized records",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "district.president@example.test login",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "district.president@example.test consolidated read stays within ledger grants",
+      "passed": true,
+      "detail": 200
+    },
+    {
+      "scenario": "district.president@example.test foreign region rejected",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "district.president@example.test CSV contains no unauthorized records",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "zonal.president@example.test login",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "zonal.president@example.test consolidated read stays within ledger grants",
+      "passed": true,
+      "detail": 200
+    },
+    {
+      "scenario": "zonal.president@example.test foreign region rejected",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "zonal.president@example.test CSV contains no unauthorized records",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "club.president@example.test login",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "club.president@example.test consolidated read stays within ledger grants",
+      "passed": true,
+      "detail": 200
+    },
+    {
+      "scenario": "club.president@example.test foreign region rejected",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "club.president@example.test CSV contains no unauthorized records",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "member.club1@example.test login",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "member.club1@example.test consolidated read stays within ledger grants",
+      "passed": true,
+      "detail": 200
+    },
+    {
+      "scenario": "member.club1@example.test CSV contains no unauthorized records",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Club collection register still scoped",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Verified allocation receipt fixture exists",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Club scoped allocation receipt MOCK-REC-00000004",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Club scoped allocation receipt MOCK-REC-00000003",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Club scoped allocation receipt MOCK-REC-00000001",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Club scoped allocation receipt MOCK-REC-00000002",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Ordinary member cannot read club allocation receipt",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Unknown receipt allocation rejected",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Missing event survey returns clean empty response",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "scenario": "Anonymous consolidated access rejected",
+      "passed": true,
+      "detail": null
+    }
+  ]
+}

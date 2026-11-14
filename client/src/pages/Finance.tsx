@@ -1,5 +1,6 @@
+import FinanceOverview from "./FinanceOverview";
 
-import DuesReports from "./DuesReports";
+import DuesReports, {InvoiceDetails, CollectionForm, CollectionReview} from "./DuesReports";
 import "./DuesReports.css";
 import { useState, useEffect } from "react";
 import { FinanceContext as ctx, useFinance } from "./FinanceContext";
@@ -10,6 +11,7 @@ import {
   Routes,
   useParams,
   useNavigate,
+  useLocation,
 } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
@@ -270,7 +272,10 @@ const key = () => crypto.randomUUID();
 export default function Finance() {
   const { w } = useWorkspace();
   const q = useData("/finance/entities");
+  const generalFinance = w?.permissions.some(p => ["finance.view","finance.manage","finance.reconcile","finance.configure","finance.post","finance.approve"].includes(p));
   const [entityId, setEntity] = useState("");
+  const location = useLocation();
+  const consolidated = location.pathname === "/app/finance" || location.pathname.startsWith("/app/finance/dues");
   const [create, setCreate] = useState(false);
   const a = useAction();
   useEffect(() => {
@@ -282,12 +287,12 @@ export default function Finance() {
   return (
     <ctx.Provider value={{ e, path, currency: e?.currency ?? "INR", a, entities:q.data, onEntityChange:(id:string)=>{setEntity(id);sessionStorage.setItem("finance:"+w?.id,id);} }}>
       <div className="operations finance finance-command-shell">
-        <div className="fin-context">
+        {!consolidated && <div className="fin-context">
           <span>
-            <Landmark size={18} /> Financial workspace
+            <Landmark size={18} /> Source ledger
           </span>
           <select
-            aria-label="Financial entity"
+            aria-label="Source ledger"
             value={e?.id ?? ""}
             onChange={(x) => {
               setEntity(x.target.value);
@@ -295,7 +300,7 @@ export default function Finance() {
             }}
           >
             <option value="" disabled>
-              Select entity
+              Select source ledger
             </option>
             {q.data?.map((x: Row) => (
               <option key={x.id} value={x.id}>
@@ -303,15 +308,16 @@ export default function Finance() {
               </option>
             ))}
           </select>
-          {w?.permissions.includes("finance.configure") && (
+          {location.pathname === "/app/finance/settings" && w?.permissions.includes("finance.configure") && (
             <button onClick={() => setCreate(true)}>
               <Plus size={15} /> New entity
             </button>
           )}
-        </div>
-        <details className="fc-configuration"><summary>Books & configuration</summary><nav aria-label="Finance configuration">{[["settings","Financial settings"],["dues-plans","Dues rules & generation"],["funding","Donations & sponsors"],["sources","Events & projects"],["allocations","Inter-entity allocations"],["member","My finances"]].map(([path,label])=><Link key={path} to={root+"/"+path}>{label}</Link>)}{w?.permissions.includes("finance.configure")&&<button onClick={()=>setCreate(true)}>New independent entity</button>}</nav></details>
+        </div>}
+        {generalFinance && <details className="fc-configuration"><summary>Books & configuration</summary><nav aria-label="Finance configuration">{[["settings","Financial settings"],["dues-plans","Dues rules & generation"],["funding","Donations & sponsors"],["sources","Events & projects"],["allocations","Inter-entity allocations"],["member","My finances"]].map(([path,label])=><Link key={path} to={root+"/"+path}>{label}</Link>)}</nav></details>}
         <ErrorBox error={q.error ?? a.error} />
         <Routes>
+          <Route index element={generalFinance || w?.permissions.includes("finance.dues.reports") ? <FinanceOverview /> : <MemberFinance />} />
           <Route path="dues-reports" element={<DuesReports />} />
           <Route path="dues" element={<DuesReports management />} />
           <Route path="club-collections" element={<DuesReports collecting />} />
@@ -558,6 +564,7 @@ function Invoice() {
   const [form, setForm] = useState("");
   const [intentKey] = useState(() => key());
   const i = q.data?.invoice;
+  if ((q.error as {status?:number})?.status === 403 && w?.permissions.includes("finance.dues.reports")) return <ScopedDuesInvoice id={id!} />;
   return (
     <>
       <Header
@@ -1390,7 +1397,7 @@ function Accounting({ configuration = false }: { configuration?: boolean }) {
                 "action",
                 "Correction",
                 (r) =>
-                  r.source.startsWith("manual:") ? (
+                  r.source.startsWith("manual:") && !r.reversed ? (
                     <button
                       onClick={() => {
                         setDetail({ journal: r });
@@ -1400,7 +1407,7 @@ function Accounting({ configuration = false }: { configuration?: boolean }) {
                       Reverse
                     </button>
                   ) : (
-                    <span className="op-muted">Source controlled</span>
+                    <span className="op-muted">{r.reversed ? "Reversed" : "Source controlled"}</span>
                   ),
               ],
             ]}
@@ -2756,4 +2763,10 @@ function FinancialReviews() {
       <ErrorBox error={q.error} />
     </section>
   );
+}
+
+function ScopedDuesInvoice({id}:{id:string}) {
+ const navigate=useNavigate(),qc=useQueryClient();const [collection,setCollection]=useState<any>(),[review,setReview]=useState<any>();
+ const refresh=()=>{qc.invalidateQueries({queryKey:['dues-detail']});qc.invalidateQueries({queryKey:['dues-report']});qc.invalidateQueries({queryKey:['dues-intelligence']});};
+ return <><Header title="Member dues invoice" description="Authorized dues and collection history for this member."/>{!collection&&!review&&<InvoiceDetails id={id} onClose={()=>navigate('/app/finance')} onChanged={refresh} onRecord={setCollection} onReview={setReview}/>} {collection&&<CollectionForm initialInvoice={collection} onClose={()=>setCollection(undefined)} onSaved={()=>{setCollection(undefined);refresh()}}/>}{review&&<CollectionReview row={review} onClose={()=>setReview(undefined)} onSaved={()=>{setReview(undefined);refresh()}}/>}</>;
 }

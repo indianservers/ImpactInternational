@@ -87,6 +87,12 @@ public static partial class DuesCenter
                     club = a.Db.Memberships.Where(m => m.Id == i.MembershipId).Select(m => m.Club.Name).First(),
                     pendingVerification = a.Db.DuesCollections.Where(c => c.InvoiceId == i.Id && c.Status == "Submitted").Sum(c => c.Amount) }).ToListAsync() };
         });
+        api.MapGet("/allocations/{id:guid}/receipt",async(Guid id,Access a,CommunicationService comm)=>{
+            var w=await Workspace(a,comm,View);var invoices=Invoices(a.Db,a,w);
+            var row=await (from allocation in a.Db.FinanceAllocations join invoice in invoices on allocation.InvoiceId equals invoice.Id join payment in a.Db.FinancePayments on allocation.PaymentId equals payment.Id join entity in a.Db.FinanceEntitys on invoice.EntityId equals entity.Id where allocation.Id==id&&allocation.TenantId==w.TenantId&&payment.Status=="Verified"&&payment.ReceiptNumber!="" select new{allocation.Amount,invoice.Number,invoice.Customer,invoice.Currency,payment.ReceiptNumber,payment.Date,payment.Method,payment.Reference,payment.SettlementStatus,entity.Name,entity.Decimals}).SingleOrDefaultAsync();
+            Check(row!=null,"Receipt allocation unavailable in your scope.",404);
+            return Results.File(FinancePdf.Build("Receipt allocation "+row!.ReceiptNumber,new[]{row.Name,row.Customer,"Invoice "+row.Number,row.Date.ToString("yyyy-MM-dd"),"Allocated amount "+row.Currency+" "+row.Amount.ToString("N"+row.Decimals,CultureInfo.InvariantCulture),"Method "+row.Method,"Reference "+row.Reference,"Settlement "+row.SettlementStatus,"This document covers only the allocation to this authorized dues invoice, not the full multi-invoice payment."}),"application/pdf",row.ReceiptNumber+"-allocation.pdf");
+        });
         api.MapPost("/collections", Submit);
         api.MapPost("/collections/{id:guid}/review", Review);
         api.MapGet("/reports/{kind}", Report);

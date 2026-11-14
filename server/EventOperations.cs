@@ -292,9 +292,9 @@ public static partial class EventEndpoints
             {
                 var e = await s.Find(id);
                 await s.View(e, token);
-                return Results.Ok(
-                    await s.Db.EventFeedbackForms.SingleOrDefaultAsync(x => x.EventId == id)
-                );
+                var form = await s.Db.EventFeedbackForms.SingleOrDefaultAsync(x => x.EventId == id);
+                // Query consumers need a JSON null value, not an empty successful body.
+                return form == null ? Results.Text("null", "application/json") : Results.Ok(form);
             }
         );
         api.MapPost(

@@ -319,7 +319,7 @@ function Shell() {
                 aria-current={selected ? "true" : undefined}
                 onClick={() => setOpen(false)}>
                 <Icon size={19} />{membershipMode&&section.id==="home"?"Dashboard":membershipMode&&section.id==="people"?"Members":section.label}
-              </Link>{section.id === "tools" && location.pathname.startsWith("/app/finance") && section.tabs.some(tab => tab.to === "/app/finance") && <nav className="impact-sidebar-submenu" aria-label="Finance pages">{financeMenu.map(([path, label]) => {
+              </Link>{section.id === "tools" && location.pathname.startsWith("/app/finance") && section.tabs.some(tab => tab.to === "/app/finance") && <nav className="impact-sidebar-submenu" aria-label="Finance pages">{financeMenu.filter(([path])=>!path||(path==='dues'?w?.permissions.includes('finance.dues.reports'):w?.permissions.some(p=>['finance.view','finance.manage','finance.reconcile','finance.configure','finance.post','finance.approve'].includes(p)))).map(([path, label]) => {
                 const to = "/app/finance" + (path ? "/" + path : "");
                 const current = path ? matchesTab(location.pathname, to) : location.pathname === to;
                 return <Link key={to} to={to} className={current ? "active" : undefined} aria-current={current ? "page" : undefined} onClick={() => setOpen(false)}>{label}</Link>;
