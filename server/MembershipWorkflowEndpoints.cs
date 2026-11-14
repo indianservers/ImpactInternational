@@ -394,7 +394,9 @@ public static class MembershipWorkflowEndpoints
                         x.TenantId == w.TenantId && s.Access.Visible(w).Any(o => o.Id == x.ClubId)
                     );
                 }
-                if (!string.IsNullOrEmpty(status))
+                if (status == "Pending")
+                    q = q.Where(x => MembershipStatistics.PendingApplicationStates.Contains(x.Status));
+                else if (!string.IsNullOrEmpty(status))
                     q = q.Where(x => x.Status == status);
                 return new
                 {
@@ -496,7 +498,7 @@ public static class MembershipWorkflowEndpoints
                         .ToListAsync(),
                     canDecide = !own
                         && stage != null
-                        && stage.Roles.Any(x => x.RoleId == w!.RoleId)
+                        && (stage.Roles.Any(x => x.RoleId == w!.RoleId) || await ApprovalEngine.HierarchyAuthority(s.Db, w!))
                         && new[] { "Submitted", "Under Review" }.Contains(app.Status),
                 };
             }

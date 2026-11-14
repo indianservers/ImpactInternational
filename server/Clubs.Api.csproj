@@ -23,6 +23,7 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Assets/Fonts/NotoSans-Regular.ttf" />
+    <EmbeddedResource Include="Assets/Brand/impact-logo.webp" />
     <None Update="Assets/Fonts/OFL.txt" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 </Project>

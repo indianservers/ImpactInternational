@@ -637,6 +637,8 @@ public static partial class IdCardEndpoints
                         c.ExpiryAt,
                         c.TemplateVersionId,
                         c.MembershipId,
+                        memberId = m.Number,
+                        memberName = m.Person.DisplayName,
                         club = m.Club.Name,
                         canDownload = !s.Db.IdCardPolicies.Any(p =>
                             p.TenantId == c.TenantId && !p.AllowMemberDownload
@@ -652,6 +654,23 @@ public static partial class IdCardEndpoints
             async (Guid id, IdCardService s, string format = "pdf") =>
                 await Download(id, s, format, true)
         );
+        app.MapGet("/api/v1/my/id-card/download-latest", async (IdCardService s) =>
+        {
+            var user = await s.A.User();
+            var now = DateTimeOffset.UtcNow;
+            var id = await (from c in s.Db.DigitalCards
+                            join m in s.Db.Memberships on c.MembershipId equals m.Id
+                            where m.Person.UserId == user.Id
+                                && (s.A.BoundTenant == null || c.TenantId == s.A.BoundTenant)
+                                && c.State == "Issued" && c.RevokedAt == null
+                                && c.TemplateVersionId != null && c.Files != "{}"
+                                && (c.ExpiryAt == null || c.ExpiryAt > now)
+                                && m.Status == "Active" && (m.EndsAt == null || m.EndsAt > now)
+                            orderby c.IssuedAt descending, c.Id
+                            select (Guid?)c.Id).FirstOrDefaultAsync();
+            Check(id != null, "No current issued card is available. Ask your issuing authority to prepare or renew your card.", 409);
+            return await Download(id!.Value, s, "pdf", true);
+        });
         api.MapPost(
             "/issuances/{id:guid}/requests",
             async (Guid id, IdCardReason i, IdCardService s) =>

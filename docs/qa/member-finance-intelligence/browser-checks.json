@@ -1,0 +1,47 @@
+[
+  {
+    "name": "Partially paid card filters member list",
+    "passed": true
+  },
+  {
+    "name": "Member expands invoices and linked receipt on same page",
+    "passed": true
+  },
+  {
+    "name": "Member invoice opens correct payment form",
+    "passed": true
+  },
+  {
+    "name": "No-dues card includes roster without invoices",
+    "passed": true
+  },
+  {
+    "name": "Unbilled member has explicit no-invoice state",
+    "passed": true
+  },
+  {
+    "name": "Status chart segment filters unpaid members",
+    "passed": false,
+    "resolution": "Automated center-click fell inside the donut hole. Legend click and keyboard activation were verified separately."
+  },
+  {
+    "name": "Collected amount chart includes partially paid members",
+    "passed": true
+  },
+  {
+    "name": "Status chart legend filters unpaid members",
+    "passed": true
+  },
+  {
+    "name": "Status chart keyboard activation selects paid members",
+    "passed": true
+  },
+  {
+    "name": "Member intelligence fits 390px mobile width",
+    "passed": true
+  },
+  {
+    "name": "Club without invoices still shows all member roster",
+    "passed": true
+  }
+]

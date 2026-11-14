@@ -6,6 +6,20 @@ namespace Clubs;
 // Shared by membership and governance; one stage/role/quorum/revision/decision model.
 public static class ApprovalEngine
 {
+    // Callers must first enforce the target's tenant and organizational scope.
+    public static Task<bool> PlatformAuthority(Db db, Assignment w) =>
+        db.Users.AnyAsync(u => u.Id == w.UserId && u.PlatformAdmin);
+
+    public static async Task<bool> HierarchyAuthority(Db db, Assignment w) =>
+        await PlatformAuthority(db, w) || await db.Roles.AnyAsync(r =>
+            r.Id == w.RoleId && r.TenantId == w.TenantId &&
+            (r.Name == "Club President" || r.Name == "Zonal President" ||
+             r.Name == "District President" || r.Name == "Regional President" ||
+             r.Name == "National President" || r.Name == "International President"));
+
+    public static async Task<bool> HierarchyRequest(Db db, Assignment w, GovernanceRequest r) =>
+        r.Kind == "OfficerAppointment" && await HierarchyAuthority(db, w);
+
     public record Progress(
         MembershipApprovalStage Stage,
         MembershipApproval Decision,
@@ -81,7 +95,10 @@ public static class ApprovalEngine
         }
         else
             Check(
-                stage.Roles.Any(x => x.RoleId == w.RoleId),
+                stage.Roles.Any(x => x.RoleId == w.RoleId)
+                    || (!governance && await HierarchyAuthority(db, w))
+                    || (governance && await HierarchyRequest(db, w,
+                        await db.GovernanceRequests.SingleAsync(x => x.Id == id && x.TenantId == w.TenantId))),
                 "This role cannot review the current stage.",
                 403
             );

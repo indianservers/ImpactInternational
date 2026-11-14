@@ -1,0 +1,66 @@
+[
+  {
+    "name": "Admin login",
+    "passed": true
+  },
+  {
+    "name": "Verified register available",
+    "passed": true
+  },
+  {
+    "name": "Verified rows carry payment references and club names",
+    "passed": true
+  },
+  {
+    "name": "Awaiting-verification filter contains only submitted claims",
+    "passed": true
+  },
+  {
+    "name": "Existing unfiltered register remains available",
+    "passed": true
+  },
+  {
+    "name": "Currency filter excludes other currencies",
+    "passed": true
+  },
+  {
+    "name": "Invalid status rejected",
+    "passed": true
+  },
+  {
+    "name": "Invalid currency rejected",
+    "passed": true
+  },
+  {
+    "name": "Selected-club dues contain only selected club",
+    "passed": true
+  },
+  {
+    "name": "Expanded pending invoices stay within selected club",
+    "passed": true
+  },
+  {
+    "name": "Filtered CSV includes club column",
+    "passed": true
+  },
+  {
+    "name": "Club president login",
+    "passed": true
+  },
+  {
+    "name": "Club president sees own collections",
+    "passed": true
+  },
+  {
+    "name": "Foreign-club collections blocked",
+    "passed": true
+  },
+  {
+    "name": "Member login",
+    "passed": true
+  },
+  {
+    "name": "Ordinary member cannot access collection register",
+    "passed": true
+  }
+]

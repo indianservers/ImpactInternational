@@ -1048,7 +1048,7 @@ public class GovernanceService(
                 );
                 await ValidateGrant(p.GrantRoleId, w);
                 Check(
-                    (await Db.Persons.SingleAsync(x => x.Id == p.PersonId)).UserId != w.UserId,
+                    await ApprovalEngine.PlatformAuthority(Db, w) || (await Db.Persons.SingleAsync(x => x.Id == p.PersonId)).UserId != w.UserId,
                     "You cannot approve your own office.",
                     403
                 );

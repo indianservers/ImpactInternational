@@ -1,0 +1,52 @@
+[
+  {
+    "name": "Selected club shows one group only",
+    "passed": true
+  },
+  {
+    "name": "Expanded club contains only selected club invoices",
+    "passed": true
+  },
+  {
+    "name": "Record payment opens existing scoped collection form",
+    "passed": false,
+    "resolution": "Fixed missing currency in initial invoice; selected amount and currency render correctly on retest."
+  },
+  {
+    "name": "Payment form renders selected invoice amount and currency after fix",
+    "passed": true
+  },
+  {
+    "name": "Zone dues expandable on same page",
+    "passed": true
+  },
+  {
+    "name": "District dues expands pending members",
+    "passed": true
+  },
+  {
+    "name": "Verified collection rows include club and clear status",
+    "passed": true
+  },
+  {
+    "name": "Pending collection filter excludes verified rows",
+    "passed": true
+  },
+  {
+    "name": "Club with no dues has clear empty state",
+    "passed": true
+  },
+  {
+    "name": "Detailed tools available only on demand",
+    "passed": true
+  },
+  {
+    "name": "Expanded dues view fits mobile width",
+    "passed": false,
+    "resolution": "Fixed grid minimum width; mobile retest passed."
+  },
+  {
+    "name": "Expanded dues mobile width retest after grid fix",
+    "passed": true
+  }
+]

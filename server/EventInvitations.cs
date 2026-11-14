@@ -29,7 +29,7 @@ public static partial class EventEndpoints
                 var user = await s.A.User();
                 var send = (r.SendAt ?? DateTimeOffset.UtcNow).ToUniversalTime();
                 Check(send < e.EndsAt, "Send before event ends.");
-                var people = await s.Audience(e);
+                var people = await CommunicationPeople(s,e,r.OrgId,"All");
                 var audienceRules = await s
                     .Db.EventAudiences.Where(rule => rule.EventId == id)
                     .Select(rule => rule.Id)

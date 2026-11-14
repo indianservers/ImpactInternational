@@ -20,7 +20,8 @@ public record EventAudienceInput(EventAudience[] Rules);
 public record InvitationBatchInput(
     DateTimeOffset? SendAt = null,
     string Message = "You are invited.",
-    EventGuestInput[]? Guests = null
+    EventGuestInput[]? Guests = null,
+    Guid? OrgId = null
 );
 
 public record EventGuestInput(string Name, string Email, bool Consent);
@@ -781,6 +782,7 @@ public static partial class EventEndpoints
             }
         );
         MapInvitations(api);
+        MapCommunicationCenter(api);
         MapRegistration(api);
         MapOperations(api);
     }

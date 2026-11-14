@@ -1,0 +1,34 @@
+[
+  {
+    "name": "See members who paid filters matching members",
+    "passed": true
+  },
+  {
+    "name": "Open follow-up list filters matching members",
+    "passed": true
+  },
+  {
+    "name": "Review member payments filters matching members",
+    "passed": true
+  },
+  {
+    "name": "Coverage widget opens unassigned members",
+    "passed": true
+  },
+  {
+    "name": "Payment flow opens all outstanding members",
+    "passed": true
+  },
+  {
+    "name": "Unbilled club gauge uses empty state without invalid percentages",
+    "passed": true
+  },
+  {
+    "name": "Collection gauge matches verified amount divided by net dues",
+    "passed": true
+  },
+  {
+    "name": "Gadget dashboard fits mobile width",
+    "passed": true
+  }
+]

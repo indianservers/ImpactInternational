@@ -258,6 +258,7 @@ public class IdCardService(
                 : tenant.Name,
             ["card.issue_date"] = card.IssuedAt.ToString("yyyy-MM-dd"),
             ["card.expiry_date"] = card.ExpiryAt?.ToString("yyyy-MM-dd") ?? "",
+            ["card.expiry_month_year"] = card.ExpiryAt?.ToString("MMMM yyyy", System.Globalization.CultureInfo.InvariantCulture) ?? "",
             ["card.serial_number"] = card.Serial,
             ["card.qr_code"] =
                 (config["PublicOrigin"] ?? "http://127.0.0.1:5175").TrimEnd('/')
@@ -265,6 +266,20 @@ public class IdCardService(
                 + members.Unprotect(card.ProtectedToken),
         };
         var images = new Dictionary<string, string>();
+        using (var logo = typeof(IdCardService).Assembly.GetManifestResourceStream("Clubs.Api.Assets.Brand.impact-logo.webp"))
+        {
+            if (logo != null)
+            {
+                using var buffer = new MemoryStream();
+                await logo.CopyToAsync(buffer);
+                var bytes = buffer.ToArray();
+                var key = IntelligenceKnowledge.HashBytes(bytes)[..32].ToLowerInvariant();
+                Directory.CreateDirectory(storage.Root);
+                if (!File.Exists(storage.PathFor(key))) await File.WriteAllBytesAsync(storage.PathFor(key), bytes);
+                images["association.logo"] = key;
+            }
+        }
+
         if (m.Person.Photo != null)
         {
             using var image = IdCardRenderer.Decode(m.Person.Photo);

@@ -1602,23 +1602,28 @@ function Settings() {
 export function MyIdCard() {
   const q = useData("/my/id-card"),
     a = useAction();
+  const [showHistory,setShowHistory] = useState(false);
   const [back, setBack] = useState(false),
     [request, setRequest] = useState<Row>(),
     [reason, setReason] = useState("");
+  const current = q.data?.find((c:Row)=>c.state==='Issued'&&!c.revokedAt&&c.templateVersionId&&c.canDownload&&(!c.expiryAt||new Date(c.expiryAt)>new Date()));
   return (
     <div className="id-cards">
       <Header
         title="My Impact membership card"
-        description="View your official membership card and download protected copies when Impact International permits."
+        description="Your Impact identity, ready to carry. Download your latest valid card as a print-ready PDF."
+        action={current&&<a className="card-primary card-download-main" href="/api/v1/my/id-card/download-latest"><Download size={18}/>Download my card</a>}
       />
+      <section className="card-member-welcome"><div><span>IMPACT INTERNATIONAL · MEMBER WALLET</span><h2>One community. A world of impact.</h2><p>Your photo, membership ID, club and secure verification in one beautifully crafted identity card.</p></div><ShieldCheck size={48}/></section>
       <ErrorBox error={q.error} />
+      {q.isPending&&<Skeleton/>}
       {q.data?.length ? (
-        q.data.map((c: Row) => (
+        q.data.filter((c:Row)=>showHistory||(!c.revokedAt&&c.state!=='Replaced')).map((c: Row) => (
           <article className="card-my-id" key={c.id}>
             <div className="card-section-title">
-              <h2>{c.club}</h2>
+              <div><span className="card-eyebrow">MEMBER ID · {c.memberId||'See card'}</span><h2>{c.memberName||c.club}</h2><p>{c.club}</p></div>
               <Status>
-                {c.revokedAt
+                {c.state==='Replaced'?'Replaced':c.revokedAt
                   ? "Revoked"
                   : c.expiryAt && new Date(c.expiryAt) < new Date()
                     ? "Expired"
@@ -1631,7 +1636,7 @@ export function MyIdCard() {
                 src={
                   "/api/v1/id-cards/issuances/" + c.id + "/preview?back=" + back
                 }
-                alt="Your membership ID"
+                alt={(back?"Back":"Front")+" of "+(c.memberName||"your")+" membership card"}
               />
             ) : (
               <p>
@@ -1642,7 +1647,7 @@ export function MyIdCard() {
             <p>
               {c.serial} ·{" "}
               {c.expiryAt
-                ? "Valid until " + c.expiryAt.slice(0, 10)
+                ? "Valid till " + new Intl.DateTimeFormat("en-IN", {month:"long",year:"numeric",timeZone:"UTC"}).format(new Date(c.expiryAt.slice(0,10)+"T00:00:00Z"))
                 : "Membership validity applies"}
             </p>
             <div className="card-actions">
@@ -1662,7 +1667,7 @@ export function MyIdCard() {
                     key={f}
                   >
                     <Download size={14} />
-                    {f}
+                    {f==='pdf'?'Download PDF':f==='front'?'Front image':'Back image'}
                   </a>
                 ))}
               <button
@@ -1676,12 +1681,13 @@ export function MyIdCard() {
             </div>
           </article>
         ))
-      ) : (
+      ) : !q.isPending&&!q.error ? (
         <Empty>
           No official ID card is available yet. Your issuing authority can
           prepare one after validating your membership.
         </Empty>
-      )}
+      ) : null}
+      {q.data?.some((c:Row)=>c.revokedAt||c.state==='Replaced')&&<button className="secondary" onClick={()=>setShowHistory(!showHistory)}>{showHistory?'Hide previous cards':'View previous cards'}</button>}
       {request && (
         <Modal
           title="Contact your issuing authority"

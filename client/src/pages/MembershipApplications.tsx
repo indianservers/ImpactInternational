@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   Plus,
@@ -9,7 +9,7 @@ import {
   FilePenLine,
 } from "lucide-react";
 import { api } from "../api";
-import { PageHeader, Skeleton, ErrorBox } from "../App";
+import { PageHeader, Skeleton, ErrorBox, useWorkspace } from "../App";
 import {
   MemberDrawer,
   MemberStatus,
@@ -21,13 +21,17 @@ export default function MembershipApplications({
   review?: boolean;
 }) {
   const qc = useQueryClient();
-  const [status, setStatus] = useState(""),
+  const {w}=useWorkspace();
+  const [params]=useSearchParams();
+  const [status, setStatus] = useState(params.get("status")||""),
     [page, setPage] = useState(1),
     [create, setCreate] = useState(false),
     [selected, setSelected] = useState<string | null>(null),
     [message, setMessage] = useState("");
   const q = useQuery({
-    queryKey: ["applications", review, status, page],
+    queryKey: ["applications", w?.id, review, status, page],
+    enabled: !!w,
+    refetchInterval: 30000,
     queryFn: () =>
       api(
         "/membership/applications?mine=" +
@@ -103,6 +107,7 @@ export default function MembershipApplications({
             }}
           >
             <option value="">All application states</option>
+            <option value="Pending">All pending applications</option>
             {[
               "Draft",
               "Submitted",

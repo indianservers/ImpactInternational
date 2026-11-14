@@ -7,10 +7,15 @@ import {ErrorBox,Skeleton,useWorkspace} from '../App';
 import {useFinance} from './FinanceContext';
 import DuesManagement from './DuesManagement';
 import './FinanceOverview.css';
+import FinanceDuesHome from './FinanceDuesHome';
 type Row=Record<string,any>;
 const levels=['National','Region','District','Zone','Club'];
 const money=(n:number,c:string)=>new Intl.NumberFormat(undefined,{style:'currency',currency:c}).format(n||0);
 export default function FinanceOverview(){
+ const {w}=useWorkspace();
+ return w?.permissions.includes('finance.dues.reports')?<FinanceDuesHome advanced={<FinanceLedgerOverview/>}/>:<FinanceLedgerOverview/>;
+}
+function FinanceLedgerOverview(){
  const {w}=useWorkspace(),{onEntityChange}=useFinance(),navigate=useNavigate();
  const [tab,setTab]=useState('Overview'),[scope,setScope]=useState<string[]>(['','','','','']),[currency,setCurrency]=useState('');
  const [from,setFrom]=useState(()=>new Date().getFullYear()+'-01-01'),[to,setTo]=useState(()=>new Date().toISOString().slice(0,10));

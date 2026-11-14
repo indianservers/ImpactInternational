@@ -235,7 +235,19 @@ public class EventWorker(IServiceScopeFactory scopes, ILogger<EventWorker> log) 
                 foreach (var job in notices)
                 {
                     var e = await s.Find(job.EventId);
-                    if (job.Audience == "Registrations")
+                    if (job.Audience.StartsWith("MemberUpdate|"))
+                    {
+                        if(e.Lifecycle is "Cancelled" or "Completed" or "Archived"||e.EndsAt<=now){job.Completed=true;continue;}
+                        var parts=job.Audience.Split('|');
+                        Guid? target=Guid.TryParse(parts.ElementAtOrDefault(1),out var unit)?unit:null;
+                        var people=await EventEndpoints.CommunicationPeople(s,e,target,parts.ElementAtOrDefault(2)??"All",true);
+                        if(job.Cursor!=null)people=people.Where(p=>p.CompareTo(job.Cursor.Value)>0);
+                        var recipients=await people.OrderBy(p=>p).Take(100).ToListAsync();
+                        foreach(var person in recipients)await s.RsvpNotify(person,e,job.Message);
+                        job.Cursor=recipients.Count>0?recipients[^1]:job.Cursor;
+                        job.Completed=recipients.Count<100;
+                    }
+                    else if (job.Audience == "Registrations")
                     {
                         var q = s.Db.EventRegistrations.Where(r => r.EventId == e.Id);
                         if (

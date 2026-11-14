@@ -12,6 +12,7 @@ public class DuesCollectionLine
     public Guid? PaymentId { get; set; }
     public string Invoice { get; set; } = "";
     public string Member { get; set; } = "";
+    public string Club { get; set; } = "";
     public string Receipt { get; set; } = "";
     public string Currency { get; set; } = "";
     public DateOnly Date { get; set; }
@@ -91,6 +92,8 @@ public static partial class DuesCenter
                 DateOnly? from = null,
                 DateOnly? to = null,
                 string source = "",
+                string status = "",
+                string currency = "",
                 string search = "",
                 int page = 1,
                 string format = ""
@@ -113,6 +116,8 @@ public static partial class DuesCenter
                         }.Contains(source),
                     "Invalid collection filters."
                 );
+                Check(new[] { "", "Verified", "Submitted", "Rejected", "Cancelled", "Refunded" }.Contains(status), "Invalid collection status.");
+                Check(currency == "" || currency.Length == 3, "Invalid currency.");
                 var iq = Invoices(a.Db, a, w);
                 if (orgId != null)
                 {
@@ -139,6 +144,7 @@ public static partial class DuesCenter
                         PaymentId = p.Id,
                         Invoice = i.Number,
                         Member = i.Customer,
+                        Club = a.Db.Memberships.Where(m => m.Id == i.MembershipId).Select(m => m.Club.Name).FirstOrDefault() ?? "",
                         Receipt = p.ReceiptNumber,
                         Currency = p.Currency,
                         Date = p.Date,
@@ -163,6 +169,7 @@ public static partial class DuesCenter
                         PaymentId = null,
                         Invoice = i.Number,
                         Member = i.Customer,
+                        Club = a.Db.Memberships.Where(m => m.Id == i.MembershipId).Select(m => m.Club.Name).FirstOrDefault() ?? "",
                         Receipt = c.Reference,
                         Currency = c.Currency,
                         Date = c.Date,
@@ -186,6 +193,7 @@ public static partial class DuesCenter
                             InvoiceId = i.Id,
                             Invoice = i.Number,
                             Member = i.Customer,
+                        Club = a.Db.Memberships.Where(m => m.Id == i.MembershipId).Select(m => m.Club.Name).FirstOrDefault() ?? "",
                             Receipt = t.ProviderId,
                             Currency = i.Currency,
                             Date = i.Date,
@@ -203,6 +211,9 @@ public static partial class DuesCenter
                     rows = rows.Where(r => r.Unallocated > 0);
                 else if (source != "")
                     rows = rows.Where(r => r.Status == source);
+                if (status == "Verified") rows = rows.Where(r => r.PaymentId != null && r.Status != "Refunded");
+                else if (status != "") rows = rows.Where(r => r.Status == status);
+                if (currency != "") rows = rows.Where(r => r.Currency == currency);
                 if (from != null)
                     rows = rows.Where(r => r.Date >= from);
                 if (to != null)
@@ -225,6 +236,7 @@ public static partial class DuesCenter
                         [
                             "Date",
                             "Member",
+                            "Club",
                             "Invoice",
                             "Receipt",
                             "Currency",
@@ -241,6 +253,7 @@ public static partial class DuesCenter
                             {
                                 r.Date.ToString("yyyy-MM-dd"),
                                 r.Member,
+                                r.Club,
                                 r.Invoice,
                                 r.Receipt,
                                 r.Currency,

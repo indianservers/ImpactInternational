@@ -336,6 +336,9 @@ public static class GovernanceEndpoints
                 return new
                 {
                     appointment = p,
+                    approvalRequestId = await s.Db.GovernanceRequests
+                        .Where(r => r.TenantId == w.TenantId && r.AppointmentId == p.Id && r.Kind == "OfficerAppointment")
+                        .OrderByDescending(r => r.CreatedAt).Select(r => (Guid?)r.Id).FirstOrDefaultAsync(),
                     person = await s
                         .Db.Persons.Where(x => x.Id == p.PersonId)
                         .Select(x => new { x.Id, x.DisplayName })
@@ -568,11 +571,11 @@ public static class GovernanceEndpoints
                             Roles = stage.Roles.Select(x => x.RoleId),
                         },
                     canDecide = (await s.A.Grants(w)).Contains("governance.approve")
-                        && r.CreatorId != w.UserId
-                        && r.SubjectUserId != w.UserId
+                        && (await ApprovalEngine.HierarchyRequest(s.Db, w, r) || r.CreatorId != w.UserId)
+                        && (await ApprovalEngine.PlatformAuthority(s.Db, w) && r.Kind == "OfficerAppointment" || r.SubjectUserId != w.UserId)
                         && new[] { "Submitted", "Under Review" }.Contains(r.Status)
                         && stage != null
-                        && (stage.Roles.Any(x => x.RoleId == w.RoleId) || stage.AllowDelegation),
+                        && (stage.Roles.Any(x => x.RoleId == w.RoleId) || stage.AllowDelegation || await ApprovalEngine.HierarchyRequest(s.Db, w, r)),
                     canEdit = r.CreatorId == w.UserId
                         && new[] { "Draft", "Changes Requested" }.Contains(r.Status),
                     revisions = await s
@@ -795,7 +798,8 @@ public static class GovernanceEndpoints
                     409
                 );
                 Check(
-                    r.CreatorId != w.UserId && r.SubjectUserId != w.UserId,
+                    (await ApprovalEngine.HierarchyRequest(s.Db, w, r) || r.CreatorId != w.UserId)
+                        && (await ApprovalEngine.PlatformAuthority(s.Db, w) && r.Kind == "OfficerAppointment" || r.SubjectUserId != w.UserId),
                     "You cannot approve your own request or office.",
                     403
                 );

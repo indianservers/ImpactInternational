@@ -152,6 +152,7 @@ export default function Members({
   });
   const metrics = useQuery({
     queryKey: ["member-metrics", w?.id, range,dates],
+    refetchInterval: 30000,
     queryFn: () => api("/membership/metrics?"+new URLSearchParams({range,...dates})),
     enabled: !directory,
   });
@@ -328,7 +329,7 @@ export default function Members({
       </PageHeader>
       <div className="mm-mobile-search search-field"><Search size={17}/><input aria-label="Search members on mobile" placeholder="Search name or member ID…" value={search} onChange={e=>setSearch(e.target.value)}/><small>{q.data?.total?.toLocaleString()??"…"}</small></div>
       {!directory&&grants.includes("members.manage")&&<button className="mm-floating-add" aria-label="Add new member" onClick={()=>setDrawer("create")}><Plus size={18}/>Add member</button>}
-      {!directory&&<nav className="mm-status-tabs" aria-label="Membership status">{[["All members",""],["Active","Active"],["Inactive","Inactive"],["Suspended","Suspended"],["Transferred","Transferred"],["Expired","Expired"],["Renewals due","Renewal Due"]].map(([label,status])=><button key={label} className={statuses.join(",")===status?"active":""} aria-pressed={statuses.join(",")===status} onClick={()=>setStatuses(status?[status]:[])}>{label}<span>{status===""?metrics.data?.memberships??"—":status==="Renewal Due"?metrics.data?.upcomingRenewals??"—":metrics.data?(metrics.data.intelligence?.statusCounts.find((x:any)=>x.status===status)?.count??0):"—"}</span></button>)}{grants.includes("members.approve")&&<Link to="/app/approvals">Pending applications <b>{metrics.data?.pendingApplications??"—"}</b></Link>}</nav>}
+      {!directory&&<nav className="mm-status-tabs" aria-label="Membership status">{[["All members",""],["Active","Active"],["Inactive","Inactive"],["Suspended","Suspended"],["Transferred","Transferred"],["Expired","Expired"],["Renewals due","Renewal Due"]].map(([label,status])=><button key={label} className={statuses.join(",")===status?"active":""} aria-pressed={statuses.join(",")===status} onClick={()=>setStatuses(status?[status]:[])}>{label}<span>{status===""?metrics.data?.memberships??"—":status==="Renewal Due"?metrics.data?.upcomingRenewals??"—":metrics.data?(metrics.data.intelligence?.statusCounts.find((x:any)=>x.status===status)?.count??0):"—"}</span></button>)}{grants.includes("members.approve")&&<Link to="/app/approvals?status=Pending">Pending applications <b>{metrics.data?.pendingApplications??"—"}</b></Link>}</nav>}
       {!directory&&<MembershipIntelligence {...{metrics,range,setRange,setDates}} onStatus={setStatuses} onRegion={selectRegion} canApprove={grants.includes("members.approve")}/>}
       <section className="mm-primary-filters" aria-label="Member hierarchy filters">
        <label>Region<select value={regionId} onChange={e=>selectRegion(e.target.value)}><option value="">All authorized regions</option>{regions.data?.map(r=><option key={r.id} value={r.id}>{r.name}</option>)}</select></label>

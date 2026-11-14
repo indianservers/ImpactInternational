@@ -342,7 +342,7 @@ public static class ClubGovernanceEndpoints
                     pendingApplications = await s.Db.MembershipApplications.CountAsync(x =>
                         x.TenantId == w.TenantId
                         && ids.Contains(x.ClubId)
-                        && new[] { "Submitted", "Under Review" }.Contains(x.Status)
+                        && MembershipStatistics.PendingApplicationStates.Contains(x.Status)
                     ),
                     currentOfficers = officerStats?.Total ?? 0,
                     expiringOfficers = officerStats?.Expiring ?? 0,

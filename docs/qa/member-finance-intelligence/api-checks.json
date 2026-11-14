@@ -1,0 +1,138 @@
+[
+  {
+    "name": "Admin login",
+    "passed": true
+  },
+  {
+    "name": "Member intelligence available",
+    "passed": true
+  },
+  {
+    "name": "Payment categories partition all memberships",
+    "passed": true
+  },
+  {
+    "name": "Members without invoices included",
+    "passed": true
+  },
+  {
+    "name": "One row per membership",
+    "passed": true
+  },
+  {
+    "name": "Rows remain in selected club",
+    "passed": true
+  },
+  {
+    "name": "No-dues members are not treated as unpaid",
+    "passed": true
+  },
+  {
+    "name": "billed reconciles to club dues report",
+    "passed": true
+  },
+  {
+    "name": "collected reconciles to club dues report",
+    "passed": true
+  },
+  {
+    "name": "pending reconciles to club dues report",
+    "passed": true
+  },
+  {
+    "name": "overdue reconciles to club dues report",
+    "passed": true
+  },
+  {
+    "name": "Paid chart filter returns matching members",
+    "passed": true
+  },
+  {
+    "name": "Paid filtering preserves full-scope chart counts",
+    "passed": true
+  },
+  {
+    "name": "Partial chart filter returns matching members",
+    "passed": true
+  },
+  {
+    "name": "Partial filtering preserves full-scope chart counts",
+    "passed": true
+  },
+  {
+    "name": "Unpaid chart filter returns matching members",
+    "passed": true
+  },
+  {
+    "name": "Unpaid filtering preserves full-scope chart counts",
+    "passed": true
+  },
+  {
+    "name": "No dues chart filter returns matching members",
+    "passed": true
+  },
+  {
+    "name": "No dues filtering preserves full-scope chart counts",
+    "passed": true
+  },
+  {
+    "name": "Overdue chart filter returns matching members",
+    "passed": true
+  },
+  {
+    "name": "Overdue filtering preserves full-scope chart counts",
+    "passed": true
+  },
+  {
+    "name": "Verification chart filter returns matching members",
+    "passed": true
+  },
+  {
+    "name": "Verification filtering preserves full-scope chart counts",
+    "passed": true
+  },
+  {
+    "name": "HasPaid chart filter returns matching members",
+    "passed": true
+  },
+  {
+    "name": "HasPaid filtering preserves full-scope chart counts",
+    "passed": true
+  },
+  {
+    "name": "Pending chart filter returns matching members",
+    "passed": true
+  },
+  {
+    "name": "Pending filtering preserves full-scope chart counts",
+    "passed": true
+  },
+  {
+    "name": "No currency mixing",
+    "passed": true
+  },
+  {
+    "name": "Invalid member status rejected",
+    "passed": true
+  },
+  {
+    "name": "Club president login",
+    "passed": true
+  },
+  {
+    "name": "President can read assigned club",
+    "passed": true
+  },
+  {
+    "name": "Foreign-club roster blocked",
+    "passed": true
+  },
+  {
+    "name": "Member login",
+    "passed": true
+  },
+  {
+    "name": "Ordinary member cannot read finance roster",
+    "passed": true
+  }
+]

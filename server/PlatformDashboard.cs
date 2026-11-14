@@ -93,7 +93,7 @@ public static class PlatformDashboard
         var clubs = orgs.Where(o => o.IsClub).ToList();
         var activeCommittees = committees.Count(c => c.Status == "Active" && c.StartsAt <= now && c.EndsAt > now);
         bool Pending(string status) => status is "Submitted" or "Under Review";
-        var openRequests = requests.Count(r => Pending(r.Status)); var openApplications = applications.Count(r => Pending(r.Status)); var openOrgApprovals = orgs.Count(o => o.Status == "Pending");
+        var openRequests = requests.Count(r => Pending(r.Status)); var openApplications = applications.Count(r => MembershipStatistics.PendingApplicationStates.Contains(r.Status)); var openOrgApprovals = orgs.Count(o => o.Status == "Pending");
         int InPeriod(IEnumerable<DateTimeOffset> values) => values.Count(v => v >= start && v < end);
         int Previous(IEnumerable<DateTimeOffset> values) => values.Count(v => v >= priorStart && v < start);
         var monthStart = Bound(new DateOnly(today.Year, today.Month, 1)); var priorMonth = Bound(new DateOnly(today.Year, today.Month, 1).AddMonths(-1));
@@ -121,7 +121,7 @@ public static class PlatformDashboard
         var priorities = new[] {
             new { id="vacancies", label="Mandatory office vacancies", count=vacancies, priority="High", href="/app/leadership", meaning="Active organizational units with an unfilled mandatory position" },
             new { id="memberships", label="Memberships expiring in 30 days", count=expiringMemberships, priority="Medium", href="/app/members?status=Renewal%20Due", meaning="Active membership records ending within 30 days" },
-            new { id="applications", label="Pending member applications", count=openApplications, priority="Medium", href="/app/approvals", meaning="Submitted or under-review applications" },
+            new { id="applications", label="Pending member applications", count=openApplications, priority="Medium", href="/app/approvals?status=Pending", meaning="Current Submitted, Under Review or Changes Requested applications; drafts excluded" },
             new { id="successors", label="Scheduled successors", count=appointments.Count(o=>o.Status=="Scheduled"&&o.EndsAt>now), priority="Low", href="/app/leadership-calendar", meaning="Scheduled appointments not yet ended" },
             new { id="org-approvals", label="Pending organization approvals", count=openOrgApprovals, priority="Medium", href="/app/organizations?status=Pending", meaning="Organizational units with Pending status" },
             new { id="configuration", label="Incomplete unit profiles", count=orgs.Count(o=>o.Status=="Active"&&(o.Country==""||o.City=="")), priority="Medium", href="/app/organizations", meaning="Active units missing city or country" },

@@ -186,7 +186,8 @@ export default function MembershipInsights() {
       );
     },
     enabled: !!w && w.permissions.includes("members.view"),
-    staleTime: 30000,
+    staleTime: 15000,
+    refetchInterval: 30000,
   });
   const options = useQuery({
     queryKey: ["analytics-reference", w?.id],
@@ -689,7 +690,7 @@ export default function MembershipInsights() {
               <span>
                 <i />
                 {q.isFetching || queryFilter !== filter
-                  ? "Updating filtered records�"
+                  ? "Updating filtered records…"
                   : "Scoped records · cache up to 20s"}
               </span>
               <span>
@@ -742,7 +743,7 @@ export default function MembershipInsights() {
                       "Pending Applications",
                       d.summary.pendingApplications,
                       Layers,
-                      "Submitted in selected period",
+                      "Current backlog · drafts excluded",
                     ],
                   ].map(([label, value, Icon, hint]: any, i) => (
                     <KpiDestination
@@ -752,7 +753,7 @@ export default function MembershipInsights() {
                         i === 4
                           ? link("renewals")
                           : i === 5
-                            ? (w?.permissions.includes("members.approve") ? "/app/approvals" : undefined)
+                            ? (w?.permissions.includes("members.approve") ? "/app/approvals?status=Pending" : undefined)
                             : membersLink(i === 1 ? { status: "Active" } : {})
                       }
                     >

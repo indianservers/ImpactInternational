@@ -1,0 +1,78 @@
+[
+  {
+    "test": "Current total reconciles with member metrics",
+    "passed": true
+  },
+  {
+    "test": "Current active count reconciles with member metrics",
+    "passed": true
+  },
+  {
+    "test": "Current renewal due reconciles with member metrics",
+    "passed": true
+  },
+  {
+    "test": "Current pending applications reconcile",
+    "passed": true
+  },
+  {
+    "test": "Rolling 30-day window includes end of thirtieth day",
+    "passed": true
+  },
+  {
+    "test": "Rolling renewal count matches Members API",
+    "passed": true
+  },
+  {
+    "test": "Renewal status drill-down matches KPI",
+    "passed": true
+  },
+  {
+    "test": "Selected club renewal window narrows correctly",
+    "passed": true
+  },
+  {
+    "test": "Live status changes do not depend on history backfill",
+    "passed": true
+  },
+  {
+    "test": "Latest chart point matches live active snapshot",
+    "passed": true
+  },
+  {
+    "test": "Inactive member no longer counted as renewal due",
+    "passed": true
+  },
+  {
+    "test": "Historical active counts remain based on history",
+    "passed": true
+  },
+  {
+    "test": "Old pending applications remain in current backlog",
+    "passed": true
+  },
+  {
+    "test": "Changing chart period does not hide pending backlog",
+    "passed": true
+  },
+  {
+    "test": "Platform dashboard uses same application definition",
+    "passed": true
+  },
+  {
+    "test": "Governance dashboard uses same application definition",
+    "passed": true
+  },
+  {
+    "test": "Cancelled applications are excluded",
+    "passed": true
+  },
+  {
+    "test": "Club role backlog matches its authorized pending queue",
+    "passed": true
+  },
+  {
+    "test": "Ordinary members cannot see administrative statistics",
+    "passed": true
+  }
+]

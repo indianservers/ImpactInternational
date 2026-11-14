@@ -98,6 +98,7 @@ public static class IdCardDesign
         "association.name",
         "card.issue_date",
         "card.expiry_date",
+        "card.expiry_month_year",
         "card.serial_number",
     ];
     public static readonly string[] ImageKeys =
@@ -129,92 +130,41 @@ public static class IdCardDesign
         ))
         .ToArray();
 
-    public static IdCardLayout Default() =>
-        new(
-            Front: new(
-                "#f5f7f3",
-                [
-                    new("band", "Rect", 0, 0, 85.6f, 12, Fill: "#174f46"),
-                    new(
-                        "association",
-                        "Text",
-                        5,
-                        4,
-                        75,
-                        5,
-                        Text: "Impact International",
-                        Binding: "association.name",
-                        Color: "#ffffff",
-                        FontSize: 3.5f,
-                        Locked: true
-                    ),
-                    new("photo", "Image", 5, 17, 22, 27, Binding: "member.photo", Radius: 2),
-                    new(
-                        "name",
-                        "Text",
-                        32,
-                        18,
-                        49,
-                        12,
-                        Binding: "member.full_name",
-                        FontSize: 4.1f,
-                        Required: true,
-                        Bold: true
-                    ),
-                    new(
-                        "number",
-                        "Text",
-                        32,
-                        32,
-                        47,
-                        6,
-                        Binding: "member.member_id",
-                        FontSize: 3.2f,
-                        Required: true
-                    ),
-                    new("club", "Text", 32, 40, 47, 7, Binding: "member.club_name", FontSize: 2.6f),
-                ]
-            ),
-            Back: new(
-                "#174f46",
-                [
-                    new("qr", "Qr", 6, 9, 30, 30, Binding: "card.qr_code"),
-                    new(
-                        "title",
-                        "Text",
-                        42,
-                        11,
-                        38,
-                        8,
-                        Text: "CONNECTED BY PURPOSE",
-                        Color: "#ffffff",
-                        FontSize: 3.2f
-                    ),
-                    new(
-                        "valid",
-                        "Text",
-                        42,
-                        23,
-                        38,
-                        7,
-                        Text: "Valid until {{card.expiry_date}}",
-                        Color: "#ffffff",
-                        FontSize: 2.8f
-                    ),
-                    new(
-                        "return",
-                        "Text",
-                        6,
-                        43,
-                        73,
-                        8,
-                        Text: "If found, return to the issuing organization. Verify this card using its secure QR code.",
-                        Color: "#ffffff",
-                        FontSize: 2.3f
-                    ),
-                ]
-            )
-        );
+    public static IdCardLayout Default() => new(
+        Front: new("#f8f7f3", [
+            new("navy-header", "Rect", 0, 0, 85.6f, 15, Fill: "#101e40", Locked: true),
+            new("header-glow", "Ellipse", 62, -18, 45, 45, Fill: "#273a62", Opacity: .65f),
+            new("gold-rule", "Rect", 0, 15, 85.6f, .7f, Fill: "#d7b568", Locked: true),
+            new("logo-disc", "Ellipse", 4, 2, 11, 11, Fill: "#ffffff"),
+            new("logo", "Image", 4.5f, 2.5f, 10, 10, Binding: "association.logo", Radius: 5, Locked: true),
+            new("association", "Text", 18, 3, 62, 5, Binding: "association.name", Color: "#ffffff", FontSize: 3.7f, Bold: true, Locked: true),
+            new("brand-line", "Text", 18, 9, 62, 3, Text: "TRAINING · BUSINESS · SERVICE · LEADERSHIP", Color: "#dfc68f", FontSize: 1.55f, Locked: true),
+            new("photo-frame", "Rect", 4, 19, 23, 28, Fill: "#d7b568", Radius: 2),
+            new("photo-placeholder", "Rect", 4.6f, 19.6f, 21.8f, 26.8f, Fill: "#e4e7ef", Radius: 1.5f),
+            new("photo-label", "Text", 6, 29, 19, 8, Text: "IMPACT\nMEMBER", Color: "#66718b", FontSize: 2.4f, Align: "Center"),
+            new("photo", "Image", 4.6f, 19.6f, 21.8f, 26.8f, Binding: "member.photo", Radius: 1.5f),
+            new("identity-label", "Text", 31, 18.5f, 50, 3, Text: "MEMBERSHIP IDENTITY", Color: "#94702f", FontSize: 1.8f, Bold: true),
+            new("name", "Text", 31, 22.5f, 50, 11, Binding: "member.full_name", Color: "#101e40", FontSize: 3.5f, Bold: true, Required: true),
+            new("id-strip", "Rect", 31, 34, 50, 7, Fill: "#e9e3d4", Radius: 1),
+            new("number", "Text", 33, 35, 46, 5, Binding: "member.member_id", Color: "#101e40", FontSize: 3, Bold: true, Required: true),
+            new("category", "Text", 31, 42.5f, 50, 4, Binding: "member.membership_category", Color: "#66552f", FontSize: 2.2f),
+            new("footer", "Rect", 0, 49, 85.6f, 5, Fill: "#101e40"),
+            new("footer-text", "Text", 4, 50, 78, 3, Text: "CONNECTED BY PURPOSE  •  PEOPLE · SERVICE · IMPACT", Color: "#dfc68f", FontSize: 1.6f, Align: "Center")
+        ]),
+        Back: new("#101e40", [
+            new("back-orbit", "Ellipse", 55, -20, 60, 60, Fill: "#23385e", Opacity: .7f),
+            new("back-title", "Text", 5, 4, 75, 5, Text: "YOUR IMPACT. YOUR IDENTITY.", Color: "#dfc68f", FontSize: 3, Bold: true),
+            new("back-rule", "Rect", 5, 11, 75, .4f, Fill: "#d7b568"),
+            new("qr-frame", "Rect", 5, 16, 25, 25, Fill: "#ffffff", Radius: 2),
+            new("qr", "Qr", 6.5f, 17.5f, 22, 22, Binding: "card.qr_code"),
+            new("club-label", "Text", 34, 15, 46, 3, Text: "MEMBER CLUB", Color: "#dfc68f", FontSize: 1.7f),
+            new("club", "Text", 34, 19, 46, 10, Binding: "member.club_name", Color: "#ffffff", FontSize: 2.4f),
+            new("district", "Text", 34, 30, 46, 6, Binding: "member.district_name", Color: "#bdc9df", FontSize: 2),
+            new("valid", "Text", 34, 37, 46, 4, Text: "VALID TILL  {{card.expiry_month_year}}", Color: "#dfc68f", FontSize: 2),
+            new("verification", "Text", 5, 43, 76, 5, Text: "Scan to verify current status. If found, return to the issuing club.", Color: "#bdc9df", FontSize: 1.8f),
+            new("serial", "Text", 5, 49, 76, 3, Binding: "card.serial_number", Color: "#8295b5", FontSize: 1.55f)
+        ])
+    );
 
     public static void Validate(IdCardLayout d)
     {

@@ -34,7 +34,7 @@ const featureSections = [
     tab("Handovers", "/handovers", "leadership.view"), tab("Committees", "/committees", "committees.view"),
   ] },
   { id: "governance", label: "Governance", icon: ClipboardCheck, tabs: [
-    tab("Approvals", "/governance", "governance.approve", "clubs.manage", "leadership.manage", "committees.manage", "governance.documents"),
+    tab("Approvals", "/governance", "clubs.view", "clubs.manage", "leadership.view", "leadership.manage", "governance.configure", "governance.approve", "governance.restructure", "governance.documents", "committees.view", "committees.manage", "governance.reports"),
     tab("Resolutions", "/resolutions", "governance.documents"), tab("Documents", "/governance-documents", "governance.documents"),
     tab("Configuration", "/governance-settings", "governance.configure"),
   ] },
@@ -45,13 +45,13 @@ const featureSections = [
   { id: "operations", label: "Operations", icon: Briefcase, tabs: [tab("Operations", "/operations", "operations.view")] },
   { id: "communications", label: "Communications", icon: Mail, tabs: [tab("Communications", "/communications", "communications.view")] },
   { id: "finance", label: "Finance", icon: Wallet, tabs: [tab("Finance", "/finance", "finance.self")] },
-  { id: "cards", label: "ID Card Studio", icon: CreditCard, tabs: [tab("ID Card Studio", "/id-cards", "members.cards")] },
+  { id: "cards", label: "ID Card Studio", icon: CreditCard, tabs: [tab("ID Card Studio", "/id-cards", "members.cards"), tab("My digital ID", "/my-id")] },
   { id: "intelligence", label: "Intelligence", icon: ChartNoAxesCombined, tabs: [tab("Intelligence", "/intelligence", "intelligence.assistant")] },
   { id: "administration", label: "Administration", icon: Settings, tabs: [
     tab("Roles & access", "/administration", "roles.view"), tab("Audit trail", "/audit", "audit.view"), tab("Impact settings", "/settings", "settings.view"),
   ] },
   { id: "community", label: "My Impact community", icon: UserRound, tabs: [
-    tab("My membership", "/my-membership"), tab("My digital ID", "/my-id"), tab("Join a club", "/apply"), tab("Profile & security", "/profile"),
+    tab("My membership", "/my-membership"), tab("Join a club", "/apply"), tab("Profile & security", "/profile"),
   ] },
 ];
 

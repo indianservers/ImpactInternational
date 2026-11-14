@@ -1106,7 +1106,7 @@ public static class MembershipEndpoints
                 PendingApplications = await s.Db.MembershipApplications.CountAsync(x =>
                     x.TenantId == w.TenantId
                     && s.Access.Visible(w).Any(o => o.Id == x.ClubId)
-                    && new[] { "Submitted", "Under Review", "Changes Requested" }.Contains(x.Status)
+                    && MembershipStatistics.PendingApplicationStates.Contains(x.Status)
                 ),
                 UpcomingRenewals = await active.CountAsync(x =>
                     x.EndsAt != null && x.EndsAt <= now.AddDays(30)

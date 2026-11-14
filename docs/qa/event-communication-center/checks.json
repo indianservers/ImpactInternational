@@ -1,0 +1,23 @@
+{
+  "module": "Events hierarchy and communication",
+  "date": "2026-11-14",
+  "apiChecksPassed": 21,
+  "browserChecks": [
+    "Platform Admin login",
+    "District selection narrows zones to five",
+    "Zone selection narrows clubs",
+    "Create-event link retains selected club",
+    "Communication recipient preview",
+    "Invitation review and edit",
+    "RSVP reminder selects Awaiting RSVP",
+    "Joining details selects Confirmed",
+    "Invitation template restores invitation purpose",
+    "390px viewport has no horizontal overflow",
+    "Desktop viewport restored"
+  ],
+  "builds": {
+    "client": "passed",
+    "server": "passed, zero warnings and errors"
+  },
+  "delivery": "No messages sent during this check. Live email delivery and WhatsApp/SMS were not tested."
+}

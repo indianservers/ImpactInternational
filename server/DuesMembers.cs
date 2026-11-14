@@ -8,6 +8,7 @@ public static partial class DuesCenter
 {
     static void MapMembers(RouteGroupBuilder api)
     {
+        MapMemberIntelligence(api);
         api.MapGet(
             "/members",
             async (

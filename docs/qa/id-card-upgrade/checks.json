@@ -1,0 +1,93 @@
+{
+  "checks": [
+    {
+      "test": "Member metadata exposes membership number and name",
+      "passed": true
+    },
+    {
+      "test": "Member cannot design templates",
+      "passed": true
+    },
+    {
+      "test": "Premium default includes required name and membership ID",
+      "passed": true
+    },
+    {
+      "test": "Premium card includes logo photo and secure QR",
+      "passed": true
+    },
+    {
+      "test": "Premium template passes publication and QR constraints",
+      "passed": true
+    },
+    {
+      "test": "Unapproved draft cannot download",
+      "passed": true
+    },
+    {
+      "test": "Creator cannot approve own card",
+      "passed": true
+    },
+    {
+      "test": "Latest card downloads automatically as PDF",
+      "passed": true
+    },
+    {
+      "test": "Download sends attachment filename",
+      "passed": true
+    },
+    {
+      "test": "front image download",
+      "passed": true
+    },
+    {
+      "test": "back image download",
+      "passed": true
+    },
+    {
+      "test": "Another member cannot download this card",
+      "passed": true
+    },
+    {
+      "test": "Front image is 300 DPI CR80 size",
+      "passed": true
+    },
+    {
+      "test": "PDF contains front and back pages",
+      "passed": true
+    },
+    {
+      "test": "PDF includes real member ID",
+      "passed": true
+    },
+    {
+      "test": "PDF preserves CR80 physical dimensions",
+      "passed": true
+    },
+    {
+      "test": "Secure QR decodes and uses current port 1234",
+      "passed": true
+    },
+    {
+      "test": "Member without issued card receives clear 409",
+      "passed": true
+    }
+  ],
+  "fixture": {
+    "cardId": "afb88ab8-16b6-4e9b-9497-d84b5147a680",
+    "templateId": "9556b1ab-6913-4225-9908-fe99a4cfb0a2",
+    "member": "member.club1@example.test"
+  },
+  "browserChecks": {
+    "memberLogin": "passed",
+    "oneClickPdfDownload": "passed",
+    "frontBackFlip": "passed",
+    "cardHistoryToggle": "passed",
+    "mobile390pxNoHorizontalOverflow": "passed",
+    "desktopViewportRestored": true
+  },
+  "notes": [
+    "New premium design is used when creating a template. Existing issued snapshots remain unchanged.",
+    "QA card issued through independent approval for member.club1@example.test."
+  ]
+}

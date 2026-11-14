@@ -68,6 +68,8 @@ public static class MembershipSetup
             add = add.Concat(CommunicationService.Permissions.Where(p => p != "communications.configure")).ToArray();
         if (LeaderCommunications.SendingRoles.Contains(role.Name) || role.Name == "Club Treasurer") add = add.Concat(new[] { DuesCenter.View }).ToArray();
         if (role.Name is "Club President" or "Club Treasurer" or "Club Secretary" or "Club Manager") add = add.Concat(new[] { DuesCenter.Collect }).ToArray();
+        if (LeaderCommunications.PresidentLevels.ContainsKey(role.Name))
+            add = add.Concat(new[] { "members.approve", "governance.approve", "leadership.view" }).ToArray();
         role.Permissions = role.Permissions.Concat(add).Distinct().ToArray();
     }
 
