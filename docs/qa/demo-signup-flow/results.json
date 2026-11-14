@@ -1,0 +1,727 @@
+{
+  "total": 136,
+  "passed": 136,
+  "failed": [],
+  "environment": "Live local demo at localhost:1234",
+  "emailVerification": "Locally queued verification links; external email delivery not tested",
+  "accounts": [
+    {
+      "label": "Club approval",
+      "email": "demo.signup.club.20261114.a9aec56@example.test",
+      "userId": "7a23163c-1bca-4f82-bc12-3d3a588b9111",
+      "applicationId": "1fad3ced-7ed0-43a9-89a0-b1610263ca91",
+      "clubId": "18ee9a12-bcc5-464f-bae4-1377038a0162",
+      "club": "Demo Region 01 District 01 Zone 01 Club 01",
+      "zoneId": "3417509a-736c-44aa-804e-9b5ea9204a46",
+      "status": "Active",
+      "approvedBy": "club.president@example.test",
+      "membershipNumber": "IM-000003168",
+      "membershipId": "d4840d86-4031-407c-9d43-cd3e7b7f9dc6"
+    },
+    {
+      "label": "Zone approval",
+      "email": "demo.signup.zone.20261114.a9aec56@example.test",
+      "userId": "adb2085b-378d-47e3-9e68-dbfd6b37c24b",
+      "applicationId": "54070284-e410-4932-95fa-7f2d95f81d3d",
+      "clubId": "19a06fac-8eea-477b-af34-db9c8d1ebfe0",
+      "club": "Demo Region 01 District 01 Zone 01 Club 02",
+      "zoneId": "3417509a-736c-44aa-804e-9b5ea9204a46",
+      "status": "Active",
+      "approvedBy": "zonal.president@example.test",
+      "membershipNumber": "IM-000003169",
+      "membershipId": "a950b4e6-f417-4b88-860e-d32c55f5b605"
+    },
+    {
+      "label": "Pending outside zone",
+      "email": "demo.signup.pending.20261114.a9aec56@example.test",
+      "userId": "8bbe0250-1382-44e7-b4f5-e28ae76a7613",
+      "applicationId": "00ddc3a5-fe03-4b05-a7ea-c76dee034cbf",
+      "clubId": "24193e6e-beb3-47b6-a7f9-7118e21e8ac3",
+      "club": "Demo Region 01 District 01 Zone 02 Club 01",
+      "zoneId": "7c883946-0860-4447-91a6-238c65251344",
+      "status": "Pending approval"
+    }
+  ],
+  "checks": [
+    {
+      "name": "GET /auth/methods",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Demo uses password member login",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GET /public/membership-options",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Public zones and clubs available",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "POST /public/membership-signup",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Club approval signup reports pending",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Club approval has pending submitted application",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Club approval has no membership or role before approval",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Club approval unverified sign-in blocked",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "POST /auth/complete",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "demo.signup.club.20261114.a9aec56@example.test login",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Club approval login identifies pending application",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GET /workspaces",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Club approval has no pending workspace",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GET /membership/applications?mine=true",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Club approval can track own pending status",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GET /membership/me",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Club approval portal has no active memberships",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GET /members",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "POST /membership/applications/1fad3ced-7ed0-43a9-89a0-b1610263ca91/decisions",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "POST /public/membership-signup",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Zone approval signup reports pending",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Zone approval has pending submitted application",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Zone approval has no membership or role before approval",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Zone approval unverified sign-in blocked",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "POST /auth/complete",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "demo.signup.zone.20261114.a9aec56@example.test login",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Zone approval login identifies pending application",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GET /workspaces",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Zone approval has no pending workspace",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GET /membership/applications?mine=true",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Zone approval can track own pending status",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GET /membership/me",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Zone approval portal has no active memberships",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GET /members",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "POST /membership/applications/54070284-e410-4932-95fa-7f2d95f81d3d/decisions",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "POST /public/membership-signup",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Pending outside zone signup reports pending",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Pending outside zone has pending submitted application",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Pending outside zone has no membership or role before approval",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Pending outside zone unverified sign-in blocked",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "POST /auth/complete",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "demo.signup.pending.20261114.a9aec56@example.test login",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Pending outside zone login identifies pending application",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GET /workspaces",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Pending outside zone has no pending workspace",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GET /membership/applications?mine=true",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Pending outside zone can track own pending status",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GET /membership/me",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Pending outside zone portal has no active memberships",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GET /members",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "POST /membership/applications/00ddc3a5-fe03-4b05-a7ea-c76dee034cbf/decisions",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "club.president@example.test login",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "zonal.president@example.test login",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "saisatish@indianservers.com login",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GET /workspaces",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "POST /workspaces/1cbc8082-f8ba-42ea-accf-0b26a73f6a40/activate",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Club President workspace has approval permission",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GET /workspaces",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "POST /workspaces/86ed6e45-347d-4a53-97b3-4c4619253d57/activate",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GET /auth/methods",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Demo uses password member login",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GET /public/membership-options",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Public zones and clubs available",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "club.president@example.test login",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "zonal.president@example.test login",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "saisatish@indianservers.com login",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GET /workspaces",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "POST /workspaces/1cbc8082-f8ba-42ea-accf-0b26a73f6a40/activate",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Club President workspace has approval permission",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GET /workspaces",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "POST /workspaces/86ed6e45-347d-4a53-97b3-4c4619253d57/activate",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Zonal President workspace has approval permission",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GET /membership/applications?status=Pending",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GET /membership/applications?status=Pending",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Club president inbox excludes sibling and foreign clubs",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Zone president inbox includes both own-zone clubs and excludes other zone",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GET /membership/applications/54070284-e410-4932-95fa-7f2d95f81d3d",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "POST /membership/applications/54070284-e410-4932-95fa-7f2d95f81d3d/decisions",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Club president sibling-club denial preserves pending state",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GET /membership/applications/00ddc3a5-fe03-4b05-a7ea-c76dee034cbf",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "POST /membership/applications/00ddc3a5-fe03-4b05-a7ea-c76dee034cbf/decisions",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Club president foreign-zone denial preserves pending state",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GET /membership/applications/00ddc3a5-fe03-4b05-a7ea-c76dee034cbf",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "POST /membership/applications/00ddc3a5-fe03-4b05-a7ea-c76dee034cbf/decisions",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Zone president foreign-zone denial preserves pending state",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GET /membership/applications/1fad3ced-7ed0-43a9-89a0-b1610263ca91",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Club approval can be approved by intended president",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "POST /membership/applications/1fad3ced-7ed0-43a9-89a0-b1610263ca91/decisions",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GET /membership/applications/1fad3ced-7ed0-43a9-89a0-b1610263ca91",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Club approval needs one presidential approval",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "POST /membership/applications/1fad3ced-7ed0-43a9-89a0-b1610263ca91/decisions",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Club approval creates one membership only",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Club approval audit identifies actual approving president",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "demo.signup.club.20261114.a9aec56@example.test login",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Club approval fresh login is no longer pending",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GET /workspaces",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Club approval receives only selected club member workspace",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GET /auth/me",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Club approval member workspace automatically selected",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GET /membership/me",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Club approval member portal returns active membership",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GET /membership/applications",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GET /roles",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "POST /membership/applications/00ddc3a5-fe03-4b05-a7ea-c76dee034cbf/decisions",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GET /membership/applications?mine=true",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Club approval own application now approved",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GET /membership/applications/54070284-e410-4932-95fa-7f2d95f81d3d",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Zone approval can be approved by intended president",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "POST /membership/applications/54070284-e410-4932-95fa-7f2d95f81d3d/decisions",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GET /membership/applications/54070284-e410-4932-95fa-7f2d95f81d3d",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Zone approval needs one presidential approval",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "POST /membership/applications/54070284-e410-4932-95fa-7f2d95f81d3d/decisions",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Zone approval creates one membership only",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Zone approval audit identifies actual approving president",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "demo.signup.zone.20261114.a9aec56@example.test login",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Zone approval fresh login is no longer pending",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GET /workspaces",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Zone approval receives only selected club member workspace",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GET /auth/me",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Zone approval member workspace automatically selected",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GET /membership/me",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Zone approval member portal returns active membership",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GET /membership/applications",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GET /roles",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "POST /membership/applications/00ddc3a5-fe03-4b05-a7ea-c76dee034cbf/decisions",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GET /membership/applications?mine=true",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Zone approval own application now approved",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "demo.signup.pending.20261114.a9aec56@example.test login",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GET /workspaces",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Scope-test user remains pending after both successful approvals",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GET /membership/applications/00ddc3a5-fe03-4b05-a7ea-c76dee034cbf",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Platform admin retains access to other-zone pending application",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Club approval signup audit exists",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Zone approval signup audit exists",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Pending outside zone signup audit exists",
+      "passed": true,
+      "detail": null
+    }
+  ]
+}

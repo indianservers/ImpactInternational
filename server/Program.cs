@@ -554,20 +554,27 @@ api.MapGet(
                 Association = t.Name,
                 t.Color,
                 RoleEntity = r,
+                Assignment = x,
             }
         ).ToListAsync();
-        return data.Select(x => new
+        var result = new List<object>();
+        foreach (var x in data)
         {
-            x.Id,
-            x.OrgId,
-            x.TenantId,
-            x.Organization,
-            x.OrganizationType,
-            x.Association,
-            x.Color,
-            Role = x.RoleEntity.Name,
-            Permissions = u.PlatformAdmin ? Access.All : x.RoleEntity.Permissions,
-        });
+            if (!await a.Effective(x.Assignment)) continue;
+            result.Add(new
+            {
+                x.Id,
+                x.OrgId,
+                x.TenantId,
+                x.Organization,
+                x.OrganizationType,
+                x.Association,
+                x.Color,
+                Role = x.RoleEntity.Name,
+                Permissions = await a.Grants(x.Assignment),
+            });
+        }
+        return result;
     }
 );
 api.MapPost(

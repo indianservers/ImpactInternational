@@ -1,0 +1,22 @@
+[
+  {
+    "role": "Club President",
+    "approvalPermissionExposedToUI": true,
+    "approvalInbox": 200
+  },
+  {
+    "role": "Zonal President",
+    "approvalPermissionExposedToUI": true,
+    "approvalInbox": 200
+  },
+  {
+    "role": "District President",
+    "approvalPermissionExposedToUI": true,
+    "approvalInbox": 200
+  },
+  {
+    "role": "International President",
+    "approvalPermissionExposedToUI": true,
+    "approvalInbox": 200
+  }
+]
