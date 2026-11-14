@@ -1,6 +1,6 @@
 import "./Members.css";
 import { Link } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   Upload,
@@ -13,9 +13,11 @@ import {
 } from "lucide-react";
 import { api, apiForm } from "../api";
 import { PageHeader, Skeleton, ErrorBox } from "../App";
+import MemberDuesImport, { ImportTemplates, ImportAudit } from "./MemberDuesImport";
 import { MemberStatus, ClubCategoryFields } from "../MemberComponents";
 export default function MemberImports() {
   const qc = useQueryClient();
+  const [mode, setMode] = useState<"members"|"dues">("members");
   const [target, setTarget] = useState<any>({ clubId: "", categoryId: "" }),
     [file, setFile] = useState<File | null>(null),
     [id, setId] = useState(""),
@@ -40,6 +42,14 @@ export default function MemberImports() {
   });
   const d = job.data,
     headers = d ? JSON.parse(d.headers) : [];
+  useEffect(() => {
+    if (d?.status === "Uploaded") {
+      const saved = JSON.parse(d.mapping || '{}');
+      setMapping(Object.keys(saved).length ? saved : Object.fromEntries(JSON.parse(d.headers).map((h:string) => [
+        ["name","email","phone","city","country","clubCode","categoryCode","joinedAt","profession","industry"].find(k=>k.toLowerCase()===h.toLowerCase().replaceAll(" ","")),h
+      ]).filter(([k]:[string|undefined,string])=>!!k)));
+    }
+  }, [d?.id, d?.status]);
   async function action(path: string, body: any = {}) {
     setBusy(true);
     setError(null);
@@ -47,19 +57,24 @@ export default function MemberImports() {
       await api(path, "POST", body);
       qc.invalidateQueries({ queryKey: ["import-job", id] });
       qc.invalidateQueries({ queryKey: ["import-jobs"] });
+      qc.invalidateQueries({ queryKey: ["import-audit"] });
     } catch (e) {
       setError(e);
     } finally {
       setBusy(false);
     }
   }
+  const tabs=<div className="header-actions spaced" role="tablist" aria-label="Bulk import type"><button role="tab" aria-selected={mode==='members'} className={mode==='members'?'':'secondary'} onClick={()=>setMode('members')}>Members</button><button role="tab" aria-selected={mode==='dues'} className={mode==='dues'?'':'secondary'} onClick={()=>setMode('dues')}>Member dues</button></div>;
+  if(mode==='dues') return <><PageHeader title="Bulk import" description="Import members and dues with validation, duplicate checks and audit history."/>{tabs}<MemberDuesImport/></>;
   return (
     <>
       <PageHeader
         eyebrow="BUILD YOUR IMPACT DIRECTORY"
-        title="Member import"
+        title="Bulk import"
         description="Import Impact International members, review duplicates, and keep a complete audit trail."
       />
+      {tabs}
+      <ImportTemplates kind="members"/>
       <div className="import-steps">
         {[
           "Template",
@@ -78,7 +93,7 @@ export default function MemberImports() {
           </div>
         ))}
       </div>
-      <a className="button secondary" href="/templates/impact-members.csv" download><Download size={15}/>Download import template (CSV)</a><p className="muted">Use the existing field names. Choose a destination club and category before upload; no rows are imported until validation and confirmation.</p>
+
       <ErrorBox error={error || jobs.error || job.error} />
       {!id ? (
         <div className="dashboard-grid">
@@ -154,6 +169,7 @@ export default function MemberImports() {
                   onClick={() => {
                     setId(j.id);
                     setPage(1);
+                    setMapping({});
                     setAck(false);
                   }}
                 >
@@ -192,6 +208,7 @@ export default function MemberImports() {
                   <div className="section-heading">
                     <div>
                       <h2>{d.fileName}</h2>
+                      <p>Uploaded by {d.creator || "authorized officer"} · File fingerprint: <span style={{overflowWrap:"anywhere"}}>{d.hash}</span></p>
                       <p>
                         {d.status === "Importing"
                           ? "Committing all reviewed rows in one transaction. The final count appears after the commit."
@@ -221,7 +238,8 @@ export default function MemberImports() {
                     </div>
                   )}
                   {d.error && <div className="error">{d.error}</div>}
-                  {d.rows?.some((r:any)=>r.status==="Invalid"||r.status==="NeedsReview")&&<button className="secondary" onClick={()=>{const cell=(v:any)=>'"'+(/^[=+\-@\t\r]/.test(String(v??''))?"'"+String(v??''):String(v??'')).replaceAll('"','""')+'"';const rows=d.rows.filter((r:any)=>r.status==="Invalid"||r.status==="NeedsReview");const csv="row,status,validation\r\n"+rows.map((r:any)=>[r.rowNumber,r.status,r.error||r.reviewReason||r.errors||"Review required"].map(cell).join(",")).join("\r\n");const url=URL.createObjectURL(new Blob([csv],{type:"text/csv"}));const a=document.createElement("a");a.href=url;a.download="import-errors-current-page.csv";a.click();URL.revokeObjectURL(url);}}>Download errors & review rows on this page</button>}
+                  {d.totalRows>0&&<a className="button secondary" href={'/api/v1/membership/imports/'+id+'/report'} download><Download size={15}/>Download full import report (all rows)</a>}
+
                   {d.status === "Uploaded" && (
                     <form
                       className="form-stack"
@@ -291,6 +309,7 @@ export default function MemberImports() {
                           validation errors.
                         </p>
                       )}
+                      <button className="secondary" disabled={busy || !d.rows.some((r:any)=>r.status==='NeedsReview')} onClick={()=>action('/membership/imports/'+id+'/resolve',{rows:d.rows.filter((r:any)=>r.status==='NeedsReview').map((r:any)=>({rowId:r.id,skip:true}))})}>Skip duplicate rows on this page</button>
                       <label className="checkbox">
                         <input
                           type="checkbox"
@@ -339,13 +358,13 @@ export default function MemberImports() {
                           action("/membership/imports/" + id + "/commit")
                         }
                       >
-                        Import {d.totalRows} reviewed memberships
+                        Import {d.totalRows - (d.skippedRows || 0)} reviewed memberships
                       </button>
                     </div>
                   )}
                   {d.status === "Completed" && (
                     <div className="success">
-                      <b>{d.importedRows} memberships imported successfully.</b>
+                      <b>{d.importedRows} memberships imported successfully · {d.skippedRows || 0} duplicate rows skipped.</b>
                       <p>
                         Retrying this completed job does not import its rows
                         again. Raw input is cleared after commit; staging
@@ -430,6 +449,7 @@ export default function MemberImports() {
                                 </td>
                                 <td>
                                   {r.error}
+                                  {r.status === 'NeedsReview'&&<button className="secondary" disabled={busy} onClick={()=>action('/membership/imports/'+id+'/resolve',{rows:[{rowId:r.id,skip:true}]})}>Skip duplicate row</button>}
                                   {r.status === "NeedsReview" && (
                                     <ExistingResolution
                                       row={r}
@@ -483,6 +503,7 @@ export default function MemberImports() {
           )}
         </>
       )}
+      <ImportAudit/>
     </>
   );
 }

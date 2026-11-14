@@ -1,0 +1,2 @@
+﻿"key","memberNumber","amount","date","dueOn","purpose","description","periodStart","periodEnd","notes"
+"LEGACY-DUES-2026-001","REPLACE-WITH-MEMBER-NUMBER","1200.00","2026-11-14","2026-12-14","ClubDues","Annual membership dues","2026-01-01","2026-12-31","Replace sample values before upload"

@@ -1,0 +1,535 @@
+{
+  "total": 105,
+  "passed": 105,
+  "checks": [
+    {
+      "name": "saisatish@indianservers.com login",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "members csv true template downloads",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "CSV sample count",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "members csv false template downloads",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "CSV sample count",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "members xlsx true template downloads",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Excel template has instructions",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "members xlsx false template downloads",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Excel template has instructions",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "dues csv true template downloads",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "CSV sample count",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "dues csv false template downloads",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "CSV sample count",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "dues xlsx true template downloads",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Excel template has instructions",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "dues xlsx false template downloads",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Excel template has instructions",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Stage member import",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Repeated upload key reuses job",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Changed upload cannot reuse key",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "POST /membership/imports/aa399a0d-0eea-4489-b6d5-84ded06b35cd/mapping",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "POST /membership/imports/aa399a0d-0eea-4489-b6d5-84ded06b35cd/commit",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "One member imported",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Member job shows uploader and fingerprint",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "POST /membership/imports/aa399a0d-0eea-4489-b6d5-84ded06b35cd/commit",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Report includes assigned membership number",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Generated Excel template accepted",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "POST /membership/imports/7be50212-be54-4600-b295-1ff87939c5c5/mapping",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "POST /membership/imports/7be50212-be54-4600-b295-1ff87939c5c5/commit",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Excel membership imported",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Excel formula rejected without execution",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Stage member import",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "POST /membership/imports/f554f824-0209-42b0-8270-d05a306aa6ad/mapping",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Existing member detected",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "POST /membership/imports/f554f824-0209-42b0-8270-d05a306aa6ad/commit",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "POST /membership/imports/f554f824-0209-42b0-8270-d05a306aa6ad/resolve",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "POST /membership/imports/f554f824-0209-42b0-8270-d05a306aa6ad/resolve",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "POST /membership/imports/f554f824-0209-42b0-8270-d05a306aa6ad/resolve",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "POST /membership/imports/f554f824-0209-42b0-8270-d05a306aa6ad/commit",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "All-skipped job completes without duplicate memberships",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Stage member import",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Stage member import",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "POST /membership/imports/3a6cd81e-baad-4ea8-802d-8533efb95223/mapping",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "POST /membership/imports/760746d9-acc7-4b50-8717-74f852ed9e68/mapping",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "POST /membership/imports/3a6cd81e-baad-4ea8-802d-8533efb95223/commit",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "POST /membership/imports/760746d9-acc7-4b50-8717-74f852ed9e68/commit",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Commit-time duplicate race rolls back",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "POST /membership/imports/760746d9-acc7-4b50-8717-74f852ed9e68/retry",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Retry returns new duplicate for review",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Stage member import",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "POST /membership/imports/f76a9670-2739-4422-9a02-0e4b383252b3/mapping",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "All invalid rows counted",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Full report includes every page",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "club.president@example.test login",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Stage member import",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "POST /membership/imports/c5e40c8c-d738-4344-80e9-e820387fcf89/mapping",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Cross-scope club code rejected",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Stage member import",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GET /membership/imports/c5bc1434-5398-4f07-ad40-8c9e399d661f",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GET /membership/imports/c5bc1434-5398-4f07-ad40-8c9e399d661f/report",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "member.club1@example.test login",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GET /membership/imports",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GET /membership/import-audit",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GET /membership/dues-imports/entities",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Billing entities available",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Dues file preview",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Dues preview ready without financial writes",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "POST /membership/dues-imports/commit",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Dues created as drafts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Imported invoice has exact amount and no paid balance",
+      "passed": true,
+      "detail": [
+        "1200.00000000",
+        "0.00000000",
+        "Draft"
+      ]
+    },
+    {
+      "name": "POST /membership/dues-imports/commit",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Dues commit retry safely reuses invoice",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Dues file preview",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Reupload identifies imported dues",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Dues file preview",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "changed amount blocked",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Dues file preview",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "different key same period blocked",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Dues file preview",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "invalid precision blocked",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Dues file preview",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "unknown member blocked",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Dues file preview",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "backward due date blocked",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Dues file preview",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Repeated file keys blocked",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Dues file preview",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Same period with different issue dates blocked within file",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Dues file preview",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "admin@example.test login",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "POST /membership/dues-imports/commit",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "POST /membership/dues-imports/commit",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Dues file preview",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GET /membership/dues-imports/entities",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "POST /finance/entities/ef40e543-bd2e-467a-a160-cc85f4afe1e7/invoices",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "POST /membership/dues-imports/commit",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Dues file preview",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Scoped billing officer can preview own club",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Dues file preview",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Billing entity grant cannot bypass club scope",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "POST /membership/dues-imports/commit",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Revoked billing authority produces no invoice",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GET /membership/import-audit",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Audit covers upload, mapping, validation, review, failure and dues commit",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Financial audit ties imported invoice to row and file hash",
+      "passed": true,
+      "detail": null
+    }
+  ]
+}

@@ -318,7 +318,7 @@ export default function Members({
               Invite member
             </button>
           )}
-          {!directory&&grants.includes("members.import")&&<Link className="button secondary" to="/app/imports"><Upload size={16}/>Import members</Link>}
+          {!directory&&grants.includes("members.import")&&<Link className="button secondary" to="/app/imports"><Upload size={16}/>Bulk import</Link>}
           {!directory && grants.includes("members.manage") && (
             <button onClick={() => setDrawer("create")}>
               <Plus size={16} />

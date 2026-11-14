@@ -22,7 +22,7 @@ const featureSections = [
   { id: "membership", label: "Membership", icon: Users, tabs: [
     tab("Members", "/members", "members.view"), tab("Directory", "/directory", "directory.view"),
     tab("Applications", "/approvals", "members.approve"), tab("Transfers & requests", "/transfers", "members.transfer.approve"),
-    tab("Import", "/imports", "members.import"), tab("Insights", "/membership-insights", "members.view"),
+    tab("Bulk import", "/imports", "members.import"), tab("Insights", "/membership-insights", "members.view"),
     tab("Settings", "/membership-settings", "members.workflow.manage"),
   ] },
   { id: "organizations", label: "Impact structure", icon: Network, tabs: [

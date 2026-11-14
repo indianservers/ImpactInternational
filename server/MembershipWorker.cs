@@ -1,4 +1,5 @@
 using System.Text.Json;
+using System.Globalization;
 using Microsoft.EntityFrameworkCore;
 using static Clubs.Access;
 
@@ -145,7 +146,7 @@ public class MembershipWorker(IServiceScopeFactory scopes, ILogger<MembershipWor
                     : "Import processing failed ("
                         + e.GetType().Name
                         + "). The atomic transaction was rolled back; review input and retry.";
-            await db
+            var changed = await db
                 .MemberImportJobs.Where(x =>
                     x.Id == id
                     && x.LeaseId == lease
@@ -159,6 +160,14 @@ public class MembershipWorker(IServiceScopeFactory scopes, ILogger<MembershipWor
                             .SetProperty(x => x.LeaseUntil, (DateTimeOffset?)null),
                     token
                 );
+            if (changed > 0)
+            {
+                var failed = await db.MemberImportJobs.AsNoTracking().SingleAsync(j => j.Id == id, token);
+                db.Audits.Add(new Audit { TenantId = failed.TenantId, OrgId = failed.ClubId, ActorId = failed.CreatorId,
+                    Action = "member.import.failed", Resource = id.ToString(), Outcome = "Failure",
+                    Changes = JsonSerializer.Serialize(new { failed.Hash, errorType = e.GetType().Name, atomicRollback = true }) });
+                await db.SaveChangesAsync(token);
+            }
             log.LogWarning("Import {JobId} failed ({Type})", id, e.GetType().Name);
         }
     }
@@ -271,8 +280,8 @@ public class MembershipWorker(IServiceScopeFactory scopes, ILogger<MembershipWor
                 var date = v.GetValueOrDefault("joinedAt", "");
                 if (date != "")
                     Check(
-                        DateTimeOffset.TryParse(date, out var joined)
-                            && joined <= DateTimeOffset.UtcNow
+                        DateOnly.TryParseExact(date, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out var joined)
+                            && joined <= DateOnly.FromDateTime(DateTime.UtcNow)
                             && joined.Year >= 1900,
                         "Joining date must be a past ISO date."
                     );
@@ -332,6 +341,9 @@ public class MembershipWorker(IServiceScopeFactory scopes, ILogger<MembershipWor
                     : validated.Any(x => x.Status == "NeedsReview") ? "NeedsReview"
                     : "Ready";
                 current.LeaseUntil = null;
+                db.Audits.Add(new Audit { TenantId = current.TenantId, OrgId = current.ClubId, ActorId = current.CreatorId,
+                    Action = "member.import.validated", Resource = id.ToString(), Changes = JsonSerializer.Serialize(new {
+                        total = validated.Count, invalid = validated.Count(r => r.Status == "Invalid"), duplicates = validated.Count(r => r.Status == "NeedsReview"), current.Hash }) });
             }
             await db.SaveChangesAsync(token);
             await tx.CommitAsync(token);
@@ -362,13 +374,34 @@ public class MembershipWorker(IServiceScopeFactory scopes, ILogger<MembershipWor
             .OrderBy(x => x.RowNumber)
             .ToListAsync(token);
         Check(
-            rows.Count > 0 && rows.All(x => x.Status == "Valid"),
+            rows.Count > 0 && rows.All(x => x.Status is "Valid" or "Skipped"),
             "Import rows are not fully validated."
         );
+        var skipped = rows.Count(x => x.Status == "Skipped");
+        rows = rows.Where(x => x.Status == "Valid").ToList();
         var values = rows.Select(x =>
                 JsonSerializer.Deserialize<Dictionary<string, string>>(x.Data)!
             )
             .ToList();
+        // Validation may have happened hours ago. Check again under the tenant lock.
+        var visiblePeople = s.Scoped(w).Select(m => m.PersonId);
+        var candidateNames = values.Select(v => v.GetValueOrDefault("name", "").Trim().ToLowerInvariant()).Distinct().ToArray();
+        var candidateContacts = values.SelectMany(v => new[] {
+            MembershipService.Normalize(v.GetValueOrDefault("email", ""), "Email"),
+            MembershipService.Normalize(v.GetValueOrDefault("phone", ""), "Phone") }).Where(v => v != "").Distinct().ToArray();
+        var currentNames = (await db.Persons.Where(p => visiblePeople.Contains(p.Id) && candidateNames.Contains(p.LegalName.Trim().ToLower()))
+            .Select(p => p.LegalName.Trim().ToLower()).ToListAsync(token)).ToHashSet();
+        var currentContacts = (await db.PersonContacts.Where(c => visiblePeople.Contains(c.PersonId) && candidateContacts.Contains(c.NormalizedValue))
+            .Select(c => c.NormalizedValue).ToListAsync(token)).ToHashSet();
+        for (int i = 0; i < rows.Count; i++)
+            if (rows[i].ExistingPersonId == null && !rows[i].CreateSeparate)
+            {
+                var v = values[i];
+                Check(!currentNames.Contains(v.GetValueOrDefault("name", "").Trim().ToLowerInvariant())
+                    && !new[] { MembershipService.Normalize(v.GetValueOrDefault("email", ""), "Email"), MembershipService.Normalize(v.GetValueOrDefault("phone", ""), "Phone") }
+                        .Any(c => c != "" && currentContacts.Contains(c)),
+                    "A new duplicate appeared after validation. No rows were imported. Retry validation and review duplicates.", 409);
+            }
         var clubIds = values.Select(v => Guid.Parse(v["clubId"])).Distinct().ToArray();
         var categoryIds = values.Select(v => Guid.Parse(v["categoryId"])).Distinct().ToArray();
         var clubs = await s
@@ -487,7 +520,7 @@ public class MembershipWorker(IServiceScopeFactory scopes, ILogger<MembershipWor
             attached.Add((person.Id, club.Id));
             var joined = string.IsNullOrEmpty(v.GetValueOrDefault("joinedAt"))
                 ? DateTimeOffset.UtcNow
-                : DateTimeOffset.Parse(v["joinedAt"]).ToUniversalTime();
+                : new DateTimeOffset(DateOnly.ParseExact(v["joinedAt"], "yyyy-MM-dd", CultureInfo.InvariantCulture).ToDateTime(TimeOnly.MinValue), TimeSpan.Zero);
             var m = new Membership
             {
                 TenantId = job.TenantId,
@@ -549,7 +582,7 @@ public class MembershipWorker(IServiceScopeFactory scopes, ILogger<MembershipWor
                 job.ClubId
             );
         await Authorized(job, s); // Recheck real effective dates before committing a potentially long import.
-        await s.Access.Log(w, "member.import.completed", job.Id.ToString(), rows.Count.ToString());
+        await s.Access.Log(w, "member.import.completed", job.Id.ToString(), JsonSerializer.Serialize(new { imported = rows.Count, skipped, job.Hash }));
         await tx.CommitAsync(token);
     }
 }

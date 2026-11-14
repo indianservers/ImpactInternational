@@ -15,7 +15,8 @@ public record ImportMapping(Dictionary<string, string> Fields);
 public record ImportResolution(
     Guid RowId,
     bool CreateSeparate = false,
-    Guid? ExistingPersonId = null
+    Guid? ExistingPersonId = null,
+    bool Skip = false
 );
 
 public record ResolveImport(ImportResolution[] Rows);
@@ -198,6 +199,7 @@ public static class MembershipImport
 
     public static void MapMemberImports(this RouteGroupBuilder api)
     {
+        api.MapBulkImportTools();
         api.MapPost(
                 "/membership/imports",
                 async (
@@ -227,6 +229,7 @@ public static class MembershipImport
                     var hash = Convert.ToHexString(
                         System.Security.Cryptography.SHA256.HashData(payload)
                     );
+                    await using var tx = await s.Access.Mutation(w);
                     var previous = await s.Db.MemberImportJobs.SingleOrDefaultAsync(x =>
                         x.TenantId == w.TenantId
                         && x.CreatorId == w.UserId
@@ -273,7 +276,8 @@ public static class MembershipImport
                         Headers = JsonSerializer.Serialize(preview.Headers),
                     };
                     s.Db.MemberImportJobs.Add(job);
-                    await s.Access.Log(w, "member.import.upload", job.Id.ToString());
+                    await s.Access.Log(w, "member.import.upload", job.Id.ToString(), JsonSerializer.Serialize(new { job.FileName, job.Hash, job.ClubId, job.CategoryId }));
+                    await tx.CommitAsync();
                     return Results.Ok(
                         new
                         {
@@ -331,6 +335,9 @@ public static class MembershipImport
                     job.Headers,
                     job.Mapping,
                     job.TotalRows,
+                    skippedRows = await s.Db.MemberImportRows.CountAsync(r => r.JobId == id && r.Status == "Skipped"),
+                    job.Hash,
+                    creator = await s.Db.Users.Where(u => u.Id == job.CreatorId).Select(u => u.Name).FirstOrDefaultAsync(),
                     job.ProcessedRows,
                     job.ImportedRows,
                     job.Error,
@@ -355,6 +362,7 @@ public static class MembershipImport
             "/membership/imports/{id:guid}/mapping",
             async (Guid id, ImportMapping r, MembershipService s) =>
             {
+                await using var tx = await s.Access.Mutation(await s.Access.Workspace("members.import"));
                 var (w, job) = await Job(id, s);
                 Check(
                     job.Status == "Uploaded",
@@ -370,7 +378,8 @@ public static class MembershipImport
                 );
                 job.Mapping = JsonSerializer.Serialize(r.Fields);
                 job.Status = "Validating";
-                await s.Db.SaveChangesAsync();
+                await s.Access.Log(w, "member.import.mapping", id.ToString(), job.Mapping);
+                await tx.CommitAsync();
                 return Results.Accepted(value: new { job.Id, job.Status });
             }
         );
@@ -378,6 +387,7 @@ public static class MembershipImport
             "/membership/imports/{id:guid}/resolve",
             async (Guid id, ResolveImport r, MembershipService s) =>
             {
+                await using var tx = await s.Access.Mutation(await s.Access.Workspace("members.import"));
                 var (w, job) = await Job(id, s);
                 Check(
                     job.Status == "NeedsReview",
@@ -395,8 +405,8 @@ public static class MembershipImport
                         "Choose a row awaiting review."
                     );
                     Check(
-                        decision.CreateSeparate ^ (decision.ExistingPersonId != null),
-                        "Explicitly choose a separate person or one existing authorized person."
+                        (decision.Skip ? 1 : 0) + (decision.CreateSeparate ? 1 : 0) + (decision.ExistingPersonId != null ? 1 : 0) == 1,
+                        "Choose exactly one: skip this row, create a separate person, or use an existing authorized person."
                     );
                     if (decision.ExistingPersonId != null)
                         Check(
@@ -405,17 +415,29 @@ public static class MembershipImport
                             "Existing person outside scope.",
                             403
                         );
+                    if (decision.ExistingPersonId != null)
+                    {
+                        var values = JsonSerializer.Deserialize<Dictionary<string, string>>(row.Data)!;
+                        Check(!await s.Db.Memberships.AnyAsync(m => m.TenantId == w.TenantId && m.PersonId == decision.ExistingPersonId
+                            && m.ClubId == Guid.Parse(values["clubId"]) && m.CategoryId == Guid.Parse(values["categoryId"])
+                            && new[] { "Active", "Inactive", "Suspended", "Expired" }.Contains(m.Status)),
+                            "This person already has this membership. Skip the duplicate row instead.", 409);
+                    }
+                    s.Db.Audits.Add(new Audit { TenantId = w.TenantId, OrgId = w.OrgId, ActorId = w.UserId,
+                        Action = "member.import.row.reviewed", Resource = id.ToString(),
+                        Changes = JsonSerializer.Serialize(new { row.RowNumber, decision.Skip, decision.CreateSeparate, decision.ExistingPersonId }) });
                     row.CreateSeparate = decision.CreateSeparate;
                     row.ExistingPersonId = decision.ExistingPersonId;
-                    row.Status = "Valid";
+                    row.Status = decision.Skip ? "Skipped" : "Valid";
                     row.Error = "";
                 }
                 await s.Db.SaveChangesAsync();
                 if (
-                    !await s.Db.MemberImportRows.AnyAsync(x => x.JobId == id && x.Status != "Valid")
+                    !await s.Db.MemberImportRows.AnyAsync(x => x.JobId == id && x.Status != "Valid" && x.Status != "Skipped")
                 )
                     job.Status = "Ready";
                 await s.Access.Log(w, "member.import.duplicates.reviewed", id.ToString());
+                await tx.CommitAsync();
                 return Results.Ok(new { job.Id, job.Status });
             }
         );
@@ -423,6 +445,7 @@ public static class MembershipImport
             "/membership/imports/{id:guid}/commit",
             async (Guid id, MembershipService s) =>
             {
+                await using var tx = await s.Access.Mutation(await s.Access.Workspace("members.import"));
                 var (w, job) = await Job(id, s);
                 if (job.Status == "Completed")
                     return Results.Ok(
@@ -436,13 +459,14 @@ public static class MembershipImport
                 Check(
                     job.Status == "Ready"
                         && !await s.Db.MemberImportRows.AnyAsync(x =>
-                            x.JobId == id && x.Status != "Valid"
+                            x.JobId == id && x.Status != "Valid" && x.Status != "Skipped"
                         ),
                     "Every row must be valid and duplicate-reviewed before import.",
                     409
                 );
                 job.Status = "Queued";
                 await s.Access.Log(w, "member.import.commit.request", id.ToString());
+                await tx.CommitAsync();
                 return Results.Accepted(value: new { job.Id, job.Status });
             }
         );
@@ -450,6 +474,7 @@ public static class MembershipImport
             "/membership/imports/{id:guid}/cancel",
             async (Guid id, MembershipService s) =>
             {
+                await using var tx = await s.Access.Mutation(await s.Access.Workspace("members.import"));
                 var (w, job) = await Job(id, s);
                 Check(
                     new[]
@@ -467,6 +492,7 @@ public static class MembershipImport
                 job.Status = "Cancelled";
                 job.Payload = [];
                 await s.Access.Log(w, "member.import.cancelled", id.ToString());
+                await tx.CommitAsync();
                 return Results.NoContent();
             }
         );
@@ -474,6 +500,7 @@ public static class MembershipImport
             "/membership/imports/{id:guid}/retry",
             async (Guid id, MembershipService s) =>
             {
+                await using var tx = await s.Access.Mutation(await s.Access.Workspace("members.import"));
                 var (w, job) = await Job(id, s);
                 Check(
                     job.Status == "Failed" && job.Payload.Length > 0 && job.ImportedRows == 0,
@@ -489,6 +516,7 @@ public static class MembershipImport
                 job.LeaseId = null;
                 job.LeaseUntil = null;
                 await s.Access.Log(w, "member.import.retry", id.ToString());
+                await tx.CommitAsync();
                 return Results.Accepted(value: new { job.Id, job.Status });
             }
         );
