@@ -1,0 +1,64 @@
+/* Shared application navigation, based on the Events menu. Page styles must
+   not change this chrome when a module is loaded or a route changes. */
+.app-shell.unified-navigation .sidebar {
+  background: radial-gradient(ellipse at 110% 65%, #392063, transparent 55%), linear-gradient(160deg, #0b1439, #151943);
+  color: #fff;
+  border-right: 1px solid #24234b;
+}
+.app-shell.unified-navigation .sidebar .brand {
+  padding-bottom: 27px;
+  border-bottom: 1px solid #bd963c66;
+  margin-bottom: 16px;
+}
+.app-shell.unified-navigation .sidebar a,
+.app-shell.unified-navigation .sidebar strong,
+.app-shell.unified-navigation .sidebar-label,
+.app-shell.unified-navigation .sidebar .organization-switcher {
+  color: #fff;
+}
+.app-shell.unified-navigation .sidebar-label { letter-spacing: 1.7px; }
+.app-shell.unified-navigation .sidebar nav a { font-size: 12px; font-weight: 500; padding: 10px 14px; border-radius: 7px; }
+.app-shell.unified-navigation .sidebar nav a:hover { background: #ffffff13; }
+.app-shell.unified-navigation .sidebar nav a.active {
+  background: linear-gradient(110deg, #f4d77b, #d49a36);
+  color: #121536;
+  font-weight: 650;
+  box-shadow: 0 4px 14px #0002;
+}
+.app-shell.unified-navigation .sidebar nav a.active::before { background: #d49a36; }
+.app-shell.unified-navigation .sidebar select,
+.app-shell.unified-navigation .sidebar .organization-picker,
+.app-shell.unified-navigation .foundation-organization {
+  background: #24294e;
+  color: #fff;
+  border-color: #514d6b;
+}
+.app-shell.unified-navigation .organization-context span,
+.app-shell.unified-navigation .profile-mini small { color: #b7c7de; }
+.app-shell.unified-navigation .foundation-scope-picker { color: #d8d0e9; }
+.app-shell.unified-navigation .sidebar-bottom { color: #fff; }
+.app-shell.unified-navigation .sidebar .help-card { background: #11183b; border: 1px solid #b48b35; color: #fff; }
+.app-shell.unified-navigation .sidebar .help-card p { color: #d3cee5; }
+.app-shell.unified-navigation .sidebar .profile-mini { background: #ffffff0b; border: 1px solid #ffffff25; border-radius: 10px; padding: 12px; }
+.app-shell.unified-navigation .sidebar nav :is(.impact-sidebar-submenu, .mm-sidebar-submenu) {
+  display: grid; gap: 4px; margin: 6px 0 16px 19px; padding-left: 12px; border-left: 1px solid #b6a1e02b;
+}
+.app-shell.unified-navigation .sidebar nav :is(.impact-sidebar-submenu, .mm-sidebar-submenu) a { font-size: 11px; min-height: 34px; padding: 8px 10px; margin: 0; }
+.app-shell.unified-navigation .sidebar nav :is(.impact-sidebar-submenu, .mm-sidebar-submenu) a.active { background: #8c65d44d; color: #fff; box-shadow: none; }
+.app-shell.unified-navigation .topbar { height: 65px; padding-inline: 25px; background: #fff; border-bottom: 1px solid #e7ecf2; }
+.app-shell.unified-navigation .section-navigation-heading { color: #514b6c; }
+.app-shell.unified-navigation :is(.section-tabs, .section-tools) { display: flex; gap: 8px; flex-wrap: wrap; padding: 8px 0; border-bottom: 1px solid #e8e1ef; }
+.app-shell.unified-navigation :is(.section-tabs, .section-tools) a { display: inline-flex; align-items: center; gap: 10px; padding: 10px 20px; border: 0; border-radius: 10px; color: #17133c; font-size: 13px; font-weight: 650; text-decoration: none; }
+.app-shell.unified-navigation :is(.section-tabs, .section-tools) a.active { background: #eee3ff; color: #582399; box-shadow: inset 0 -2px #8a4cdb; }
+.app-shell.unified-navigation :is(.section-tabs, .section-tools) a:hover { background: #f4edfc; }
+.app-shell.unified-navigation .sidebar a:focus-visible { outline: 2px solid #f4d77b; outline-offset: 2px; }
+:root[data-theme=dark] .app-shell.unified-navigation .topbar { background: #19263c; border-color: #29374c; }
+:root[data-theme=dark] .app-shell.unified-navigation :is(.section-tabs, .section-tools) { border-color: #40374f; }
+:root[data-theme=dark] .app-shell.unified-navigation :is(.section-tabs, .section-tools) a,
+:root[data-theme=dark] .app-shell.unified-navigation .section-navigation-heading { color: #ded0f4; }
+:root[data-theme=dark] .app-shell.unified-navigation :is(.section-tabs, .section-tools) a.active,
+:root[data-theme=dark] .app-shell.unified-navigation :is(.section-tabs, .section-tools) a:hover { background: #422a58; color: #fff; }
+@media (max-width: 760px) {
+  .app-shell.unified-navigation .topbar { padding-inline: 18px; }
+  .app-shell.unified-navigation :is(.section-tabs, .section-tools) a { padding: 9px 10px; font-size: 11px; }
+}

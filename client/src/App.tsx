@@ -27,6 +27,7 @@ import {
   Bell,
 } from "lucide-react";
 import "./mobile.css";
+import "./navigation.css";
 import { navigationSections, canOpenTab, matchesTab, taskGroups, financeMenu } from "./navigation";
 import { TenantBrand } from "./TenantBrand";
 import { impact, impactRole, ImpactDocumentTitle, ImpactPageContext } from "./brand";
@@ -186,7 +187,6 @@ function Shell() {
     nav = useNavigate(),
     location = useLocation();
   const membershipMode = ["/app/members","/app/directory","/app/imports","/app/approvals","/app/transfers","/app/membership-settings","/app/membership-insights","/app/organizations","/app/international","/app/national","/app/regions","/app/districts","/app/zones","/app/clubs","/app/leadership","/app/handovers","/app/committees"].some(p=>location.pathname.startsWith(p));
-  const [compactSidebar,setCompactSidebar]=useState(false);
   const [open, setOpen] = useState(false),
     [active, setActive] = useState(""),
     [error, setError] = useState<unknown>();
@@ -291,7 +291,7 @@ function Shell() {
   return (
     <Context.Provider value={{ w, me: me.data }}>
       <div
-        className={"app-shell" + (me.data.platformAdmin ? " platform-admin-shell" : "") + (membershipMode?" membership-shell":"") + (compactSidebar?" compact-sidebar":"") + (location.pathname.startsWith("/app/finance") ? " finance-mode" : "")}
+        className={"app-shell unified-navigation" + (me.data.platformAdmin ? " platform-admin-shell" : "") + (membershipMode?" membership-shell":"") + (location.pathname.startsWith("/app/finance") ? " finance-mode" : "")}
         style={
           {
             "--brand-accent": impact.color,
@@ -318,7 +318,7 @@ function Shell() {
                 className={selected ? "active" : undefined}
                 aria-current={selected ? "true" : undefined}
                 onClick={() => setOpen(false)}>
-                <Icon size={19} />{membershipMode&&section.id==="home"?"Dashboard":membershipMode&&section.id==="people"?"Members":section.label}
+                <Icon size={19} />{section.label}
               </Link>{section.id === "tools" && location.pathname.startsWith("/app/finance") && section.tabs.some(tab => tab.to === "/app/finance") && <nav className="impact-sidebar-submenu" aria-label="Finance pages">{financeMenu.filter(([path])=>!path||(path==='dues'?w?.permissions.includes('finance.dues.reports'):w?.permissions.some(p=>['finance.view','finance.manage','finance.reconcile','finance.configure','finance.post','finance.approve'].includes(p)))).map(([path, label]) => {
                 const to = "/app/finance" + (path ? "/" + path : "");
                 const current = path ? matchesTab(location.pathname, to) : location.pathname === to;
@@ -348,7 +348,7 @@ function Shell() {
           </div>
         </aside>
         <div className="main-column">
-          <header className="topbar">{membershipMode&&<button className="icon-button mm-sidebar-toggle" aria-label={compactSidebar?"Expand sidebar":"Collapse sidebar"} onClick={()=>setCompactSidebar(!compactSidebar)}><Menu size={19}/></button>}
+          <header className="topbar">
             <button
               className="icon-button mobile-menu"
               aria-label="Toggle menu"
