@@ -209,6 +209,7 @@ var api = app.MapGroup("/api/v1");
 api.MapMembership();
 api.MapMembershipAnalytics();
 api.MapMembershipWorkflows();
+api.MapPublicMembership();
 api.MapGovernance();
 api.MapEvents();
 api.MapCommunications();
@@ -341,7 +342,9 @@ api.MapPost(
                     MaxAge = TimeSpan.FromHours(8),
                 }
             );
-            return Results.Ok(new { u.Name });
+            return Results.Ok(new { u.Name,
+                pendingMembership = defaultWorkspace == null && await db.MembershipApplications.AnyAsync(a => a.ApplicantUserId == u.Id
+                    && new[] { "Draft", "Submitted", "Under Review", "Changes Requested" }.Contains(a.Status)) });
         }
     )
     .RequireRateLimiting("auth");

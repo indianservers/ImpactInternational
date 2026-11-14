@@ -946,7 +946,7 @@ public static class MembershipWorkflowEndpoints
         return Results.Ok(new { Id = resultId, Kind = kind });
     }
 
-    private static async Task NotifyReviewers(
+    public static async Task NotifyReviewers(
         MembershipService s,
         NotificationService n,
         MembershipApplication app
@@ -961,16 +961,17 @@ public static class MembershipWorkflowEndpoints
             )
             .ToArrayAsync();
         var roles = stage.Roles.Select(x => x.RoleId).ToArray();
-        var users = await s
+        var reviewerAssignments = await s
             .Db.Assignments.Where(x =>
                 x.TenantId == app.TenantId
                 && ancestors.Contains(x.OrgId)
                 && roles.Contains(x.RoleId)
                 && x.UserId != app.ApplicantUserId
             )
-            .Select(x => x.UserId)
-            .Distinct()
-            .ToArrayAsync();
+            .ToListAsync();
+        var users = new HashSet<Guid>();
+        foreach (var assignment in reviewerAssignments)
+            if (await s.Access.Effective(assignment) && (await s.Access.Grants(assignment)).Contains("members.approve")) users.Add(assignment.UserId);
         foreach (var id in users)
             await n.User(
                 id,

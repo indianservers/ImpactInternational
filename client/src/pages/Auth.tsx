@@ -1,5 +1,5 @@
 import {TenantBrand} from "../TenantBrand";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Eye, EyeOff, ArrowRight, Mail, LockKeyhole, UsersRound, CircleAlert } from "lucide-react";
 import "./Auth.css";
@@ -14,6 +14,7 @@ export default function Auth({ mode }: { mode: string }) {
     [error, setError] = useState<unknown>(),
     [message, setMessage] = useState("");
   const [passwordMode, setStaff] = useState(false);
+  useEffect(() => { setStaff(new URLSearchParams(location.search).get('applicant') === '1'); setChallenge(undefined); setMessage(''); setError(null); }, [mode]);
   const methods = useQuery<any>({ queryKey: ["auth-methods"], queryFn: () => api("/auth/methods"), enabled: mode === "login", staleTime: 0 });
   const otpEnabled = methods.data?.memberOtpEnabled === true;
   const staff = !otpEnabled || passwordMode;
@@ -25,11 +26,18 @@ export default function Auth({ mode }: { mode: string }) {
     complete = mode === "complete",
     verify =
       complete && new URLSearchParams(location.search).get("kind") === "verify";
+  const [zoneId, setZoneId] = useState(''), [clubId, setClubId] = useState('');
+  const [clubSearch, setClubSearch] = useState(''), [querySearch, setQuerySearch] = useState(''), [clubPage, setClubPage] = useState(1);
+  useEffect(() => { const timer = setTimeout(() => { setQuerySearch(clubSearch); setClubPage(1); }, 300); return () => clearTimeout(timer); }, [clubSearch]);
+  const catalog = useQuery<any>({ queryKey: ['public-membership-options', zoneId, querySearch, clubPage],
+    queryFn: () => api('/public/membership-options?page='+clubPage+(zoneId?'&zoneId='+zoneId:'')+(querySearch?'&search='+encodeURIComponent(querySearch):'')),
+    enabled: signup, staleTime: 30000 });
   async function submit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setBusy(true);
     setError(null);
-    const data = Object.fromEntries(new FormData(e.currentTarget));
+    const form = e.currentTarget;
+    const data = Object.fromEntries(new FormData(form));
     try {
       if (mode === "login") {
         if (!staff && !challenge) {
@@ -38,16 +46,16 @@ export default function Auth({ mode }: { mode: string }) {
           setMessage(result.deliveryConfigured ? result.message : "Email OTP is ready, but Amazon SES delivery has not been configured yet. Contact your administrator to enable delivery.");
           return;
         }
-        await api(staff ? "/auth/login" : "/auth/otp/verify", "POST", staff ? data : { challengeId: challenge, code: data.code });
+        const signedIn = await api(staff ? "/auth/login" : "/auth/otp/verify", "POST", staff ? data : { challengeId: challenge, code: data.code });
         qc.clear();
         const target = new URLSearchParams(location.search).get("returnTo");
         nav(
-          target?.startsWith("/") && !target.startsWith("//") ? target : "/app",
+          target?.startsWith("/") && !target.startsWith("//") ? target : signedIn.pendingMembership ? "/app/apply" : "/app",
         );
       } else {
         const result = await api(
           signup
-            ? "/auth/register"
+            ? "/public/membership-signup"
             : forgot
               ? mode === "resend-verification"
                 ? "/auth/resend-verification"
@@ -62,6 +70,7 @@ export default function Auth({ mode }: { mode: string }) {
           },
         );
         setMessage(result.message);
+        if(signup) { form.reset(); setZoneId(''); setClubId(''); }
       }
     } catch (e) {
       setError(e);
@@ -70,7 +79,7 @@ export default function Auth({ mode }: { mode: string }) {
     }
   }
   return (
-    <div className="auth-page impact-auth-page">
+    <div className={"auth-page impact-auth-page"+(signup?" public-signup-page":"")}>
       <div className="auth-story">
         <Link className="brand" to="/">
           <TenantBrand/>
@@ -101,7 +110,7 @@ export default function Auth({ mode }: { mode: string }) {
         <div className="eyebrow">WELCOME TO YOUR COMMUNITY</div>
         <h1>
           {signup
-            ? "Start something meaningful."
+            ? "Join your Impact community."
             : forgot
               ? "Let’s get you back in."
               : complete
@@ -110,18 +119,30 @@ export default function Auth({ mode }: { mode: string }) {
         </h1>
         <p>
           {signup
-            ? "Create your Impact International account, then apply to an Impact club."
+            ? "Choose your zone and club, then sign up. Your application stays pending until your club president or zone president approves it."
             : forgot
               ? "Enter your email to request a password reset."
               : complete
                 ? "Complete your secure account request."
                 : otpEnabled ? "Members sign in with a one-time email code. Enter your registered email or phone number." : "Sign in with your email and password. Email OTP login is temporarily paused."}
         </p>
-        <form onSubmit={submit} className="form-stack">
+        {signup&&message?<section className="signup-pending success" role="status"><h2>Pending approval</h2><p>{message}</p><p>Your signup does not grant active membership or club access.</p><Link className="button" to="/login?applicant=1">Sign in after verifying your email</Link></section>:<form onSubmit={submit} className="form-stack">
+          {signup&&<fieldset className="signup-community"><legend>Choose your community</legend>
+            <p>{catalog.data?`${catalog.data.zones.length} available zones · ${catalog.data.availableClubs} active clubs`:'Loading available zones and clubs…'}</p>
+            <ErrorBox error={catalog.error}/>
+            <label>Zone<select name="zoneId" required value={zoneId} disabled={catalog.isPending||busy} onChange={e=>{setZoneId(e.target.value);setClubId('');setClubSearch('');setQuerySearch('');setClubPage(1);}}><option value="">Choose an available zone</option>{catalog.data?.zones.map((z:any)=><option value={z.id} key={z.id}>{z.name} · {z.clubCount} clubs</option>)}</select></label>
+            {zoneId&&<><label>Find a club<input type="search" value={clubSearch} placeholder="Search club name, code or city" onChange={e=>{setClubSearch(e.target.value);setClubId('');}}/></label>
+            <label>Club<select name="clubId" required value={clubId} disabled={catalog.isFetching||busy} onChange={e=>setClubId(e.target.value)}><option value="">Choose a club in your zone</option>{catalog.data?.clubs.map((c:any)=><option value={c.id} key={c.id}>{c.name}{c.city?' · '+c.city:''} · {c.code}</option>)}</select></label>
+            {!catalog.isFetching&&catalog.data?.total===0&&<p>No available clubs match your search. Try another name or zone.</p>}
+            {catalog.data?.total>50&&<div className="signup-club-pages"><button type="button" className="secondary" disabled={clubPage===1||catalog.isFetching} onClick={()=>{setClubPage(clubPage-1);setClubId('');}}>Previous clubs</button><span>Page {clubPage} of {Math.ceil(catalog.data.total/50)}</span><button type="button" className="secondary" disabled={clubPage*50>=catalog.data.total||catalog.isFetching} onClick={()=>{setClubPage(clubPage+1);setClubId('');}}>More clubs</button></div>}
+            {clubId&&catalog.data?.clubs.filter((c:any)=>c.id===clubId).map((c:any)=><div className="signup-club-choice" key={c.id}><strong>{c.name}</strong><span>{[c.city,c.country].filter(Boolean).join(', ')}</span><small>{[c.zone,c.district,c.region].filter(Boolean).join(' / ')}</small><small>{catalog.data.category} membership · Pending until approved</small></div>)}
+            </>}
+            {catalog.data&&!catalog.data.signupAvailable&&<p>Signup is currently unavailable. Please contact the association.</p>}
+          </fieldset>}
           {signup && (
             <label>
               Full name
-              <input name="name" autoComplete="name" required />
+              <input name="name" autoComplete="name" minLength={2} maxLength={200} required />
             </label>
           )}
           {mode === "login" && !staff && <>
@@ -158,7 +179,7 @@ export default function Auth({ mode }: { mode: string }) {
               </label>
               <label>
                 Mobile number
-                <input name="phone" type="tel" required />
+                <input name="phone" type="tel" autoComplete="tel-national" inputMode="tel" pattern="[0-9 ()-]{6,20}" maxLength={20} required />
               </label>
             </div>
           )}
@@ -229,11 +250,11 @@ export default function Auth({ mode }: { mode: string }) {
               {message}
             </div>
           )}
-          <button className="auth-submit" type="submit" disabled={busy || mode === "login" && methods.isPending}>
+          <button className="auth-submit" type="submit" disabled={busy || mode === "login" && methods.isPending || signup && (!zoneId || !clubId || !catalog.data?.signupAvailable || catalog.isFetching)}>
             {busy
               ? "Please wait…"
               : signup
-                ? "Create account"
+                ? "Sign up — pending approval"
                 : forgot
                   ? "Send recovery instructions"
                   : complete
@@ -241,8 +262,8 @@ export default function Auth({ mode }: { mode: string }) {
                     : staff ? "Sign in" : challenge ? "Verify code and sign in" : "Send email code"}
             <ArrowRight size={16} />
           </button>
-        </form>
-        {mode === "login" && otpEnabled && <button type="button" className="secondary" onClick={() => { setStaff(!staff); setChallenge(undefined); setMessage(""); setError(null); }}>{staff ? "Member sign in with OTP" : "Administrator / staff password sign in"}</button>}
+        </form>}
+        {mode === "login" && otpEnabled && <button type="button" className="secondary" onClick={() => { setStaff(!staff); setChallenge(undefined); setMessage(""); setError(null); }}>{staff ? "Member sign in with OTP" : "Use email and password"}</button>}
         <p className="auth-bottom">
           {mode === "login" ? (
             <>

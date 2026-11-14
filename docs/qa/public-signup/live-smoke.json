@@ -1,0 +1,11 @@
+{
+  "publicSignupPage": 200,
+  "unauthenticatedCatalog": 200,
+  "zones": 126,
+  "clubs": 626,
+  "zoneFiltering": "passed",
+  "databaseHealth": "passed",
+  "existingImportsAndApprovalInbox": "passed",
+  "liveTestAccountsCreated": 0,
+  "browserZoneClubSelection": "passed"
+}

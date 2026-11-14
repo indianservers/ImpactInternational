@@ -1,0 +1,351 @@
+{
+  "total": 69,
+  "passed": 69,
+  "checks": [
+    {
+      "name": "GET /public/membership-options",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Zones and clubs publicly visible without login",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Public catalog has no contacts, users or member data",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GET /public/membership-options?zoneId=3417509a-736c-44aa-804e-9b5ea9204a46",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Selected zone contains only its clubs",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GET /public/membership-options?zoneId=3417509a-736c-44aa-804e-9b5ea9204a46&search=DEMO-R01-D01-Z01-C01",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Club code search selects intended club",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GET /public/membership-options?zoneId=f5f16ead-020c-4f87-ae3b-6e21905d9d54",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "POST /public/membership-signup",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "POST /public/membership-signup",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "POST /public/membership-signup",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "POST /public/membership-signup",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Invalid signup creates no accounts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "POST /public/membership-signup",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Public response remains pending",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "New user is unverified and never platform admin",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Application is submitted and awaiting president approval",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Signup grants no active membership or roles",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Public signup uses dedicated workflow",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Club or zone approval requires one decision only",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "President reviewer roles configured",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Club and zone presidents notified",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "POST /public/membership-signup",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Repeated signup cannot replace password or duplicate applications",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Unverified account cannot sign in",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "POST /auth/complete",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "signup.187095dac.club@example.test login",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Pending applicant login routes to application tracking",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GET /workspaces",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Pending applicant has no workspace",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GET /membership/applications?mine=true",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Pending applicant can track application without a workspace",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GET /members",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "POST /membership/applications/3d500b3b-502c-4735-89d8-a36db1c30e9b/decisions",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "club.president@example.test login",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "zonal.president@example.test login",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "saisatish@indianservers.com login",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GET /membership/applications/3d500b3b-502c-4735-89d8-a36db1c30e9b",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "President can decide pending signup",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "POST /membership/applications/3d500b3b-502c-4735-89d8-a36db1c30e9b/decisions",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Single presidential approval activates membership",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Membership role granted only after approval",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GET /workspaces",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Approved applicant obtains member workspace",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "POST /public/membership-signup",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Public response remains pending",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GET /membership/applications/7b605b21-0c13-430d-847d-a6c7ff35d618",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "POST /membership/applications/7b605b21-0c13-430d-847d-a6c7ff35d618/decisions",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GET /membership/applications/7b605b21-0c13-430d-847d-a6c7ff35d618",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "President can decide pending signup",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "POST /membership/applications/7b605b21-0c13-430d-847d-a6c7ff35d618/decisions",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Single presidential approval activates membership",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "POST /public/membership-signup",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Public response remains pending",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GET /membership/applications/a4b62549-7075-4fd2-b7c9-651bacd27127",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "POST /membership/applications/a4b62549-7075-4fd2-b7c9-651bacd27127/decisions",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Foreign zone attempt leaves signup pending",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GET /membership/applications/a4b62549-7075-4fd2-b7c9-651bacd27127",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "President can decide pending signup",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "POST /membership/applications/a4b62549-7075-4fd2-b7c9-651bacd27127/decisions",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Single presidential approval activates membership",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "POST /public/membership-signup",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Public response remains pending",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "POST /membership/applications/561e5c17-8e8b-422b-a458-6dddf6e80550/decisions",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Rejection creates no membership or role",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GET /public/membership-options",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Inactive zone hidden",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "POST /public/membership-signup",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Signup audit records pending state and consent",
+      "passed": true,
+      "detail": null
+    }
+  ]
+}

@@ -30,7 +30,7 @@ export default function MembershipApplications({
     [message, setMessage] = useState("");
   const q = useQuery({
     queryKey: ["applications", w?.id, review, status, page],
-    enabled: !!w,
+    enabled: !review || !!w,
     refetchInterval: 30000,
     queryFn: () =>
       api(
@@ -160,7 +160,7 @@ export default function MembershipApplications({
                     </td>
                     <td>{a.stage || "Not submitted"}</td>
                     <td>
-                      <MemberStatus status={a.status} />
+                      <MemberStatus status={["Submitted","Under Review"].includes(a.status) ? "Pending approval" : a.status} />
                     </td>
                     <td>
                       <button
