@@ -12,7 +12,7 @@
       "passed": true,
       "detail": {
         "status": 200,
-        "ms": 143.9,
+        "ms": 32.1,
         "error": null
       }
     },
@@ -86,7 +86,7 @@
       "passed": true,
       "detail": {
         "status": 200,
-        "ms": 24.2,
+        "ms": 19.6,
         "error": null
       }
     },
@@ -120,7 +120,7 @@
       "passed": true,
       "detail": {
         "status": 200,
-        "ms": 21.9,
+        "ms": 12.8,
         "error": null
       }
     },
@@ -139,7 +139,7 @@
       "passed": true,
       "detail": {
         "status": 200,
-        "ms": 165.3,
+        "ms": 23.3,
         "error": null
       }
     },
@@ -153,7 +153,7 @@
       "passed": true,
       "detail": {
         "status": 200,
-        "ms": 150.7,
+        "ms": 151.8,
         "error": null
       }
     },
@@ -167,7 +167,7 @@
       "passed": true,
       "detail": {
         "status": 200,
-        "ms": 162.4,
+        "ms": 157.7,
         "error": null
       }
     },
@@ -181,7 +181,7 @@
       "passed": true,
       "detail": {
         "status": 200,
-        "ms": 156.7,
+        "ms": 159.5,
         "error": null
       }
     },
@@ -195,7 +195,7 @@
       "passed": true,
       "detail": {
         "status": 200,
-        "ms": 77.4,
+        "ms": 69.5,
         "error": null
       }
     },
@@ -209,7 +209,7 @@
       "passed": true,
       "detail": {
         "status": 200,
-        "ms": 150.2,
+        "ms": 204.8,
         "error": null
       }
     },
@@ -223,7 +223,7 @@
       "passed": true,
       "detail": {
         "status": 200,
-        "ms": 64.6,
+        "ms": 32.9,
         "error": null
       }
     },
@@ -237,7 +237,7 @@
       "passed": true,
       "detail": {
         "status": 200,
-        "ms": 167.5,
+        "ms": 194.3,
         "error": null
       }
     },
@@ -251,7 +251,7 @@
       "passed": true,
       "detail": {
         "status": 200,
-        "ms": 37.8,
+        "ms": 43.6,
         "error": null
       }
     },
@@ -265,7 +265,7 @@
       "passed": true,
       "detail": {
         "status": 200,
-        "ms": 28.2,
+        "ms": 24.8,
         "error": null
       }
     },
@@ -279,7 +279,7 @@
       "passed": true,
       "detail": {
         "status": 200,
-        "ms": 40.4,
+        "ms": 23.2,
         "error": null
       }
     },
@@ -293,7 +293,7 @@
       "passed": true,
       "detail": {
         "status": 200,
-        "ms": 35.4,
+        "ms": 23.4,
         "error": null
       }
     },
@@ -307,7 +307,7 @@
       "passed": true,
       "detail": {
         "status": 200,
-        "ms": 34.5,
+        "ms": 22.0,
         "error": null
       }
     },
@@ -321,7 +321,7 @@
       "passed": true,
       "detail": {
         "status": 200,
-        "ms": 9.7,
+        "ms": 11.0,
         "error": null
       }
     },
@@ -335,7 +335,7 @@
       "passed": true,
       "detail": {
         "status": 200,
-        "ms": 8.4,
+        "ms": 7.6,
         "error": null
       }
     },
@@ -349,7 +349,7 @@
       "passed": true,
       "detail": {
         "status": 200,
-        "ms": 8.9,
+        "ms": 9.1,
         "error": null
       }
     },
@@ -363,7 +363,7 @@
       "passed": true,
       "detail": {
         "status": 200,
-        "ms": 28.3,
+        "ms": 7.8,
         "error": null
       }
     },
@@ -377,7 +377,7 @@
       "passed": true,
       "detail": {
         "status": 200,
-        "ms": 8.5,
+        "ms": 7.4,
         "error": null
       }
     },
@@ -391,7 +391,7 @@
       "passed": true,
       "detail": {
         "status": 200,
-        "ms": 7.3,
+        "ms": 7.8,
         "error": null
       }
     },
@@ -405,7 +405,7 @@
       "passed": true,
       "detail": {
         "status": 200,
-        "ms": 8.6,
+        "ms": 8.4,
         "error": null
       }
     },
@@ -419,7 +419,7 @@
       "passed": true,
       "detail": {
         "status": 200,
-        "ms": 8.4,
+        "ms": 7.2,
         "error": null
       }
     },
@@ -433,7 +433,7 @@
       "passed": true,
       "detail": {
         "status": 200,
-        "ms": 9.3,
+        "ms": 7.6,
         "error": null
       }
     },
@@ -447,7 +447,7 @@
       "passed": true,
       "detail": {
         "status": 200,
-        "ms": 9.9,
+        "ms": 7.1,
         "error": null
       }
     },
@@ -461,7 +461,7 @@
       "passed": true,
       "detail": {
         "status": 200,
-        "ms": 7.6,
+        "ms": 9.1,
         "error": null
       }
     },
@@ -475,7 +475,7 @@
       "passed": true,
       "detail": {
         "status": 200,
-        "ms": 37.5,
+        "ms": 18.3,
         "error": null
       }
     },
@@ -489,7 +489,7 @@
       "passed": true,
       "detail": {
         "status": 200,
-        "ms": 162.6,
+        "ms": 180.7,
         "error": null
       }
     },
@@ -498,7 +498,7 @@
       "passed": true,
       "detail": {
         "status": 200,
-        "ms": 148.4,
+        "ms": 22.3,
         "error": null
       }
     },
@@ -512,7 +512,7 @@
       "passed": true,
       "detail": {
         "status": 200,
-        "ms": 57.7,
+        "ms": 59.2,
         "error": null
       }
     },
@@ -521,7 +521,7 @@
       "passed": true,
       "detail": {
         "status": 200,
-        "ms": 14.1,
+        "ms": 18.7,
         "error": null
       }
     },
@@ -535,7 +535,7 @@
       "passed": true,
       "detail": {
         "status": 200,
-        "ms": 31.6,
+        "ms": 31.3,
         "error": null
       }
     },
@@ -544,7 +544,7 @@
       "passed": true,
       "detail": {
         "status": 200,
-        "ms": 14.6,
+        "ms": 16.9,
         "error": null
       }
     },
@@ -558,7 +558,7 @@
       "passed": true,
       "detail": {
         "status": 200,
-        "ms": 28.5,
+        "ms": 36.7,
         "error": null
       }
     },
@@ -567,7 +567,7 @@
       "passed": true,
       "detail": {
         "status": 200,
-        "ms": 13.4,
+        "ms": 17.0,
         "error": null
       }
     },
@@ -581,7 +581,7 @@
       "passed": true,
       "detail": {
         "status": 200,
-        "ms": 20.2,
+        "ms": 20.0,
         "error": null
       }
     },
@@ -590,7 +590,7 @@
       "passed": true,
       "detail": {
         "status": 200,
-        "ms": 14.6,
+        "ms": 16.6,
         "error": null
       }
     },
@@ -604,7 +604,7 @@
       "passed": true,
       "detail": {
         "status": 200,
-        "ms": 26.2,
+        "ms": 22.5,
         "error": null
       }
     },
@@ -613,7 +613,7 @@
       "passed": true,
       "detail": {
         "status": 200,
-        "ms": 25.8,
+        "ms": 18.2,
         "error": null
       }
     },
@@ -622,7 +622,7 @@
       "passed": true,
       "detail": {
         "status": 200,
-        "ms": 29.6,
+        "ms": 19.6,
         "error": null
       }
     },
@@ -631,7 +631,7 @@
       "passed": true,
       "detail": {
         "status": 200,
-        "ms": 41.4,
+        "ms": 29.8,
         "error": null
       }
     },
@@ -640,7 +640,7 @@
       "passed": true,
       "detail": {
         "status": 200,
-        "ms": 18.9,
+        "ms": 20.6,
         "error": null
       }
     },
@@ -649,7 +649,7 @@
       "passed": true,
       "detail": {
         "status": 200,
-        "ms": 25.9,
+        "ms": 19.5,
         "error": null
       }
     },
@@ -658,7 +658,7 @@
       "passed": true,
       "detail": {
         "status": 200,
-        "ms": 20.1,
+        "ms": 20.5,
         "error": null
       }
     },
@@ -667,7 +667,7 @@
       "passed": true,
       "detail": {
         "status": 200,
-        "ms": 18.4,
+        "ms": 19.9,
         "error": null
       }
     },
@@ -676,7 +676,7 @@
       "passed": true,
       "detail": {
         "status": 200,
-        "ms": 17.8,
+        "ms": 20.0,
         "error": null
       }
     },
@@ -685,7 +685,7 @@
       "passed": true,
       "detail": {
         "status": 200,
-        "ms": 60.7,
+        "ms": 48.4,
         "error": null
       }
     },
@@ -699,7 +699,7 @@
       "passed": true,
       "detail": {
         "status": 400,
-        "ms": 6.0,
+        "ms": 3.6,
         "error": {
           "detail": "Unsupported analytics period.",
           "status": 400
@@ -711,7 +711,7 @@
       "passed": true,
       "detail": {
         "status": 400,
-        "ms": 3.8,
+        "ms": 2.9,
         "error": {
           "detail": "Unsupported aggregation interval.",
           "status": 400
@@ -723,7 +723,7 @@
       "passed": true,
       "detail": {
         "status": 400,
-        "ms": 6.0,
+        "ms": 6.1,
         "error": {
           "detail": "Invalid from.",
           "status": 400
@@ -735,7 +735,7 @@
       "passed": true,
       "detail": {
         "status": 400,
-        "ms": 6.5,
+        "ms": 5.2,
         "error": {
           "detail": "Choose a valid range from 1900 through today.",
           "status": 400
@@ -747,7 +747,7 @@
       "passed": true,
       "detail": {
         "status": 400,
-        "ms": 6.0,
+        "ms": 4.9,
         "error": {
           "detail": "Choose a valid range from 1900 through today.",
           "status": 400
@@ -759,7 +759,7 @@
       "passed": true,
       "detail": {
         "status": 400,
-        "ms": 5.0,
+        "ms": 4.7,
         "error": {
           "detail": "Invalid regionId.",
           "status": 400
@@ -771,7 +771,7 @@
       "passed": true,
       "detail": {
         "status": 400,
-        "ms": 6.5,
+        "ms": 5.0,
         "error": {
           "detail": "Unsupported status.",
           "status": 400
@@ -783,7 +783,7 @@
       "passed": true,
       "detail": {
         "status": 400,
-        "ms": 5.9,
+        "ms": 4.7,
         "error": {
           "detail": "Choose a coarser aggregation interval for this date range.",
           "status": 400
@@ -795,7 +795,7 @@
       "passed": true,
       "detail": {
         "status": 400,
-        "ms": 6.5,
+        "ms": 6.3,
         "error": {
           "detail": "Reversed joinedFrom range.",
           "status": 400
@@ -807,7 +807,7 @@
       "passed": true,
       "detail": {
         "status": 400,
-        "ms": 3.6,
+        "ms": 3.1,
         "error": {
           "detail": "Unknown analytical workspace.",
           "status": 400
@@ -829,7 +829,7 @@
       "passed": true,
       "detail": {
         "status": 200,
-        "ms": 155.2,
+        "ms": 172.5,
         "error": null
       }
     },
@@ -843,7 +843,7 @@
       "passed": true,
       "detail": {
         "status": 200,
-        "ms": 153.4,
+        "ms": 203.5,
         "error": null
       }
     },
@@ -857,7 +857,7 @@
       "passed": true,
       "detail": {
         "status": 200,
-        "ms": 55.8,
+        "ms": 66.5,
         "error": null
       }
     },
@@ -866,7 +866,7 @@
       "passed": true,
       "detail": {
         "status": 404,
-        "ms": 14.7,
+        "ms": 14.8,
         "error": {
           "detail": "Club outside authorized scope.",
           "status": 404
@@ -883,7 +883,7 @@
       "passed": true,
       "detail": {
         "status": 403,
-        "ms": 34.7,
+        "ms": 296.6,
         "error": {
           "detail": "Action not permitted in this workspace.",
           "status": 403
@@ -900,7 +900,7 @@
       "passed": true,
       "detail": {
         "status": 200,
-        "ms": 37.1,
+        "ms": 41.6,
         "error": null
       }
     },
@@ -909,7 +909,7 @@
       "passed": true,
       "detail": {
         "status": 404,
-        "ms": 7.8,
+        "ms": 10.6,
         "error": {
           "detail": "Club outside authorized scope.",
           "status": 404
@@ -926,7 +926,7 @@
       "passed": true,
       "detail": {
         "status": 403,
-        "ms": 8.6,
+        "ms": 8.0,
         "error": {
           "detail": "Action not permitted in this workspace.",
           "status": 403
@@ -943,7 +943,7 @@
       "passed": true,
       "detail": {
         "status": 200,
-        "ms": 26.2,
+        "ms": 34.4,
         "error": null
       }
     },
@@ -952,7 +952,7 @@
       "passed": true,
       "detail": {
         "status": 404,
-        "ms": 7.2,
+        "ms": 11.5,
         "error": {
           "detail": "Club outside authorized scope.",
           "status": 404
@@ -969,7 +969,7 @@
       "passed": true,
       "detail": {
         "status": 403,
-        "ms": 5.9,
+        "ms": 10.9,
         "error": {
           "detail": "Action not permitted in this workspace.",
           "status": 403
@@ -986,7 +986,7 @@
       "passed": true,
       "detail": {
         "status": 200,
-        "ms": 35.8,
+        "ms": 10.1,
         "error": null
       }
     },
@@ -995,7 +995,7 @@
       "passed": true,
       "detail": {
         "status": 404,
-        "ms": 9.6,
+        "ms": 7.6,
         "error": {
           "detail": "Club outside authorized scope.",
           "status": 404
@@ -1012,7 +1012,7 @@
       "passed": true,
       "detail": {
         "status": 200,
-        "ms": 19.3,
+        "ms": 20.0,
         "error": null
       }
     },
@@ -1043,7 +1043,7 @@
       "passed": true,
       "detail": {
         "status": 403,
-        "ms": 5.8,
+        "ms": 5.0,
         "error": {
           "detail": "Action not permitted in this workspace.",
           "status": 403
@@ -1055,7 +1055,7 @@
       "passed": true,
       "detail": {
         "status": 401,
-        "ms": 2.5,
+        "ms": 2.3,
         "error": {
           "detail": "Sign in to continue.",
           "status": 401
@@ -1067,7 +1067,7 @@
       "passed": true,
       "detail": {
         "status": 404,
-        "ms": 5.8,
+        "ms": 5.9,
         "error": {
           "detail": "Category outside scope.",
           "status": 404
@@ -1079,7 +1079,7 @@
       "passed": true,
       "detail": {
         "status": 200,
-        "ms": 10.9,
+        "ms": 12.5,
         "error": null
       }
     },
@@ -1091,7 +1091,7 @@
     {
       "scenario": "Payload bounded",
       "passed": true,
-      "detail": 9136
+      "detail": 9519
     },
     {
       "scenario": "Database membership count preserved outside QA",
@@ -1131,8 +1131,8 @@
     }
   ],
   "timings": {
-    "minMs": 2.5,
-    "maxMs": 167.5,
-    "medianMs": 19.3
+    "minMs": 2.3,
+    "maxMs": 296.6,
+    "medianMs": 18.3
   }
 }
