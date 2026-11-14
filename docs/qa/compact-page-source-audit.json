@@ -1,0 +1,438 @@
+{
+  "scope": "Source inventory of every page and ID-card component. Browser coverage is recorded separately; record-specific workspaces retain existing tabs and wizards.",
+  "files": [
+    {
+      "file": "client/src/cards/CardDesigner.tsx",
+      "reorganized": false,
+      "subpageGroups": [],
+      "existingNavigation": true,
+      "panelHeadings": 3
+    },
+    {
+      "file": "client/src/cards/IdCards.tsx",
+      "reorganized": true,
+      "subpageGroups": [
+        "card-studio"
+      ],
+      "existingNavigation": true,
+      "panelHeadings": 17
+    },
+    {
+      "file": "client/src/pages/AddMemberWizard.tsx",
+      "reorganized": false,
+      "subpageGroups": [],
+      "existingNavigation": true,
+      "panelHeadings": 8
+    },
+    {
+      "file": "client/src/pages/Administration.tsx",
+      "reorganized": false,
+      "subpageGroups": [],
+      "existingNavigation": false,
+      "panelHeadings": 3
+    },
+    {
+      "file": "client/src/pages/Audit.tsx",
+      "reorganized": true,
+      "subpageGroups": [],
+      "existingNavigation": false,
+      "panelHeadings": 0
+    },
+    {
+      "file": "client/src/pages/Auth.tsx",
+      "reorganized": false,
+      "subpageGroups": [],
+      "existingNavigation": false,
+      "panelHeadings": 0
+    },
+    {
+      "file": "client/src/pages/CommunicationCampaigns.tsx",
+      "reorganized": false,
+      "subpageGroups": [],
+      "existingNavigation": true,
+      "panelHeadings": 10
+    },
+    {
+      "file": "client/src/pages/CommunicationLibrary.tsx",
+      "reorganized": false,
+      "subpageGroups": [],
+      "existingNavigation": false,
+      "panelHeadings": 6
+    },
+    {
+      "file": "client/src/pages/CommunicationMembers.tsx",
+      "reorganized": false,
+      "subpageGroups": [],
+      "existingNavigation": false,
+      "panelHeadings": 3
+    },
+    {
+      "file": "client/src/pages/CommunicationOperations.tsx",
+      "reorganized": false,
+      "subpageGroups": [],
+      "existingNavigation": false,
+      "panelHeadings": 0
+    },
+    {
+      "file": "client/src/pages/Communications.tsx",
+      "reorganized": false,
+      "subpageGroups": [],
+      "existingNavigation": true,
+      "panelHeadings": 6
+    },
+    {
+      "file": "client/src/pages/CommunicationSettings.tsx",
+      "reorganized": false,
+      "subpageGroups": [],
+      "existingNavigation": true,
+      "panelHeadings": 10
+    },
+    {
+      "file": "client/src/pages/Dashboard.tsx",
+      "reorganized": false,
+      "subpageGroups": [],
+      "existingNavigation": false,
+      "panelHeadings": 5
+    },
+    {
+      "file": "client/src/pages/DuesBankRemittance.tsx",
+      "reorganized": false,
+      "subpageGroups": [],
+      "existingNavigation": false,
+      "panelHeadings": 2
+    },
+    {
+      "file": "client/src/pages/DuesCharts.tsx",
+      "reorganized": false,
+      "subpageGroups": [],
+      "existingNavigation": false,
+      "panelHeadings": 0
+    },
+    {
+      "file": "client/src/pages/DuesManagement.tsx",
+      "reorganized": true,
+      "subpageGroups": [
+        "dues-analysis"
+      ],
+      "existingNavigation": true,
+      "panelHeadings": 15
+    },
+    {
+      "file": "client/src/pages/DuesMembers.tsx",
+      "reorganized": false,
+      "subpageGroups": [],
+      "existingNavigation": false,
+      "panelHeadings": 4
+    },
+    {
+      "file": "client/src/pages/DuesReports.tsx",
+      "reorganized": false,
+      "subpageGroups": [],
+      "existingNavigation": true,
+      "panelHeadings": 9
+    },
+    {
+      "file": "client/src/pages/DuesWorkspaces.tsx",
+      "reorganized": false,
+      "subpageGroups": [],
+      "existingNavigation": true,
+      "panelHeadings": 9
+    },
+    {
+      "file": "client/src/pages/EventParticipation.tsx",
+      "reorganized": false,
+      "subpageGroups": [],
+      "existingNavigation": true,
+      "panelHeadings": 12
+    },
+    {
+      "file": "client/src/pages/EventPlatform.tsx",
+      "reorganized": true,
+      "subpageGroups": [
+        "event-reports"
+      ],
+      "existingNavigation": true,
+      "panelHeadings": 14
+    },
+    {
+      "file": "client/src/pages/Events.tsx",
+      "reorganized": false,
+      "subpageGroups": [],
+      "existingNavigation": true,
+      "panelHeadings": 8
+    },
+    {
+      "file": "client/src/pages/EventWorkspace.tsx",
+      "reorganized": false,
+      "subpageGroups": [],
+      "existingNavigation": true,
+      "panelHeadings": 17
+    },
+    {
+      "file": "client/src/pages/Finance.tsx",
+      "reorganized": false,
+      "subpageGroups": [],
+      "existingNavigation": true,
+      "panelHeadings": 26
+    },
+    {
+      "file": "client/src/pages/FinanceCommand.tsx",
+      "reorganized": true,
+      "subpageGroups": [
+        "finance-charts"
+      ],
+      "existingNavigation": true,
+      "panelHeadings": 28
+    },
+    {
+      "file": "client/src/pages/FinanceInvoiceImport.tsx",
+      "reorganized": false,
+      "subpageGroups": [],
+      "existingNavigation": false,
+      "panelHeadings": 1
+    },
+    {
+      "file": "client/src/pages/FinanceRecordTools.tsx",
+      "reorganized": false,
+      "subpageGroups": [],
+      "existingNavigation": false,
+      "panelHeadings": 4
+    },
+    {
+      "file": "client/src/pages/GovernanceApprovals.tsx",
+      "reorganized": false,
+      "subpageGroups": [],
+      "existingNavigation": false,
+      "panelHeadings": 5
+    },
+    {
+      "file": "client/src/pages/GovernanceClubs.tsx",
+      "reorganized": true,
+      "subpageGroups": [
+        "club-administration",
+        "community-clubs"
+      ],
+      "existingNavigation": true,
+      "panelHeadings": 14
+    },
+    {
+      "file": "client/src/pages/GovernanceCommittees.tsx",
+      "reorganized": false,
+      "subpageGroups": [],
+      "existingNavigation": true,
+      "panelHeadings": 6
+    },
+    {
+      "file": "client/src/pages/GovernanceDocuments.tsx",
+      "reorganized": false,
+      "subpageGroups": [],
+      "existingNavigation": false,
+      "panelHeadings": 2
+    },
+    {
+      "file": "client/src/pages/GovernanceLeadership.tsx",
+      "reorganized": false,
+      "subpageGroups": [],
+      "existingNavigation": false,
+      "panelHeadings": 6
+    },
+    {
+      "file": "client/src/pages/GovernanceSettings.tsx",
+      "reorganized": false,
+      "subpageGroups": [],
+      "existingNavigation": true,
+      "panelHeadings": 4
+    },
+    {
+      "file": "client/src/pages/GreetingSetup.tsx",
+      "reorganized": false,
+      "subpageGroups": [],
+      "existingNavigation": false,
+      "panelHeadings": 2
+    },
+    {
+      "file": "client/src/pages/Intelligence.tsx",
+      "reorganized": true,
+      "subpageGroups": [
+        "community-intelligence"
+      ],
+      "existingNavigation": true,
+      "panelHeadings": 20
+    },
+    {
+      "file": "client/src/pages/LeadershipAppointmentWizard.tsx",
+      "reorganized": false,
+      "subpageGroups": [],
+      "existingNavigation": true,
+      "panelHeadings": 2
+    },
+    {
+      "file": "client/src/pages/LeadershipCenter.tsx",
+      "reorganized": true,
+      "subpageGroups": [
+        "leadership-overview",
+        "leadership-intelligence"
+      ],
+      "existingNavigation": true,
+      "panelHeadings": 27
+    },
+    {
+      "file": "client/src/pages/LeadershipCharts.tsx",
+      "reorganized": false,
+      "subpageGroups": [],
+      "existingNavigation": false,
+      "panelHeadings": 0
+    },
+    {
+      "file": "client/src/pages/MemberImports.tsx",
+      "reorganized": false,
+      "subpageGroups": [],
+      "existingNavigation": false,
+      "panelHeadings": 7
+    },
+    {
+      "file": "client/src/pages/MemberPortal.tsx",
+      "reorganized": true,
+      "subpageGroups": [
+        "member-home"
+      ],
+      "existingNavigation": false,
+      "panelHeadings": 10
+    },
+    {
+      "file": "client/src/pages/MemberProfile.tsx",
+      "reorganized": false,
+      "subpageGroups": [],
+      "existingNavigation": true,
+      "panelHeadings": 22
+    },
+    {
+      "file": "client/src/pages/Members.tsx",
+      "reorganized": false,
+      "subpageGroups": [],
+      "existingNavigation": true,
+      "panelHeadings": 4
+    },
+    {
+      "file": "client/src/pages/MembershipApplications.tsx",
+      "reorganized": false,
+      "subpageGroups": [],
+      "existingNavigation": false,
+      "panelHeadings": 6
+    },
+    {
+      "file": "client/src/pages/MembershipInsights.tsx",
+      "reorganized": true,
+      "subpageGroups": [
+        "membership-summary",
+        "membership-overview"
+      ],
+      "existingNavigation": true,
+      "panelHeadings": 43
+    },
+    {
+      "file": "client/src/pages/MembershipIntelligence.tsx",
+      "reorganized": false,
+      "subpageGroups": [],
+      "existingNavigation": false,
+      "panelHeadings": 3
+    },
+    {
+      "file": "client/src/pages/MembershipOperations.tsx",
+      "reorganized": false,
+      "subpageGroups": [],
+      "existingNavigation": true,
+      "panelHeadings": 2
+    },
+    {
+      "file": "client/src/pages/MembershipPublic.tsx",
+      "reorganized": false,
+      "subpageGroups": [],
+      "existingNavigation": false,
+      "panelHeadings": 1
+    },
+    {
+      "file": "client/src/pages/MembershipSettings.tsx",
+      "reorganized": false,
+      "subpageGroups": [],
+      "existingNavigation": false,
+      "panelHeadings": 3
+    },
+    {
+      "file": "client/src/pages/Operations.tsx",
+      "reorganized": false,
+      "subpageGroups": [],
+      "existingNavigation": true,
+      "panelHeadings": 29
+    },
+    {
+      "file": "client/src/pages/OrganizationHierarchyCharts.tsx",
+      "reorganized": false,
+      "subpageGroups": [],
+      "existingNavigation": true,
+      "panelHeadings": 0
+    },
+    {
+      "file": "client/src/pages/Organizations.tsx",
+      "reorganized": true,
+      "subpageGroups": [
+        "organization-intelligence"
+      ],
+      "existingNavigation": true,
+      "panelHeadings": 10
+    },
+    {
+      "file": "client/src/pages/PersonalEvents.tsx",
+      "reorganized": true,
+      "subpageGroups": [
+        "personal-events"
+      ],
+      "existingNavigation": false,
+      "panelHeadings": 9
+    },
+    {
+      "file": "client/src/pages/PlatformAdminDashboard.tsx",
+      "reorganized": true,
+      "subpageGroups": [
+        "platform-dashboard"
+      ],
+      "existingNavigation": false,
+      "panelHeadings": 20
+    },
+    {
+      "file": "client/src/pages/Profile.tsx",
+      "reorganized": false,
+      "subpageGroups": [],
+      "existingNavigation": false,
+      "panelHeadings": 3
+    },
+    {
+      "file": "client/src/pages/RequestOrganization.tsx",
+      "reorganized": false,
+      "subpageGroups": [],
+      "existingNavigation": false,
+      "panelHeadings": 0
+    },
+    {
+      "file": "client/src/pages/RoleHome.tsx",
+      "reorganized": false,
+      "subpageGroups": [],
+      "existingNavigation": false,
+      "panelHeadings": 1
+    },
+    {
+      "file": "client/src/pages/Settings.tsx",
+      "reorganized": false,
+      "subpageGroups": [],
+      "existingNavigation": false,
+      "panelHeadings": 2
+    },
+    {
+      "file": "client/src/pages/StructureManagement.tsx",
+      "reorganized": true,
+      "subpageGroups": [],
+      "existingNavigation": false,
+      "panelHeadings": 3
+    }
+  ]
+}

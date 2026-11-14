@@ -3,3 +3,5 @@
 .app-shell .lp-center .lp-root-card .lp-person-card{background:#ffffff12!important;color:white!important}.app-shell .lp-center .lp-root-card .lp-person-card small{color:#e0cfee!important}.app-shell .lp-center .lp-root-card .lp-person-card strong{color:#fff!important}.lp-timeline{max-height:310px;overflow:auto;scrollbar-width:thin}.lp-profile .lp-timeline{max-height:none}.lp-profile small{overflow-wrap:anywhere}
 
 .lp-mini-kpis>a{display:block;padding:17px 20px;background:#fff;border:1px solid #eee3f6;border-radius:11px;color:#9a80ab;font-size:10px}.lp-mini-kpis>a strong{font-size:25px}.lp-mini-kpis>a:hover{border-color:#c5a6df}
+
+.lp-center .lp-filter-toggle{display:none!important}@media(max-width:650px){.lp-center .lp-filter-toggle{display:inline-flex!important;align-items:center;gap:7px}.lp-filters:not(.expanded){display:none}.lp-heading-actions{gap:7px}.lp-heading-actions button{padding:9px 10px;font-size:10px}}

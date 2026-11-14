@@ -1,0 +1,726 @@
+[
+  {
+    "test": "DuesManagement preserves all original headings",
+    "passed": true
+  },
+  {
+    "test": "EventPlatform preserves all original headings",
+    "passed": true
+  },
+  {
+    "test": "FinanceCommand preserves all original headings",
+    "passed": true
+  },
+  {
+    "test": "LeadershipCenter preserves all original headings",
+    "passed": true
+  },
+  {
+    "test": "MembershipInsights preserves all original headings",
+    "passed": true
+  },
+  {
+    "test": "Organizations preserves all original headings",
+    "passed": true
+  },
+  {
+    "test": "PersonalEvents preserves all original headings",
+    "passed": true
+  },
+  {
+    "test": "PlatformAdminDashboard preserves all original headings",
+    "passed": true
+  },
+  {
+    "test": "MemberPortal preserves all original headings",
+    "passed": true
+  },
+  {
+    "test": "Intelligence preserves all original headings",
+    "passed": true
+  },
+  {
+    "test": "GovernanceClubs preserves all original headings",
+    "passed": true
+  },
+  {
+    "test": "StructureManagement preserves all original headings",
+    "passed": true
+  },
+  {
+    "test": "Audit preserves all original headings",
+    "passed": true
+  },
+  {
+    "test": "/finance/dues renders without runtime errors",
+    "passed": true
+  },
+  {
+    "test": "/finance/dues has no desktop overflow",
+    "passed": true
+  },
+  {
+    "test": "Overview omits deep analysis and matrix",
+    "passed": true
+  },
+  {
+    "test": "Dues desktop overview fits within 1250 pixels",
+    "passed": true
+  },
+  {
+    "test": "Organization matrix has its own subpage",
+    "passed": true
+  },
+  {
+    "test": "All eight dues analysis panels retained across four subpages",
+    "passed": true
+  },
+  {
+    "test": "Dues analysis group 1 has two panels",
+    "passed": true
+  },
+  {
+    "test": "Dues analysis group 2 has two panels",
+    "passed": true
+  },
+  {
+    "test": "Dues analysis group 3 has two panels",
+    "passed": true
+  },
+  {
+    "test": "Dues analysis group 4 has two panels",
+    "passed": true
+  },
+  {
+    "test": "Browser Back restores selected analysis subpage",
+    "passed": true
+  },
+  {
+    "test": "/finance/dues 768px has no horizontal overflow",
+    "passed": true
+  },
+  {
+    "test": "/finance/dues 390px has no horizontal overflow",
+    "passed": true
+  },
+  {
+    "test": "/platform-dashboard renders without runtime errors",
+    "passed": true
+  },
+  {
+    "test": "/platform-dashboard has no desktop overflow",
+    "passed": true
+  },
+  {
+    "test": "/platform-dashboard subpage 1 selected",
+    "passed": true
+  },
+  {
+    "test": "/platform-dashboard subpage 2 selected",
+    "passed": true
+  },
+  {
+    "test": "/platform-dashboard subpage 3 selected",
+    "passed": true
+  },
+  {
+    "test": "/platform-dashboard subpage 4 selected",
+    "passed": true
+  },
+  {
+    "test": "/platform-dashboard subpage 5 selected",
+    "passed": true
+  },
+  {
+    "test": "/platform-dashboard reload preserves selected URL",
+    "passed": true
+  },
+  {
+    "test": "/platform-dashboard 768px has no horizontal overflow",
+    "passed": true
+  },
+  {
+    "test": "/platform-dashboard 390px has no horizontal overflow",
+    "passed": true
+  },
+  {
+    "test": "/membership-insights renders without runtime errors",
+    "passed": true
+  },
+  {
+    "test": "/membership-insights has no desktop overflow",
+    "passed": true
+  },
+  {
+    "test": "/membership-insights subpage 1 selected",
+    "passed": true
+  },
+  {
+    "test": "/membership-insights subpage 2 selected",
+    "passed": true
+  },
+  {
+    "test": "/membership-insights nested section 2/1",
+    "passed": true
+  },
+  {
+    "test": "/membership-insights nested section 2/2",
+    "passed": true
+  },
+  {
+    "test": "/membership-insights nested section 2/3",
+    "passed": true
+  },
+  {
+    "test": "/membership-insights nested section 2/4",
+    "passed": true
+  },
+  {
+    "test": "/membership-insights reload preserves selected URL",
+    "passed": true
+  },
+  {
+    "test": "/membership-insights 768px has no horizontal overflow",
+    "passed": true
+  },
+  {
+    "test": "/membership-insights 390px has no horizontal overflow",
+    "passed": true
+  },
+  {
+    "test": "/leadership renders without runtime errors",
+    "passed": true
+  },
+  {
+    "test": "/leadership has no desktop overflow",
+    "passed": true
+  },
+  {
+    "test": "/leadership subpage 1 selected",
+    "passed": true
+  },
+  {
+    "test": "/leadership subpage 2 selected",
+    "passed": true
+  },
+  {
+    "test": "/leadership reload preserves selected URL",
+    "passed": true
+  },
+  {
+    "test": "/leadership 768px has no horizontal overflow",
+    "passed": true
+  },
+  {
+    "test": "/leadership 390px has no horizontal overflow",
+    "passed": true
+  },
+  {
+    "test": "/leadership/intelligence renders without runtime errors",
+    "passed": true
+  },
+  {
+    "test": "/leadership/intelligence has no desktop overflow",
+    "passed": true
+  },
+  {
+    "test": "/leadership/intelligence subpage 1 selected",
+    "passed": true
+  },
+  {
+    "test": "/leadership/intelligence subpage 2 selected",
+    "passed": true
+  },
+  {
+    "test": "/leadership/intelligence subpage 3 selected",
+    "passed": true
+  },
+  {
+    "test": "/leadership/intelligence subpage 4 selected",
+    "passed": true
+  },
+  {
+    "test": "/leadership/intelligence reload preserves selected URL",
+    "passed": true
+  },
+  {
+    "test": "/leadership/intelligence 768px has no horizontal overflow",
+    "passed": true
+  },
+  {
+    "test": "/leadership/intelligence 390px has no horizontal overflow",
+    "passed": true
+  },
+  {
+    "test": "/organizations renders without runtime errors",
+    "passed": true
+  },
+  {
+    "test": "/organizations has no desktop overflow",
+    "passed": true
+  },
+  {
+    "test": "/organizations subpage 1 selected",
+    "passed": true
+  },
+  {
+    "test": "/organizations subpage 2 selected",
+    "passed": true
+  },
+  {
+    "test": "/organizations reload preserves selected URL",
+    "passed": true
+  },
+  {
+    "test": "/organizations 768px has no horizontal overflow",
+    "passed": true
+  },
+  {
+    "test": "/organizations 390px has no horizontal overflow",
+    "passed": true
+  },
+  {
+    "test": "/event-intelligence renders without runtime errors",
+    "passed": true
+  },
+  {
+    "test": "/event-intelligence has no desktop overflow",
+    "passed": true
+  },
+  {
+    "test": "/event-intelligence subpage 1 selected",
+    "passed": true
+  },
+  {
+    "test": "/event-intelligence subpage 2 selected",
+    "passed": true
+  },
+  {
+    "test": "/event-intelligence subpage 3 selected",
+    "passed": true
+  },
+  {
+    "test": "/event-intelligence subpage 4 selected",
+    "passed": true
+  },
+  {
+    "test": "/event-intelligence subpage 5 selected",
+    "passed": true
+  },
+  {
+    "test": "/event-intelligence reload preserves selected URL",
+    "passed": true
+  },
+  {
+    "test": "/event-intelligence 768px has no horizontal overflow",
+    "passed": true
+  },
+  {
+    "test": "/event-intelligence 390px has no horizontal overflow",
+    "passed": true
+  },
+  {
+    "test": "/my-events renders without runtime errors",
+    "passed": true
+  },
+  {
+    "test": "/my-events has no desktop overflow",
+    "passed": true
+  },
+  {
+    "test": "/my-events subpage 1 selected",
+    "passed": true
+  },
+  {
+    "test": "/my-events subpage 2 selected",
+    "passed": true
+  },
+  {
+    "test": "/my-events subpage 3 selected",
+    "passed": true
+  },
+  {
+    "test": "/my-events reload preserves selected URL",
+    "passed": true
+  },
+  {
+    "test": "/my-events 768px has no horizontal overflow",
+    "passed": true
+  },
+  {
+    "test": "/my-events 390px has no horizontal overflow",
+    "passed": true
+  },
+  {
+    "test": "/finance renders without runtime errors",
+    "passed": true
+  },
+  {
+    "test": "/finance has no desktop overflow",
+    "passed": true
+  },
+  {
+    "test": "/finance subpage 1 selected",
+    "passed": true
+  },
+  {
+    "test": "/finance subpage 2 selected",
+    "passed": true
+  },
+  {
+    "test": "/finance reload preserves selected URL",
+    "passed": true
+  },
+  {
+    "test": "/finance 768px has no horizontal overflow",
+    "passed": true
+  },
+  {
+    "test": "/finance 390px has no horizontal overflow",
+    "passed": true
+  },
+  {
+    "test": "/finance/reports renders without runtime errors",
+    "passed": true
+  },
+  {
+    "test": "/finance/reports has no desktop overflow",
+    "passed": true
+  },
+  {
+    "test": "/finance/reports subpage 1 selected",
+    "passed": true
+  },
+  {
+    "test": "/finance/reports subpage 2 selected",
+    "passed": true
+  },
+  {
+    "test": "/finance/reports reload preserves selected URL",
+    "passed": true
+  },
+  {
+    "test": "Finance Summary accessible",
+    "passed": true
+  },
+  {
+    "test": "Finance Records accessible",
+    "passed": true
+  },
+  {
+    "test": "Finance Report Library accessible",
+    "passed": true
+  },
+  {
+    "test": "Finance Ledger accessible",
+    "passed": true
+  },
+  {
+    "test": "Finance Forecast accessible",
+    "passed": true
+  },
+  {
+    "test": "/finance/reports 768px has no horizontal overflow",
+    "passed": true
+  },
+  {
+    "test": "/finance/reports 390px has no horizontal overflow",
+    "passed": true
+  },
+  {
+    "test": "/my-membership renders without runtime errors",
+    "passed": true
+  },
+  {
+    "test": "/my-membership has no desktop overflow",
+    "passed": true
+  },
+  {
+    "test": "/my-membership subpage 1 selected",
+    "passed": true
+  },
+  {
+    "test": "/my-membership subpage 2 selected",
+    "passed": true
+  },
+  {
+    "test": "/my-membership subpage 3 selected",
+    "passed": true
+  },
+  {
+    "test": "/my-membership reload preserves selected URL",
+    "passed": true
+  },
+  {
+    "test": "/my-membership 768px has no horizontal overflow",
+    "passed": true
+  },
+  {
+    "test": "/my-membership 390px has no horizontal overflow",
+    "passed": true
+  },
+  {
+    "test": "/intelligence renders without runtime errors",
+    "passed": true
+  },
+  {
+    "test": "/intelligence has no desktop overflow",
+    "passed": true
+  },
+  {
+    "test": "/intelligence subpage 1 selected",
+    "passed": true
+  },
+  {
+    "test": "/intelligence subpage 2 selected",
+    "passed": true
+  },
+  {
+    "test": "/intelligence subpage 3 selected",
+    "passed": true
+  },
+  {
+    "test": "/intelligence subpage 4 selected",
+    "passed": true
+  },
+  {
+    "test": "/intelligence reload preserves selected URL",
+    "passed": true
+  },
+  {
+    "test": "/intelligence 768px has no horizontal overflow",
+    "passed": true
+  },
+  {
+    "test": "/intelligence 390px has no horizontal overflow",
+    "passed": true
+  },
+  {
+    "test": "/club-administration renders without runtime errors",
+    "passed": true
+  },
+  {
+    "test": "/club-administration has no desktop overflow",
+    "passed": true
+  },
+  {
+    "test": "/club-administration subpage 1 selected",
+    "passed": true
+  },
+  {
+    "test": "/club-administration subpage 2 selected",
+    "passed": true
+  },
+  {
+    "test": "/club-administration nested section 2/1",
+    "passed": true
+  },
+  {
+    "test": "/club-administration nested section 2/2",
+    "passed": true
+  },
+  {
+    "test": "/club-administration nested section 2/3",
+    "passed": true
+  },
+  {
+    "test": "/club-administration nested section 2/4",
+    "passed": true
+  },
+  {
+    "test": "/club-administration subpage 3 selected",
+    "passed": true
+  },
+  {
+    "test": "/club-administration reload preserves selected URL",
+    "passed": true
+  },
+  {
+    "test": "/club-administration 768px has no horizontal overflow",
+    "passed": true
+  },
+  {
+    "test": "/club-administration 390px has no horizontal overflow",
+    "passed": true
+  },
+  {
+    "test": "/members smoke render",
+    "passed": true
+  },
+  {
+    "test": "/directory smoke render",
+    "passed": true
+  },
+  {
+    "test": "/international smoke render",
+    "passed": true
+  },
+  {
+    "test": "/national smoke render",
+    "passed": true
+  },
+  {
+    "test": "/regions smoke render",
+    "passed": true
+  },
+  {
+    "test": "/districts smoke render",
+    "passed": true
+  },
+  {
+    "test": "/zones smoke render",
+    "passed": true
+  },
+  {
+    "test": "/clubs smoke render",
+    "passed": true
+  },
+  {
+    "test": "/clubs/directory smoke render",
+    "passed": true
+  },
+  {
+    "test": "/club-administration smoke render",
+    "passed": true
+  },
+  {
+    "test": "/apply smoke render",
+    "passed": true
+  },
+  {
+    "test": "/approvals smoke render",
+    "passed": true
+  },
+  {
+    "test": "/imports smoke render",
+    "passed": true
+  },
+  {
+    "test": "/membership-settings smoke render",
+    "passed": true
+  },
+  {
+    "test": "/transfers smoke render",
+    "passed": true
+  },
+  {
+    "test": "/events smoke render",
+    "passed": true
+  },
+  {
+    "test": "/event-settings smoke render",
+    "passed": true
+  },
+  {
+    "test": "/leadership-calendar smoke render",
+    "passed": true
+  },
+  {
+    "test": "/handovers smoke render",
+    "passed": true
+  },
+  {
+    "test": "/committees smoke render",
+    "passed": true
+  },
+  {
+    "test": "/governance smoke render",
+    "passed": true
+  },
+  {
+    "test": "/governance-settings smoke render",
+    "passed": true
+  },
+  {
+    "test": "/resolutions smoke render",
+    "passed": true
+  },
+  {
+    "test": "/administration smoke render",
+    "passed": true
+  },
+  {
+    "test": "/settings smoke render",
+    "passed": true
+  },
+  {
+    "test": "/audit smoke render",
+    "passed": true
+  },
+  {
+    "test": "/profile smoke render",
+    "passed": true
+  },
+  {
+    "test": "/id-cards smoke render",
+    "passed": true
+  },
+  {
+    "test": "/intelligence smoke render",
+    "passed": true
+  },
+  {
+    "test": "/operations smoke render",
+    "passed": true
+  },
+  {
+    "test": "/communications smoke render",
+    "passed": true
+  },
+  {
+    "test": "/finance/transactions smoke render",
+    "passed": true
+  },
+  {
+    "test": "/finance/receipts smoke render",
+    "passed": true
+  },
+  {
+    "test": "/finance/invoices smoke render",
+    "passed": true
+  },
+  {
+    "test": "/finance/payments smoke render",
+    "passed": true
+  },
+  {
+    "test": "/finance/expenses smoke render",
+    "passed": true
+  },
+  {
+    "test": "/finance/reconciliation smoke render",
+    "passed": true
+  },
+  {
+    "test": "/finance/budgets smoke render",
+    "passed": true
+  },
+  {
+    "test": "/finance/audit smoke render",
+    "passed": true
+  },
+  {
+    "test": "Audit page 1 has at most ten rows",
+    "passed": true
+  },
+  {
+    "test": "Audit page 1 preserves exact source order",
+    "passed": true
+  },
+  {
+    "test": "Audit page 2 has at most ten rows",
+    "passed": true
+  },
+  {
+    "test": "Audit page 2 preserves exact source order",
+    "passed": true
+  },
+  {
+    "test": "Audit page 3 has at most ten rows",
+    "passed": true
+  },
+  {
+    "test": "No runtime errors across audited routes",
+    "passed": true
+  }
+]

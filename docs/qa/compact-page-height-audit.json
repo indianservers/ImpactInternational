@@ -1,0 +1,508 @@
+[
+  {
+    "height": 1050,
+    "headings": [],
+    "subpages": 0,
+    "route": "/finance/dues"
+  },
+  {
+    "height": 1222,
+    "headings": [
+      "Impact International Dashboard",
+      "Organizations",
+      "Connected clubs",
+      "Registered members",
+      "Active members",
+      "Current officers",
+      "Pending decisions",
+      "Joined this month",
+      "Active committees",
+      "Open approvals",
+      "Event engagement",
+      "Your administrative priorities",
+      "Operational overview",
+      "Membership growth cumulative registrations",
+      "Club activity events scheduled",
+      "Club status",
+      "Approval pipeline",
+      "Club distribution RegionsDistricts",
+      "Organizational structure"
+    ],
+    "subpages": 5,
+    "route": "/platform-dashboard"
+  },
+  {
+    "height": 1210,
+    "headings": [
+      "Membership Intelligence & Analytics Center",
+      "Global Membership Footprint",
+      "Membership Growth & Trends"
+    ],
+    "subpages": 2,
+    "route": "/membership-insights"
+  },
+  {
+    "height": 1168,
+    "headings": [
+      "Leadership & People"
+    ],
+    "subpages": 0,
+    "route": "/leadership"
+  },
+  {
+    "height": 1168,
+    "headings": [
+      "Leadership & People"
+    ],
+    "subpages": 0,
+    "route": "/leadership/intelligence"
+  },
+  {
+    "height": 1725,
+    "headings": [
+      "Organization Structure & Governance",
+      "Hierarchical Coverage",
+      "Structure Strength",
+      "Global Presence",
+      "Impact International"
+    ],
+    "subpages": 2,
+    "route": "/organizations"
+  },
+  {
+    "height": 1454,
+    "headings": [
+      "Impact Event Intelligence",
+      "Analyze \u00b7 Measure \u00b7 Engage \u00b7 Grow",
+      "Registrations Over Time",
+      "Attendance Trend"
+    ],
+    "subpages": 5,
+    "route": "/event-intelligence"
+  },
+  {
+    "height": 1482,
+    "headings": [
+      "My Impact Events",
+      "Your Events. Your Participation. Your Impact.",
+      "\u2606 Your next event",
+      "November 2026"
+    ],
+    "subpages": 3,
+    "route": "/my-events"
+  },
+  {
+    "height": 1050,
+    "headings": [
+      "Financial Reports & Analytics"
+    ],
+    "subpages": 0,
+    "route": "/finance/reports"
+  },
+  {
+    "height": 1470,
+    "headings": [
+      "Hello, Impact.",
+      "Your digital membership",
+      "Your next chapter starts with a community.",
+      "Your profile",
+      "Application access roles",
+      "Your club administration",
+      "More ways to connect"
+    ],
+    "subpages": 3,
+    "route": "/my-membership"
+  },
+  {
+    "height": 1684,
+    "headings": [
+      "Impact International intelligence",
+      "Impact International"
+    ],
+    "subpages": 0,
+    "route": "/intelligence"
+  },
+  {
+    "height": 1514,
+    "headings": [
+      "Impact International dashboard",
+      "Good governance startswith a clear picture.",
+      "Your administrative priorities",
+      "Operational overview"
+    ],
+    "subpages": 3,
+    "route": "/club-administration"
+  },
+  {
+    "height": 1615,
+    "headings": [
+      "Impact Members",
+      "Analytics Historical QA 0",
+      "Analytics Historical QA 1",
+      "Analytics Historical QA 2",
+      "Analytics Historical QA 3",
+      "Browser Redesign QA Updated",
+      "Demo Member 0001-01",
+      "Demo Member 0001-02",
+      "Demo Member 0001-03",
+      "Demo Member 0001-04",
+      "Demo Member 0001-05",
+      "Demo Member 0002-01",
+      "Demo Member 0002-02",
+      "Demo Member 0002-03",
+      "Demo Member 0002-04",
+      "Demo Member 0002-05",
+      "Demo Member 0003-01",
+      "Demo Member 0003-02",
+      "Demo Member 0003-03",
+      "Demo Member 0003-04",
+      "Demo Member 0003-05"
+    ],
+    "subpages": 0,
+    "route": "/members"
+  },
+  {
+    "height": 1050,
+    "headings": [
+      "Impact member directory"
+    ],
+    "subpages": 0,
+    "route": "/directory"
+  },
+  {
+    "height": 1050,
+    "headings": [
+      "International headquarters",
+      "Impact International"
+    ],
+    "subpages": 0,
+    "route": "/international"
+  },
+  {
+    "height": 1050,
+    "headings": [
+      "Manage national units"
+    ],
+    "subpages": 0,
+    "route": "/national"
+  },
+  {
+    "height": 1161,
+    "headings": [
+      "Manage regions"
+    ],
+    "subpages": 0,
+    "route": "/regions"
+  },
+  {
+    "height": 1529,
+    "headings": [
+      "Manage districts"
+    ],
+    "subpages": 0,
+    "route": "/districts"
+  },
+  {
+    "height": 1529,
+    "headings": [
+      "Manage zones"
+    ],
+    "subpages": 0,
+    "route": "/zones"
+  },
+  {
+    "height": 1529,
+    "headings": [
+      "Manage clubs"
+    ],
+    "subpages": 0,
+    "route": "/clubs"
+  },
+  {
+    "height": 1572,
+    "headings": [
+      "Impact club directory"
+    ],
+    "subpages": 0,
+    "route": "/clubs/directory"
+  },
+  {
+    "height": 1094,
+    "headings": [
+      "Join an Impact club",
+      "My membership applications",
+      "Your next community starts here."
+    ],
+    "subpages": 0,
+    "route": "/apply"
+  },
+  {
+    "height": 1050,
+    "headings": [
+      "Impact membership approvals",
+      "Application inbox"
+    ],
+    "subpages": 0,
+    "route": "/approvals"
+  },
+  {
+    "height": 1302,
+    "headings": [
+      "Member import",
+      "Bring your community with you",
+      "Import history"
+    ],
+    "subpages": 0,
+    "route": "/imports"
+  },
+  {
+    "height": 1391,
+    "headings": [
+      "Membership settings",
+      "Approval workflow",
+      "Membership categories",
+      "Affiliation & transfer policy"
+    ],
+    "subpages": 0,
+    "route": "/membership-settings"
+  },
+  {
+    "height": 1095,
+    "headings": [
+      "Impact membership operations"
+    ],
+    "subpages": 0,
+    "route": "/transfers"
+  },
+  {
+    "height": 1490,
+    "headings": [
+      "Events",
+      "Gather \u00b7 Learn \u00b7 Do Business \u00b7 Serve \u00b7 Lead",
+      "November 2026",
+      "November 2026",
+      "Events in this month",
+      "Event Insights",
+      "Registration & capacity"
+    ],
+    "subpages": 0,
+    "route": "/events"
+  },
+  {
+    "height": 1686,
+    "headings": [
+      "Impact event types",
+      "Available event templates"
+    ],
+    "subpages": 0,
+    "route": "/event-settings"
+  },
+  {
+    "height": 1050,
+    "headings": [
+      "Impact leadership calendar"
+    ],
+    "subpages": 0,
+    "route": "/leadership-calendar"
+  },
+  {
+    "height": 1050,
+    "headings": [
+      "Impact leadership handovers"
+    ],
+    "subpages": 0,
+    "route": "/handovers"
+  },
+  {
+    "height": 1050,
+    "headings": [
+      "Committee directory",
+      "QA Dashboard Committee"
+    ],
+    "subpages": 0,
+    "route": "/committees"
+  },
+  {
+    "height": 1050,
+    "headings": [
+      "Impact approval center"
+    ],
+    "subpages": 0,
+    "route": "/governance"
+  },
+  {
+    "height": 1487,
+    "headings": [
+      "Impact governance settings",
+      "Officer position master"
+    ],
+    "subpages": 0,
+    "route": "/governance-settings"
+  },
+  {
+    "height": 1050,
+    "headings": [
+      "Impact resolutions"
+    ],
+    "subpages": 0,
+    "route": "/resolutions"
+  },
+  {
+    "height": 1298,
+    "headings": [
+      "Roles & permissions",
+      "Permission matrix",
+      "People & organizational scopes"
+    ],
+    "subpages": 0,
+    "route": "/administration"
+  },
+  {
+    "height": 1587,
+    "headings": [
+      "Impact settings",
+      "Impact identity",
+      "Organizational levels"
+    ],
+    "subpages": 0,
+    "route": "/settings"
+  },
+  {
+    "height": 1461,
+    "headings": [
+      "Impact audit trail"
+    ],
+    "subpages": 0,
+    "route": "/audit"
+  },
+  {
+    "height": 1284,
+    "headings": [
+      "My Impact profile & security",
+      "Your profile",
+      "Change password",
+      "Active sessions"
+    ],
+    "subpages": 0,
+    "route": "/profile"
+  },
+  {
+    "height": 1379,
+    "headings": [
+      "Impact ID Card Studio",
+      "A card that belongsto your community.",
+      "Your identity workspace",
+      "Recent card activity"
+    ],
+    "subpages": 0,
+    "route": "/id-cards"
+  },
+  {
+    "height": 1639,
+    "headings": [
+      "Impact International operations",
+      "Bring people together.Move good ideas forward.",
+      "Your next move",
+      "Verified impact",
+      "Room for your next contribution"
+    ],
+    "subpages": 0,
+    "route": "/operations"
+  },
+  {
+    "height": 1614,
+    "headings": [
+      "Impact Communication Center",
+      "All inbox",
+      "Room for a new connection",
+      "Meaningful conversations.Lasting connections."
+    ],
+    "subpages": 0,
+    "route": "/communications"
+  },
+  {
+    "height": 1050,
+    "headings": [
+      "Transactions"
+    ],
+    "subpages": 0,
+    "route": "/finance/transactions"
+  },
+  {
+    "height": 1050,
+    "headings": [
+      "Receipts & Collections"
+    ],
+    "subpages": 0,
+    "route": "/finance/receipts"
+  },
+  {
+    "height": 1666,
+    "headings": [
+      "Invoices & Billing",
+      "Overdue Aging",
+      "Invoice Status Distribution",
+      "Top Billed Customers",
+      "Invoices & Billing (12)"
+    ],
+    "subpages": 0,
+    "route": "/finance/invoices"
+  },
+  {
+    "height": 1050,
+    "headings": [
+      "Payments"
+    ],
+    "subpages": 0,
+    "route": "/finance/payments"
+  },
+  {
+    "height": 1356,
+    "headings": [
+      "Expenses",
+      "Expenses (0)",
+      "No matching records"
+    ],
+    "subpages": 0,
+    "route": "/finance/expenses"
+  },
+  {
+    "height": 1050,
+    "headings": [],
+    "subpages": 0,
+    "route": "/finance/reconciliation"
+  },
+  {
+    "height": 1669,
+    "headings": [
+      "Budgets & Allocation",
+      "Budget Limits",
+      "Budget Review Status",
+      "Budgets & Allocation (0)",
+      "No matching records"
+    ],
+    "subpages": 0,
+    "route": "/finance/budgets"
+  },
+  {
+    "height": 1741,
+    "headings": [
+      "Audit Trail",
+      "Audit Trail (88)"
+    ],
+    "subpages": 0,
+    "route": "/finance/audit"
+  },
+  {
+    "height": 1444,
+    "headings": [
+      "Finance Overview",
+      "Collections Trend",
+      "Collections by Source",
+      "Insights & Follow-up",
+      "Quick Actions"
+    ],
+    "subpages": 2,
+    "route": "/finance"
+  }
+]

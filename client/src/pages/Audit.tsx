@@ -15,9 +15,9 @@ export default function Audit() {
     return () => clearTimeout(t);
   }, [search]);
   const q = useQuery({
-    queryKey: ["audit", w?.id, term, page],
+    queryKey: ["audit", w?.id, term, Math.ceil(page / 2)],
     queryFn: () =>
-      api("/audit-logs?search=" + encodeURIComponent(term) + "&page=" + page),
+      api("/audit-logs?search=" + encodeURIComponent(term) + "&page=" + Math.ceil(page / 2)),
   });
   return (
     <>
@@ -51,7 +51,7 @@ export default function Audit() {
                 </tr>
               </thead>
               <tbody>
-                {q.data?.items.map((x: any) => (
+                {q.data?.items.slice(((page - 1) % 2) * 10, ((page - 1) % 2) * 10 + 10).map((x: any) => (
                   <tr key={x.id}>
                     <td>{x.action}</td>
                     <td className="mono">
@@ -92,7 +92,7 @@ export default function Audit() {
             </button>
             <button
               className="secondary"
-              disabled={page * 20 >= (q.data?.total || 0)}
+              disabled={page * 10 >= (q.data?.total || 0)}
               onClick={() => setPage((p) => p + 1)}
             >
               Next

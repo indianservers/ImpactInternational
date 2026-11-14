@@ -1,3 +1,4 @@
+import PageSections from '../PageSections';
 import { lazy, Suspense, useEffect, useRef, useState } from "react";
 import { Link, useParams, useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -776,7 +777,7 @@ export default function MembershipInsights() {
                     </Link>
                   ))}
                 </div>
-                <div className="a-overview-main">
+                <PageSections id="membership-summary" perPage={1} labels={["Footprint & Growth","Membership Details"]}><div className="a-overview-main">
                   <Panel
                     title="Global Membership Footprint"
                     className="a-footprint"
@@ -864,7 +865,7 @@ export default function MembershipInsights() {
                     ))}
                   </div>
                 </div>
-                <div className="a-overview-grid">
+                <PageSections id="membership-overview" className="a-overview-grid" perPage={2}>
                   <Panel
                     title="Membership by Category"
                     action={
@@ -994,8 +995,8 @@ export default function MembershipInsights() {
                   >
                     <InsightList items={insights.slice(0, 3)} />
                   </Panel>
-                </div>
-              </>
+                </PageSections>
+              </PageSections></>
             )}
             {workspace === "growth" && (
               <>

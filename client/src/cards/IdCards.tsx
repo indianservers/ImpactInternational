@@ -1,3 +1,4 @@
+import PageSections from '../PageSections';
 import ModuleNavigation from "../ModuleNavigation";
 import { useState, useEffect, useRef } from "react";
 import { Link, Route, Routes, useParams } from "react-router-dom";
@@ -278,7 +279,7 @@ function Dashboard() {
           </Link>
         }
       />
-      <div className="card-dashboard-hero">
+      <PageSections id="card-studio" perPage={1} labels={["Overview & Metrics","Workspace & Activity"]}><div><div className="card-dashboard-hero">
         <div>
           <span className="card-eyebrow">
             ONE IDENTITY. MANY POSSIBILITIES.
@@ -335,7 +336,7 @@ function Dashboard() {
           </section>
         ))}
       </div>
-      <div className="card-two">
+      </div><div className="card-two">
         <Panel title="Your identity workspace">
           {[
             [
@@ -398,7 +399,7 @@ function Dashboard() {
           )}
         </Panel>
       </div>
-    </>
+</PageSections>    </>
   );
 }
 function Templates() {

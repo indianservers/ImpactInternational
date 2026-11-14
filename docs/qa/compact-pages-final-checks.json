@@ -1,0 +1,66 @@
+[
+  {
+    "test": "ID card studio preserves every original heading",
+    "passed": true
+  },
+  {
+    "test": "/id-cards default page under 1800px",
+    "passed": true
+  },
+  {
+    "test": "Card activity remains accessible",
+    "passed": true
+  },
+  {
+    "test": "/finance/invoices default page under 1800px",
+    "passed": true
+  },
+  {
+    "test": "Finance defaults to ten rows",
+    "passed": true
+  },
+  {
+    "test": "/districts default page under 1800px",
+    "passed": true
+  },
+  {
+    "test": "/zones default page under 1800px",
+    "passed": true
+  },
+  {
+    "test": "/clubs default page under 1800px",
+    "passed": true
+  },
+  {
+    "test": "/club-administration default page under 1800px",
+    "passed": true
+  },
+  {
+    "test": "/audit default page under 1800px",
+    "passed": true
+  },
+  {
+    "test": "/intelligence default page under 1800px",
+    "passed": true
+  },
+  {
+    "test": "/finance/dues default page under 1800px",
+    "passed": true
+  },
+  {
+    "test": "Hierarchy drill URL records District level",
+    "passed": true
+  },
+  {
+    "test": "Hierarchy level and scope survive reload",
+    "passed": true
+  },
+  {
+    "test": "Dark section buttons use dark surface",
+    "passed": true
+  },
+  {
+    "test": "Focused checks have no runtime errors",
+    "passed": true
+  }
+]

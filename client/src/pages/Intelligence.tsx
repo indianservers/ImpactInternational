@@ -1,3 +1,4 @@
+import PageSections from '../PageSections';
 import ModuleNavigation from "../ModuleNavigation";
 import { useState, useEffect } from "react";
 import { Link, Routes, Route, useNavigate } from "react-router-dom";
@@ -272,7 +273,7 @@ function Overview() {
       ) : (
         q.data && (
           <>
-            <div className="intel-metrics">
+            <PageSections id="community-intelligence" perPage={1} labels={["Key Metrics","Membership & Hierarchy","Community & Service","Financial Entities"]}><div className="intel-metrics">
               {q.data.metrics.map((m: Row) => (
                 <button
                   className="intel-kpi"
@@ -411,7 +412,7 @@ function Overview() {
                 ]}
               />
             </section>
-            {q.data.alerts.map((r: Row, n: number) => (
+            </PageSections>{q.data.alerts.map((r: Row, n: number) => (
               <aside className="intel-notice" key={n}>
                 <ShieldCheck size={20} />
                 <div>

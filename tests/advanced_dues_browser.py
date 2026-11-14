@@ -3,6 +3,7 @@ from playwright.sync_api import sync_playwright
 from support import Client,sql,BASE
 import json,pathlib,os
 assert BASE=='http://127.0.0.1:5098' and os.environ['CLUBS_TEST_DATABASE'].startswith('clubs_impact_dues_center_qa_')
+UI=os.environ.get('CLUBS_UI_URL','http://127.0.0.1:1238')
 results=[]
 def check(name,ok):
  results.append({'test':name,'passed':bool(ok)});print(('PASS ' if ok else 'FAIL ')+name,flush=True)
@@ -12,11 +13,11 @@ with sync_playwright() as p:
  browser=p.chromium.launch(headless=True);context=browser.new_context(viewport={'width':1672,'height':1050},device_scale_factor=1)
  context.add_cookies([{'name':x.name,'value':x.value,'domain':'127.0.0.1','path':x.path,'httpOnly':True,'secure':False,'sameSite':'Lax'} for x in c.jar])
  page=context.new_page();errors=[];serverErrors=[];page.on('pageerror',lambda e:errors.append(str(e)));page.on('response',lambda r:serverErrors.append(r.url) if r.status>=500 else None)
- page.goto('http://127.0.0.1:1238/app/finance/dues');page.get_by_role('heading',name='Dues & Membership',exact=True).wait_for();page.locator('.dm-kpi strong').first.wait_for();page.wait_for_timeout(700)
+ page.goto(UI+'/app/finance/dues');page.get_by_role('heading',name='Dues & Membership',exact=True).wait_for();page.locator('.dm-kpi strong').first.wait_for();page.wait_for_timeout(700)
  check('Dues center uses eight live KPI cards',page.locator('.dm-kpi').count()==8)
  check('No desktop horizontal overflow',page.evaluate('document.documentElement.scrollWidth<=innerWidth'))
  page.screenshot(path='docs/qa/advanced-dues-overview-desktop.png',full_page=True)
- for section in ['Organization View','Member Dues','Club Dues','Collections','Outstanding & Overdue','Renewals','Waivers & Discounts','Reminders','Reports','Overview']:
+ for section in ['Analysis','Organization View','Member Dues','Club Dues','Collections','Outstanding & Overdue','Renewals','Waivers & Discounts','Reminders','Reports','Overview']:
   page.locator('.dm-tabs').get_by_role('button',name=section,exact=True).click();page.wait_for_timeout(350)
   check(section+' workspace is selectable',page.locator('.dm-tabs').get_by_role('button',name=section,exact=True).get_attribute('aria-current')=='page')
  page.locator('.dm-tabs').get_by_role('button',name='Member Dues',exact=True).click();page.get_by_role('button',name='Open ledger').first.click();page.get_by_role('dialog',name='Member Dues Ledger').wait_for();page.wait_for_timeout(300)
@@ -39,7 +40,7 @@ with sync_playwright() as p:
  check('Combined club bank record links separate member receipts',page.locator('.dm-bank-remittance a[href="/api/v1/finance/payments/'+bankFixture['payments'][0]+'/receipt"]').count()==1)
  page.screenshot(path='docs/qa/advanced-dues-club-bank-remittance.png',full_page=True);page.get_by_role('button',name='Close drawer',exact=True).click()
  page.locator('.dm-tabs').get_by_role('button',name='Overview',exact=True).click();page.locator('.dm-kpi').nth(3).click();check('Overdue KPI drills into reports',page.locator('.dm-tabs').get_by_role('button',name='Reports',exact=True).get_attribute('aria-current')=='page')
- page.locator('.dm-tabs').get_by_role('button',name='Overview',exact=True).click();page.locator('.dm-level-tabs').get_by_role('button',name='Region',exact=True).click();page.locator('.dm-table-link').first.click();check('Region drills into actual districts',page.locator('.dm-level-tabs').get_by_role('button',name='District',exact=True).get_attribute('class')=='active')
+ page.locator('.dm-tabs').get_by_role('button',name='Organization View',exact=True).click();page.locator('.dm-level-tabs').get_by_role('button',name='Region',exact=True).click();page.locator('.dm-table-link').first.click();check('Region drills into actual districts',page.locator('.dm-level-tabs').get_by_role('button',name='District',exact=True).get_attribute('class')=='active')
  for width in [768,390]:
   page.set_viewport_size({'width':width,'height':900});page.wait_for_timeout(250);check(str(width)+'px responsive no page overflow',page.evaluate('document.documentElement.scrollWidth<=innerWidth'));page.screenshot(path='docs/qa/advanced-dues-overview-'+str(width)+'.png',full_page=True)
  check('No JavaScript runtime errors',not errors);check('No server errors during user workflows',not serverErrors)

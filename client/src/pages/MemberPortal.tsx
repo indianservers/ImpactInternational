@@ -1,3 +1,4 @@
+import PageSections from '../PageSections';
 import {MemberAchievements} from "./Operations";
 import {OwnLeadership} from "../GovernanceUI";
 import { useState } from "react";
@@ -88,7 +89,7 @@ export default function MemberPortal() {
         </div>
       )}
       <div className="portal-layout">
-        <div>
+        <div><PageSections id="member-home" perPage={1}>
           <section className="panel portal-identity">
             <div className="section-heading">
               <div>
@@ -246,7 +247,7 @@ export default function MemberPortal() {
               </div>
             )}
           </section>
-        </div>
+        </PageSections></div>
         <aside>
           <section className="panel">
             <div className="section-heading">

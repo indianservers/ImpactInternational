@@ -1,0 +1,136 @@
+{
+  "testedAt": "2026-11-13T18:16:23.598Z",
+  "baseUrl": "http://localhost:1234",
+  "checks": [
+    {
+      "scenario": "Leadership Overview renders live scope metrics",
+      "passed": true
+    },
+    {
+      "scenario": "People directory shows 20 server-paginated distinct people",
+      "passed": true
+    },
+    {
+      "scenario": "Directory switches to cards",
+      "passed": true
+    },
+    {
+      "scenario": "Search finds one central multi-office person",
+      "passed": true
+    },
+    {
+      "scenario": "Person profile consolidates nine distinct appointment records",
+      "passed": true
+    },
+    {
+      "scenario": "Saved directory view persists on this browser",
+      "passed": true
+    },
+    {
+      "scenario": "Office Bearers workspace renders its dedicated content",
+      "passed": true
+    },
+    {
+      "scenario": "Appointments workspace renders its dedicated content",
+      "passed": true
+    },
+    {
+      "scenario": "Vacancies workspace renders its dedicated content",
+      "passed": true
+    },
+    {
+      "scenario": "Succession workspace renders its dedicated content",
+      "passed": true
+    },
+    {
+      "scenario": "Tenure & History workspace renders its dedicated content",
+      "passed": true
+    },
+    {
+      "scenario": "Committees embeds existing directory with actual membership counts",
+      "passed": true
+    },
+    {
+      "scenario": "Office positions reuse existing configuration",
+      "passed": true
+    },
+    {
+      "scenario": "Wizard blocks missing person",
+      "passed": true
+    },
+    {
+      "scenario": "Wizard filters offices by actual selected unit level",
+      "passed": true
+    },
+    {
+      "scenario": "Wizard preserves notes when moving backward and forward",
+      "passed": true
+    },
+    {
+      "scenario": "Wizard review retains existing person and unit IDs",
+      "passed": true
+    },
+    {
+      "scenario": "Wizard submits a new proposal through governance approval",
+      "passed": true
+    },
+    {
+      "scenario": "Submitted wizard record appears as Pending approval",
+      "passed": true
+    },
+    {
+      "scenario": "Vacancy follow-up updates priority/reason with audit",
+      "passed": true
+    },
+    {
+      "scenario": "Directory page CSV download succeeds with current authorized filters",
+      "passed": true
+    },
+    {
+      "scenario": "Term filter restricts directory to the person with the recorded term",
+      "passed": true
+    },
+    {
+      "scenario": "Intelligence distribution section renders three D3 charts",
+      "passed": true
+    },
+    {
+      "scenario": "Current intelligence charts download as labeled SVG",
+      "passed": true
+    },
+    {
+      "scenario": "390px intelligence layout has no horizontal page overflow",
+      "passed": true
+    },
+    {
+      "scenario": "390px directory cards have no horizontal page overflow",
+      "passed": true
+    },
+    {
+      "scenario": "Mobile search/filter panel expands and collapses",
+      "passed": true
+    },
+    {
+      "scenario": "Regional login sees assigned branch directory without appointment-management, export or private contacts",
+      "passed": true
+    },
+    {
+      "scenario": "Regional URL manipulation displays Organizational scope not found",
+      "passed": true
+    },
+    {
+      "scenario": "Final administrator overview restored after regional foreign-scope rejection",
+      "passed": true
+    }
+  ],
+  "evidence": [
+    "leadership-overview-desktop.png",
+    "leadership-directory-desktop.png",
+    "leadership-person-assignments.png",
+    "leadership-appointment-review.png",
+    "leadership-intelligence-distribution.png",
+    "leadership-intelligence-mobile.png",
+    "leadership-directory-mobile.png",
+    "leadership-regional-directory.png"
+  ]
+}

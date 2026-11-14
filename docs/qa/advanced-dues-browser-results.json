@@ -8,6 +8,10 @@
     "passed": true
   },
   {
+    "test": "Analysis workspace is selectable",
+    "passed": true
+  },
+  {
     "test": "Organization View workspace is selectable",
     "passed": true
   },
