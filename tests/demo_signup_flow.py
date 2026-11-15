@@ -30,6 +30,7 @@ def call(c,path,method='GET',data=None,expected=200):
 def login(email):
     c=Client();status,result=c.login(email);check(email+' login',status==200);c.login_result=result;return c
 def org(code):return json.loads(sql('SELECT row_to_json(o) FROM "Orgs" o WHERE "Code"=\''+code+'\''))
+def org_by_id(id):return json.loads(sql('SELECT row_to_json(o) FROM "Orgs" o WHERE "Id"=\''+id+'\''))
 clubs=[org(c) for c in ['DEMO-R01-D01-Z01-C01','DEMO-R01-D01-Z01-C02','DEMO-R01-D01-Z02-C01']]
 public=Client();methods=call(public,'/auth/methods')
 check('Demo uses password member login',methods['memberOtpEnabled'] is False)
@@ -39,7 +40,7 @@ if not resume:
     run=uuid.uuid4().hex[:7]
     for index,(label,target) in enumerate(zip(['Club approval','Zone approval','Pending outside zone'],clubs)):
         email=f'demo.signup.{["club","zone","pending"][index]}.20261114.{run}@example.test'
-        body=dict(name='Demo Signup — '+label,email=email,phone='+919876543210',password=PASSWORD,confirmation=PASSWORD,agreed=True,zoneId=target['ParentId'],clubId=target['Id'])
+        body=dict(name='Demo Signup — '+label,email=email,phone='+919876543210',password=PASSWORD,confirmation=PASSWORD,agreed=True,zoneId=target['ParentId'],districtId=org_by_id(target['ParentId'])['ParentId'],clubId=target['Id'])
         response=call(public,'/public/membership-signup','POST',body,202)
         check(label+' signup reports pending',response['status']=='Pending')
         user=json.loads(sql('SELECT row_to_json(u) FROM "Users" u WHERE "Email"=\''+email+'\''))

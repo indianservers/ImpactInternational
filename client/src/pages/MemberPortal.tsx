@@ -431,11 +431,11 @@ function DigitalIdentity({ membership: m }: any) {
           <div className="header-actions">
             <a
               className="button secondary"
-              href={"/api/v1/members/" + m.id + "/card"}
+              href={"/api/v1/my/id-card/download-latest?membershipId=" + m.id}
               download
             >
               <Download size={14} />
-              Download card
+              Download ID card (PDF)
             </a>
             <button
               className="text-button"

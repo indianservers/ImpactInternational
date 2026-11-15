@@ -8,9 +8,9 @@ public static class PublicMembershipEndpoints
 {
     public const string WorkflowKind = "PublicSignup";
     public record SignupInput(string Name, string Email, string Phone, string Password,
-        string Confirmation, bool Agreed, Guid ZoneId, Guid ClubId, string Statement = "");
+        string Confirmation, bool Agreed, Guid ZoneId, Guid ClubId, Guid DistrictId, string Statement = "");
     sealed record PublicClub(Guid Id, string Name, string Code, string City, string Country,
-        Guid ZoneId, string Zone, string District, string Region);
+        Guid ZoneId, string Zone, Guid DistrictId, string District, string Region);
 
     static async Task<(Guid Tenant, List<Org> Units, Dictionary<Guid, Level> Levels)> Structure(Access a)
     {
@@ -37,9 +37,10 @@ public static class PublicMembershipEndpoints
             // An inactive, missing or cyclic ancestor must never make a club publicly selectable.
             if (cursor != null || chain[^1].ParentId != null) continue;
             var zone = chain.FirstOrDefault(o => levels[o.LevelId].Name.Equals("Zone", StringComparison.OrdinalIgnoreCase));
-            if (zone == null) continue;
+            var district = chain.FirstOrDefault(o => levels[o.LevelId].Name.Equals("District", StringComparison.OrdinalIgnoreCase));
+            if (zone == null || district == null) continue;
             result.Add(new(club.Id, club.Name, club.Code, club.City, club.Country, zone.Id, zone.Name,
-                chain.FirstOrDefault(o => levels[o.LevelId].Name == "District")?.Name ?? "",
+                district.Id, district.Name,
                 chain.FirstOrDefault(o => levels[o.LevelId].Name == "Region")?.Name ?? ""));
         }
         return result;
@@ -47,20 +48,24 @@ public static class PublicMembershipEndpoints
 
     public static void MapPublicMembership(this RouteGroupBuilder api)
     {
-        api.MapGet("/public/membership-options", async (Access a, Guid? zoneId = null, string search = "", int page = 1) =>
+        api.MapGet("/public/membership-options", async (Access a, Guid? zoneId = null, Guid? districtId = null, string search = "", int page = 1) =>
         {
             Check(search.Length <= 100 && page is >= 1 and <= 10000, "Invalid directory search.");
             var (tenant, units, levels) = await Structure(a);
             var clubs = Clubs(units, levels);
-            var zones = clubs.GroupBy(c => c.ZoneId).Select(g => new { id = g.Key, name = g.First().Zone,
-                district = g.First().District, region = g.First().Region, clubCount = g.Count() }).OrderBy(z => z.name).ToList();
+            var districts = clubs.GroupBy(c => c.DistrictId).Select(g => new { id = g.Key, name = g.First().District,
+                region = g.First().Region, zoneCount = g.Select(c => c.ZoneId).Distinct().Count(), clubCount = g.Count() }).OrderBy(d => d.name).ToList();
+            if (districtId != null) Check(districts.Any(d => d.id == districtId), "Choose an available district.", 404);
+            var availableZones = clubs.Select(c => c.ZoneId).Distinct().Count();
+            var zones = clubs.Where(c => districtId == null || c.DistrictId == districtId).GroupBy(c => c.ZoneId).Select(g => new { id = g.Key, name = g.First().Zone,
+                districtId = g.First().DistrictId, district = g.First().District, region = g.First().Region, clubCount = g.Count() }).OrderBy(z => z.name).ToList();
             if (zoneId != null) Check(zones.Any(z => z.id == zoneId), "Choose an available zone.", 404);
-            var filtered = clubs.Where(c => zoneId == null || c.ZoneId == zoneId);
+            var filtered = clubs.Where(c => (zoneId == null || c.ZoneId == zoneId) && (districtId == null || c.DistrictId == districtId));
             if (!string.IsNullOrWhiteSpace(search)) filtered = filtered.Where(c => new[] { c.Name, c.Code, c.City, c.Zone, c.District }
                 .Any(s => s.Contains(search.Trim(), StringComparison.OrdinalIgnoreCase)));
             var category = await a.Db.MembershipCategories.Where(c => c.TenantId == tenant && c.Active)
                 .OrderBy(c => c.Code == "REG" ? 0 : 1).ThenBy(c => c.Name).Select(c => new { c.Name }).FirstOrDefaultAsync();
-            return Results.Ok(new { zones, total = filtered.Count(), availableClubs = clubs.Count, page, pageSize = 50,
+            return Results.Ok(new { districts, zones, availableZones, total = filtered.Count(), availableClubs = clubs.Count, page, pageSize = 50,
                 clubs = filtered.OrderBy(c => c.Name).ThenBy(c => c.Id).Skip((page - 1) * 50).Take(50),
                 category = category?.Name, signupAvailable = category != null && clubs.Count > 0 });
         });
@@ -79,8 +84,8 @@ public static class PublicMembershipEndpoints
             var personInput = new PersonInput(input.Name!.Trim(), input.Name.Trim(), Contacts: [new("Email", "Personal", email), new("Phone", "Mobile", input.Phone.Trim())]);
             s.Validate(personInput);
             var (tenant, units, levels) = await Structure(s.Access);
-            var club = Clubs(units, levels).SingleOrDefault(c => c.Id == input.ClubId && c.ZoneId == input.ZoneId);
-            Check(club != null, "Choose an active club in the selected available zone.");
+            var club = Clubs(units, levels).SingleOrDefault(c => c.Id == input.ClubId && c.ZoneId == input.ZoneId && c.DistrictId == input.DistrictId);
+            Check(club != null, "Choose an active club within the selected district and zone.");
             var category = await s.Db.MembershipCategories.Where(c => c.TenantId == tenant && c.Active)
                 .OrderBy(c => c.Code == "REG" ? 0 : 1).ThenBy(c => c.Name).FirstOrDefaultAsync();
             Check(category != null, "The association must configure a membership category before signup.", 409);
@@ -91,7 +96,7 @@ public static class PublicMembershipEndpoints
             // Do not change or expose another account, its password, or its applications.
             if (await s.Db.Users.AnyAsync(u => u.Email == email)) return Results.Accepted(value: accepted);
             var latest = await Structure(s.Access);
-            Check(Clubs(latest.Units, latest.Levels).Any(c => c.Id == club.Id && c.ZoneId == input.ZoneId)
+            Check(Clubs(latest.Units, latest.Levels).Any(c => c.Id == club.Id && c.ZoneId == input.ZoneId && c.DistrictId == input.DistrictId)
                 && await s.Db.MembershipCategories.AnyAsync(c => c.Id == category.Id && c.Active), "The selected zone, club or category is no longer available.", 409);
             var workflow = await s.Db.MembershipWorkflows.Include(w => w.Stages).ThenInclude(st => st.Roles)
                 .SingleOrDefaultAsync(w => w.TenantId == tenant && w.Kind == WorkflowKind && w.Active);
@@ -116,7 +121,7 @@ public static class PublicMembershipEndpoints
             Queue(s.Db, user, "verify");
             s.Db.Audits.Add(new Audit { TenantId = tenant, OrgId = club.Id, ActorId = user.Id,
                 Action = "membership.public-signup", Resource = application.Id.ToString(),
-                Changes = GovernanceService.Pack(new { input.ZoneId, input.ClubId, state = "Pending", approval = "Club or zone president", membershipGranted = false, consentRecorded = true }) });
+                Changes = GovernanceService.Pack(new { input.DistrictId, input.ZoneId, input.ClubId, state = "Pending", approval = "Club or zone president", membershipGranted = false, consentRecorded = true }) });
             s.Db.AuthenticationAudits.Add(new() { ActorId = user.Id, Action = "auth.public-signup" });
             await s.Db.SaveChangesAsync();
             await MembershipWorkflowEndpoints.NotifyReviewers(s, notifications, application);

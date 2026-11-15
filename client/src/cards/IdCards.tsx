@@ -1606,7 +1606,7 @@ export function MyIdCard() {
   const [back, setBack] = useState(false),
     [request, setRequest] = useState<Row>(),
     [reason, setReason] = useState("");
-  const current = q.data?.find((c:Row)=>c.state==='Issued'&&!c.revokedAt&&c.templateVersionId&&c.canDownload&&(!c.expiryAt||new Date(c.expiryAt)>new Date()));
+  const current = q.data?.find((c:Row)=>['Issued','Legacy'].includes(c.state)&&!c.revokedAt&&c.canDownload&&(!c.expiryAt||new Date(c.expiryAt)>new Date()));
   return (
     <div className="id-cards">
       <Header
@@ -1627,7 +1627,7 @@ export function MyIdCard() {
                   ? "Revoked"
                   : c.expiryAt && new Date(c.expiryAt) < new Date()
                     ? "Expired"
-                    : c.state}
+                    : c.state==='Legacy'?'Active':c.state}
               </Status>
             </div>
             {c.templateVersionId ? (
@@ -1639,10 +1639,7 @@ export function MyIdCard() {
                 alt={(back?"Back":"Front")+" of "+(c.memberName||"your")+" membership card"}
               />
             ) : (
-              <p>
-                Your original digital membership ID is available in{" "}
-                <Link to="/app/my-membership">My membership</Link>.
-              </p>
+              c.canDownload ? <img className="card-rendered-preview" src={'/api/v1/my/id-card/download?id='+c.id+'&format=front'} alt={'Membership ID card for '+(c.memberName||'member')}/> : <p>This card is not currently available for download. Your membership must be approved and active.</p>
             )}
             <p>
               {c.serial} ·{" "}
@@ -1656,9 +1653,8 @@ export function MyIdCard() {
                   Flip front / back
                 </button>
               )}
-              {c.templateVersionId &&
-                c.canDownload &&
-                ["Issued", "Revoked", "Replaced"].includes(c.state) &&
+              {c.canDownload &&
+                ["Issued", "Legacy"].includes(c.state) &&
                 ["pdf", "front", "back"].map((f) => (
                   <a
                     href={

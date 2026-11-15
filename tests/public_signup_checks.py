@@ -15,6 +15,7 @@ def call(c,path,method='GET',data=None,expected=200):
 def login(email):
     c=Client();status,result=c.login(email);check(email+' login',status==200);c.login_result=result;return c
 def org(code):return json.loads(sql('SELECT row_to_json(o) FROM "Orgs" o WHERE "Code"=\''+code+'\''))
+def org_by_id(id):return json.loads(sql('SELECT row_to_json(o) FROM "Orgs" o WHERE "Id"=\''+id+'\''))
 club=org('DEMO-R01-D01-Z01-C01');sibling=org('DEMO-R01-D01-Z01-C02');outside=org('DEMO-R01-D01-Z02-C01')
 public=Client();prefix=uuid.uuid4().hex[:9]
 catalog=call(public,'/public/membership-options')
@@ -25,10 +26,16 @@ check('Selected zone contains only its clubs',all(c['zoneId']==club['ParentId'] 
 found=call(public,'/public/membership-options?zoneId='+club['ParentId']+'&search='+club['Code'])
 check('Club code search selects intended club',any(c['id']==club['Id'] for c in found['clubs']))
 call(public,'/public/membership-options?zoneId='+str(uuid.uuid4()),expected=404)
+district=org_by_id(club['ParentId'])['ParentId']
+district_options=call(public,'/public/membership-options?districtId='+district)
+check('District selector limits zones and clubs to the district',all(z['districtId']==district for z in district_options['zones']) and all(c['districtId']==district for c in district_options['clubs']))
+foreign_district=org_by_id(org('DEMO-R01-D02-Z01-C01')['ParentId'])['ParentId']
+call(public,'/public/membership-options?districtId='+foreign_district+'&zoneId='+club['ParentId'],expected=404)
+
 
 def signup(label,target=club,extra=None,expected=202):
     email='signup.'+prefix+'.'+label+'@example.test'
-    body=dict(name='Signup QA '+prefix+' '+label,email=email,phone='+919876543210',password=PASSWORD,confirmation=PASSWORD,agreed=True,zoneId=target['ParentId'],clubId=target['Id'])
+    body=dict(name='Signup QA '+prefix+' '+label,email=email,phone='+919876543210',password=PASSWORD,confirmation=PASSWORD,agreed=True,zoneId=target['ParentId'],districtId=org_by_id(target['ParentId'])['ParentId'],clubId=target['Id'])
     body.update(extra or {})
     result=call(public,'/public/membership-signup','POST',body,expected)
     if expected!=202:return None
@@ -42,6 +49,8 @@ signup('bad-zone',extra={'zoneId':outside['ParentId']},expected=400)
 signup('weak-password',extra={'password':'short','confirmation':'short'},expected=400)
 signup('no-consent',extra={'agreed':False},expected=400)
 signup('unknown-club',extra={'clubId':str(uuid.uuid4())},expected=400)
+signup('wrong-district',extra={'districtId':foreign_district},expected=400)
+signup('missing-district',extra={'districtId':str(uuid.UUID(int=0))},expected=400)
 check('Invalid signup creates no accounts',sql('SELECT count(*) FROM "Users"')==before)
 
 user,application,body=signup('club',extra={'platformAdmin':True,'status':'Active','verified':True,'role':'Association Super Admin'})

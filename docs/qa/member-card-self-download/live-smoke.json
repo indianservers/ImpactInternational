@@ -1,0 +1,27 @@
+[
+  {
+    "member": "Club approval",
+    "membershipNumber": "IM-000003168",
+    "login": 200,
+    "ownPdfDownload": 200,
+    "downloadButtonEligible": true
+  },
+  {
+    "member": "Zone approval",
+    "membershipNumber": "IM-000003169",
+    "login": 200,
+    "ownPdfDownload": 200,
+    "downloadButtonEligible": true
+  },
+  {
+    "member": "Pending outside zone",
+    "pendingLogin": 200,
+    "hasCards": false,
+    "downloadBlocked": 409
+  },
+  {
+    "publicDistrictSelector": true,
+    "districts": 26,
+    "filteredZonesCorrect": true
+  }
+]

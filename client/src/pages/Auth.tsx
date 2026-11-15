@@ -26,11 +26,12 @@ export default function Auth({ mode }: { mode: string }) {
     complete = mode === "complete",
     verify =
       complete && new URLSearchParams(location.search).get("kind") === "verify";
+  const [districtId, setDistrictId] = useState('');
   const [zoneId, setZoneId] = useState(''), [clubId, setClubId] = useState('');
   const [clubSearch, setClubSearch] = useState(''), [querySearch, setQuerySearch] = useState(''), [clubPage, setClubPage] = useState(1);
   useEffect(() => { const timer = setTimeout(() => { setQuerySearch(clubSearch); setClubPage(1); }, 300); return () => clearTimeout(timer); }, [clubSearch]);
-  const catalog = useQuery<any>({ queryKey: ['public-membership-options', zoneId, querySearch, clubPage],
-    queryFn: () => api('/public/membership-options?page='+clubPage+(zoneId?'&zoneId='+zoneId:'')+(querySearch?'&search='+encodeURIComponent(querySearch):'')),
+  const catalog = useQuery<any>({ queryKey: ['public-membership-options', districtId, zoneId, querySearch, clubPage],
+    queryFn: () => api('/public/membership-options?page='+clubPage+(districtId?'&districtId='+districtId:'')+(zoneId?'&zoneId='+zoneId:'')+(querySearch?'&search='+encodeURIComponent(querySearch):'')),
     enabled: signup, staleTime: 30000 });
   async function submit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -70,7 +71,7 @@ export default function Auth({ mode }: { mode: string }) {
           },
         );
         setMessage(result.message);
-        if(signup) { form.reset(); setZoneId(''); setClubId(''); }
+        if(signup) { form.reset(); setDistrictId(''); setZoneId(''); setClubId(''); }
       }
     } catch (e) {
       setError(e);
@@ -119,7 +120,7 @@ export default function Auth({ mode }: { mode: string }) {
         </h1>
         <p>
           {signup
-            ? "Choose your zone and club, then sign up. Your application stays pending until your club president or zone president approves it."
+            ? "Choose your district, zone and club, then sign up. Your application stays pending until your club president or zone president approves it."
             : forgot
               ? "Enter your email to request a password reset."
               : complete
@@ -128,9 +129,10 @@ export default function Auth({ mode }: { mode: string }) {
         </p>
         {signup&&message?<section className="signup-pending success" role="status"><h2>Pending approval</h2><p>{message}</p><p>Your signup does not grant active membership or club access.</p><Link className="button" to="/login?applicant=1">Sign in after verifying your email</Link></section>:<form onSubmit={submit} className="form-stack">
           {signup&&<fieldset className="signup-community"><legend>Choose your community</legend>
-            <p>{catalog.data?`${catalog.data.zones.length} available zones · ${catalog.data.availableClubs} active clubs`:'Loading available zones and clubs…'}</p>
+            <p>{catalog.data?`${catalog.data.districts.length} districts · ${catalog.data.availableZones} available zones · ${catalog.data.availableClubs} active clubs`:'Loading available zones and clubs…'}</p>
             <ErrorBox error={catalog.error}/>
-            <label>Zone<select name="zoneId" required value={zoneId} disabled={catalog.isPending||busy} onChange={e=>{setZoneId(e.target.value);setClubId('');setClubSearch('');setQuerySearch('');setClubPage(1);}}><option value="">Choose an available zone</option>{catalog.data?.zones.map((z:any)=><option value={z.id} key={z.id}>{z.name} · {z.clubCount} clubs</option>)}</select></label>
+            <label>District<select name="districtId" required value={districtId} disabled={catalog.isPending||busy} onChange={e=>{setDistrictId(e.target.value);setZoneId('');setClubId('');setClubSearch('');setQuerySearch('');setClubPage(1);}}><option value="">Choose an available district</option>{catalog.data?.districts.map((d:any)=><option value={d.id} key={d.id}>{d.name} · {d.zoneCount} zones</option>)}</select></label>
+            <label>Zone<select name="zoneId" required value={zoneId} disabled={!districtId||catalog.isPending||busy} onChange={e=>{setZoneId(e.target.value);setClubId('');setClubSearch('');setQuerySearch('');setClubPage(1);}}><option value="">Choose an available zone</option>{catalog.data?.zones.map((z:any)=><option value={z.id} key={z.id}>{z.name} · {z.clubCount} clubs</option>)}</select></label>
             {zoneId&&<><label>Find a club<input type="search" value={clubSearch} placeholder="Search club name, code or city" onChange={e=>{setClubSearch(e.target.value);setClubId('');}}/></label>
             <label>Club<select name="clubId" required value={clubId} disabled={catalog.isFetching||busy} onChange={e=>setClubId(e.target.value)}><option value="">Choose a club in your zone</option>{catalog.data?.clubs.map((c:any)=><option value={c.id} key={c.id}>{c.name}{c.city?' · '+c.city:''} · {c.code}</option>)}</select></label>
             {!catalog.isFetching&&catalog.data?.total===0&&<p>No available clubs match your search. Try another name or zone.</p>}
@@ -250,7 +252,7 @@ export default function Auth({ mode }: { mode: string }) {
               {message}
             </div>
           )}
-          <button className="auth-submit" type="submit" disabled={busy || mode === "login" && methods.isPending || signup && (!zoneId || !clubId || !catalog.data?.signupAvailable || catalog.isFetching)}>
+          <button className="auth-submit" type="submit" disabled={busy || mode === "login" && methods.isPending || signup && (!districtId || !zoneId || !clubId || !catalog.data?.signupAvailable || catalog.isFetching)}>
             {busy
               ? "Please wait…"
               : signup

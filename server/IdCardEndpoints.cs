@@ -640,7 +640,9 @@ public static partial class IdCardEndpoints
                         memberId = m.Number,
                         memberName = m.Person.DisplayName,
                         club = m.Club.Name,
-                        canDownload = !s.Db.IdCardPolicies.Any(p =>
+                        canDownload = m.Status == "Active" && (m.EndsAt == null || m.EndsAt > DateTimeOffset.UtcNow)
+                            && c.RevokedAt == null && (c.ExpiryAt == null || c.ExpiryAt > DateTimeOffset.UtcNow)
+                            && (c.State == "Legacy" || c.State == "Issued") && !s.Db.IdCardPolicies.Any(p =>
                             p.TenantId == c.TenantId && !p.AllowMemberDownload
                         ),
                     }
@@ -654,7 +656,7 @@ public static partial class IdCardEndpoints
             async (Guid id, IdCardService s, string format = "pdf") =>
                 await Download(id, s, format, true)
         );
-        app.MapGet("/api/v1/my/id-card/download-latest", async (IdCardService s) =>
+        app.MapGet("/api/v1/my/id-card/download-latest", async (IdCardService s, Guid? membershipId = null) =>
         {
             var user = await s.A.User();
             var now = DateTimeOffset.UtcNow;
@@ -662,13 +664,13 @@ public static partial class IdCardEndpoints
                             join m in s.Db.Memberships on c.MembershipId equals m.Id
                             where m.Person.UserId == user.Id
                                 && (s.A.BoundTenant == null || c.TenantId == s.A.BoundTenant)
-                                && c.State == "Issued" && c.RevokedAt == null
-                                && c.TemplateVersionId != null && c.Files != "{}"
+                                && (membershipId == null || m.Id == membershipId) && c.RevokedAt == null
+                                && (c.State == "Legacy" && c.TemplateVersionId == null || c.State == "Issued" && c.TemplateVersionId != null && c.Files != "{}")
                                 && (c.ExpiryAt == null || c.ExpiryAt > now)
                                 && m.Status == "Active" && (m.EndsAt == null || m.EndsAt > now)
-                            orderby c.IssuedAt descending, c.Id
+                            orderby (c.State == "Issued" ? 0 : 1), c.IssuedAt descending, c.Id
                             select (Guid?)c.Id).FirstOrDefaultAsync();
-            Check(id != null, "No current issued card is available. Ask your issuing authority to prepare or renew your card.", 409);
+            Check(id != null, "No active membership card is available. Pending, expired and revoked memberships cannot download a current ID card.", 409);
             return await Download(id!.Value, s, "pdf", true);
         });
         api.MapPost(
@@ -961,6 +963,33 @@ public static partial class IdCardEndpoints
                 "Member downloads are disabled by association policy.",
                 403
             );
+        if (own)
+        {
+            IdCardService.Eligible(m);
+            Check(c.RevokedAt == null && (c.ExpiryAt == null || c.ExpiryAt > DateTimeOffset.UtcNow)
+                && c.State is "Legacy" or "Issued", "This card is no longer current. Open My Digital ID for your current card.", 409);
+        }
+        // Membership approval already creates a verifiable standard card. Let its owner
+        // download it without waiting for a separate custom-design issuance workflow.
+        if (c.State == "Legacy" && c.TemplateVersionId == null)
+        {
+            IdCardService.Eligible(m);
+            Check(c.RevokedAt == null && (c.ExpiryAt == null || c.ExpiryAt > DateTimeOffset.UtcNow), "Card is no longer current.", 409);
+            Check(format is "pdf" or "front" or "back", "Choose PDF, front image or back image.");
+            m = await s.Db.Memberships.Include(x => x.Person).Include(x => x.Club).Include(x => x.Category).SingleAsync(x => x.Id == m.Id);
+            var snapshot = await s.Snapshot(m, c);
+            snapshot.Values["card.qr_code"] = snapshot.Values["card.qr_code"].Replace("/verify/id/", "/verify?token=");
+            snapshot.Values["card.serial_number"] = string.IsNullOrEmpty(c.Serial) ? m.Number : c.Serial;
+            snapshot.Values["card.expiry_date"] = (c.ExpiryAt ?? m.EndsAt)?.ToString("yyyy-MM-dd") ?? "";
+            snapshot.Values["card.expiry_month_year"] = (c.ExpiryAt ?? m.EndsAt)?.ToString("MMMM yyyy", System.Globalization.CultureInfo.InvariantCulture) ?? "";
+            var published = new IdCardPublished(IdCardDesign.Default(), new Dictionary<string, string>());
+            byte[] bytes;
+            if (format == "pdf") { using var output = new MemoryStream(); s.Renderer.Pdf(output, published, snapshot); bytes = output.ToArray(); }
+            else bytes = s.Renderer.Png(published, snapshot, back: format == "back");
+            s.Audit(c.TenantId, m.ClubId, user.Id, "download", c.Id, "Standard approved membership card: " + format);
+            await s.Db.SaveChangesAsync();
+            return Results.File(bytes, format == "pdf" ? "application/pdf" : "image/png", m.Number + "-" + format + (format == "pdf" ? ".pdf" : ".png"));
+        }
         Check(
             c.State is "Issued" or "Replaced" or "Revoked" && c.Files != "{}",
             "No issued file is available.",

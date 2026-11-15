@@ -1,6 +1,6 @@
 {
-  "total": 69,
-  "passed": 69,
+  "total": 74,
+  "passed": 74,
   "checks": [
     {
       "name": "GET /public/membership-options",
@@ -38,7 +38,32 @@
       "detail": null
     },
     {
-      "name": "GET /public/membership-options?zoneId=f5f16ead-020c-4f87-ae3b-6e21905d9d54",
+      "name": "GET /public/membership-options?zoneId=884d92e2-7f54-4a0e-814c-502a46bf84b9",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GET /public/membership-options?districtId=7c722b24-66f1-4123-85b5-8eda42bf4ab4",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "District selector limits zones and clubs to the district",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GET /public/membership-options?districtId=00306929-26db-4967-9290-7b9d4fbfbfcf&zoneId=3417509a-736c-44aa-804e-9b5ea9204a46",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "POST /public/membership-signup",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "POST /public/membership-signup",
       "passed": true,
       "detail": null
     },
@@ -133,7 +158,7 @@
       "detail": null
     },
     {
-      "name": "signup.187095dac.club@example.test login",
+      "name": "signup.5f20c632b.club@example.test login",
       "passed": true,
       "detail": null
     },
@@ -168,7 +193,7 @@
       "detail": null
     },
     {
-      "name": "POST /membership/applications/3d500b3b-502c-4735-89d8-a36db1c30e9b/decisions",
+      "name": "POST /membership/applications/57c7015b-eceb-4e83-8ccc-59c405587ad7/decisions",
       "passed": true,
       "detail": null
     },
@@ -188,7 +213,7 @@
       "detail": null
     },
     {
-      "name": "GET /membership/applications/3d500b3b-502c-4735-89d8-a36db1c30e9b",
+      "name": "GET /membership/applications/57c7015b-eceb-4e83-8ccc-59c405587ad7",
       "passed": true,
       "detail": null
     },
@@ -198,7 +223,7 @@
       "detail": null
     },
     {
-      "name": "POST /membership/applications/3d500b3b-502c-4735-89d8-a36db1c30e9b/decisions",
+      "name": "POST /membership/applications/57c7015b-eceb-4e83-8ccc-59c405587ad7/decisions",
       "passed": true,
       "detail": null
     },
@@ -233,17 +258,17 @@
       "detail": null
     },
     {
-      "name": "GET /membership/applications/7b605b21-0c13-430d-847d-a6c7ff35d618",
+      "name": "GET /membership/applications/aa881c0e-f38a-4053-a66b-6e7c550b9c53",
       "passed": true,
       "detail": null
     },
     {
-      "name": "POST /membership/applications/7b605b21-0c13-430d-847d-a6c7ff35d618/decisions",
+      "name": "POST /membership/applications/aa881c0e-f38a-4053-a66b-6e7c550b9c53/decisions",
       "passed": true,
       "detail": null
     },
     {
-      "name": "GET /membership/applications/7b605b21-0c13-430d-847d-a6c7ff35d618",
+      "name": "GET /membership/applications/aa881c0e-f38a-4053-a66b-6e7c550b9c53",
       "passed": true,
       "detail": null
     },
@@ -253,7 +278,7 @@
       "detail": null
     },
     {
-      "name": "POST /membership/applications/7b605b21-0c13-430d-847d-a6c7ff35d618/decisions",
+      "name": "POST /membership/applications/aa881c0e-f38a-4053-a66b-6e7c550b9c53/decisions",
       "passed": true,
       "detail": null
     },
@@ -273,12 +298,12 @@
       "detail": null
     },
     {
-      "name": "GET /membership/applications/a4b62549-7075-4fd2-b7c9-651bacd27127",
+      "name": "GET /membership/applications/0056646f-65ef-43e8-9af9-5e13f566f300",
       "passed": true,
       "detail": null
     },
     {
-      "name": "POST /membership/applications/a4b62549-7075-4fd2-b7c9-651bacd27127/decisions",
+      "name": "POST /membership/applications/0056646f-65ef-43e8-9af9-5e13f566f300/decisions",
       "passed": true,
       "detail": null
     },
@@ -288,7 +313,7 @@
       "detail": null
     },
     {
-      "name": "GET /membership/applications/a4b62549-7075-4fd2-b7c9-651bacd27127",
+      "name": "GET /membership/applications/0056646f-65ef-43e8-9af9-5e13f566f300",
       "passed": true,
       "detail": null
     },
@@ -298,7 +323,7 @@
       "detail": null
     },
     {
-      "name": "POST /membership/applications/a4b62549-7075-4fd2-b7c9-651bacd27127/decisions",
+      "name": "POST /membership/applications/0056646f-65ef-43e8-9af9-5e13f566f300/decisions",
       "passed": true,
       "detail": null
     },
@@ -318,7 +343,7 @@
       "detail": null
     },
     {
-      "name": "POST /membership/applications/561e5c17-8e8b-422b-a458-6dddf6e80550/decisions",
+      "name": "POST /membership/applications/dd46277a-6c46-4e3d-9f48-ad41b6ffd720/decisions",
       "passed": true,
       "detail": null
     },

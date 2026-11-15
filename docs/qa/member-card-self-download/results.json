@@ -1,0 +1,226 @@
+{
+  "total": 44,
+  "passed": 44,
+  "checks": [
+    {
+      "name": "Login signup.6d60d62bb.club@example.test",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Login member.club2@example.test",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Login saisatish@indianservers.com",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GET /my/id-card",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Newly approved standard card is downloadable without custom issuance",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Own pdf downloads successfully",
+      "passed": true,
+      "detail": 200
+    },
+    {
+      "name": "pdf is a named attachment",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Own front downloads successfully",
+      "passed": true,
+      "detail": 200
+    },
+    {
+      "name": "front is a named attachment",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Own back downloads successfully",
+      "passed": true,
+      "detail": 200
+    },
+    {
+      "name": "back is a named attachment",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "One-click latest card PDF works",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Member portal chosen-membership PDF works",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "PDF includes both sides, member name and assigned number",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Printable front image has expected card dimensions",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Other member cannot download this card",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GET /my/id-card/download-latest?membershipId=c3f4526a-2c3f-4954-9446-036507122725",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GET /my/id-card/download-latest",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "POST /public/membership-signup",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "POST /auth/complete",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Login pending.card.7a7f653b@example.test",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GET /my/id-card",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Pending applicant has no cards",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GET /my/id-card/download-latest",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Pending applicant cannot download another member card",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GET /my/id-card",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Suspended card metadata disables download",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GET /my/id-card/download-latest",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GET /my/id-card/download?id=4ad30618-4418-4438-ba87-d1f7e3592b87",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GET /my/id-card",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Expired card metadata disables download",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GET /my/id-card/download-latest",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GET /my/id-card/download?id=4ad30618-4418-4438-ba87-d1f7e3592b87",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GET /my/id-card",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Inactive card metadata disables download",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GET /my/id-card/download-latest",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GET /my/id-card/download?id=4ad30618-4418-4438-ba87-d1f7e3592b87",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GET /my/id-card/download-latest",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GET /my/id-card/download?id=4ad30618-4418-4438-ba87-d1f7e3592b87",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GET /id-cards/policy",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "PUT /id-cards/policy",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GET /my/id-card/download?id=4ad30618-4418-4438-ba87-d1f7e3592b87",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "PUT /id-cards/policy",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Download audit records owner and card",
+      "passed": true,
+      "detail": null
+    }
+  ]
+}
