@@ -54,6 +54,8 @@ const Audit = lazy(() => import("./pages/Audit"));
 const Profile = lazy(() => import("./pages/Profile"));
 const Auth = lazy(() => import("./pages/Auth"));
 const Members = lazy(() => import("./pages/Members"));
+const Networking = lazy(() => import("./pages/Networking"));
+const Community = lazy(() => import("./pages/Community"));
 const MemberProfile = lazy(() => import("./pages/MemberProfile"));
 const MemberPortal = lazy(() => import("./pages/MemberPortal"));
 const MembershipApplications = lazy(
@@ -573,6 +575,8 @@ export default function App() {
           <Route path="platform-dashboard" element={<PlatformAdminDashboard />} />
           <Route path="members" element={<Members />} />
           <Route path="directory" element={<Members directory />} />
+          <Route path="networking/*" element={<Networking />} />
+          <Route path="community/*" element={<Community />} />
           <Route path="members/:id" element={<MemberProfile />} />
           <Route path="my-membership" element={<MemberPortal />} />
           <Route path="apply" element={<MembershipApplications />} />

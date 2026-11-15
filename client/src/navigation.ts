@@ -25,6 +25,11 @@ const featureSections = [
     tab("Bulk import", "/imports", "members.import"), tab("Insights", "/membership-insights", "members.view"),
     tab("Settings", "/membership-settings", "members.workflow.manage"),
   ] },
+  { id: "networking", label: "Networking", icon: Users, tabs: [
+    tab("Discover people", "/networking", "directory.view"), tab("Community spaces", "/community", "directory.view"),
+    tab("Activity reports", "/community/reports", "communications.manage", "reports.view", "governance.reports"),
+    tab("My connections", "/networking/connections", "directory.view"), tab("My networking profile", "/networking/profile", "directory.view"),
+  ] },
   { id: "organizations", label: "Impact structure", icon: Network, tabs: [
     tab("Structure overview", "/organizations", "organization.view"), tab("International", "/international", "organization.view"), tab("National", "/national", "organization.view"), tab("Regions", "/regions", "organization.view"), tab("Districts", "/districts", "organization.view"), tab("Zones", "/zones", "organization.view"), tab("Clubs", "/clubs", "organization.view"),
     tab("Club overview", "/club-administration", "governance.reports"),
@@ -59,6 +64,7 @@ const featureSections = [
 const areaDefinitions = [
   { id: "home", label: "Home", icon: LayoutDashboard, groups: [["Overview", "home"]] },
   { id: "people", label: "People", icon: Users, groups: [["Members", "membership"], ["Applications & transfers", "requests"], ["My membership", "community"]] },
+  { id: "networking", label: "Networking", icon: Users, groups: [["Connect & collaborate", "networking"]] },
   { id: "leadership", label: "Leadership", icon: ShieldCheck, groups: [["Leadership & People", "leadership"]] },
   { id: "organization", label: "Organization", icon: Network, groups: [["Structure & clubs", "organizations"], ["Decisions & records", "governance"]] },
   { id: "activities", label: "Activities", icon: CalendarDays, groups: [["Events", "events"], ["Meetings & projects", "operations"], ["Messages", "communications"]] },

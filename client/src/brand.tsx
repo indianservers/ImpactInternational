@@ -68,6 +68,8 @@ const pages: [string, string, string][] = [
   ["/app/administration", "Roles and access", "Give Impact teams the access their responsibilities require."],
   ["/app/approvals", "Membership approvals", "Welcome new members through the Impact admission process."],
   ["/app/transfers", "Transfers and requests", "Support members as they move between Impact clubs."],
+  ["/app/networking", "Impact Network", "Connect through business, shared skills, interests and area."],
+  ["/app/community", "Community spaces", "Activity updates and conversations across your organization."],
   ["/app/imports", "Bulk import", "Import members and dues with validation, duplicate checks and audit history."],
   ["/app/members", "Impact members", "Manage member profiles, affiliations, and membership records."],
   ["/app/directory", "Impact member directory", "Connect with people and expertise across Impact International."],

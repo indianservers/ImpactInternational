@@ -1,0 +1,761 @@
+{
+  "total": 145,
+  "passed": 145,
+  "checks": [
+    {
+      "name": "Login saisatish@indianservers.com",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "POST /public/membership-signup",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "POST /auth/complete",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "POST /membership/applications/75527f0a-899f-4127-96a3-ae36a96a405a/decisions",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Login network.4300009c.alice@example.test",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "POST /public/membership-signup",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "POST /auth/complete",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "POST /membership/applications/61570a12-0539-448f-9308-8b61c81d2815/decisions",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Login network.4300009c.bob@example.test",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "POST /public/membership-signup",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "POST /auth/complete",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "POST /membership/applications/6b9707df-2c49-4dd8-89e3-91cbde2a6632/decisions",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Login network.4300009c.hidden@example.test",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "POST /public/membership-signup",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "POST /auth/complete",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Login network.4300009c.pending@example.test",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GET /networking/people",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GET /networking/me",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GET /community/posts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GET /networking/me",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "PUT /networking/me",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GET /networking/me",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "PUT /networking/me",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GET /networking/me",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "PUT /networking/me",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GET /networking/me",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Skill tags deduplicate without overwriting contacts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GET /networking/people?search=4300009c",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Cross-club opted-in member discovered and self excluded",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Shared skills and interests counted",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GET /networking/people?search=4300009c&skill=public+speaking",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "skill filter finds expected member",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GET /networking/people?search=4300009c&interest=Entrepreneurship",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "interest filter finds expected member",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GET /networking/people?search=4300009c&city=Hyderabad",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "city filter finds expected member",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GET /networking/people?search=4300009c&area=Banjara",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "area filter finds expected member",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GET /networking/people?search=4300009c&industry=Training",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "industry filter finds expected member",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GET /networking/people/523c8d15-7200-4932-8ec2-b60eb3f95d68",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Private email and phone stay private across clubs",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Professional profile excludes private identity fields",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GET /networking/people/ea242f7a-cd59-4f6c-a0ac-d17c168b5fd0",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GET /networking/options",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Hidden tags and location data are excluded from options",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "POST /networking/people/8d4edb21-de98-49ea-94df-ceeb92dd91df/connect",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "POST /networking/people/523c8d15-7200-4932-8ec2-b60eb3f95d68/connect",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "POST /networking/people/523c8d15-7200-4932-8ec2-b60eb3f95d68/connect",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "POST /networking/people/523c8d15-7200-4932-8ec2-b60eb3f95d68/connect",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "POST /networking/people/8d4edb21-de98-49ea-94df-ceeb92dd91df/connect",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GET /networking/connections?view=incoming",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Recipient sees pending request and sender profile",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "POST /networking/connections/12b0a4f3-77ff-458d-8fd9-c476c1640e0b/respond",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "POST /networking/connections/12b0a4f3-77ff-458d-8fd9-c476c1640e0b/respond",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "POST /networking/connections/12b0a4f3-77ff-458d-8fd9-c476c1640e0b/respond",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "POST /networking/connections/12b0a4f3-77ff-458d-8fd9-c476c1640e0b/respond",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GET /networking/connections?view=accepted",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Accepted connection visible to sender",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "POST /networking/people/523c8d15-7200-4932-8ec2-b60eb3f95d68/connect",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GET /networking/people/523c8d15-7200-4932-8ec2-b60eb3f95d68",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Acceptance does not silently reveal private contacts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GET /networking/me",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "PUT /networking/me",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GET /networking/people/8d4edb21-de98-49ea-94df-ceeb92dd91df",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Opt-out preserves basic directory preference",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "PUT /networking/me",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GET /networking/me",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "PUT /networking/me",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GET /networking/me",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "PUT /networking/me",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Login club.president@example.test",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Login zonal.president@example.test",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Login district.president@example.test",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Login national.president@example.test",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Login international.president@example.test",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GET /community/report",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GET /community/report",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GET /community/report",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GET /community/report",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GET /community/report",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GET /community/spaces",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Club administrator can publish only in its own unit",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GET /community/spaces",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GET /community/spaces",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Member can read spaces but has no publishing or reporting authority",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "POST /community/posts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "POST /community/posts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "POST /community/posts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "POST /community/posts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "POST /community/posts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "POST /community/posts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "POST /community/posts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "POST /community/posts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "POST /community/posts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "POST /community/posts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Publication retries reuse the same update",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "POST /community/posts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "POST /community/posts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "POST /community/posts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "POST /community/posts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "POST /community/posts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GET /community/posts?search=4300009c",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Member sees own club and parent announcements only",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GET /community/posts?orgId=19a06fac-8eea-477b-af34-db9c8d1ebfe0",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GET /community/posts/fc97b031-cf91-4ae3-ba8d-a68abaa8bfd7/comments",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "PUT /community/posts/a01fefda-8cb8-4b8e-a8ea-db3f1b0e8958/reaction",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "PUT /community/posts/a01fefda-8cb8-4b8e-a8ea-db3f1b0e8958/reaction",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "PUT /community/posts/a01fefda-8cb8-4b8e-a8ea-db3f1b0e8958/reaction",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GET /community/posts?search=4300009c",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Like action is idempotent",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "POST /community/posts/a01fefda-8cb8-4b8e-a8ea-db3f1b0e8958/comments",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "POST /community/posts/a01fefda-8cb8-4b8e-a8ea-db3f1b0e8958/comments",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "POST /community/comments/eae6e7b2-ba75-4c88-b207-b67d9a4f4afd/hide",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "POST /community/comments/fa80c9a2-78c6-462d-9bdd-5be51511e8f5/hide",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GET /community/posts/a01fefda-8cb8-4b8e-a8ea-db3f1b0e8958/comments",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Moderated comments disappear from member view",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GET /community/report",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "club report covers correct descendant units",
+      "passed": true,
+      "detail": {
+        "updates": 1,
+        "reportingUnits": 1,
+        "totalUnits": 1,
+        "participants": 10,
+        "volunteerHours": 2
+      }
+    },
+    {
+      "name": "club attendance and volunteer totals match included updates",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GET /community/report",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "zonal report covers correct descendant units",
+      "passed": true,
+      "detail": {
+        "updates": 3,
+        "reportingUnits": 3,
+        "totalUnits": 10,
+        "participants": 30,
+        "volunteerHours": 6
+      }
+    },
+    {
+      "name": "zonal attendance and volunteer totals match included updates",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GET /community/report",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "district report covers correct descendant units",
+      "passed": true,
+      "detail": {
+        "updates": 5,
+        "reportingUnits": 5,
+        "totalUnits": 35,
+        "participants": 50,
+        "volunteerHours": 10
+      }
+    },
+    {
+      "name": "district attendance and volunteer totals match included updates",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GET /community/report",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "national report covers correct descendant units",
+      "passed": true,
+      "detail": {
+        "updates": 8,
+        "reportingUnits": 8,
+        "totalUnits": 786,
+        "participants": 80,
+        "volunteerHours": 16
+      }
+    },
+    {
+      "name": "national attendance and volunteer totals match included updates",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GET /community/report",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "international report covers correct descendant units",
+      "passed": true,
+      "detail": {
+        "updates": 9,
+        "reportingUnits": 9,
+        "totalUnits": 792,
+        "participants": 90,
+        "volunteerHours": 18
+      }
+    },
+    {
+      "name": "international attendance and volunteer totals match included updates",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GET /community/report",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GET /community/report?orgId=19a06fac-8eea-477b-af34-db9c8d1ebfe0",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GET /community/report?orgId=24193e6e-beb3-47b6-a7f9-7118e21e8ac3",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GET /community/report?from=2020-01-01&to=2026-01-01",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Report export includes own scope only",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "PUT /community/posts/a01fefda-8cb8-4b8e-a8ea-db3f1b0e8958",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "PUT /community/posts/a01fefda-8cb8-4b8e-a8ea-db3f1b0e8958",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "POST /community/posts/a01fefda-8cb8-4b8e-a8ea-db3f1b0e8958/archive",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GET /community/posts?search=4300009c",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GET /community/report",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Archived updates leave feed and reports",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GET /community/report",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Networking and community changes have audit records",
+      "passed": true,
+      "detail": null
+    }
+  ]
+}

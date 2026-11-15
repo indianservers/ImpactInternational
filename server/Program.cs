@@ -210,6 +210,8 @@ api.MapMembership();
 api.MapMembershipAnalytics();
 api.MapMembershipWorkflows();
 api.MapPublicMembership();
+api.MapNetworking();
+api.MapCommunity();
 api.MapGovernance();
 api.MapEvents();
 api.MapCommunications();

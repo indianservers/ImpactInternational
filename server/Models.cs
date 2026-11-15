@@ -248,6 +248,7 @@ public partial class Db(DbContextOptions<Db> options) : DbContext(options)
     protected override void OnModelCreating(ModelBuilder b)
     {
         ConfigureMembership(b);
+        ConfigureCommunity(b);
         b.Entity<User>()
             .SplitToTable(
                 "UserProfiles",

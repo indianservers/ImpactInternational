@@ -1,0 +1,9 @@
+{
+  "/networking/me": 200,
+  "/networking/options": 200,
+  "/networking/people": 200,
+  "/networking/connections": 200,
+  "/community/spaces": 200,
+  "/community/posts": 200,
+  "/community/report": 200
+}
