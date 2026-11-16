@@ -32,6 +32,14 @@ namespace Clubs.Api.Migrations
                     b.Property<Guid?>("AppointmentId")
                         .HasColumnType("uuid");
 
+                    b.Property<string>("IciPortfolio")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("IciSlot")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<Guid?>("MembershipId")
                         .HasColumnType("uuid");
 
@@ -182,6 +190,10 @@ namespace Clubs.Api.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<string>("ActivityLevel")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("ActivityProgram")
                         .IsRequired()
                         .HasColumnType("text");
 
@@ -5115,6 +5127,246 @@ namespace Clubs.Api.Migrations
                     b.ToTable("HandoverChecklistItems");
                 });
 
+            modelBuilder.Entity("Clubs.IciDecision", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("ActorId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("ActorRole")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTimeOffset>("At")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Comment")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Decision")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("RequestId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("Revision")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Stage")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasAlternateKey("TenantId", "Id");
+
+                    b.HasIndex("TenantId", "RequestId");
+
+                    b.HasIndex("RequestId", "Revision", "Stage", "ActorId")
+                        .IsUnique();
+
+                    b.ToTable("IciDecisions");
+                });
+
+            modelBuilder.Entity("Clubs.IciPrivateProfile", b =>
+                {
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("LeadershipCareer")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("ProtectedBankDetails")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("TrainingCareer")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<long>("Version")
+                        .IsConcurrencyToken()
+                        .HasColumnType("bigint");
+
+                    b.HasKey("UserId");
+
+                    b.ToTable("IciPrivateProfiles");
+                });
+
+            modelBuilder.Entity("Clubs.IciRegionCoverage", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("AssignmentId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("RegionId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasAlternateKey("TenantId", "Id");
+
+                    b.HasIndex("AssignmentId", "RegionId")
+                        .IsUnique();
+
+                    b.HasIndex("TenantId", "RegionId");
+
+                    b.ToTable("IciRegionCoverages");
+                });
+
+            modelBuilder.Entity("Clubs.IciRequest", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<decimal>("Amount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("CreatorId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("CreatorRole")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid?>("EventId")
+                        .HasColumnType("uuid");
+
+                    b.Property<decimal>("Hours")
+                        .HasColumnType("numeric");
+
+                    b.Property<string>("Kind")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("MemberCount")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid>("OrgId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Payload")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("PaymentReference")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid?>("PaymentVerifierId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Portfolio")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid?>("RelatedRequestId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("ResultId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("ReviewRoute")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("Revision")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Stage")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid?>("TargetOrgId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<long>("Version")
+                        .IsConcurrencyToken()
+                        .HasColumnType("bigint");
+
+                    b.Property<int>("VolunteerCount")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TenantId", "OrgId", "Kind", "Status");
+
+                    b.ToTable("IciRequests");
+                });
+
+            modelBuilder.Entity("Clubs.IciSubscriptionMember", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("MembershipId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("OrgId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("PeriodKey")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("PersonId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("RequestId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasAlternateKey("TenantId", "Id");
+
+                    b.HasIndex("TenantId", "RequestId");
+
+                    b.HasIndex("TenantId", "OrgId", "PersonId", "PeriodKey")
+                        .IsUnique();
+
+                    b.ToTable("IciSubscriptionMembers");
+                });
+
             modelBuilder.Entity("Clubs.IdCardJob", b =>
                 {
                     b.Property<Guid>("Id")
@@ -7020,7 +7272,7 @@ namespace Clubs.Api.Migrations
 
                     b.HasIndex("MembershipId")
                         .IsUnique()
-                        .HasFilter("\"Status\" IN ('PendingSource','PendingDestination','PendingAssociation','Scheduled')");
+                        .HasFilter("\"Status\" IN ('PendingSource','PendingDestination','PendingVicePresidentSource','PendingVicePresidentDestination','PendingAssociation','Scheduled')");
 
                     b.HasIndex("TenantId", "CategoryId");
 
@@ -7759,6 +8011,22 @@ namespace Clubs.Api.Migrations
                     b.ToTable("Permissions");
 
                     b.HasData(
+                        new
+                        {
+                            Id = "ici.view"
+                        },
+                        new
+                        {
+                            Id = "ici.submit"
+                        },
+                        new
+                        {
+                            Id = "ici.review"
+                        },
+                        new
+                        {
+                            Id = "ici.team"
+                        },
                         new
                         {
                             Id = "organization.view"
@@ -11500,6 +11768,85 @@ namespace Clubs.Api.Migrations
                     b.HasOne("Clubs.LeadershipHandover", null)
                         .WithMany()
                         .HasForeignKey("TenantId", "HandoverId")
+                        .HasPrincipalKey("TenantId", "Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Clubs.IciDecision", b =>
+                {
+                    b.HasOne("Clubs.Tenant", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Clubs.IciRequest", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "RequestId")
+                        .HasPrincipalKey("TenantId", "Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Clubs.IciPrivateProfile", b =>
+                {
+                    b.HasOne("Clubs.User", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Clubs.IciRegionCoverage", b =>
+                {
+                    b.HasOne("Clubs.Assignment", null)
+                        .WithMany()
+                        .HasForeignKey("AssignmentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Clubs.Tenant", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Clubs.Org", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "RegionId")
+                        .HasPrincipalKey("TenantId", "Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Clubs.IciRequest", b =>
+                {
+                    b.HasOne("Clubs.Tenant", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Clubs.Org", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "OrgId")
+                        .HasPrincipalKey("TenantId", "Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Clubs.IciSubscriptionMember", b =>
+                {
+                    b.HasOne("Clubs.Tenant", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Clubs.IciRequest", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "RequestId")
                         .HasPrincipalKey("TenantId", "Id")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();

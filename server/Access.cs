@@ -16,6 +16,7 @@ public class Access(Db db, IHttpContextAccessor ctx)
     public Guid? BoundTenant=>ctx.HttpContext?.Items["tenant-domain"] as Guid?;
     public static readonly string[] All =
     [
+        "ici.view", "ici.submit", "ici.review", "ici.team",
         "organization.view",
         "organization.create",
         "organization.update",
@@ -155,7 +156,19 @@ public class Access(Db db, IHttpContextAccessor ctx)
         return w;
     }
 
-    public async Task<string[]> Grants(Assignment w){if(await db.Users.AnyAsync(u=>u.Id==w.UserId&&u.PlatformAdmin))return All;var grants=await db.RolePermissions.Where(x=>x.RoleId==w.RoleId).Select(x=>x.PermissionId).ToArrayAsync();if(!await db.Roles.AnyAsync(r=>r.Id==w.RoleId&&r.TenantId==w.TenantId&&(r.Name=="Association Super Admin"||r.Name=="Main Admin")))grants=grants.Where(p=>!p.StartsWith("communications.")).ToArray();if(await db.Roles.AnyAsync(r=>r.Id==w.RoleId&&r.TenantId==w.TenantId&&LeaderCommunications.PresidentLevels.Keys.Contains(r.Name)))grants=grants.Concat(new[]{"members.approve","members.view","directory.view","leadership.view","governance.approve"}).Distinct().ToArray();if(await db.Roles.AnyAsync(r=>r.Id==w.RoleId&&r.TenantId==w.TenantId&&(r.Name=="Regional President"||r.Name=="Club President")))grants=grants.Concat(new[]{"events.view","events.manage","events.reports","members.view","directory.view","organization.view"}).Distinct().ToArray();var disabled=await db.TenantBrandings.Where(b=>b.TenantId==w.TenantId).Select(b=>b.DisabledFeatures).SingleOrDefaultAsync();if(disabled==null||disabled=="[]")return grants;var features=GovernanceService.Unpack<string[]>(disabled);var prefixes=features.Where(TenantExperience.PermissionPrefixes.ContainsKey).SelectMany(f=>TenantExperience.PermissionPrefixes[f]).ToArray();return grants.Where(p=>!prefixes.Any(prefix=>p.StartsWith(prefix,StringComparison.Ordinal))).ToArray();}
+    public async Task<string[]> Grants(Assignment w)
+    {
+        if(await db.Users.AnyAsync(u=>u.Id==w.UserId&&u.PlatformAdmin))return All;
+        var role=await db.Roles.Where(r=>r.Id==w.RoleId&&r.TenantId==w.TenantId).Select(r=>r.Name).SingleOrDefaultAsync() ?? "";
+        var grants=IciPolicy.IsRole(role)?IciPolicy.Permissions(role):await db.RolePermissions.Where(x=>x.RoleId==w.RoleId).Select(x=>x.PermissionId).ToArrayAsync();
+        if(role is not "Association Super Admin" and not "Main Admin")grants=grants.Where(p=>!p.StartsWith("communications.")).ToArray();
+        if(!IciPolicy.IsRole(role)&&LeaderCommunications.PresidentLevels.ContainsKey(role))grants=grants.Concat(new[]{"members.approve","members.view","directory.view","leadership.view","governance.approve"}).Distinct().ToArray();
+        var disabled=await db.TenantBrandings.Where(b=>b.TenantId==w.TenantId).Select(b=>b.DisabledFeatures).SingleOrDefaultAsync();
+        if(disabled==null||disabled=="[]")return grants;
+        var features=GovernanceService.Unpack<string[]>(disabled);
+        var prefixes=features.Where(TenantExperience.PermissionPrefixes.ContainsKey).SelectMany(f=>TenantExperience.PermissionPrefixes[f]).ToArray();
+        return grants.Where(p=>!prefixes.Any(prefix=>p.StartsWith(prefix,StringComparison.Ordinal))).ToArray();
+    }
 
 #pragma warning disable EF1002 // Only canonical typed GUID literals enter this SQL; see below.
     public IQueryable<Org> Tree(Guid tenant, Guid root) =>
@@ -173,23 +186,23 @@ public class Access(Db db, IHttpContextAccessor ctx)
         );
 #pragma warning restore EF1002
 
-    public IQueryable<Org> Visible(Assignment w) => db.Users.Any(u => u.Id == w.UserId && u.PlatformAdmin) ? db.Orgs.Where(o => o.TenantId == w.TenantId) : Tree(w.TenantId, w.OrgId);
+    public IQueryable<Org> Visible(Assignment w) => db.Users.Any(u => u.Id == w.UserId && u.PlatformAdmin) ? db.Orgs.Where(o => o.TenantId == w.TenantId) : AssignmentTree(w);
 
-    // Keep the narrow recursive projection parameter-free, just like Tree above.
-    // EF/Npgsql can reuse raw-query parameter names for composed LINQ search
-    // values. Only canonical, strongly typed GUID literals enter this SQL.
-#pragma warning disable EF1002
-    public IQueryable<Guid> VisibleIds(Assignment w) =>
-        db.Users.Any(u => u.Id == w.UserId && u.PlatformAdmin) ? db.Orgs.Where(o => o.TenantId == w.TenantId).Select(o => o.Id) : db.Database.SqlQueryRaw<Guid>(
-            $"""
-            WITH RECURSIVE tree AS (
-              SELECT "Id","TenantId" FROM "Orgs" WHERE "TenantId"='{w.TenantId:D}'::uuid AND "Id"='{w.OrgId:D}'::uuid
-              UNION ALL SELECT o."Id",o."TenantId" FROM "Orgs" o JOIN tree t
-                ON o."ParentId"=t."Id" AND o."TenantId"=t."TenantId"
-            ) SELECT "Id" AS "Value" FROM tree
-            """
-        );
+#pragma warning disable EF1002 // Only typed GUID values enter these canonical SQL literals.
+    private IQueryable<Org> AssignmentTree(Assignment w) => db.Orgs.FromSqlRaw($"""
+        WITH RECURSIVE scope AS (
+            SELECT * FROM "Orgs" WHERE "TenantId"='{w.TenantId:D}'::uuid AND "Id"='{w.OrgId:D}'::uuid
+            UNION ALL SELECT o.* FROM "Orgs" o JOIN scope p ON o."ParentId"=p."Id" AND o."TenantId"=p."TenantId"
+        ), roots AS (
+            SELECT s.* FROM scope s WHERE
+            (s."Id"='{w.OrgId:D}'::uuid AND NOT EXISTS(SELECT 1 FROM "Roles" r WHERE r."Id"='{w.RoleId:D}'::uuid AND r."Name" IN ('National Vice President','Office Bearers','National Secretary')))
+            OR EXISTS(SELECT 1 FROM "IciRegionCoverages" c WHERE c."AssignmentId"='{w.Id:D}'::uuid AND c."TenantId"=s."TenantId" AND c."RegionId"=s."Id")
+        ), tree AS (
+            SELECT * FROM roots UNION ALL SELECT o.* FROM "Orgs" o JOIN tree p ON o."ParentId"=p."Id" AND o."TenantId"=p."TenantId"
+        ) SELECT * FROM tree
+        """);
 #pragma warning restore EF1002
+    public IQueryable<Guid> VisibleIds(Assignment w) => Visible(w).Select(o=>o.Id);
 
     public async Task<Microsoft.EntityFrameworkCore.Storage.IDbContextTransaction> Mutation(
         Assignment w

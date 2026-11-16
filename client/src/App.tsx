@@ -119,6 +119,7 @@ const Operations = lazy(() => import("./pages/Operations"));
 const VerifyCertificate = lazy(() =>
   import("./pages/Operations").then((m) => ({ default: m.VerifyCertificate })),
 );
+const IciWorkspace = lazy(() => import("./pages/IciWorkspace"));
 const Certifications = lazy(() => import("./pages/Certifications"));
 const Communications = lazy(() => import("./pages/Communications"));
 const Events = lazy(() => import("./pages/Events"));
@@ -311,7 +312,7 @@ function Shell() {
           </Link>
           <div className="sidebar-label">YOUR ORGANIZATION</div>
           <div className="foundation-organization" aria-label="Your organization"><img src={impact.logo} alt="" width="38" height="38" /><strong>Impact International</strong></div>
-          {workspaces.data && workspaces.data.length > 1 && <label className="foundation-scope-picker">Your role and unit<select aria-label="Active role and unit" value={active || me.data?.workspaceId || ""} onChange={e => activate(e.target.value)}>{workspaces.data.map(x => <option key={x.id} value={x.id}>{x.organization} · {impactRole(x.role)}</option>)}</select></label>}
+          {workspaces.data && workspaces.data.length > 1 && <label className="foundation-scope-picker">Your role and unit<select aria-label="Active role and unit" value={active || me.data?.workspaceId || ""} onChange={e => activate(e.target.value)}>{workspaces.data.map(x => <option key={x.id} value={x.id}>{x.organization} · {[impactRole(x.role),x.portfolio,x.slot].filter(Boolean).join(" · ")}</option>)}</select></label>}
           {w && <div className="organization-context"><strong>{w.organization}</strong><span>{impactRole(w.role)}</span></div>}
           <div className="sidebar-label">ORGANIZATION</div>
           <nav>
@@ -600,6 +601,7 @@ export default function App() {
           <Route path="my-id" element={<MyIdCard />} />
           <Route path="finance/*" element={<Finance />} />
           <Route path="operations/*" element={<Operations />} />
+          <Route path="ici" element={<IciWorkspace />} />
           <Route path="certifications" element={<Certifications />} />
           <Route path="communications/*" element={<Communications />} />
           <Route path="events" element={<Events />} />

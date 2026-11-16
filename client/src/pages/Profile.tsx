@@ -1,3 +1,4 @@
+import {IciCareerProfile} from "./IciCareerProfile";
 import {MemberCertifications} from "./Certifications";
 import SectionTabs from "../SectionTabs";
 import { useState } from "react";
@@ -6,7 +7,7 @@ import { api } from "../api";
 import { PageHeader, ErrorBox, useWorkspace } from "../App";
 export default function Profile() {
   const [section, setSection] = useState("Profile");
-  const { me } = useWorkspace(),
+  const { me, w } = useWorkspace(),
     qc = useQueryClient();
   const [error, setError] = useState<unknown>(),
     [message, setMessage] = useState("");
@@ -48,7 +49,7 @@ export default function Profile() {
           {message}
         </div>
       )}
-      <SectionTabs id="account" label="Account settings" tabs={["Profile", "Password", "Sessions", "Certifications"]} value={section} onChange={setSection} />
+      <SectionTabs id="account" label="Account settings" tabs={["Profile", "Password", "Sessions", "Certifications", ...(w?.permissions.includes("ici.view")?["Career & bank"]:[])]} value={section} onChange={setSection} />
       <div className="account-panels">
         <section className="panel" role="tabpanel" id="account-panel-0" aria-labelledby="account-tab-0" hidden={section !== "Profile"}>
           <h2>Your profile</h2>
@@ -160,6 +161,7 @@ export default function Profile() {
       <section role="tabpanel" id="account-panel-3" aria-labelledby="account-tab-3" hidden={section !== "Certifications"}>
         {section === "Certifications" && (memberProfile.data?.profile ? <MemberCertifications/> : <p>Certifications are available once a member profile is linked to your account.</p>)}
       </section>
+      {w?.permissions.includes("ici.view")&&<section role="tabpanel" id="account-panel-4" aria-labelledby="account-tab-4" hidden={section!=="Career & bank"}>{section==="Career & bank"&&<IciCareerProfile/>}</section>}
     </>
   );
 }

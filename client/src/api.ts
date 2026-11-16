@@ -7,6 +7,8 @@ export type Workspace = {
   association: string;
   color?: string;
   role: string;
+  portfolio?: string;
+  slot?: string;
   permissions: string[];
 };
 export type Org = {

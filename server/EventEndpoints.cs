@@ -76,7 +76,7 @@ public static partial class EventEndpoints
             var w = await a.Workspace("events.manage");
             var root = await a.Db.Orgs.SingleAsync(o => o.TenantId == w.TenantId && o.ParentId == null);
             var dates = ActivityPolicy.FinancialYear(root);
-            return new { types = ActivityPolicy.Types, levels = ActivityPolicy.Levels, financialYearStart = dates.Start, financialYearEnd = dates.End.AddTicks(-1),
+            return new { types = ActivityPolicy.Types, programs = IciPolicy.Programs, levels = ActivityPolicy.Levels, financialYearStart = dates.Start, financialYearEnd = dates.End.AddTicks(-1),
                 clubs = await a.Visible(w).Where(o => a.Db.Levels.Any(l => l.Id == o.LevelId && l.IsClub)).OrderBy(o => o.Name).Select(o => new { o.Id, o.Name }).ToListAsync() };
         });
         api.MapGet(
@@ -889,6 +889,7 @@ public static partial class EventEndpoints
         if (registrationStatus != "") q = q.Where(e => person != null && s.Db.EventRegistrations.Any(r => r.EventId == e.Id && r.PersonId == person && r.Status == registrationStatus));
         if (typeId != null)
             q = q.Where(x => x.TypeId == typeId);
+        if (w != null) q = IciPolicy.Events(s.A, w, q);
         if (orgId != null)
         {
             var target = s
@@ -1077,6 +1078,8 @@ public static partial class EventEndpoints
                 "Adjust draft sessions before changing the event range.",
                 409
             );
+        Check(r.ActivityProgram == "" || IciPolicy.Programs.Contains(r.ActivityProgram), "Choose a supported activity initiative.");
+        e.ActivityProgram = r.ActivityProgram;
         e.ActivityType = r.ActivityType; e.ActivityLevel = r.ActivityLevel; e.ActivityClubId = clubId;
         e.ChiefGuest = r.ChiefGuest; e.MemberParticipants = r.MemberParticipants; e.OutsideVolunteers = r.OutsideVolunteers;
         e.ProjectCoordinator = r.ProjectCoordinator; e.CoordinatorPhone = r.CoordinatorPhone; e.CoordinatorEmail = r.CoordinatorEmail; e.MeetingCost = r.MeetingCost;

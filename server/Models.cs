@@ -120,6 +120,8 @@ public class RolePermission
 
 public class Assignment
 {
+    public string IciPortfolio { get; set; } = "";
+    public string IciSlot { get; set; } = "";
     public Guid? AppointmentId { get; set; }
     public Guid Id { get; set; } = Guid.NewGuid();
     public Guid? MembershipId { get; set; }
@@ -247,6 +249,7 @@ public partial class Db(DbContextOptions<Db> options) : DbContext(options)
 
     protected override void OnModelCreating(ModelBuilder b)
     {
+        ConfigureIci(b);
         ConfigureTraining(b);
         ConfigureMembership(b);
         b.Entity<Level>().HasQueryFilter(l => l.Name != "District" && l.Name != "Zone");

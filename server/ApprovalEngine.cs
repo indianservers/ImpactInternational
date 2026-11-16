@@ -101,6 +101,7 @@ public static class ApprovalEngine
                 "This role cannot review the current stage.",
                 403
             );
+        if(governance) await IciWorkflow.CheckGovernanceReview(db,w,await db.GovernanceRequests.SingleAsync(r=>r.Id==id));
         var decisions = db
             .MembershipApprovals.Where(x =>
                 governance ? x.GovernanceRequestId == id : x.ApplicationId == id

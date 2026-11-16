@@ -204,6 +204,7 @@ export default function MemberPortal() {
                 {[
                   "PendingSource",
                   "PendingDestination",
+                  "PendingVicePresidentSource", "PendingVicePresidentDestination",
                   "PendingAssociation",
                   "Scheduled",
                   "Blocked",

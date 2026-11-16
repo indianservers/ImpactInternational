@@ -41,7 +41,7 @@ public record EventInput(
     double? Longitude = null,
     string ActivityType = "Training", string ActivityLevel = "Club", Guid? ActivityClubId = null,
     string ChiefGuest = "", int MemberParticipants = 0, int OutsideVolunteers = 0,
-    string ProjectCoordinator = "", string CoordinatorPhone = "", string CoordinatorEmail = "", decimal MeetingCost = 0
+    string ProjectCoordinator = "", string CoordinatorPhone = "", string CoordinatorEmail = "", decimal MeetingCost = 0, string ActivityProgram = ""
 );
 
 public record EventRegistrationInput(
@@ -149,6 +149,7 @@ public class EventService(
                 capability == "Checkin" ? "events.checkin" : "events.manage"
             )
             && await A.Visible(w).AnyAsync(x => x.Id == e.OrgId)
+            && (!Db.Roles.Any(r=>r.Id==w.RoleId&&(r.Name=="Club President"||r.Name=="Regional President")) || e.OrgId==w.OrgId || Db.Users.Any(u=>u.Id==w.UserId&&u.PlatformAdmin))
         )
             return w;
         var now = DateTimeOffset.UtcNow;
@@ -223,6 +224,16 @@ public class EventService(
 
     public async Task View(ClubEvent e, string? token = null)
     {
+        Assignment? workspace=null;
+        try{var selected=await A.Session();workspace=await Db.Assignments.SingleOrDefaultAsync(w=>w.Id==selected.WorkspaceId&&w.UserId==selected.UserId);}
+        catch(ApiError error) when(error.Status==401) { }
+        if(workspace!=null&&await Db.Roles.AnyAsync(r=>r.Id==workspace.RoleId&&IciPolicy.Roles.Select(d=>d.Name).Contains(r.Name)))
+        {
+            await A.Workspace("events.view");
+            Check(await IciPolicy.Events(A,workspace,Db.Events).AnyAsync(item=>item.Id==e.Id),"Event outside your assigned region or portfolio.",404);
+            return;
+        }
+
         if (token != null)
         {
             var i = await Invitation(token);

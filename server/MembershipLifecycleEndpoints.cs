@@ -60,10 +60,10 @@ public static class MembershipLifecycleEndpoints
                     RequesterId = user.Id,
                     Reason = r.Reason,
                     EffectiveAt = effective,
-                    SourceRequired = policy.SourceReviewRequired,
-                    AssociationRequired = policy.AssociationReviewRequired,
+                    SourceRequired = true,
+                    AssociationRequired = true,
                     ClearanceRequired = policy.FinancialClearanceRequired,
-                    Status = policy.SourceReviewRequired ? "PendingSource" : "PendingDestination",
+                    Status = "PendingSource",
                 };
                 s.Db.MembershipTransfers.Add(transfer);
                 s.Activity(m, user.Id, "transfer.requested", club.Name);
@@ -152,7 +152,7 @@ public static class MembershipLifecycleEndpoints
                     403
                 );
                 Check(
-                    new[] { "PendingSource", "PendingDestination", "PendingAssociation" }.Contains(
+                    new[] { "PendingSource", "PendingDestination", "PendingVicePresidentSource", "PendingVicePresidentDestination", "PendingAssociation" }.Contains(
                         t.Status
                     ),
                     "Transfer is not awaiting a decision.",
@@ -161,9 +161,10 @@ public static class MembershipLifecycleEndpoints
                 var m = await s
                     .Db.Memberships.Include(x => x.Person)
                     .SingleAsync(x => x.Id == t.MembershipId);
-                var org = t.Status == "PendingDestination" ? t.DestinationClubId : m.ClubId;
+                var org = t.Status is "PendingDestination" or "PendingVicePresidentDestination" ? t.DestinationClubId : m.ClubId;
+                await IciWorkflow.CheckTransfer(s.Access,w,t,m.ClubId);
                 if (t.Status == "PendingAssociation")
-                    await s.Access.TenantWorkspace("members.transfer.approve");
+                    await s.Access.Workspace("members.transfer.approve");
                 else
                     Check(
                         await s.Access.Visible(w).AnyAsync(x => x.Id == org),
@@ -186,7 +187,11 @@ public static class MembershipLifecycleEndpoints
                     t.Status = "Rejected";
                 else if (t.Status == "PendingSource")
                     t.Status = "PendingDestination";
-                else if (t.Status == "PendingDestination" && t.AssociationRequired)
+                else if (t.Status == "PendingDestination")
+                    t.Status = "PendingVicePresidentSource";
+                else if (t.Status == "PendingVicePresidentSource")
+                    t.Status = "PendingVicePresidentDestination";
+                else if (t.Status == "PendingVicePresidentDestination")
                     t.Status = "PendingAssociation";
                 else
                 {
@@ -246,6 +251,8 @@ public static class MembershipLifecycleEndpoints
                     {
                         "PendingSource",
                         "PendingDestination",
+                        "PendingVicePresidentSource",
+                        "PendingVicePresidentDestination",
                         "PendingAssociation",
                         "Scheduled",
                         "Blocked",
@@ -282,6 +289,8 @@ public static class MembershipLifecycleEndpoints
                     {
                         "PendingSource",
                         "PendingDestination",
+                        "PendingVicePresidentSource",
+                        "PendingVicePresidentDestination",
                         "PendingAssociation",
                         "Blocked",
                     }.Contains(t.Status),

@@ -146,6 +146,7 @@ export default function MembershipOperations() {
                           {[
                             "PendingSource",
                             "PendingDestination",
+                  "PendingVicePresidentSource", "PendingVicePresidentDestination",
                             "PendingAssociation",
                             "Blocked",
                           ].includes(r.status) && (

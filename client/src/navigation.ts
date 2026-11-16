@@ -34,7 +34,7 @@ const featureSections = [
     tab("Structure overview", "/organizations", "organization.view"), tab("International", "/international", "organization.view"), tab("National", "/national", "organization.view"), tab("Regions", "/regions", "organization.view"), tab("Clubs", "/clubs", "organization.view"),
     tab("Club overview", "/club-administration", "governance.reports"),
   ] },
-  { id: "leadership", label: "Leadership", icon: ShieldCheck, tabs: [
+  { id: "leadership", label: "Leadership", icon: ShieldCheck, tabs: [tab("Role workspace", "/ici", "ici.view"),
     tab("Leadership Overview", "/leadership", "leadership.view"), tab("People Directory", "/leadership/directory", "leadership.view"), tab("Leadership Intelligence", "/leadership/intelligence", "leadership.view"), tab("Office Bearers", "/leadership/office-bearers", "leadership.view"), tab("Appointments", "/leadership/appointments", "leadership.view"), tab("Vacancies", "/leadership/vacancies", "leadership.view"), tab("Succession", "/leadership/succession", "leadership.view"), tab("History", "/leadership/history", "leadership.view"), tab("Office Positions", "/leadership/positions", "governance.configure"), tab("Calendar", "/leadership-calendar", "leadership.view"),
     tab("Handovers", "/handovers", "leadership.view"), tab("Committees", "/committees", "committees.view"),
   ] },

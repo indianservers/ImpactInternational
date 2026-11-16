@@ -324,6 +324,14 @@ public class GovernanceService(
                 || x.Status == "Under Review"
             );
         }
+        var sourceRole=await IciPolicy.Role(A,w);
+        if(IciPolicy.IsRole(sourceRole))
+        {
+            var eventIds=IciPolicy.Events(A,w,Db.Events).Select(e=>e.Id);
+            if(sourceRole is "Regional Director" or "National Director" or "National Coordinator")
+                q=q.Where(r=>r.Kind=="EventPublication"&&Db.Events.Any(e=>eventIds.Contains(e.Id)&&e.ApprovalRequestId==r.Id));
+            else q=q.Where(r=>!r.Kind.StartsWith("Event")||Db.Events.Any(e=>eventIds.Contains(e.Id)&&e.ApprovalRequestId==r.Id)||r.CreatorId==w.UserId);
+        }
         return q;
     }
 
@@ -506,9 +514,11 @@ public class GovernanceService(
                 .SingleAsync();
             r.Payload = Pack(data with { Version = version });
         }
-        var wf = await Db.MembershipWorkflows.SingleOrDefaultAsync(x =>
+        var specialized = await IciWorkflow.EventWorkflow(this, r);
+        var wf = specialized ?? await Db.MembershipWorkflows.SingleOrDefaultAsync(x =>
             x.TenantId == r.TenantId && x.Kind == "Governance" && x.Active
         );
+        if (specialized != null) r.WorkflowId = specialized.Id;
         Check(wf != null, "Configure a governance workflow first.", 409);
         if (r.WorkflowId == null)
             r.WorkflowId = wf.Id;
@@ -739,6 +749,7 @@ public class GovernanceService(
             403
         );
         var r = await Db.Roles.SingleOrDefaultAsync(x => x.Id == role && x.TenantId == w.TenantId);
+        Check(r == null || !IciPolicy.IsRole(r.Name), "Assign ICI access through the role workspace so portfolio, region coverage and handover rules are applied.", 409);
         Check(
             r != null && r.Permissions.All(grants.Contains),
             "The configured access exceeds your authority.",
@@ -841,6 +852,8 @@ public class GovernanceService(
                 && x.UserId == person.UserId
                 && x.RoleId == p.GrantRoleId
             );
+            Check(exists || !await Db.Roles.AnyAsync(r => r.Id == p.GrantRoleId && IciPolicy.Roles.Select(d => d.Name).Contains(r.Name)),
+                "Assign ICI access through the role workspace so portfolio, coverage and handover rules are applied.", 409);
             if (!exists)
                 Db.Assignments.Add(
                     new()

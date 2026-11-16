@@ -1,0 +1,125 @@
+.ici-workspace {
+  min-width: 0;
+}
+.ici-tabs {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  margin: 0 0 22px;
+  padding: 3px 0 10px;
+}
+.ici-tabs button {
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+.ici-workspace .panel {
+  margin-bottom: 18px;
+}
+.ici-role-grid,
+.ici-responsibilities {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+}
+.ici-role-grid article {
+  margin: 0;
+}
+.ici-role-grid h2 {
+  font-size: 20px;
+}
+.ici-role-grid h3,
+.ici-responsibilities h3 {
+  font-size: 14px;
+  margin: 16px 0 8px;
+}
+.ici-role-grid ul,
+.ici-responsibilities ul {
+  padding-left: 20px;
+  line-height: 1.8;
+  color: var(--muted);
+}
+.ici-badge {
+  display: inline-block;
+  font-size: 11px;
+  line-height: 1.5;
+  border: 1px solid var(--line);
+  padding: 4px 9px;
+  border-radius: 20px;
+  background: var(--bg);
+}
+.ici-quick {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+  margin: 16px 0;
+}
+.ici-filters {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  margin: 16px 0;
+}
+.ici-request {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  width: 100%;
+  text-align: left;
+  margin: 10px 0 !important;
+  white-space: normal !important;
+}
+.ici-request h3 {
+  font-size: 16px;
+  margin: 8px 0;
+}
+.ici-request > div:last-child {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  text-align: right;
+}
+.ici-details {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+.ici-details dt {
+  text-transform: capitalize;
+  font-size: 11px;
+  color: var(--muted);
+}
+.ici-details dd {
+  margin: 4px 0;
+  overflow-wrap: anywhere;
+}
+.ici-workspace fieldset {
+  border: 1px solid var(--line);
+  padding: 16px;
+  border-radius: 10px;
+}
+.ici-workspace .context-row > * {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+@media (max-width: 700px) {
+  .ici-role-grid,
+  .ici-responsibilities,
+  .ici-filters {
+    grid-template-columns: 1fr;
+  }
+  .ici-request {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .ici-request > div:last-child {
+    text-align: left;
+  }
+  .ici-tabs {
+    max-width: 100%;
+  }
+  .ici-details {
+    grid-template-columns: 1fr;
+  }
+}

@@ -819,7 +819,7 @@ public partial class Db
             .HasIndex(x => x.MembershipId)
             .IsUnique()
             .HasFilter(
-                "\"Status\" IN ('PendingSource','PendingDestination','PendingAssociation','Scheduled')"
+                "\"Status\" IN ('PendingSource','PendingDestination','PendingVicePresidentSource','PendingVicePresidentDestination','PendingAssociation','Scheduled')"
             );
         b.Entity<MembershipTransfer>().Property(x => x.Version).IsConcurrencyToken();
         b.Entity<TransferDecision>()

@@ -20,6 +20,7 @@ public class ClubEvent : ITenantRecord
     public Guid TypeId { get; set; }
     public Guid? CommitteeId { get; set; }
     public Guid CreatorId { get; set; }
+    public string ActivityProgram { get; set; } = "";
     public string ActivityType { get; set; } = "Training";
     public string ActivityLevel { get; set; } = "Club";
     public Guid? ActivityClubId { get; set; }

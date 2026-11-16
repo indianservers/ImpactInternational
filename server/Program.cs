@@ -208,6 +208,7 @@ app.MapOpenApi();
 var api = app.MapGroup("/api/v1");
 api.MapMembership();
 api.MapTrainingCertifications();
+api.MapIciPortal();
 api.MapPresidentStatistics();
 api.MapMembershipAnalytics();
 api.MapMembershipWorkflows();
@@ -575,6 +576,8 @@ api.MapGet(
                 x.Association,
                 x.Color,
                 Role = x.RoleEntity.Name,
+                Portfolio = x.Assignment.IciPortfolio,
+                Slot = x.Assignment.IciSlot,
                 Permissions = await a.Grants(x.Assignment),
             });
         }
@@ -759,6 +762,7 @@ api.MapPut(
             x.Id == id && x.TenantId == w.TenantId
         );
         Check(role != null, "Role missing.", 404);
+        Check(!IciPolicy.IsRole(role.Name), "ICI role definitions are fixed. Configure holders and coverage in the role workspace.", 409);
         Check(
             !await a.Db.Assignments.AnyAsync(x => x.RoleId == id),
             "Assigned roles are immutable; create a replacement role."
@@ -821,6 +825,11 @@ api.MapPost(
             "Role exceeds your permissions.",
             403
         );
+        if(role != null && IciPolicy.IsRole(role.Name))
+        {
+            var assignment=await IciWorkflow.Assign(a,new IciAssignmentInput(r.Email,r.RoleId,r.OrgId,r.Portfolio,r.Slot,r.RegionIds));
+            await a.Db.SaveChangesAsync();await tx.CommitAsync();return Results.NoContent();
+        }
         var u = await a.Db.Users.SingleOrDefaultAsync(x => x.Email == r.Email.ToLowerInvariant());
         Check(u != null && u.Verified, "Verified account required.");
         a.Db.Assignments.Add(
@@ -1084,6 +1093,7 @@ using (var structureScope = app.Services.CreateScope())
     var setupDb = structureScope.ServiceProvider.GetRequiredService<Db>();
     await ImpactStructure.Configure(setupDb);
     await LeaderCommunications.Configure(setupDb);
+    await IciPolicy.Configure(setupDb);
 }
 app.Run();
 
@@ -1112,7 +1122,7 @@ public record Profile(
 
 public record ChangePassword(string Current, string Password);
 
-public record AssignRequest(string Email, Guid RoleId, Guid OrgId);
+public record AssignRequest(string Email, Guid RoleId, Guid OrgId, string Portfolio = "", string Slot = "", Guid[]? RegionIds = null);
 
 public record AssociationRequest(string Name);
 
