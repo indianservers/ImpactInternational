@@ -93,7 +93,7 @@ public static class IdCardDesign
         "member.current_designation",
         "member.club_name",
         "member.club_code",
-        "member.district_name",
+        "member.region_name",
         "member.national_organization",
         "association.name",
         "card.issue_date",
@@ -159,7 +159,7 @@ public static class IdCardDesign
             new("qr", "Qr", 6.5f, 17.5f, 22, 22, Binding: "card.qr_code"),
             new("club-label", "Text", 34, 15, 46, 3, Text: "MEMBER CLUB", Color: "#dfc68f", FontSize: 1.7f),
             new("club", "Text", 34, 19, 46, 10, Binding: "member.club_name", Color: "#ffffff", FontSize: 2.4f),
-            new("district", "Text", 34, 30, 46, 6, Binding: "member.district_name", Color: "#bdc9df", FontSize: 2),
+            new("district", "Text", 34, 30, 46, 6, Binding: "member.region_name", Color: "#bdc9df", FontSize: 2),
             new("valid", "Text", 34, 37, 46, 4, Text: "VALID TILL  {{card.expiry_month_year}}", Color: "#dfc68f", FontSize: 2),
             new("verification", "Text", 5, 43, 76, 5, Text: "Scan to verify current status. If found, return to the issuing club.", Color: "#bdc9df", FontSize: 1.8f),
             new("serial", "Text", 5, 49, 76, 3, Binding: "card.serial_number", Color: "#8295b5", FontSize: 1.55f)
@@ -245,7 +245,7 @@ public static class IdCardDesign
                     Check(TextKeys.Contains(m.Groups[1].Value), "Unknown or private placeholder.");
                 Check(
                     e.Binding == ""
-                        || e.Kind == "Text" && TextKeys.Contains(e.Binding)
+                        || e.Kind == "Text" && (TextKeys.Contains(e.Binding) || e.Binding == "member.district_name")
                         || e.Kind == "Image" && ImageKeys.Contains(e.Binding)
                         || e.Kind == "Qr" && e.Binding == "card.qr_code",
                     "Binding type does not match element."

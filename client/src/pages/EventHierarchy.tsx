@@ -1,8 +1,8 @@
 import {useGov} from '../GovernanceUI';
 import {ErrorBox} from '../App';
 import './EventCommunicationCenter.css';
-export default function EventHierarchy({value,onChange,title='Events by district, zone & club'}:{value:string;onChange:(id:string)=>void;title?:string}){
- const q=useGov('/event-hierarchy'),orgs:any[]=q.data||[],levels=['International','National','Region','District','Zone','Club'];
+export default function EventHierarchy({value,onChange,title='Events by region & club'}:{value:string;onChange:(id:string)=>void;title?:string}){
+ const q=useGov('/event-hierarchy'),orgs:any[]=q.data||[],levels=['International','National','Region','Club'];
  const path:Record<string,string>={};let cursor=value;const seen=new Set<string>();
  while(cursor&&!seen.has(cursor)){seen.add(cursor);const node=orgs.find(o=>o.id===cursor);if(!node)break;path[node.type]=node.id;cursor=node.parentId;}
  function below(id:string,parent:string){const visited=new Set<string>();while(id&&!visited.has(id)){if(id===parent)return true;visited.add(id);id=orgs.find(o=>o.id===id)?.parentId;}return false;}

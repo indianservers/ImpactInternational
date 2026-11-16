@@ -1,3 +1,4 @@
+import {MemberCertifications} from "./Certifications";
 import SectionTabs from "../SectionTabs";
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -9,6 +10,7 @@ export default function Profile() {
     qc = useQueryClient();
   const [error, setError] = useState<unknown>(),
     [message, setMessage] = useState("");
+  const memberProfile = useQuery({queryKey:["my-membership"],queryFn:()=>api("/membership/me")});
   const q = useQuery({
     queryKey: ["sessions"],
     queryFn: () => api("/auth/sessions"),
@@ -46,7 +48,7 @@ export default function Profile() {
           {message}
         </div>
       )}
-      <SectionTabs id="account" label="Account settings" tabs={["Profile", "Password", "Sessions"]} value={section} onChange={setSection} />
+      <SectionTabs id="account" label="Account settings" tabs={["Profile", "Password", "Sessions", "Certifications"]} value={section} onChange={setSection} />
       <div className="account-panels">
         <section className="panel" role="tabpanel" id="account-panel-0" aria-labelledby="account-tab-0" hidden={section !== "Profile"}>
           <h2>Your profile</h2>
@@ -154,6 +156,9 @@ export default function Profile() {
             </button>
           </div>
         ))}
+      </section>
+      <section role="tabpanel" id="account-panel-3" aria-labelledby="account-tab-3" hidden={section !== "Certifications"}>
+        {section === "Certifications" && (memberProfile.data?.profile ? <MemberCertifications/> : <p>Certifications are available once a member profile is linked to your account.</p>)}
       </section>
     </>
   );

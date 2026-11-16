@@ -72,6 +72,13 @@ public static partial class EventEndpoints
                     return await next(context);
                 }
             );
+        api.MapGet("/activity-options", async (Access a) => {
+            var w = await a.Workspace("events.manage");
+            var root = await a.Db.Orgs.SingleAsync(o => o.TenantId == w.TenantId && o.ParentId == null);
+            var dates = ActivityPolicy.FinancialYear(root);
+            return new { types = ActivityPolicy.Types, levels = ActivityPolicy.Levels, financialYearStart = dates.Start, financialYearEnd = dates.End.AddTicks(-1),
+                clubs = await a.Visible(w).Where(o => a.Db.Levels.Any(l => l.Id == o.LevelId && l.IsClub)).OrderBy(o => o.Name).Select(o => new { o.Id, o.Name }).ToListAsync() };
+        });
         api.MapGet(
             "/public-events/{id:guid}",
             async (Guid id, EventService s) =>
@@ -226,7 +233,7 @@ public static partial class EventEndpoints
             {
                 var w = await s.A.TenantWorkspace("events.configure");
                 Check(
-                    input.Name.Trim().Length is > 1 and <= 100 && input.DefaultCapacity > 0,
+                    ActivityPolicy.Types.Contains(input.Name.Trim()) && input.DefaultCapacity > 0,
                     "Invalid event type."
                 );
                 var t = new EventType
@@ -330,11 +337,7 @@ public static partial class EventEndpoints
                 var user = await s.A.User();
                 if (input.Action == "Submit")
                 {
-                    Check(
-                        e.EndsAt > DateTimeOffset.UtcNow,
-                        "An ended event cannot be submitted for publication.",
-                        409
-                    );
+                    await ActivityPolicy.CheckCurrentYear(s.Db, e);
 
                     Check(
                         w != null
@@ -388,11 +391,11 @@ public static partial class EventEndpoints
                 {
                     Check(
                         e.Approval == "Approved"
-                            && e.Publication == "Draft"
-                            && e.EndsAt > DateTimeOffset.UtcNow,
+                            && e.Publication == "Draft",
                         "Approval is required before publishing.",
                         409
                     );
+                    await ActivityPolicy.CheckCurrentYear(s.Db, e);
                     e.Publication = "Published";
                     e.PublishedAt = DateTimeOffset.UtcNow;
                 }
@@ -973,6 +976,18 @@ public static partial class EventEndpoints
     {
         var w = await s.A.Workspace("events.manage");
         await s.Governance.Scope(w, r.OrgId);
+        var root = await s.Db.Orgs.SingleAsync(o => o.TenantId == w.TenantId && o.ParentId == null);
+        var year = ActivityPolicy.FinancialYear(root);
+        Check(r.StartsAt >= year.Start && r.EndsAt < year.End, "Activities must start and finish within the current financial year.");
+        Check(ActivityPolicy.Types.Contains(r.ActivityType) && ActivityPolicy.Levels.Contains(r.ActivityLevel), "Choose a valid activity type and level.");
+        Check(r.ChiefGuest is { Length: <= 200 } && r.ProjectCoordinator is { Length: <= 200 } && r.CoordinatorPhone is { Length: <= 30 }
+            && r.CoordinatorEmail is { Length: <= 200 } && r.MemberParticipants is >= 0 and <= 1000000 && r.OutsideVolunteers is >= 0 and <= 1000000 && r.MeetingCost is >= 0 and <= 1000000000, "Invalid activity participants, coordinator or meeting cost.");
+        Check(r.CoordinatorEmail == "" || System.Net.Mail.MailAddress.TryCreate(r.CoordinatorEmail, out _), "Enter a valid coordinator email.");
+        var clubId = r.ActivityClubId ?? (await s.Db.Orgs.AnyAsync(o => o.Id == r.OrgId && s.Db.Levels.Any(l => l.Id == o.LevelId && l.IsClub)) ? r.OrgId : (Guid?)null);
+        Check(clubId != null && await s.A.Visible(w).AnyAsync(o => o.Id == clubId && o.Status == "Active" && s.Db.Levels.Any(l => l.Id == o.LevelId && l.IsClub)), "Choose a club within your authorized scope.");
+        Check(await s.A.Tree(w.TenantId, r.OrgId).AnyAsync(o => o.Id == clubId), "Activity club must belong to the owning organization.");
+        if (r.TypeId == Guid.Empty) r = r with { TypeId = await s.Db.EventTypes.Where(t => t.TenantId == w.TenantId && t.Active && t.Name == r.ActivityType).Select(t => t.Id).FirstOrDefaultAsync() };
+        if (r.EndsAt <= DateTimeOffset.UtcNow) r = r with { RegistrationStartsAt = r.StartsAt.AddDays(-7), RegistrationEndsAt = r.StartsAt, RsvpDeadline = r.StartsAt };
         Check(
             r.Title.Trim().Length is > 2 and <= 200
                 && r.Description.Length <= 12000
@@ -1062,6 +1077,11 @@ public static partial class EventEndpoints
                 "Adjust draft sessions before changing the event range.",
                 409
             );
+        e.ActivityType = r.ActivityType; e.ActivityLevel = r.ActivityLevel; e.ActivityClubId = clubId;
+        e.ChiefGuest = r.ChiefGuest; e.MemberParticipants = r.MemberParticipants; e.OutsideVolunteers = r.OutsideVolunteers;
+        e.ProjectCoordinator = r.ProjectCoordinator; e.CoordinatorPhone = r.CoordinatorPhone; e.CoordinatorEmail = r.CoordinatorEmail; e.MeetingCost = r.MeetingCost;
+        e.RegistrationEnabled = r.EndsAt > DateTimeOffset.UtcNow;
+        if (r.EndsAt <= DateTimeOffset.UtcNow) e.Lifecycle = "Completed";
         e.Title = r.Title.Trim();
         e.TypeId = r.TypeId;
         e.Description = r.Description;

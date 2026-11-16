@@ -1,3 +1,4 @@
+import {MemberCertifications} from "./Certifications";
 import PageSections from '../PageSections';
 import {MemberAchievements} from "./Operations";
 import {OwnLeadership} from "../GovernanceUI";
@@ -284,7 +285,7 @@ export default function MemberPortal() {
             </button>
           </section>
           <section className="panel spaced">
-            {d.memberships.filter((m:any)=>m.status==='Active').slice(0,1).map((m:any)=><MemberAchievements key={m.id} id={m.id}/>)}<OwnLeadership/><h2>Application access roles</h2>
+            {d.memberships.filter((m:any)=>m.status==='Active').slice(0,1).map((m:any)=><MemberAchievements key={m.id} id={m.id}/>)}<OwnLeadership/><MemberCertifications/><h2>Application access roles</h2>
             {p?.roles?.length ? (
               p.roles.map((r: any, i: number) => (
                 <div className="context-row" key={i}>

@@ -10,7 +10,7 @@ import FinanceMemberIntelligence from './FinanceMemberIntelligence';
 type Row = Record<string, any>;
 const base = '/finance/dues-center';
 const money = (value: number, currency: string) => new Intl.NumberFormat('en-IN', {style:'currency', currency}).format(value || 0);
-const levels = ['National', 'Region', 'District', 'Zone', 'Club'];
+const levels = ['National', 'Region', 'Club'];
 
 export default function FinanceDuesHome({advanced}: {advanced: ReactNode}) {
   const {w} = useWorkspace(), qc = useQueryClient();

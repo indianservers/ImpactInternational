@@ -240,14 +240,7 @@ public class IdCardService(
             ["member.current_designation"] = pos ?? "Member",
             ["member.club_name"] = m.Club.Name,
             ["member.club_code"] = m.Club.Code,
-            ["member.district_name"] =
-                orgs.FirstOrDefault(o =>
-                    o.Level.Contains(
-                        brand?.DistrictTerm ?? "District",
-                        StringComparison.OrdinalIgnoreCase
-                    )
-                )?.Name
-                ?? "",
+            ["member.region_name"] = orgs.FirstOrDefault(o => o.Level == "Region")?.Name ?? "",
             ["member.national_organization"] =
                 orgs.FirstOrDefault(o =>
                     o.Level.Contains("National", StringComparison.OrdinalIgnoreCase)
@@ -265,6 +258,8 @@ public class IdCardService(
                 + "/verify/id/"
                 + members.Unprotect(card.ProtectedToken),
         };
+        // Existing published cards keep their legacy key while receiving the current region.
+        values["member.district_name"] = values["member.region_name"];
         var images = new Dictionary<string, string>();
         using (var logo = typeof(IdCardService).Assembly.GetManifestResourceStream("Clubs.Api.Assets.Brand.impact-logo.webp"))
         {

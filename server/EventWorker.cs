@@ -17,27 +17,7 @@ public static class EventSetup
     {
         if (!await db.EventTypes.AnyAsync(x => x.TenantId == tenant))
             foreach (
-                var name in new[]
-                {
-                    "Regular Club Meeting",
-                    "Fellowship Meeting",
-                    "Board Meeting",
-                    "Committee Meeting",
-                    "Service Activity",
-                    "Training Program",
-                    "Workshop",
-                    "Leadership Program",
-                    "Networking Event",
-                    "District Conference",
-                    "Regional Conference",
-                    "National Convention",
-                    "International Convention",
-                    "Charter Anniversary",
-                    "Awards Ceremony",
-                    "Fundraising Event",
-                    "Guest Speaker Event",
-                    "Other",
-                }
+                var name in ActivityPolicy.Types
             )
                 db.EventTypes.Add(new() { TenantId = tenant, Name = name });
         await db.SaveChangesAsync();

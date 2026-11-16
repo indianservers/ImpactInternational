@@ -19,9 +19,9 @@ public static class PlatformDashboard
             select new { c.Id, c.Name, r.CanManage }).Distinct().ToListAsync();
         var kind = user.PlatformAdmin ? "platform"
             : role == "Club Treasurer" && grants.Contains("finance.view") ? "finance"
-            : grants.Contains("members.view") ? org.level switch { "National" => "national", "Region" => "regional", "District" => "district", "Zone" => "zonal", "Club" => role == "Club Secretary" ? "club-operations" : "club", _ => "organization" }
+            : grants.Contains("members.view") ? org.level switch { "National" => "national", "Region" => "regional", "Club" => role == "Club Secretary" ? "club-operations" : "club", _ => "organization" }
             : committees.Count > 0 ? "committee" : "member";
-        var title = kind switch { "platform" => "Platform Administration", "finance" => "Club finance dashboard", "national" => "National leadership dashboard", "regional" => "Regional dashboard", "district" => "District dashboard", "zonal" => "Zonal dashboard", "club-operations" => "Club operations dashboard", "club" => "Club dashboard", "committee" => "My committee dashboard", "member" => "My Impact dashboard", _ => "Organization dashboard" };
+        var title = kind switch { "platform" => "Platform Administration", "finance" => "Club finance dashboard", "national" => "National leadership dashboard", "regional" => "Regional dashboard", "club-operations" => "Club operations dashboard", "club" => "Club dashboard", "committee" => "My committee dashboard", "member" => "My Impact dashboard", _ => "Organization dashboard" };
         return new { kind, title, role, scope = org, platformAdmin = user.PlatformAdmin, committees, workspaceId = w.Id };
     }
 
@@ -145,17 +145,16 @@ public static class PlatformDashboard
         var renewalEligible = members.Count(m=>m.EndsAt>=start&&m.EndsAt<end)+renewals.Count;
         var clubPreview = clubs.OrderByDescending(c=>c.CreatedAt).ThenBy(c=>c.Name).Take(4).Select(c=>new {
             c.Id,c.Name,c.Status,region=nodeById.GetValueOrDefault(Ancestor(c.Id,"Region"))?.Name??"Unassigned",
-            district=nodeById.GetValueOrDefault(Ancestor(c.Id,"District"))?.Name??"Unassigned",
             members=active.Where(m=>m.ClubId==c.Id).Select(m=>m.PersonId).Distinct().Count(),officers=current.Count(o=>o.OrgId==c.Id),href="/app/clubs/"+c.Id });
         var response = new { snapshotAt=now, scope=new { tenant.Id,tenant.Name,authorization="PlatformAdmin",context="Impact International · authorized single organization" },
             dates=new { range=selected,from=startDate,to=endDate,previousFrom=DateOnly.FromDateTime(TimeZoneInfo.ConvertTime(priorStart,zone).DateTime),previousTo=startDate.AddDays(-1),timeZone=tenant.TimeZone },
             metrics,priorities,trend=buckets,
             clubStatus=clubs.GroupBy(c=>c.Status).Select(g=>new { name=g.Key,count=g.Count() }),
             memberStatus=members.GroupBy(m=>m.Status).Select(g=>new { name=g.Key,count=g.Select(m=>m.PersonId).Distinct().Count() }),
-            regions=Distribution("Region"),districts=Distribution("District"),
+            regions=Distribution("Region"),
             pipeline=requests.GroupBy(r=>r.Status).Select(g=>new { name=g.Key,count=g.Count() }),
             structure=orgs.GroupBy(o=>o.level).Select(g=>new { name=g.Key,count=g.Count() }),
-            clubs=clubPreview, organizations=orgs.Where(o=>o.ParentId==null).Select(o=>new { tenant.Id,tenant.Name,logo=string.IsNullOrEmpty(o.Logo)?"/brand/impact-logo.webp":o.Logo,status=o.Status,registration=o.Registration,regions=orgs.Count(o=>o.level=="Region"),districts=orgs.Count(o=>o.level=="District"),clubs=clubs.Count,members=registrants.Count }),
+            clubs=clubPreview, organizations=orgs.Where(o=>o.ParentId==null).Select(o=>new { tenant.Id,tenant.Name,logo=string.IsNullOrEmpty(o.Logo)?"/brand/impact-logo.webp":o.Logo,status=o.Status,registration=o.Registration,regions=orgs.Count(o=>o.level=="Region"),clubs=clubs.Count,members=registrants.Count }),
             health=new { engagement,participated,activeMembers=activeIds.Count,clubActivation=Rate(clubs.Count(c=>c.Status=="Active"),clubs.Count),officerCoverage=mandatorySlots.Count==0?(decimal?)null:Rate(occupied,mandatorySlots.Count),mandatoryPositions=mandatorySlots.Count,occupiedPositions=occupied,
                 renewalRate=renewalEligible==0?(decimal?)null:Rate(renewals.Count,renewalEligible),renewals=renewals.Count,renewalOpportunities=renewalEligible,pendingGovernance=openRequests,
                 averageApprovalDays=completed.Count==0?(double?)null:Math.Round(completed.Average(r=>(r.UpdatedAt-r.CreatedAt).TotalDays),1),

@@ -1,0 +1,70 @@
+[
+  {
+    "test": "Organization screen has no District or Zone controls",
+    "passed": true
+  },
+  {
+    "test": "Platform Admin can create certification programs in browser",
+    "passed": true
+  },
+  {
+    "test": "Member filters omit removed hierarchy levels",
+    "passed": true
+  },
+  {
+    "test": "Registration asks for certification program, number, batch and validity",
+    "passed": true
+  },
+  {
+    "test": "Member can save certificate from account profile",
+    "passed": true
+  },
+  {
+    "test": "Club President home displays scoped statistics and member links",
+    "passed": true
+  },
+  {
+    "test": "Club President activity form has exactly five categories",
+    "passed": true
+  },
+  {
+    "test": "Club activity form includes participants and coordinator details",
+    "passed": true
+  },
+  {
+    "test": "Club activity schedule displays financial-year restriction",
+    "passed": true
+  },
+  {
+    "test": "Club statistics fits mobile viewport",
+    "passed": true
+  },
+  {
+    "test": "Region President home displays scoped statistics and member links",
+    "passed": true
+  },
+  {
+    "test": "Region President activity form has exactly five categories",
+    "passed": true
+  },
+  {
+    "test": "Region activity form includes participants and coordinator details",
+    "passed": true
+  },
+  {
+    "test": "Region activity schedule displays financial-year restriction",
+    "passed": true
+  },
+  {
+    "test": "Region statistics fits mobile viewport",
+    "passed": true
+  },
+  {
+    "test": "Public signup uses National, Region, Club selectors",
+    "passed": true
+  },
+  {
+    "test": "No browser runtime errors",
+    "passed": true
+  }
+]

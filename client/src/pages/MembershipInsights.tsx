@@ -62,7 +62,7 @@ const tabs = [
   ["actions", "Key Insights", Lightbulb],
   ["network", "Network", Network],
 ] as const;
-const levels = ["National", "Region", "District", "Zone", "Club"];
+const levels = ["National", "Region", "Club"];
 const periods = [
   ["7d", "Last 7 days"],
   ["30d", "Last 30 days"],
@@ -226,8 +226,6 @@ export default function MembershipInsights() {
             "state",
             "status",
             "regionId",
-            "districtId",
-            "zoneId",
             "clubId",
             "categoryId",
             "membershipType",
@@ -910,7 +908,7 @@ export default function MembershipInsights() {
                     }
                   >
                     <div className="a-segment">
-                      {["Region", "District", "Zone", "Club"].map((l) => (
+                      {["Region", "Club"].map((l) => (
                         <button
                           key={l}
                           className={orgLevel === l ? "active" : ""}
@@ -1391,8 +1389,6 @@ export default function MembershipInsights() {
                         "category",
                         "status",
                         "Region",
-                        "District",
-                        "Zone",
                         "Club",
                       ].map((v) => (
                         <option key={v}>{v}</option>

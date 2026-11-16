@@ -1,3 +1,4 @@
+import CompleteMemberProfile from './CompleteMemberProfile';
 import "./Members.css";
 import {MemberAchievements} from "./Operations";
 import {MemberOffices} from "../GovernanceUI";
@@ -24,13 +25,14 @@ import {
   PrivacyEditor,
   ClubCategoryFields,
 } from "../MemberComponents";
-export default function MemberProfile() {
-  const { id } = useParams(),
+export default function MemberProfile({membershipId,directoryMode}:{membershipId?:string;directoryMode?:boolean}={}) {
+  const { id:routeId } = useParams(),
     [params] = useSearchParams(),
     { w } = useWorkspace(),
     qc = useQueryClient();
-  const directory = params.get("directory") === "true";
-  const [tab, setTab] = useState("Overview"),
+  const id=membershipId||routeId;
+  const directory = directoryMode??(params.get("directory") === "true");
+  const [tab, setTab] = useState(params.get("tab")||"Complete profile"),
     [editing, setEditing] = useState(false),
     [action, setAction] = useState(""),
     [error, setError] = useState<unknown>(),
@@ -70,6 +72,7 @@ export default function MemberProfile() {
     m = d.membership,
     own = p.privacy != null;
   const tabs = [
+    "Complete profile",
     "Overview",
     "Personal details",
     "Contact information",
@@ -196,6 +199,7 @@ export default function MemberProfile() {
       </div>
       <div className="profile-layout">
         <section className="panel profile-body">
+          {tab==="Complete profile"&&<CompleteMemberProfile membershipId={id} data={d} directory={directory}/>}
           {tab==="Organizational hierarchy"&&<><h2>Organizational hierarchy</h2><p>Affiliation within your authorized structure.</p><ErrorBox error={hierarchy.error}/>{[...(hierarchy.data?.selectedPath||[])].reverse().map((o:any)=><div className="context-row" key={o.id}><span>{o.kind}</span><b>{o.name}</b></div>)}<p>Club: {m.club} · Category: {m.category}</p></>}
           {tab==="Contact information"&&<><h2>Contact information</h2>{p.contacts?.length?p.contacts.map((c:any,i:number)=><div key={i} className="context-row"><span>{c.kind} · {c.label}</span><b>{c.value}</b></div>):<p>No contact information is shared with this workspace.</p>}{p.addresses?.map((a:any,i:number)=><div key={i} className="context-row"><span>Address</span><b>{[a.address,a.city,a.state,a.country,a.postalCode].filter(Boolean).join(", ")}</b></div>)}</>}
           {tab==="Dues & payments"&&<><h2>Dues & payments</h2><p>Collections, verification and payment records remain in the authorized finance workspace. Membership administrative holds do not represent an accounting balance.</p><Link className="button secondary" to="/app/finance/dues-reports">Open authorized dues reports →</Link></>}

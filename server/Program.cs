@@ -207,6 +207,8 @@ app.Use(
 app.MapOpenApi();
 var api = app.MapGroup("/api/v1");
 api.MapMembership();
+api.MapTrainingCertifications();
+api.MapPresidentStatistics();
 api.MapMembershipAnalytics();
 api.MapMembershipWorkflows();
 api.MapPublicMembership();
@@ -702,7 +704,7 @@ api.MapPost(
     async (Level r, Access a) =>
     {
         var w = await a.TenantWorkspace("settings.manage");
-        throw new ApiError(409, "Impact International uses National units, Regions, Districts, Zones, and Clubs. Manage them from the structure submenus.");
+        throw new ApiError(409, "Impact International uses National units, Regions, and Clubs. Manage them from the structure submenus.");
     }
 );
 api.MapGet(

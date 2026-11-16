@@ -239,7 +239,7 @@ export function HierarchyExplorer({
   const [rootId, setRootId] = useState(""),
     [collapsed, setCollapsed] = useState<string[]>(() =>
       organizations
-        .filter((o) => ["District", "Zone"].includes(o.level))
+        .filter((o) => ["Region"].includes(o.level))
         .map((o) => o.id),
     ),
     [layout, setLayout] = useState("tree");
@@ -426,8 +426,6 @@ export function HierarchyExplorer({
                               "International",
                               "National",
                               "Region",
-                              "District",
-                              "Zone",
                               "Club",
                               "Committee", "Member", "Officer",
                             ].indexOf(n.data.level),

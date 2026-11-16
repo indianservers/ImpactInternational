@@ -1,0 +1,22 @@
+{
+  "pages": [
+    "Leadership pending appointments",
+    "Appointment record popup",
+    "Member profile page",
+    "Finance member dashboard",
+    "Event communication recipient preview"
+  ],
+  "checks": [
+    "Clicking a leadership member opens Complete profile by default",
+    "Appointment record preserves Appointment and Complete profile tabs",
+    "Member name inside appointment switches to full profile",
+    "Member profile tabs remain usable",
+    "Finance member names open full profile",
+    "Finance payment ledger still expands independently",
+    "Event recipient resolves person ID to the correct membership",
+    "Mobile popup content fits 336px width without horizontal overflow",
+    "Desktop viewport restored"
+  ],
+  "apiChecksPassed": 16,
+  "dataChanges": "None; read-only verification"
+}

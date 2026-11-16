@@ -1,0 +1,239 @@
+{
+  "checks": 58,
+  "passed": true,
+  "database": "clubs_four_level_qa_20261116",
+  "results": [
+    {
+      "test": "Exactly four selectable levels",
+      "passed": true
+    },
+    {
+      "test": "All 625 clubs still exist",
+      "passed": true
+    },
+    {
+      "test": "All 3125 original memberships retained",
+      "passed": true
+    },
+    {
+      "test": "Every club now reports directly to a region",
+      "passed": true
+    },
+    {
+      "test": "Legacy organizational records are archived with snapshots",
+      "passed": true
+    },
+    {
+      "test": "Hierarchy database guard remains enabled",
+      "passed": true
+    },
+    {
+      "test": "Zone cannot be selected through hierarchy API",
+      "passed": true
+    },
+    {
+      "test": "District cannot be selected through hierarchy API",
+      "passed": true
+    },
+    {
+      "test": "Legacy roles are absent from role catalog",
+      "passed": true
+    },
+    {
+      "test": "Removed leadership scope grants no member access",
+      "passed": true
+    },
+    {
+      "test": "Club President sees exactly their members",
+      "passed": true
+    },
+    {
+      "test": "Region President sees only their region",
+      "passed": true
+    },
+    {
+      "test": "Presidents cannot open a member in another region",
+      "passed": true
+    },
+    {
+      "test": "Public signup offers National, Region, Club only",
+      "passed": true
+    },
+    {
+      "test": "Public signup accepts the four-level path without legacy IDs",
+      "passed": true
+    },
+    {
+      "test": "Training certification starter programs available",
+      "passed": true
+    },
+    {
+      "test": "Members cannot create certification programs",
+      "passed": true
+    },
+    {
+      "test": "Presidents cannot create certification programs",
+      "passed": true
+    },
+    {
+      "test": "Member can save complete certification details",
+      "passed": true
+    },
+    {
+      "test": "Another member cannot read certificate details",
+      "passed": true
+    },
+    {
+      "test": "Member cannot edit another person certificate",
+      "passed": true
+    },
+    {
+      "test": "Certificate edits use version checks",
+      "passed": true
+    },
+    {
+      "test": "Duplicate certificate numbers rejected",
+      "passed": true
+    },
+    {
+      "test": "Invalid validity dates rejected",
+      "passed": true
+    },
+    {
+      "test": "Unsafe verification links rejected",
+      "passed": true
+    },
+    {
+      "test": "Expired certification is clearly identified",
+      "passed": true
+    },
+    {
+      "test": "Add-member registration saves certificate atomically",
+      "passed": true
+    },
+    {
+      "test": "Registration retry does not duplicate member or certification",
+      "passed": true
+    },
+    {
+      "test": "Invalid certification rolls back whole registration",
+      "passed": true
+    },
+    {
+      "test": "Exactly five activity categories and three activity levels",
+      "passed": true
+    },
+    {
+      "test": "Event type catalog uses the five categories",
+      "passed": true
+    },
+    {
+      "test": "Past current-year activity records all requested fields",
+      "passed": true
+    },
+    {
+      "test": "Future current-year event can be scheduled",
+      "passed": true
+    },
+    {
+      "test": "Service category can be posted by Region President",
+      "passed": true
+    },
+    {
+      "test": "Leadership category can be posted by Region President",
+      "passed": true
+    },
+    {
+      "test": "Business category can be posted by Region President",
+      "passed": true
+    },
+    {
+      "test": "Training category can be posted by Region President",
+      "passed": true
+    },
+    {
+      "test": "Nari Cell category can be posted by Region President",
+      "passed": true
+    },
+    {
+      "test": "Previous financial year is rejected",
+      "passed": true
+    },
+    {
+      "test": "Next financial year is rejected",
+      "passed": true
+    },
+    {
+      "test": "Activity cannot cross financial year end",
+      "passed": true
+    },
+    {
+      "test": "Invalid category and negative costs rejected",
+      "passed": true
+    },
+    {
+      "test": "President cannot post for another region club",
+      "passed": true
+    },
+    {
+      "test": "Ordinary member cannot post activities",
+      "passed": true
+    },
+    {
+      "test": "Past activity can pass approval and publish",
+      "passed": true
+    },
+    {
+      "test": "Retiring a program retains member certificates",
+      "passed": true
+    },
+    {
+      "test": "New certificates cannot use a retired program",
+      "passed": true
+    },
+    {
+      "test": "Migrated module /structure remains available",
+      "passed": true
+    },
+    {
+      "test": "Migrated module /membership/options remains available",
+      "passed": true
+    },
+    {
+      "test": "Migrated module /dashboard remains available",
+      "passed": true
+    },
+    {
+      "test": "Migrated module /event-hierarchy remains available",
+      "passed": true
+    },
+    {
+      "test": "Migrated module /leadership/center remains available",
+      "passed": true
+    },
+    {
+      "test": "Migrated module /governance/options remains available",
+      "passed": true
+    },
+    {
+      "test": "Migrated module /members remains available",
+      "passed": true
+    },
+    {
+      "test": "Migrated module /directory/regions remains available",
+      "passed": true
+    },
+    {
+      "test": "Migrated module /finance/entities remains available",
+      "passed": true
+    },
+    {
+      "test": "Migrated module /finance/dues-center/options remains available",
+      "passed": true
+    },
+    {
+      "test": "Migrated module /structure/intelligence remains available",
+      "passed": true
+    }
+  ]
+}

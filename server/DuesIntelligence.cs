@@ -213,7 +213,7 @@ public static partial class DuesCenter
         ).ToDictionaryAsync(o => o.Id);
         var rollups = new List<object>();
         foreach (
-            var level in new[] { "International", "National", "Region", "District", "Zone", "Club" }
+            var level in new[] { "International", "National", "Region", "Club" }
         )
         {
             Guid? Ancestor(Guid id)

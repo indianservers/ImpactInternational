@@ -50,7 +50,7 @@ public class IntelligenceService(
     [
         "ClubDues",
         "AssociationDues",
-        "DistrictDues",
+
         "NationalDues",
         "InternationalDues",
         "JoiningFee",

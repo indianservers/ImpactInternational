@@ -29,7 +29,7 @@ export default function CommunicationMembers() {
   return <section className="panel comm-member-outreach">
     <div className="section-heading"><div><div className="eyebrow">MESSAGES FOR YOUR COMMUNITY</div><h2>Send to my members</h2><p>Your message stays within {scope.name} and its child levels.</p></div><button onClick={() => setOpen(true)} disabled={!scope.canSend || scope.reachableMembers === 0}><Send size={16} />Compose message</button></div>
     <div className="comm-scope-stats"><div><strong>{scope.totalMembers}</strong><span>Active members in scope</span></div><div><strong>{scope.clubs}</strong><span>Clubs in scope</span></div><div><strong>{scope.reachableMembers}</strong><span>Can receive in-app messages</span></div></div>
-    <p className="privacy-notice">National messages reach members in the national unit’s regions, districts, zones, and clubs. Regional, district, zonal, and club messages follow the same rule within their own branch.</p>
+    <p className="privacy-notice">National messages reach members in the national unit’s regions and clubs. Region and club messages follow the same rule within their own branch.</p>
     {scope.unlinkedMembers > 0 && <p className="privacy-notice">{scope.unlinkedMembers} members do not have a linked login yet. In-app announcements can reach linked member accounts; invite the remaining members to activate their accounts. <Link to="/app/members">Manage members →</Link></p>}
     <h3>Your sending scope</h3><p><b>{scope.name}</b> · {scope.type}</p>
     <p>Recipients see messages under Communication Center → Announcements. Only members in the selected scope receive the announcement.</p>

@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { api } from "./api";
 import { ErrorBox, useWorkspace } from "./App";
 
-const stages = ["National", "Region", "District", "Zone", "Club"] as const;
+const stages = ["National", "Region", "Club"] as const;
 type Stage = typeof stages[number];
 type Row = { id: string; name: string; code: string; parentId: string };
 type Options = { items: Row[]; total: number; page: number; size: number; selectedPath: (Row & { kind: Stage })[] };
@@ -16,15 +16,15 @@ export default function MembershipLocationPicker({ clubId, onChange, publicCatal
   const selected = useQuery<Options>({
     queryKey: ["member-club-path", w?.id, publicCatalog, tenantId, clubId],
     queryFn: () => api("/membership/hierarchy?" + new URLSearchParams({ ...queryContext, clubId })),
-    enabled: !!clubId && !path.Zone,
+    enabled: !!clubId && !path.Region,
   });
   useEffect(() => {
-    if (selected.data?.selectedPath.length && !path.Zone) {
+    if (selected.data?.selectedPath.length && !path.Region) {
       const restored: Partial<Record<Stage, string>> = {};
       for (const node of selected.data.selectedPath) if (stages.includes(node.kind)) restored[node.kind] = node.id;
       setPath(restored);
     }
-  }, [selected.data, path.Zone]);
+  }, [selected.data, path.Region]);
   function choose(stage: Stage, id: string) {
     const next = { ...path, [stage]: id };
     for (const child of stages.slice(stages.indexOf(stage) + 1)) delete next[child];
@@ -33,7 +33,7 @@ export default function MembershipLocationPicker({ clubId, onChange, publicCatal
   }
   return <fieldset className="membership-location-picker">
     <legend>Choose the member’s community</legend>
-    <p>Select National unit → Region → District → Zone → Club.</p>
+    <p>Select National unit → Region → Club.</p>
     <div className="form-grid">{stages.map((stage, index) => <LocationSelect key={stage} stage={stage}
       value={stage === "Club" ? clubId || "" : path[stage] || ""}
       parentId={index ? path[stages[index - 1]] : undefined}

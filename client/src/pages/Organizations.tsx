@@ -14,7 +14,7 @@ import "./MembershipInsights.css";
 import "./Organizations.css";
 const Geo=lazy(()=>import("./analytics/Explorers").then(m=>({default:m.GeoExplorer})));
 function flatten(n:UnitNode):UnitNode[]{return[n,...n.children.flatMap(flatten)];}
-const kinds=["International","National","Region","District","Zone","Club"];
+const kinds=["International","National","Region","Club"];
 const icons=[Globe2,Flag,Layers,Layers,Network,Building2];
 function Card({title,sub,children,wide=false}:{title:string;sub?:string;children:React.ReactNode;wide?:boolean}){return <section className={"oc-card"+(wide?" oc-wide":"")}><header><h2>{title}</h2>{sub&&<p>{sub}</p>}</header>{children}</section>}
 export default function Organizations(){

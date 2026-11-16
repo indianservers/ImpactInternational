@@ -132,6 +132,7 @@ public class Access(Db db, IHttpContextAccessor ctx)
             403
         );
         Check(BoundTenant==null||BoundTenant==w.TenantId,"Switch to this domain's authorized association workspace.",403);
+        Check(await db.Orgs.AnyAsync(o => o.Id == w.OrgId && o.Status == "Active"), "This workspace is no longer active. Choose a current club or region workspace.", 403);
         var grants = await Grants(w);
         Check(
             w.AppointmentId == null
@@ -154,7 +155,7 @@ public class Access(Db db, IHttpContextAccessor ctx)
         return w;
     }
 
-    public async Task<string[]> Grants(Assignment w){if(await db.Users.AnyAsync(u=>u.Id==w.UserId&&u.PlatformAdmin))return All;var grants=await db.RolePermissions.Where(x=>x.RoleId==w.RoleId).Select(x=>x.PermissionId).ToArrayAsync();if(await db.Roles.AnyAsync(r=>r.Id==w.RoleId&&r.TenantId==w.TenantId&&LeaderCommunications.PresidentLevels.Keys.Contains(r.Name)))grants=grants.Concat(new[]{"members.approve","members.view","directory.view","leadership.view","governance.approve"}).Distinct().ToArray();var disabled=await db.TenantBrandings.Where(b=>b.TenantId==w.TenantId).Select(b=>b.DisabledFeatures).SingleOrDefaultAsync();if(disabled==null||disabled=="[]")return grants;var features=GovernanceService.Unpack<string[]>(disabled);var prefixes=features.Where(TenantExperience.PermissionPrefixes.ContainsKey).SelectMany(f=>TenantExperience.PermissionPrefixes[f]).ToArray();return grants.Where(p=>!prefixes.Any(prefix=>p.StartsWith(prefix,StringComparison.Ordinal))).ToArray();}
+    public async Task<string[]> Grants(Assignment w){if(await db.Users.AnyAsync(u=>u.Id==w.UserId&&u.PlatformAdmin))return All;var grants=await db.RolePermissions.Where(x=>x.RoleId==w.RoleId).Select(x=>x.PermissionId).ToArrayAsync();if(!await db.Roles.AnyAsync(r=>r.Id==w.RoleId&&r.TenantId==w.TenantId&&(r.Name=="Association Super Admin"||r.Name=="Main Admin")))grants=grants.Where(p=>!p.StartsWith("communications.")).ToArray();if(await db.Roles.AnyAsync(r=>r.Id==w.RoleId&&r.TenantId==w.TenantId&&LeaderCommunications.PresidentLevels.Keys.Contains(r.Name)))grants=grants.Concat(new[]{"members.approve","members.view","directory.view","leadership.view","governance.approve"}).Distinct().ToArray();if(await db.Roles.AnyAsync(r=>r.Id==w.RoleId&&r.TenantId==w.TenantId&&(r.Name=="Regional President"||r.Name=="Club President")))grants=grants.Concat(new[]{"events.view","events.manage","events.reports","members.view","directory.view","organization.view"}).Distinct().ToArray();var disabled=await db.TenantBrandings.Where(b=>b.TenantId==w.TenantId).Select(b=>b.DisabledFeatures).SingleOrDefaultAsync();if(disabled==null||disabled=="[]")return grants;var features=GovernanceService.Unpack<string[]>(disabled);var prefixes=features.Where(TenantExperience.PermissionPrefixes.ContainsKey).SelectMany(f=>TenantExperience.PermissionPrefixes[f]).ToArray();return grants.Where(p=>!prefixes.Any(prefix=>p.StartsWith(prefix,StringComparison.Ordinal))).ToArray();}
 
 #pragma warning disable EF1002 // Only canonical typed GUID literals enter this SQL; see below.
     public IQueryable<Org> Tree(Guid tenant, Guid root) =>

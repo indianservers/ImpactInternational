@@ -11,10 +11,10 @@ public static class ImpactSetup
     public static readonly string[] Roles =
     [
         "Association Super Admin", "International Administrator", "National Administrator",
-        "District Administrator", "Regional Administrator", "Zone Administrator",
+        "Regional Administrator",
         "Club President", "Club Secretary", "Club Treasurer", "Club Manager",
         "Club Member", "Guest / Applicant",
-        "International President", "National President", "Regional President", "District President", "Zonal President",
+        "International President", "National President", "Regional President",
     ];
 
     // Explicit first-install command. Never resets an existing installation.
@@ -40,7 +40,7 @@ public static class ImpactSetup
         };
         Level? parent = null;
         var levels = new List<Level>();
-        foreach (var name in new[] { "International", "National", "Region", "District", "Zone", "Club" })
+        foreach (var name in new[] { "International", "National", "Region", "Club" })
         {
             var level = new Level { TenantId = tenant.Id, Name = name, ParentLevelId = parent?.Id, IsClub = name == "Club" };
             levels.Add(level);
@@ -50,7 +50,7 @@ public static class ImpactSetup
         {
             TenantId = tenant.Id, LevelId = levels[0].Id, Name = Name, Code = "IMPACT-HQ",
             Country = "India", State = "Telangana", City = "Hyderabad",
-            Website = "https://impactinternational.in/", TimeZone = "Asia/Kolkata", Currency = "INR",
+            FiscalStartMonth = 4, Website = "https://impactinternational.in/", TimeZone = "Asia/Kolkata", Currency = "INR",
         };
         var roles = Roles.Select(name =>
         {

@@ -1,0 +1,66 @@
+[
+  {
+    "test": "Platform Admin login",
+    "passed": true
+  },
+  {
+    "test": "Person resolves to authorized membership",
+    "passed": true
+  },
+  {
+    "test": "Resolved member is the requested person",
+    "passed": true
+  },
+  {
+    "test": "Admin complete profile includes existing identity and sections",
+    "passed": true
+  },
+  {
+    "test": "Leadership profile and member profile refer to same person",
+    "passed": true
+  },
+  {
+    "test": "Leadership affiliation resolves to same membership",
+    "passed": true
+  },
+  {
+    "test": "Pending appointment links to this person",
+    "passed": true
+  },
+  {
+    "test": "Appointment record retains person ID for profile tab",
+    "passed": true
+  },
+  {
+    "test": "Member login",
+    "passed": true
+  },
+  {
+    "test": "Unlisted members stay unavailable to directory-only logins",
+    "passed": true
+  },
+  {
+    "test": "Direct profile URL cannot bypass directory privacy",
+    "passed": true
+  },
+  {
+    "test": "Member lookup uses directory-safe mode",
+    "passed": true
+  },
+  {
+    "test": "Member can still open their own complete profile",
+    "passed": true
+  },
+  {
+    "test": "Club President login",
+    "passed": true
+  },
+  {
+    "test": "Cross-region profile lookup is denied",
+    "passed": true
+  },
+  {
+    "test": "Unknown person does not disclose information",
+    "passed": true
+  }
+]

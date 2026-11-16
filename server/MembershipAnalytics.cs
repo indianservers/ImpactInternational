@@ -56,7 +56,7 @@ public static class MembershipAnalytics
         var visible=await s.Access.Visible(w).AsNoTracking().Select(o=>new AnalyticsOrg{Id=o.Id,ParentId=o.ParentId,Name=o.Name,LevelId=o.LevelId,Status=o.Status,Country=o.Country,State=o.State,Latitude=o.Latitude,Longitude=o.Longitude}).ToListAsync();
         Check(visible.Count<=10000,"Narrow your workspace before exploring more than 10,000 organizational units.");
         var allowed=visible.Select(o=>o.Id).ToArray();
-        foreach(var (key,kind) in new[]{("nationalId","National"),("regionId","Region"),("districtId","District"),("zoneId","Zone"),("clubId","Club")})
+        foreach(var (key,kind) in new[]{("nationalId","National"),("regionId","Region"),("clubId","Club")})
         {
             var id=Id(key);if(id==Guid.Empty)continue;
             Check(await db.Orgs.AnyAsync(o=>o.Id==id&&o.TenantId==w.TenantId&&db.Levels.Any(l=>l.Id==o.LevelId&&l.Name==kind)) && (allowed.Contains(id)||await s.Access.Tree(w.TenantId,id).AnyAsync(o=>o.Id==w.OrgId)),kind+" outside authorized scope.",404);

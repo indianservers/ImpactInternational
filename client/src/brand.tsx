@@ -6,11 +6,9 @@ export const impact = {
   pillars: ["Training", "Business", "Service", "Leadership"],
 };
 const pages: [string, string, string][] = [
-  ["/app/international", "International headquarters", "Impact International oversees National, Regional, District, Zone, and Club levels."],
+  ["/app/international", "International headquarters", "Impact International oversees National, Region, and Club levels."],
   ["/app/national", "Manage national units", "Manage the National level reporting to Impact International headquarters."],
   ["/app/regions", "Manage regions", "Create and manage regions within their national unit."],
-  ["/app/districts", "Manage districts", "Create and manage districts within their regions."],
-  ["/app/zones", "Manage zones", "Create and manage zones within their districts."],
   ["/app/clubs/directory", "Impact club directory", "Explore club leadership, membership, and activity."],
   ["/app/events/new", "Create an Impact event", "Plan an Impact International training session, business gathering, service activity, or leadership program."],
   ["/app/events/:id/checkin", "Impact event check-in", "Welcome participants and record attendance at your Impact International event."],
@@ -64,7 +62,7 @@ const pages: [string, string, string][] = [
   ["/app/leadership-calendar", "Leadership calendar", "Plan terms and continuity across Impact leadership."],
   ["/app/event-intelligence", "Event reports", "Understand participation in Impact gatherings and programs."],
   ["/app/event-settings", "Event settings", "Set up training, business, service, and leadership gatherings."],
-  ["/app/organizations", "Impact structure", "International → National → Regions → Districts → Zones → Clubs."],
+  ["/app/organizations", "Impact structure", "International → National → Regions → Clubs."],
   ["/app/administration", "Roles and access", "Give Impact teams the access their responsibilities require."],
   ["/app/approvals", "Membership approvals", "Welcome new members through the Impact admission process."],
   ["/app/transfers", "Transfers and requests", "Support members as they move between Impact clubs."],

@@ -11,7 +11,7 @@ public static class MembershipHierarchy
             Guid? tenantId = null, bool publicCatalog = false, string? search = null, int page = 1, Guid? clubId = null) =>
         {
             await a.User();
-            Check(ImpactStructure.Kinds.Contains(kind), "Choose a National unit, Region, District, Zone, or Club.");
+            Check(ImpactStructure.Kinds.Contains(kind), "Choose a National unit, Region, or Club.");
             Guid tenant, scope;
             if (publicCatalog)
             {

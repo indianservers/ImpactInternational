@@ -21,7 +21,8 @@ public record AudienceRule(
     string Rsvp = "",
     bool? Attended = null,
     AudienceRule[]? All = null,
-    AudienceRule[]? Any = null
+    AudienceRule[]? Any = null,
+    Guid[]? PersonIds = null
 );
 
 public record BroadcastReference(Guid Id, long Version, string Hash);
@@ -266,7 +267,8 @@ public class CommunicationService(
             .ToListAsync();
         foreach (var w in assignments)
             if (
-                await A.Effective(w)
+                (await A.Grants(w)).Contains("communications.inbox")
+                && await A.Effective(w)
                 && await A.Visible(w).AnyAsync(o => o.Id == org && o.Status == "Active")
             )
                 return true;
@@ -301,6 +303,9 @@ public class CommunicationService(
         var m = Db.Memberships.Where(x =>
             x.TenantId == w.TenantId && A.Tree(w.TenantId, org).Select(o => o.Id).Contains(x.ClubId)
         );
+        Check(rule.PersonIds == null || rule.PersonIds.Length <= 500, "Select at most 500 individual members.");
+        if (rule.PersonIds != null)
+            m = m.Where(x => rule.PersonIds.Contains(x.PersonId));
         if (rule.Status != "All")
             m = m.Where(x => x.Status == rule.Status);
         if (rule.Status == "Active")

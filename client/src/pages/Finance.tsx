@@ -456,9 +456,9 @@ function PickerFields(options: Row) {
       options: [
         "ClubDues",
         "AssociationDues",
-        "DistrictDues",
+
         "RegionalDues",
-        "ZonalDues",
+
         "NationalDues",
         "InternationalDues",
         "JoiningFee",
@@ -918,7 +918,7 @@ function Dues() {
                     options: [
                       "ClubDues",
                       "AssociationDues",
-                      "DistrictDues",
+
                       "NationalDues",
                       "InternationalDues",
                       "JoiningFee",
@@ -1601,7 +1601,6 @@ function Budgets({ autoCreate = false }: { autoCreate?: boolean }) {
               label: "Budget type",
               options: [
                 "Annual",
-                "District",
                 "National",
                 "Committee",
                 "Event",

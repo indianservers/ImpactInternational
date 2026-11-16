@@ -56,6 +56,7 @@ const Auth = lazy(() => import("./pages/Auth"));
 const Members = lazy(() => import("./pages/Members"));
 const Networking = lazy(() => import("./pages/Networking"));
 const Community = lazy(() => import("./pages/Community"));
+const PersonMemberProfile = lazy(() => import("./pages/PersonMemberProfile"));
 const MemberProfile = lazy(() => import("./pages/MemberProfile"));
 const MemberPortal = lazy(() => import("./pages/MemberPortal"));
 const MembershipApplications = lazy(
@@ -118,6 +119,7 @@ const Operations = lazy(() => import("./pages/Operations"));
 const VerifyCertificate = lazy(() =>
   import("./pages/Operations").then((m) => ({ default: m.VerifyCertificate })),
 );
+const Certifications = lazy(() => import("./pages/Certifications"));
 const Communications = lazy(() => import("./pages/Communications"));
 const Events = lazy(() => import("./pages/Events"));
 const EventWizard = lazy(() =>
@@ -578,6 +580,7 @@ export default function App() {
           <Route path="networking/*" element={<Networking />} />
           <Route path="community/*" element={<Community />} />
           <Route path="members/:id" element={<MemberProfile />} />
+          <Route path="people/:personId" element={<PersonMemberProfile />} />
           <Route path="my-membership" element={<MemberPortal />} />
           <Route path="apply" element={<MembershipApplications />} />
           <Route path="approvals" element={<MembershipApplications review />} />
@@ -590,13 +593,14 @@ export default function App() {
           <Route path="international" element={<Organizations international />} />
           <Route path="national" element={<Organizations kind="National" />} />
           <Route path="regions" element={<Organizations kind="Region" />} />
-          <Route path="districts" element={<Organizations kind="District" />} />
-          <Route path="zones" element={<Organizations kind="Zone" />} />
+          <Route path="districts" element={<Navigate to="/app/regions" replace />} />
+          <Route path="zones" element={<Navigate to="/app/regions" replace />} />
           <Route path="intelligence/*" element={<Intelligence />} />
           <Route path="id-cards/*" element={<IdCards />} />
           <Route path="my-id" element={<MyIdCard />} />
           <Route path="finance/*" element={<Finance />} />
           <Route path="operations/*" element={<Operations />} />
+          <Route path="certifications" element={<Certifications />} />
           <Route path="communications/*" element={<Communications />} />
           <Route path="events" element={<Events />} />
           <Route path="events/new" element={<EventWizard />} />

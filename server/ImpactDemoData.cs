@@ -30,17 +30,9 @@ public static class ImpactDemoData
         await db.SaveChangesAsync();
         var regions = Enumerable.Range(1, 5).Select(r => Node("Region", $"DEMO-R{r:00}", $"Region {r:00}", national)).ToArray();
         await db.SaveChangesAsync();
-        var districts = new List<Org>();
-        for (int r = 1; r <= 5; r++) for (int d = 1; d <= 5; d++)
-            districts.Add(Node("District", $"DEMO-R{r:00}-D{d:00}", $"Region {r:00} District {d:00}", regions[r - 1]));
-        await db.SaveChangesAsync();
-        var zones = new List<Org>();
-        foreach (var district in districts) for (int z = 1; z <= 5; z++)
-            zones.Add(Node("Zone", district.Code + $"-Z{z:00}", district.Name[5..] + $" Zone {z:00}", district));
-        await db.SaveChangesAsync();
         var clubs = new List<Org>();
-        foreach (var zone in zones) for (int c = 1; c <= 5; c++)
-            clubs.Add(Node("Club", zone.Code + $"-C{c:00}", zone.Name[5..] + $" Club {c:00}", zone));
+        foreach (var region in regions) for (int c = 1; c <= 125; c++)
+            clubs.Add(Node("Club", region.Code + $"-C{c:000}", region.Name[5..] + $" Club {c:000}", region));
         await db.SaveChangesAsync();
         db.ChangeTracker.Clear();
         var createdMembers = 0;
@@ -67,6 +59,6 @@ public static class ImpactDemoData
         db.Audits.Add(new Audit { TenantId = tenant.Id, OrgId = root.Id, ActorId = admin, Action = "demo.setup", Resource = "625 demo clubs with at least 5 fictional members each" });
         await db.SaveChangesAsync();
         await tx.CommitAsync();
-        Console.WriteLine($"Demo setup complete: 1 national unit, 5 regions, 25 districts, 125 zones, 625 clubs; {createdMembers} members added.");
+        Console.WriteLine($"Demo setup complete: 1 national unit, 5 regions, 625 clubs; {createdMembers} members added.");
     }
 }

@@ -8,7 +8,8 @@ public static class MembershipPresentation
     public static async Task<IQueryable<Membership>> Filter(MembershipService s, Assignment w, IQueryable<Membership> q,
         Guid? districtId, Guid? zoneId, string? membershipType, DateOnly? joinedFrom, DateOnly? joinedTo, DateOnly? renewalFrom, DateOnly? renewalTo, Guid? nationalId=null,string? country=null,string? state=null)
     {
-        foreach(var (id,level) in new[]{(districtId,"District"),(zoneId,"Zone"),(nationalId,"National")})
+        Check(districtId == null && zoneId == null, "Use the National, Region or Club filter.");
+        foreach(var (id,level) in new[]{(nationalId,"National")})
         {
             if(id==null)continue;
             Check(await s.Db.Orgs.AnyAsync(o=>o.Id==id&&o.TenantId==w.TenantId&&s.Db.Levels.Any(l=>l.Id==o.LevelId&&l.Name==level))

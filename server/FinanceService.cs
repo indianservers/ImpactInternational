@@ -57,9 +57,9 @@ public class FinanceService(
     [
         "ClubDues",
         "AssociationDues",
-        "DistrictDues",
+
         "RegionalDues",
-        "ZonalDues",
+
         "NationalDues",
         "InternationalDues",
         "JoiningFee",

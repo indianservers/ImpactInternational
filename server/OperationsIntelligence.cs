@@ -70,7 +70,7 @@ public static partial class OperationsEndpoints
                         "Executive committee meeting",
                         "Membership committee meeting",
                         "Finance committee meeting",
-                        "District review meeting",
+                        "Region review meeting",
                         "Regional meeting",
                         "National executive meeting",
                         "International committee meeting",

@@ -31,7 +31,7 @@ public static class LeaderDemoLogins
             db.AuthenticationAudits.Add(new() { ActorId = user.Id, Action = "operator.platform-admin.grant" });
         }
         await db.SaveChangesAsync();
-        var emails = new[] { "saisatish@indianservers.com", "admin@example.test", "international.president@example.test", "national.president@example.test", "regional.president@example.test", "district.president@example.test", "zonal.president@example.test", "club.president@example.test", "member.club1@example.test", "member.club2@example.test", "member.zone2@example.test", "member.district2@example.test", "member.region2@example.test" };
+        var emails = new[] { "saisatish@indianservers.com", "admin@example.test", "international.president@example.test", "national.president@example.test", "regional.president@example.test", "club.president@example.test", "member.club1@example.test", "member.club2@example.test", "member.region2@example.test" };
         var users = await db.Users.Where(u => emails.Contains(u.Email)).ToListAsync();
         Check(users.Count == emails.Length, "Create all demo leader/member logins before enabling password testing.");
         foreach (var user in users)
@@ -73,9 +73,7 @@ public static class LeaderDemoLogins
             ("international.president@example.test", "International President", "IMPACT-HQ"),
             ("national.president@example.test", "National President", "DEMO-NAT-01"),
             ("regional.president@example.test", "Regional President", "DEMO-R01"),
-            ("district.president@example.test", "District President", "DEMO-R01-D01"),
-            ("zonal.president@example.test", "Zonal President", "DEMO-R01-D01-Z01"),
-            ("club.president@example.test", "Club President", "DEMO-R01-D01-Z01-C01"),
+            ("club.president@example.test", "Club President", "DEMO-R01-C001"),
         };
         foreach (var (email, role, code) in leaders)
         {
@@ -84,11 +82,11 @@ public static class LeaderDemoLogins
         }
         var members = new[]
         {
-            ("member.club1@example.test", "DEMO-R01-D01-Z01-C01"),
-            ("member.club2@example.test", "DEMO-R01-D01-Z01-C02"),
-            ("member.zone2@example.test", "DEMO-R01-D01-Z02-C01"),
-            ("member.district2@example.test", "DEMO-R01-D02-Z01-C01"),
-            ("member.region2@example.test", "DEMO-R02-D01-Z01-C01"),
+            ("member.club1@example.test", "DEMO-R01-C001"),
+            ("member.club2@example.test", "DEMO-R01-C002"),
+
+
+            ("member.region2@example.test", "DEMO-R02-C001"),
         };
         foreach (var (email, code) in members)
         {
@@ -101,6 +99,6 @@ public static class LeaderDemoLogins
         }
         await db.SaveChangesAsync();
         await tx.CommitAsync();
-        Console.WriteLine("Six president and five member demo logins are ready. Newly created logins use the current administrator demo password. Existing passwords are preserved.");
+        Console.WriteLine("Four president and three member demo logins are ready. Newly created logins use the current administrator demo password. Existing passwords are preserved.");
     }
 }

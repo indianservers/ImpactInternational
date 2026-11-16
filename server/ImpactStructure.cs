@@ -5,7 +5,7 @@ namespace Clubs;
 
 public static class ImpactStructure
 {
-    public static readonly string[] Kinds = ["National", "Region", "District", "Zone", "Club"];
+    public static readonly string[] Kinds = ["National", "Region", "Club"];
     const string GuideKey = "impact.setup.completed";
 
     public static async Task Configure(Db db)
@@ -27,6 +27,12 @@ public static class ImpactStructure
             level.IsClub = kind == "Club";
             parent = level.Id;
         }
+        if (!await db.TrainingPrograms.AnyAsync(p => p.TenantId == tenant.Id))
+            foreach (var name in new[] { "Train the Trainer", "Digital Marketing", "AI" })
+                db.TrainingPrograms.Add(new TrainingProgram { TenantId = tenant.Id, Name = name });
+        foreach (var name in ActivityPolicy.Types)
+            if (!await db.EventTypes.AnyAsync(t => t.TenantId == tenant.Id && t.Name == name))
+                db.EventTypes.Add(new EventType { TenantId = tenant.Id, Name = name });
         await db.SaveChangesAsync();
     }
 
@@ -49,7 +55,7 @@ public static class ImpactStructure
             var w = await a.TenantWorkspace("settings.manage");
             await using var tx = await a.Mutation(w);
             foreach (var kind in Kinds)
-                Check(await a.Db.Orgs.AnyAsync(o => o.TenantId == w.TenantId && o.Status != "Archived" && a.Db.Levels.Any(l => l.Id == o.LevelId && l.Name == kind)), "Create your first national unit, region, district, zone, and club before completing setup.");
+                Check(await a.Db.Orgs.AnyAsync(o => o.TenantId == w.TenantId && o.Status != "Archived" && a.Db.Levels.Any(l => l.Id == o.LevelId && l.Name == kind)), "Create your first national unit, region, and club before completing setup.");
             var row = await a.Db.TenantSettings.SingleOrDefaultAsync(s => s.TenantId == w.TenantId && s.Key == GuideKey);
             if (row == null) { row = new TenantSetting { TenantId = w.TenantId, Key = GuideKey }; a.Db.TenantSettings.Add(row); }
             row.Value = "true";

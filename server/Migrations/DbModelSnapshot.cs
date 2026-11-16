@@ -178,6 +178,17 @@ namespace Clubs.Api.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<Guid?>("ActivityClubId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("ActivityLevel")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("ActivityType")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<bool>("AllowGuests")
                         .HasColumnType("boolean");
 
@@ -195,6 +206,10 @@ namespace Clubs.Api.Migrations
                     b.Property<int>("Capacity")
                         .HasColumnType("integer");
 
+                    b.Property<string>("ChiefGuest")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<Guid?>("CommitteeId")
                         .HasColumnType("uuid");
 
@@ -202,6 +217,14 @@ namespace Clubs.Api.Migrations
                         .HasColumnType("boolean");
 
                     b.Property<string>("Contact")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("CoordinatorEmail")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("CoordinatorPhone")
                         .IsRequired()
                         .HasColumnType("text");
 
@@ -239,6 +262,12 @@ namespace Clubs.Api.Migrations
                     b.Property<int>("MaxCompanions")
                         .HasColumnType("integer");
 
+                    b.Property<decimal>("MeetingCost")
+                        .HasColumnType("numeric");
+
+                    b.Property<int>("MemberParticipants")
+                        .HasColumnType("integer");
+
                     b.Property<int>("OfferMinutes")
                         .HasColumnType("integer");
 
@@ -249,8 +278,15 @@ namespace Clubs.Api.Migrations
                     b.Property<Guid>("OrgId")
                         .HasColumnType("uuid");
 
+                    b.Property<int>("OutsideVolunteers")
+                        .HasColumnType("integer");
+
                     b.Property<bool>("Paid")
                         .HasColumnType("boolean");
+
+                    b.Property<string>("ProjectCoordinator")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<string>("Publication")
                         .IsRequired()
@@ -6085,6 +6121,72 @@ namespace Clubs.Api.Migrations
                     b.ToTable("MemberActivities");
                 });
 
+            modelBuilder.Entity("Clubs.MemberCertification", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Batch")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("CertificateId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateOnly?>("IssuedOn")
+                        .HasColumnType("date");
+
+                    b.Property<string>("Issuer")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Notes")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("PersonId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("ProgramId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("TrainingCenter")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateOnly?>("ValidUntil")
+                        .HasColumnType("date");
+
+                    b.Property<string>("VerificationUrl")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<long>("Version")
+                        .IsConcurrencyToken()
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasAlternateKey("TenantId", "Id");
+
+                    b.HasIndex("PersonId");
+
+                    b.HasIndex("TenantId", "PersonId");
+
+                    b.HasIndex("TenantId", "ProgramId", "CertificateId")
+                        .IsUnique();
+
+                    b.ToTable("MemberCertifications");
+                });
+
             modelBuilder.Entity("Clubs.MemberContactRequest", b =>
                 {
                     b.Property<Guid>("Id")
@@ -8871,6 +8973,38 @@ namespace Clubs.Api.Migrations
                         .IsUnique();
 
                     b.ToTable("TenantSettings");
+                });
+
+            modelBuilder.Entity("Clubs.TrainingProgram", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<bool>("Active")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid");
+
+                    b.Property<long>("Version")
+                        .IsConcurrencyToken()
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TenantId", "Name")
+                        .IsUnique();
+
+                    b.ToTable("TrainingPrograms");
                 });
 
             modelBuilder.Entity("Clubs.TransferDecision", b =>
@@ -11717,6 +11851,28 @@ namespace Clubs.Api.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Clubs.MemberCertification", b =>
+                {
+                    b.HasOne("Clubs.Person", null)
+                        .WithMany()
+                        .HasForeignKey("PersonId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Clubs.Tenant", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Clubs.TrainingProgram", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "ProgramId")
+                        .HasPrincipalKey("TenantId", "Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Clubs.MemberContactRequest", b =>
                 {
                     b.HasOne("Clubs.Tenant", null)
@@ -12546,6 +12702,15 @@ namespace Clubs.Api.Migrations
                 });
 
             modelBuilder.Entity("Clubs.TenantSetting", b =>
+                {
+                    b.HasOne("Clubs.Tenant", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Clubs.TrainingProgram", b =>
                 {
                     b.HasOne("Clubs.Tenant", null)
                         .WithMany()

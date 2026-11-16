@@ -67,7 +67,7 @@ export default function StructureManagement({ kind, international = false }: { k
   const previousKind = kind && unitKinds.indexOf(kind) > 0 ? unitKinds[unitKinds.indexOf(kind) - 1] : null;
   return <>
     <PageHeader eyebrow="ONE ORGANIZATION. A CLEAR STRUCTURE." title={kind ? "Manage " + unitPlural(kind).toLowerCase() : international ? "International headquarters" : "Impact International structure"}
-      description={kind ? (kind === "National" ? "Create and manage national units reporting to Impact International headquarters." : "Create and manage " + unitPlural(kind).toLowerCase() + " within their " + unitSingular(previousKind!) + ".") : "International → National → Regions → Districts → Zones → Clubs. All belong to Impact International."}>
+      description={kind ? (kind === "National" ? "Create and manage national units reporting to Impact International headquarters." : "Create and manage " + unitPlural(kind).toLowerCase() + " within their " + unitSingular(previousKind!) + ".") : "International → National → Regions → Clubs. All belong to Impact International."}>
       {kind && <div className="header-actions">{canCreate && <button onClick={() => create(kind)} disabled={!level}><Plus size={17} />Create {unitSingular(kind)}</button>}{kind === "Club" && w?.permissions.includes("clubs.view") && <Link className="button secondary" to="/app/clubs/directory">Directory & insights</Link>}</div>}
     </PageHeader>
     <ImpactSetupGuide />

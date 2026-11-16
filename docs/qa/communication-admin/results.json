@@ -1,0 +1,342 @@
+{
+  "checks": 82,
+  "passed": true,
+  "transport": "Local SMTP and Meta-compatible HTTP mocks; no real recipients or provider delivery verified.",
+  "audiences": {
+    "all": 3125,
+    "zone": 25,
+    "district": 125,
+    "club": 5,
+    "individual": 1
+  },
+  "results": [
+    {
+      "test": "Platform Admin and non-platform Main Admin can open Center",
+      "passed": true
+    },
+    {
+      "test": "Main Admin is tested without PlatformAdmin flag",
+      "passed": true
+    },
+    {
+      "test": "Organization picker exposes complete hierarchy beyond 100 units",
+      "passed": true
+    },
+    {
+      "test": "all Email audience count matches independent hierarchy",
+      "passed": true
+    },
+    {
+      "test": "all WhatsApp audience count matches independent hierarchy",
+      "passed": true
+    },
+    {
+      "test": "zone Email audience count matches independent hierarchy",
+      "passed": true
+    },
+    {
+      "test": "zone WhatsApp audience count matches independent hierarchy",
+      "passed": true
+    },
+    {
+      "test": "district Email audience count matches independent hierarchy",
+      "passed": true
+    },
+    {
+      "test": "district WhatsApp audience count matches independent hierarchy",
+      "passed": true
+    },
+    {
+      "test": "club Email audience count matches independent hierarchy",
+      "passed": true
+    },
+    {
+      "test": "club WhatsApp audience count matches independent hierarchy",
+      "passed": true
+    },
+    {
+      "test": "Individual selection deduplicates a person",
+      "passed": true
+    },
+    {
+      "test": "Empty individual selection never targets everyone",
+      "passed": true
+    },
+    {
+      "test": "Individual outside selected club is excluded",
+      "passed": true
+    },
+    {
+      "test": "Unknown person does not expand recipient set",
+      "passed": true
+    },
+    {
+      "test": "Member search remains within selected club",
+      "passed": true
+    },
+    {
+      "test": "Oversized individual list is rejected",
+      "passed": true
+    },
+    {
+      "test": "member.club1 cannot access Center APIs",
+      "passed": true
+    },
+    {
+      "test": "member.club1 cannot preview or send",
+      "passed": true
+    },
+    {
+      "test": "club.president cannot access Center APIs",
+      "passed": true
+    },
+    {
+      "test": "club.president cannot preview or send",
+      "passed": true
+    },
+    {
+      "test": "zonal.president cannot access Center APIs",
+      "passed": true
+    },
+    {
+      "test": "zonal.president cannot preview or send",
+      "passed": true
+    },
+    {
+      "test": "district.president cannot access Center APIs",
+      "passed": true
+    },
+    {
+      "test": "district.president cannot preview or send",
+      "passed": true
+    },
+    {
+      "test": "regional.president cannot access Center APIs",
+      "passed": true
+    },
+    {
+      "test": "regional.president cannot preview or send",
+      "passed": true
+    },
+    {
+      "test": "national.president cannot access Center APIs",
+      "passed": true
+    },
+    {
+      "test": "national.president cannot preview or send",
+      "passed": true
+    },
+    {
+      "test": "international.president cannot access Center APIs",
+      "passed": true
+    },
+    {
+      "test": "international.president cannot preview or send",
+      "passed": true
+    },
+    {
+      "test": "Unallowlisted email sender cannot be verified",
+      "passed": true
+    },
+    {
+      "test": "Unverified email sender cannot create a campaign",
+      "passed": true
+    },
+    {
+      "test": "WhatsApp broadcast cannot send without an approved template",
+      "passed": true
+    },
+    {
+      "test": "Email and WhatsApp senders verify and approved WhatsApp template syncs",
+      "passed": true
+    },
+    {
+      "test": "Main Admin can compose email outreach without PlatformAdmin flag",
+      "passed": true
+    },
+    {
+      "test": "Email all cannot bypass approval",
+      "passed": true
+    },
+    {
+      "test": "Email all freezes exactly the intended audience",
+      "passed": true
+    },
+    {
+      "test": "Email all transport sends only expected fictional recipients",
+      "passed": true
+    },
+    {
+      "test": "Email zone cannot bypass approval",
+      "passed": true
+    },
+    {
+      "test": "Email zone freezes exactly the intended audience",
+      "passed": true
+    },
+    {
+      "test": "Email zone transport sends only expected fictional recipients",
+      "passed": true
+    },
+    {
+      "test": "Email district cannot bypass approval",
+      "passed": true
+    },
+    {
+      "test": "Email district freezes exactly the intended audience",
+      "passed": true
+    },
+    {
+      "test": "Email district transport sends only expected fictional recipients",
+      "passed": true
+    },
+    {
+      "test": "Email club cannot bypass approval",
+      "passed": true
+    },
+    {
+      "test": "Email club freezes exactly the intended audience",
+      "passed": true
+    },
+    {
+      "test": "Email club transport sends only expected fictional recipients",
+      "passed": true
+    },
+    {
+      "test": "Email individual cannot bypass approval",
+      "passed": true
+    },
+    {
+      "test": "Email individual freezes exactly the intended audience",
+      "passed": true
+    },
+    {
+      "test": "Email individual transport sends only expected fictional recipients",
+      "passed": true
+    },
+    {
+      "test": "WhatsApp all cannot bypass approval",
+      "passed": true
+    },
+    {
+      "test": "WhatsApp all freezes exactly the intended audience",
+      "passed": true
+    },
+    {
+      "test": "WhatsApp all transport sends only expected fictional recipients",
+      "passed": true
+    },
+    {
+      "test": "WhatsApp zone cannot bypass approval",
+      "passed": true
+    },
+    {
+      "test": "WhatsApp zone freezes exactly the intended audience",
+      "passed": true
+    },
+    {
+      "test": "WhatsApp zone transport sends only expected fictional recipients",
+      "passed": true
+    },
+    {
+      "test": "WhatsApp district cannot bypass approval",
+      "passed": true
+    },
+    {
+      "test": "WhatsApp district freezes exactly the intended audience",
+      "passed": true
+    },
+    {
+      "test": "WhatsApp district transport sends only expected fictional recipients",
+      "passed": true
+    },
+    {
+      "test": "WhatsApp club cannot bypass approval",
+      "passed": true
+    },
+    {
+      "test": "WhatsApp club freezes exactly the intended audience",
+      "passed": true
+    },
+    {
+      "test": "WhatsApp club transport sends only expected fictional recipients",
+      "passed": true
+    },
+    {
+      "test": "WhatsApp individual cannot bypass approval",
+      "passed": true
+    },
+    {
+      "test": "WhatsApp individual freezes exactly the intended audience",
+      "passed": true
+    },
+    {
+      "test": "WhatsApp individual transport sends only expected fictional recipients",
+      "passed": true
+    },
+    {
+      "test": "SMTP received personalized email with selected sender",
+      "passed": true
+    },
+    {
+      "test": "WhatsApp used approved templates and personalized parameters",
+      "passed": true
+    },
+    {
+      "test": "WhatsApp rejects forged delivery confirmation",
+      "passed": true
+    },
+    {
+      "test": "Signed WhatsApp delivery confirmation updates persisted status",
+      "passed": true
+    },
+    {
+      "test": "Platform Admin browser defaults to Email campaign",
+      "passed": true
+    },
+    {
+      "test": "Browser can select Zone targeting",
+      "passed": true
+    },
+    {
+      "test": "Browser can select District targeting",
+      "passed": true
+    },
+    {
+      "test": "Browser can select Club targeting",
+      "passed": true
+    },
+    {
+      "test": "Browser can select an individual member",
+      "passed": true
+    },
+    {
+      "test": "Admin Center renders without browser errors",
+      "passed": true
+    },
+    {
+      "test": "Communication Center fits mobile viewport",
+      "passed": true
+    },
+    {
+      "test": "Main Admin browser access restriction is correct",
+      "passed": true
+    },
+    {
+      "test": "Member has no Communication Center navigation link",
+      "passed": true
+    },
+    {
+      "test": "Member browser access restriction is correct",
+      "passed": true
+    },
+    {
+      "test": "District President has no Communication Center navigation link",
+      "passed": true
+    },
+    {
+      "test": "District President browser access restriction is correct",
+      "passed": true
+    }
+  ]
+}

@@ -20,6 +20,17 @@ public class ClubEvent : ITenantRecord
     public Guid TypeId { get; set; }
     public Guid? CommitteeId { get; set; }
     public Guid CreatorId { get; set; }
+    public string ActivityType { get; set; } = "Training";
+    public string ActivityLevel { get; set; } = "Club";
+    public Guid? ActivityClubId { get; set; }
+    public string ChiefGuest { get; set; } = "";
+    public int MemberParticipants { get; set; }
+    public int OutsideVolunteers { get; set; }
+    public string ProjectCoordinator { get; set; } = "";
+    public string CoordinatorPhone { get; set; } = "";
+    public string CoordinatorEmail { get; set; } = "";
+    public decimal MeetingCost { get; set; }
+    public double TotalHours => (EndsAt - StartsAt).TotalHours;
     public string Title { get; set; } = "";
     public string Description { get; set; } = "";
     public string TimeZone { get; set; } = "UTC";

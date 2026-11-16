@@ -328,7 +328,6 @@ public static partial class FinanceEndpoints
                         && new[]
                         {
                             "Annual",
-                            "District",
                             "National",
                             "Committee",
                             "Event",

@@ -1,3 +1,4 @@
+import PresidentStatistics from "./PresidentStatistics";
 import { lazy, Suspense } from "react";
 import { Link, Navigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -16,6 +17,7 @@ export default function RoleHome() {
   const d=q.data;
   if(!d || !w)return null;
   if(d.kind==="platform")return <Suspense fallback={<Skeleton/>}><ImpactSetupGuide/><Platform/></Suspense>;
+  if(["Club President","Regional President"].includes(w.role))return <PresidentStatistics/>;
   if(d.kind==="finance")return <Navigate to="/app/finance" replace/>;
   if(d.kind==="committee")return <><section className="panel"><div className="eyebrow">YOUR AUTHORIZED WORKSPACES</div><h1>{d.title}</h1><p>Current committee memberships and responsibilities.</p></section><div className="gov-club-cards">{d.committees.map((c:any)=><Link className="panel" key={c.id} to={"/app/committees/"+c.id}><h2>{c.name}</h2><p>{c.canManage?"Committee leadership workspace":"Committee member workspace"}</p></Link>)}</div><Link to="/app/my-membership">My membership →</Link></>;
   if(d.kind==="member")return <Suspense fallback={<Skeleton/>}><Member/></Suspense>;

@@ -342,6 +342,17 @@ public static partial class CommunicationEndpoints
                 };
             }
         );
+        api.MapGet("/recipient-search", async (CommunicationService s, Guid orgId, string search = "") =>
+        {
+            var w = await s.A.Workspace("communications.manage");
+            await s.Scope(w, orgId);
+            Check(search.Length <= 100, "Search too long.");
+            var ids = await s.Audience(CommunicationService.Within(w, orgId), new AudienceRule(OrgId: orgId));
+            return await s.Db.Persons.Where(p => ids.Contains(p.Id) &&
+                (search == "" || EF.Functions.ILike(p.DisplayName, "%" + search + "%")))
+                .OrderBy(p => p.DisplayName).Take(50)
+                .Select(p => new { p.Id, p.DisplayName }).ToListAsync();
+        });
         api.MapGet(
             "/organizations",
             async (CommunicationService s) =>
@@ -350,12 +361,12 @@ public static partial class CommunicationEndpoints
                 return await s
                     .A.Visible(w)
                     .OrderBy(o => o.Name)
-                    .Take(100)
                     .Select(o => new
                     {
                         o.Id,
                         o.Name,
                         o.Code,
+                        Level = s.Db.Levels.Where(l => l.Id == o.LevelId).Select(l => l.Name).FirstOrDefault(),
                     })
                     .ToListAsync();
             }
@@ -485,13 +496,8 @@ public static partial class CommunicationEndpoints
                 if (a.Provider == "SMTP")
                 {
                     Check(
-                        cfg["Smtp:Host"] != null
-                            && string.Equals(
-                                a.Sender,
-                                cfg["Smtp:From"],
-                                StringComparison.OrdinalIgnoreCase
-                            ),
-                        "Sender must match the deployment's verified SMTP identity.",
+                        !string.IsNullOrWhiteSpace(cfg["Smtp:Host"]),
+                        "Configure SMTP before verifying a sender.",
                         409
                     );
                     Check(

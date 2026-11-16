@@ -38,7 +38,10 @@ public record EventInput(
     bool Paid = false,
     long Version = 1,
     double? Latitude = null,
-    double? Longitude = null
+    double? Longitude = null,
+    string ActivityType = "Training", string ActivityLevel = "Club", Guid? ActivityClubId = null,
+    string ChiefGuest = "", int MemberParticipants = 0, int OutsideVolunteers = 0,
+    string ProjectCoordinator = "", string CoordinatorPhone = "", string CoordinatorEmail = "", decimal MeetingCost = 0
 );
 
 public record EventRegistrationInput(

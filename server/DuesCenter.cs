@@ -37,11 +37,11 @@ public static partial class DuesCenter
 {
     public const string View = "finance.dues.reports", Collect = "finance.dues.collect";
     public static readonly string[] CollectionMethods = ["Cash", "BankTransfer", "UPI", "Cheque", "PersonalAccount"];
-    public static readonly string[] Purposes = ["ClubDues", "AssociationDues", "DistrictDues", "RegionalDues", "ZonalDues", "NationalDues", "InternationalDues", "JoiningFee", "Renewal"];
+    public static readonly string[] Purposes = ["ClubDues", "AssociationDues",  "RegionalDues",  "NationalDues", "InternationalDues", "JoiningFee", "Renewal"];
     public static readonly string[][] Reports =
     [
-        ["overview", "Dues overview"], ["club", "Club-wise dues"], ["zone", "Zone-wise dues"],
-        ["district", "District-wise dues"], ["region", "Region-wise dues"], ["national", "National-wise dues"],
+        ["overview", "Dues overview"], ["club", "Club-wise dues"],
+         ["region", "Region-wise dues"], ["national", "National-wise dues"],
         ["member", "Member dues ledger"], ["pending", "All pending dues"], ["overdue", "Overdue dues"],
         ["unpaid", "Unpaid invoices"], ["partial", "Partially paid invoices"], ["paid", "Fully cleared invoices"],
         ["ageing", "Due ageing"], ["purpose", "Dues by purpose"], ["billing-month", "Monthly billing"],
@@ -244,7 +244,7 @@ public static partial class DuesCenter
         {
             ["membershipId"] = i.MembershipId, ["invoiceId"] = i.Id, ["invoice"] = i.Number, ["member"] = i.Customer, ["memberId"] = members[i.MembershipId!.Value].Number,
             ["entity"] = entities.GetValueOrDefault(i.EntityId, "Unknown"),
-            ["club"] = Level(i, "Club"), ["region"] = Level(i, "Region"), ["district"] = Level(i, "District"), ["zone"] = Level(i, "Zone"),
+            ["club"] = Level(i, "Club"), ["region"] = Level(i, "Region"),
             ["currency"] = i.Currency, ["billed"] = i.Total, ["collected"] = i.Paid, ["credits"] = i.Credited, ["pending"] = i.Outstanding,
             ["dueOn"] = i.DueOn, ["status"] = i.PaymentStatus, ["purpose"] = i.Purpose,
             ["pendingVerification"] = awaiting.GetValueOrDefault(i.Id),
@@ -269,7 +269,7 @@ public static partial class DuesCenter
         var rows = kind switch
         {
             "overview" => Aggregate(invoices, _ => "Impact dues"),
-            "club" or "zone" or "district" or "region" or "national" => Aggregate(invoices, i => Level(i, CultureInfo.InvariantCulture.TextInfo.ToTitleCase(kind)), i => LevelId(i, CultureInfo.InvariantCulture.TextInfo.ToTitleCase(kind)).ToString()),
+            "club" or "region" or "national" => Aggregate(invoices, i => Level(i, CultureInfo.InvariantCulture.TextInfo.ToTitleCase(kind)), i => LevelId(i, CultureInfo.InvariantCulture.TextInfo.ToTitleCase(kind)).ToString()),
             "purpose" => Aggregate(invoices, i => i.Purpose),
             "billing-month" => Aggregate(invoices, i => i.Date.ToString("yyyy-MM")),
             "ageing" => Aggregate(invoices.Where(i => i.Outstanding > 0), i => i.DueOn >= FinanceService.Today ? "Not yet overdue" : FinanceService.Today.DayNumber - i.DueOn.DayNumber <= 30 ? "1–30 days" : FinanceService.Today.DayNumber - i.DueOn.DayNumber <= 60 ? "31–60 days" : FinanceService.Today.DayNumber - i.DueOn.DayNumber <= 90 ? "61–90 days" : "90+ days"),

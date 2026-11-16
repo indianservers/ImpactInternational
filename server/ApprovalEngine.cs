@@ -13,8 +13,7 @@ public static class ApprovalEngine
     public static async Task<bool> HierarchyAuthority(Db db, Assignment w) =>
         await PlatformAuthority(db, w) || await db.Roles.AnyAsync(r =>
             r.Id == w.RoleId && r.TenantId == w.TenantId &&
-            (r.Name == "Club President" || r.Name == "Zonal President" ||
-             r.Name == "District President" || r.Name == "Regional President" ||
+            (r.Name == "Club President" || r.Name == "Regional President" ||
              r.Name == "National President" || r.Name == "International President"));
 
     public static async Task<bool> HierarchyRequest(Db db, Assignment w, GovernanceRequest r) =>

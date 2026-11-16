@@ -13,7 +13,7 @@ public class TenantBranding : ITenantRecord
     public string Favicon { get; set; } = "";
     public string Accent { get; set; } = "#2563eb";
     public string ClubTerm { get; set; } = "Club";
-    public string DistrictTerm { get; set; } = "District";
+    public string DistrictTerm { get; set; } = "Region";
     public string Welcome { get; set; } = "Connected leadership. Meaningful impact.";
     public string Languages { get; set; } = "en";
     public string DisabledFeatures { get; set; } = "[]";

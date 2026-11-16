@@ -12,13 +12,13 @@ public static class LeaderCommunications
     public static readonly Dictionary<string, string> PresidentLevels = new()
     {
         ["International President"] = "International", ["National President"] = "National",
-        ["Regional President"] = "Region", ["District President"] = "District",
-        ["Zonal President"] = "Zone", ["Club President"] = "Club",
+        ["Regional President"] = "Region",
+        ["Club President"] = "Club",
     };
     public static readonly string[] SendingRoles = PresidentLevels.Keys.Concat(new[]
     {
         "International Administrator", "National Administrator", "Regional Administrator",
-        "District Administrator", "Zone Administrator", "Club Secretary", "Club Manager",
+        "Club Secretary", "Club Manager",
     }).ToArray();
 
     public static async Task Configure(Db db)

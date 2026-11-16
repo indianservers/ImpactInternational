@@ -1,0 +1,24 @@
+{
+  "pages": [
+    "Membership Insights",
+    "Pending application inbox",
+    "Members",
+    "Platform Admin dashboard"
+  ],
+  "verified": [
+    "Insights uses API counts",
+    "Pending KPI opens Pending filter instead of drafts",
+    "Members and dashboard agree with Insights renewal/application counts",
+    "Manual refresh works"
+  ],
+  "currentDataset": {
+    "members": 3166,
+    "active": 3149,
+    "renewalsWithin30Days": 0,
+    "pendingApplications": 0,
+    "draftApplications": 2
+  },
+  "apiChecks": 19,
+  "historicalAnalyticsRegressionChecks": 142,
+  "temporaryFixturesRestored": true
+}

@@ -123,6 +123,7 @@ public class MailWorker(
                                 continue;
                             }
                         }
+                        string? communicationSender = null;
                         if (mail.AccountId != null)
                         {
                             var account = await db.CommunicationAccounts.SingleAsync(
@@ -156,6 +157,8 @@ public class MailWorker(
                                 continue;
                             }
                             account.WindowCount++;
+                            if (mail.Channel == "Email")
+                                communicationSender = account.Sender;
                         }
                         if (mail.Kind.StartsWith("communication."))
                         {
@@ -314,7 +317,7 @@ public class MailWorker(
                             ),
                         };
                         using var message = new MailMessage(
-                            config["Smtp:From"]
+                            communicationSender ?? config["Smtp:From"]
                                 ?? throw new InvalidOperationException("Smtp:From required"),
                             recipient,
                             !string.IsNullOrEmpty(mail.Subject)

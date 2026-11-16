@@ -31,7 +31,7 @@ const featureSections = [
     tab("My connections", "/networking/connections", "directory.view"), tab("My networking profile", "/networking/profile", "directory.view"),
   ] },
   { id: "organizations", label: "Impact structure", icon: Network, tabs: [
-    tab("Structure overview", "/organizations", "organization.view"), tab("International", "/international", "organization.view"), tab("National", "/national", "organization.view"), tab("Regions", "/regions", "organization.view"), tab("Districts", "/districts", "organization.view"), tab("Zones", "/zones", "organization.view"), tab("Clubs", "/clubs", "organization.view"),
+    tab("Structure overview", "/organizations", "organization.view"), tab("International", "/international", "organization.view"), tab("National", "/national", "organization.view"), tab("Regions", "/regions", "organization.view"), tab("Clubs", "/clubs", "organization.view"),
     tab("Club overview", "/club-administration", "governance.reports"),
   ] },
   { id: "leadership", label: "Leadership", icon: ShieldCheck, tabs: [
@@ -53,7 +53,7 @@ const featureSections = [
   { id: "cards", label: "ID Card Studio", icon: CreditCard, tabs: [tab("ID Card Studio", "/id-cards", "members.cards"), tab("My digital ID", "/my-id")] },
   { id: "intelligence", label: "Intelligence", icon: ChartNoAxesCombined, tabs: [tab("Intelligence", "/intelligence", "intelligence.assistant")] },
   { id: "administration", label: "Administration", icon: Settings, tabs: [
-    tab("Roles & access", "/administration", "roles.view"), tab("Audit trail", "/audit", "audit.view"), tab("Impact settings", "/settings", "settings.view"),
+    tab("Roles & access", "/administration", "roles.view"), tab("Audit trail", "/audit", "audit.view"), tab("Impact settings", "/settings", "settings.view"), tab("Certifications", "/certifications", "settings.manage"),
   ] },
   { id: "community", label: "My Impact community", icon: UserRound, tabs: [
     tab("My membership", "/my-membership"), tab("Join a club", "/apply"), tab("Profile & security", "/profile"),

@@ -65,8 +65,6 @@ export default function Members({
         "number",
         "club",
         "region",
-        "district",
-        "zone",
         "category",
         "offices",
         "city",
@@ -81,7 +79,7 @@ export default function Members({
         "industry",
         "actions",
       ],
-      hidden: ["updatedAt", "email", "phone", "profession", "industry", "district", "zone", "renewalStatus", "endsAt"],
+      hidden: ["updatedAt", "email", "phone", "profession", "industry", "renewalStatus", "endsAt"],
       widths: {
         name: 210,
         club: 160,
@@ -143,8 +141,6 @@ export default function Members({
   useEffect(()=>{localStorage.setItem("impact-members-view",view);},[view]);
   const selectRegion=(id:string)=>{setRegion(id);setDistrict("");setZone("");setClub("");};
   const resetFilters=()=>{setSearch("");setStatuses([]);selectRegion("");setCategory("");setCity("");setProfession("");setIndustry("");setExpertise("");setOffice("");setExtra({});setDraftFilters({});};
-  const districtChoices=useQuery<any>({queryKey:["member-districts",w?.id,regionId],queryFn:()=>api("/membership/hierarchy?kind=District"+(regionId?"&parentId="+regionId:"")),enabled:!!w});
-  const zoneChoices=useQuery<any>({queryKey:["member-zones",w?.id,districtId],queryFn:()=>api("/membership/hierarchy?kind=Zone&parentId="+districtId),enabled:!!w&&!!districtId});
   const q = useQuery({
     queryKey: ["members", directory, w?.id, params.toString()],
     queryFn: () => api((directory ? "/directory" : "/members") + "?" + params),
@@ -191,8 +187,6 @@ export default function Members({
       "number",
       "club",
       "region",
-      "district",
-      "zone",
       "category",
       "offices",
       "city",
@@ -333,8 +327,6 @@ export default function Members({
       {!directory&&<MembershipIntelligence {...{metrics,range,setRange,setDates}} onStatus={setStatuses} onRegion={selectRegion} canApprove={grants.includes("members.approve")}/>}
       <section className="mm-primary-filters" aria-label="Member hierarchy filters">
        <label>Region<select value={regionId} onChange={e=>selectRegion(e.target.value)}><option value="">All authorized regions</option>{regions.data?.map(r=><option key={r.id} value={r.id}>{r.name}</option>)}</select></label>
-       <label>District<select value={districtId} onChange={e=>{setDistrict(e.target.value);setZone("");setClub("");}}><option value="">All authorized districts</option>{districtChoices.data?.items.map((d:any)=><option key={d.id} value={d.id}>{d.name}</option>)}</select></label>
-       <label>Zone<select value={zoneId} disabled={!districtId} onChange={e=>{setZone(e.target.value);setClub("");}}><option value="">{districtId?"All zones":"Choose district first"}</option>{zoneChoices.data?.items.map((d:any)=><option key={d.id} value={d.id}>{d.name}</option>)}</select></label>
        <label>Club<select value={clubId} onChange={e=>setClub(e.target.value)}><option value="">All authorized clubs</option>{choices.data?.clubs.map((c:any)=><option key={c.id} value={c.id}>{c.name}</option>)}</select></label>
        <label>Category<select value={categoryId} onChange={e=>setCategory(e.target.value)}><option value="">All categories</option>{choices.data?.categories.map((c:any)=><option key={c.id} value={c.id}>{c.name}</option>)}</select></label>
        <label>Status<select aria-label="Membership status filter" value={statuses.length===1?statuses[0]:""} onChange={e=>setStatuses(e.target.value?[e.target.value]:[])}><option value="">All statuses</option>{["Active","Inactive","Suspended","Transferred","Expired","Renewal Due","Resigned","Terminated","Deceased"].map(s=><option key={s}>{s}</option>)}</select></label>
@@ -553,7 +545,7 @@ export default function Members({
                   <h3>{m.name}</h3><b className="mm-card-id">{m.number}</b>
                   <p>{m.category} · {m.profession || "Community member"}</p><small>{m.offices?.join(", ")||"No current office"} · Joined {new Date(m.joinedAt).toLocaleDateString()}</small>
                   <span>{m.club}</span>
-                  <small>{[m.region, m.district, m.zone].filter(Boolean).join(" → ")}</small>
+                  <small>{[m.region].filter(Boolean).join(" → ")}</small>
                   <small>{m.city || m.country || "Location not shared"}</small>
                   <button className="secondary" onClick={() => setQuick(m)}>
                     View member <ArrowUpRight size={14} />
@@ -604,8 +596,6 @@ export default function Members({
           {[
             ["Club", quick.club],
             ["Region", quick.region || "Not assigned"],
-            ["District", quick.district || "Not assigned"],
-            ["Zone", quick.zone || "Not assigned"],
             ["Category", quick.category],
             ["Current office", quick.offices?.join(", ") || "—"],
             [

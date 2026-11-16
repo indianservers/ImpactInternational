@@ -56,21 +56,11 @@ public static class GovernanceSetup
                     ]
                     : level.Name.ToLowerInvariant() switch
                     {
-                        "zone" => ["Zone Chairperson", "Zone Coordinator", "Zone Secretary"],
                         "region" =>
                         [
                             "Regional Chairperson",
                             "Regional Secretary",
                             "Regional Coordinator",
-                        ],
-                        "district" =>
-                        [
-                            "District Governor",
-                            "Vice District Governor",
-                            "District Secretary",
-                            "District Treasurer",
-                            "District Membership Chair",
-                            "District Committee Chair",
                         ],
                         "national" =>
                         [

@@ -20,6 +20,7 @@ import { api, apiForm } from "../api";
 import { useWorkspace } from "../App";
 import { ClubCategoryFields } from "../MemberComponents";
 import { useDialog } from "../useDialog";
+import { CertificationRegistration } from "./Certifications";
 import { memberDraft } from "../memberDraft";
 import "./AddMemberWizard.css";
 
@@ -80,6 +81,7 @@ const initial = () => ({
   institution: "",
   employmentStatus: "",
   additionalInformation: "",
+  certifications: [],
 });
 export default function AddMemberWizard({
   onClose,
@@ -258,7 +260,7 @@ export default function AddMemberWizard({
     }
     if (index === 1 && (!target.clubId || !target.categoryId)) {
       setError(
-        "Select your authorized national unit, region, district, zone, club and membership category.",
+        "Select your authorized national unit, region, club and membership category.",
       );
       return false;
     }
@@ -412,6 +414,7 @@ export default function AddMemberWizard({
             ? new Date(target.joinedAt + "T00:00:00Z").toISOString()
             : null,
           personId,
+          certifications: (form.certifications||[]).map((c:any)=>({...c,issuedOn:c.issuedOn||null,validUntil:c.validUntil||null})),
           duplicateDecision: decision,
           photoBase64: photo && !personId ? photo.split(",")[1] : null,
           requestKey,
@@ -1008,6 +1011,7 @@ export default function AddMemberWizard({
                       <FileText size={20} />
                       Additional Information<span>04 / 04</span>
                     </h3>
+                    <CertificationRegistration value={form.certifications||[]} onChange={(certifications:any[])=>change("certifications",certifications)}/>
                     <p className="aw-section-note">
                       Complete their story. Everything in this section is
                       optional.

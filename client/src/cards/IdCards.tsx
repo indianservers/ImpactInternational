@@ -534,7 +534,7 @@ function Templates() {
                   "Club President ID",
                   "Secretary ID",
                   "Treasurer ID",
-                  "District Officer ID",
+                  "Region Officer ID",
                   "National Officer ID",
                   "International Officer ID",
                   "Volunteer ID",

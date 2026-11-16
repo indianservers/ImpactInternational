@@ -10,7 +10,7 @@ public record ManualMember(
     Guid? PersonId = null,
     DateTimeOffset? JoinedAt = null,
     string DuplicateDecision = "",
-    string? PhotoBase64 = null, string Status = "Active", string RequestKey = ""
+    string? PhotoBase64 = null, string Status = "Active", string RequestKey = "", CertificationInput[]? Certifications = null
 );
 
 public record StatusInput(
@@ -552,6 +552,13 @@ public static class MembershipEndpoints
                 }
                 var member = await s.Activate(person, club, category, w.UserId, r.JoinedAt);
                 if(r.Status!="Active")await s.ChangeStatus(member,r.Status,"Initial member registration",w.UserId);
+                Check((r.Certifications?.Length ?? 0) <= 100, "At most 100 certifications per registration.");
+                foreach (var certification in r.Certifications ?? [])
+                {
+                    var row = new MemberCertification();
+                    await TrainingCertifications.Apply(s.Db, w.TenantId, person.Id, certification, row);
+                    s.Db.MemberCertifications.Add(row);
+                }
                 var result=new { id=member.Id,number=member.Number,personId=member.PersonId,version=member.Version,status=member.Status };
                 if(r.RequestKey!="")await s.Access.Log(w,"member.registration.create",r.RequestKey,System.Text.Json.JsonSerializer.Serialize(new{hash,result}));
                 await s.Db.SaveChangesAsync();
@@ -845,6 +852,17 @@ public static class MembershipEndpoints
                 return Results.Ok(view);
             }
         );
+        api.MapGet("/members/by-person/{id:guid}", async (Guid id, MembershipService s) =>
+        {
+            var w = await s.Access.WorkspaceAny("members.view", "directory.view");
+            var grants = await s.Access.Grants(w);
+            var directory = !grants.Contains("members.view");
+            var q = (await s.ScopedList(w)).Where(m => m.PersonId == id);
+            if (directory) q = q.Where(m => m.Person.UserId == w.UserId || (m.Status == "Active" && (m.EndsAt == null || m.EndsAt > DateTimeOffset.UtcNow) && m.Person.Privacy.DirectoryVisible));
+            var membership = await q.OrderByDescending(m => m.Status == "Active").ThenByDescending(m => m.JoinedAt).ThenBy(m => m.Id).Select(m => new {m.Id}).FirstOrDefaultAsync();
+            Check(membership != null, "No member profile is available within your authorized scope.", 404);
+            return Results.Ok(new { membershipId = membership!.Id, directory });
+        });
         api.MapGet("/membership/metrics", Metrics);
     }
 
@@ -1047,8 +1065,6 @@ public static class MembershipEndpoints
                     x.ClubId,
                     x.Club,
                     places[x.ClubId].Region,
-                    places[x.ClubId].District,
-                    places[x.ClubId].Zone,
                     x.CategoryId,
                     x.Category,
                     x.Status,

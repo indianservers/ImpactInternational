@@ -36,7 +36,7 @@ public static class Operations
         );
         Check(level != null, "Invalid level.");
         var platformAdmin = (await a.User()).PlatformAdmin;
-        Check(r.ParentId == null || ImpactStructure.Kinds.Contains(level!.Name), "Only National units, Regions, Districts, Zones, and Clubs can be created within Impact International.");
+        Check(r.ParentId == null || ImpactStructure.Kinds.Contains(level!.Name), "Only National units, Regions, and Clubs can be created within Impact International.");
         if (r.ParentId != null)
         {
             var p = await a.Visible(w).AsNoTracking().SingleOrDefaultAsync(x => x.Id == r.ParentId);
@@ -83,7 +83,7 @@ public static class Operations
         }
         else
         {
-            Check(r.ParentId != null, "Impact International is already configured. Create a National unit, Region, District, Zone, or Club.");
+            Check(r.ParentId != null, "Impact International is already configured. Create a National unit, Region, or Club.");
             entity = new() { TenantId = w.TenantId };
             a.Db.Orgs.Add(entity);
         }
@@ -214,7 +214,7 @@ public static class Seed
             db.Tenants.Add(t);
             var names = second
                 ? new[] { "Headquarters", "Chapter" }
-                : new[] { "International", "National", "Region", "District", "Zone", "Club" };
+                : new[] { "International", "National", "Region", "Club" };
             Level? prev = null;
             var levels = new List<Level>();
             foreach (var name in names)
@@ -235,9 +235,9 @@ public static class Seed
                 "Association Super Admin",
                 "International Administrator",
                 "National Administrator",
-                "District Administrator",
+
                 "Regional Administrator",
-                "Zone Administrator",
+
                 "Club President",
                 "Club Secretary",
                 "Club Treasurer",
@@ -274,8 +274,6 @@ public static class Seed
                     "International Headquarters",
                     "India National Organization",
                     "South India Region",
-                    "District 1",
-                    "Zone A",
                     "Vijayawada Community Club",
                 };
             var units = new List<Org>();
@@ -315,7 +313,7 @@ public static class Seed
                     TenantId = t.Id,
                     LevelId = levels[^2].Id,
                     ParentId = units[^3].Id,
-                    Name = "Zone B",
+                    Name = "Region B",
                     Code = "GC-ZB",
                     Country = "India",
                 };

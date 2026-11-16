@@ -110,7 +110,7 @@ export default function Settings() {
           <div>
             <h2>Organizational levels</h2>
             <p>
-              Impact International has one fixed hierarchy. Each region contains districts, each district contains zones, and each zone contains clubs.
+              Impact International has one fixed hierarchy. Each national unit contains regions, and each region contains clubs.
             </p>
           </div>
         </div>
@@ -127,7 +127,7 @@ export default function Settings() {
             </div>
           ))}
         </div>
-        <p className="privacy-notice">International → National → Regions → Districts → Zones → Clubs. Use the structure submenus to create and manage them.</p>
+        <p className="privacy-notice">International → National → Regions → Clubs. Use the structure submenus to create and manage them.</p>
         <Link className="panel-link" to="/app/organizations">Manage Impact structure →</Link>
       </section>
       {w?.permissions.includes("roles.view") && <Link className="panel-link" to="/app/administration">
