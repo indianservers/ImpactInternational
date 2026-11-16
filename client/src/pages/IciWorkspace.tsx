@@ -175,7 +175,7 @@ export default function IciWorkspace() {
       ) : tab === "Transfers" ? (
         <Transfers />
       ) : tab === "Event approvals" ? (
-        <EventApprovals context={c} />
+        <EventApprovals />
       ) : tab === "Team & coverage" ? (
         <Team context={c} />
       ) : tab === "My profile" ? (
@@ -1206,8 +1206,9 @@ function Transfers() {
             {t.source} → {t.destination}
           </p>
           <Badge>{t.status}</Badge>
+          {t.reviewer && <p>Awaiting {t.reviewer}</p>}
           <p>{t.reason}</p>
-          {t.status.startsWith("Pending") && (
+          {t.canReview && (
             <div className="ici-quick">
               {["Approve", "Reject"].map((decision) => (
                 <button
@@ -1256,7 +1257,7 @@ function Transfers() {
     </section>
   );
 }
-function EventApprovals({ context: c }: any) {
+function EventApprovals() {
   const q = useIci("/event-reviews"),
     qc = useQueryClient(),
     a = useAction(),
@@ -1277,13 +1278,8 @@ function EventApprovals({ context: c }: any) {
         />
       </label>
       {q.data?.map((r: any) => {
-        const unit = c.units.find((o: any) => o.id === r.orgId);
-        const route =
-          unit?.level === "Club"
-            ? ["Regional President", "National Director"]
-            : ["National Director", "Executive Board"];
-        const reviewer = route[r.currentSequence - 1];
-        const allowed = c.capabilities.admin || c.role === reviewer;
+        const reviewer = r.reviewer;
+        const allowed = r.canReview;
         return (
           <article className="panel" key={r.id}>
             <h3>{r.title}</h3>

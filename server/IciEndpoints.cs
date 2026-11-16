@@ -114,7 +114,16 @@ public static class IciEndpoints
             var w = await a.Workspace("ici.view"); if (!(await a.Grants(w)).Contains("governance.approve")) return Results.Ok(Array.Empty<object>());
             var requests = await governance.Requests(w);
             var rows = await requests.Where(r => r.Kind == "EventPublication" && (r.Status == "Submitted" || r.Status == "Under Review")).OrderBy(r => r.CreatedAt).Take(100).ToListAsync();
-            return Results.Ok(rows.Select(r => new { r.Id, r.Title, r.OrgId, r.Version, r.Status, r.CurrentSequence, r.WorkflowId }));
+            var role = await IciPolicy.Role(a,w); var admin = await IciPolicy.Administrator(a,w);
+            var orgIds = rows.Select(r => r.OrgId).ToArray();
+            var levels = await (from o in a.Db.Orgs join l in a.Db.Levels on o.LevelId equals l.Id where orgIds.Contains(o.Id) select new {o.Id,l.Name}).ToDictionaryAsync(o => o.Id,o => o.Name);
+            var ids = rows.Select(r => r.Id).ToArray();
+            var prior = await a.Db.MembershipApprovals.Where(d => ids.Contains(d.GovernanceRequestId!.Value) && d.ActorId == w.UserId && d.Decision == "Approve").Select(d => new{d.GovernanceRequestId,d.Revision}).ToListAsync();
+            return Results.Ok(rows.Select(r => {
+                var reviewer = (levels[r.OrgId], r.CurrentSequence) switch { ("Club",1) => "Regional President", ("Club",2) => "National Director", ("Region",1) => "National Director", ("Region",2) => "Executive Board", _ => "Administration" };
+                return new { r.Id, r.Title, r.OrgId, r.Version, r.Status, r.CurrentSequence, r.WorkflowId, reviewer,
+                    canReview = r.CreatorId != w.UserId && (admin || role == reviewer) && !prior.Any(d => d.GovernanceRequestId == r.Id && d.Revision == r.Revision) };
+            }));
         });
         api.MapGet("/ici/team", Team);
         api.MapPost("/ici/team", async (IciAssignmentInput input, Access a) =>

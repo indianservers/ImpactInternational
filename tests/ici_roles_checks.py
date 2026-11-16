@@ -2,6 +2,7 @@
 import os,json,pathlib,subprocess,time,uuid,datetime,urllib.request,hashlib,base64,struct
 import support
 DB='clubs_ici_roles_qa_20261116'
+ASSEMBLY=str(pathlib.Path(os.environ.get('CLUBS_TEST_ASSEMBLY','.infra/ici-role-build/Clubs.Api.dll')).resolve())
 support.BASE='http://127.0.0.1:5090'
 support.PASSWORD='Ici-Test-Password-2026!'
 from support import Client
@@ -27,7 +28,7 @@ assert DB.startswith('clubs_ici_roles_qa_')
 support.sql("SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname='"+DB+"' AND pid<>pg_backend_pid()",'postgres')
 for command in [[str(pathlib.Path('.infra/pgsql/bin/dropdb.exe').resolve()),'-h','127.0.0.1','-p','55432','-U','clubs','--if-exists',DB],[str(pathlib.Path('.infra/pgsql/bin/createdb.exe').resolve()),'-h','127.0.0.1','-p','55432','-U','clubs','-T','clubs_four_level_qa_20261116',DB]]:subprocess.run(command,check=True,capture_output=True)
 migrationEnv={**os.environ,'ASPNETCORE_ENVIRONMENT':'Development','ConnectionStrings__Database':'Host=127.0.0.1;Port=55432;Database='+DB+';Username=clubs'}
-subprocess.run(['dotnet',str(pathlib.Path('.infra/ici-role-build/Clubs.Api.dll').resolve()),'--migrate'],env=migrationEnv,check=True,capture_output=True)
+subprocess.run(['dotnet',ASSEMBLY,'--migrate'],env=migrationEnv,check=True,capture_output=True)
 
 sql('''UPDATE "CommunicationAccounts" SET "Enabled"=false;
 UPDATE "Mails" SET "DeadLetter"=true WHERE "SentAt" IS NULL;
@@ -36,7 +37,7 @@ UPDATE "CommunicationAutomations" SET "Status"='Cancelled';''')
 sql('''UPDATE "Users" SET "PasswordHash"='''+"'"+identity_hash()+"'"+''',"FailedAttempts"=0,"LockedUntil"=null WHERE "Email" IN ('admin@example.test','club.president@example.test','regional.president@example.test','national.president@example.test')''')
 env={**os.environ,'ASPNETCORE_ENVIRONMENT':'Development','ConnectionStrings__Database':'Host=127.0.0.1;Port=55432;Database='+DB+';Username=clubs','Authentication__MemberOtpEnabled':'false','Smtp__Host':'','Communications__MockBase':'http://127.0.0.1:5091','Logging__LogLevel__Default':'Warning'}
 log=open('.infra/ici-qa.log','w',encoding='utf-8')
-process=subprocess.Popen(['dotnet',str(pathlib.Path('.infra/ici-role-build/Clubs.Api.dll').resolve()),'--urls',support.BASE],env=env,stdout=log,stderr=log)
+process=subprocess.Popen(['dotnet',ASSEMBLY,'--urls',support.BASE],env=env,stdout=log,stderr=log)
 try:
  for _ in range(100):
   try:urllib.request.urlopen(support.BASE+'/health');break

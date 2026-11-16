@@ -85,6 +85,7 @@ public static class MembershipLifecycleEndpoints
             async (MembershipService s, string? status = null, int page = 1) =>
             {
                 var w = await s.Access.Workspace("members.transfer.approve");
+                var reviewable = await IciWorkflow.ReviewableTransfers(s.Access, w);
                 var q = s.Db.MembershipTransfers.Where(x =>
                     x.TenantId == w.TenantId
                     && (
@@ -111,6 +112,8 @@ public static class MembershipLifecycleEndpoints
                             x.Version,
                             x.FinancialCleared,
                             x.ClearanceRequired,
+                            CanReview = reviewable.Any(t => t.Id == x.Id),
+                            Reviewer = IciWorkflow.TransferReviewer(x.Status),
                             Person = s
                                 .Db.Memberships.Where(m => m.Id == x.MembershipId)
                                 .Select(m => m.Person.DisplayName)
@@ -162,7 +165,7 @@ public static class MembershipLifecycleEndpoints
                     .Db.Memberships.Include(x => x.Person)
                     .SingleAsync(x => x.Id == t.MembershipId);
                 var org = t.Status is "PendingDestination" or "PendingVicePresidentDestination" ? t.DestinationClubId : m.ClubId;
-                await IciWorkflow.CheckTransfer(s.Access,w,t,m.ClubId);
+                await IciWorkflow.CheckTransfer(s.Access,w,t);
                 if (t.Status == "PendingAssociation")
                     await s.Access.Workspace("members.transfer.approve");
                 else
@@ -238,12 +241,12 @@ public static class MembershipLifecycleEndpoints
                 if (t.RequesterId != u.Id)
                 {
                     var w = await s.Access.Workspace("members.transfer.approve");
-                    Check(
-                        w.TenantId == t.TenantId
-                            && await s.Scoped(w).AnyAsync(x => x.Id == t.MembershipId),
-                        "Transfer outside authorized scope.",
-                        404
-                    );
+                    if (IciPolicy.IsRole(await IciPolicy.Role(s.Access,w)) && !await IciPolicy.Administrator(s.Access,w))
+                        Check(await (await IciWorkflow.ReviewableTransfers(s.Access,w)).AnyAsync(x => x.Id == t.Id),
+                            "Only the requester or current authorized reviewer can cancel this transfer.",403);
+                    else
+                        Check(w.TenantId == t.TenantId && await s.Scoped(w).AnyAsync(x => x.Id == t.MembershipId),
+                            "Transfer outside authorized scope.",404);
                 }
                 Check(t.Version == r.Version, "Transfer changed.", 409);
                 Check(

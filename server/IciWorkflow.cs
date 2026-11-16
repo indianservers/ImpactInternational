@@ -68,16 +68,29 @@ public static class IciWorkflow
         Check(await ids.ContainsAsync(reference.EventId), "Event is outside your assigned region or portfolio.", 403);
         Check(!await db.MembershipApprovals.AnyAsync(d => d.GovernanceRequestId == request.Id && d.Revision == request.Revision && d.ActorId == w.UserId && d.Decision == "Approve"), "Separate reviewers must complete each event approval stage.", 403);
     }
-    public static async Task CheckTransfer(Access a, Assignment w, MembershipTransfer transfer, Guid sourceClub)
+    public static async Task<IQueryable<MembershipTransfer>> ReviewableTransfers(Access a, Assignment w)
     {
-        if (await IciPolicy.Administrator(a, w)) return;
         var role = await IciPolicy.Role(a, w);
-        var required = transfer.Status switch { "PendingSource" or "PendingDestination" => "Regional President", "PendingVicePresidentSource" or "PendingVicePresidentDestination" => "National Vice President", "PendingAssociation" => "National President|Executive Board", _ => "" };
-        Check(required.Split('|').Contains(role), "This role cannot review the current transfer stage.", 403);
-        var org = transfer.Status is "PendingDestination" or "PendingVicePresidentDestination" ? transfer.DestinationClubId : sourceClub;
-        Check(await a.Visible(w).AnyAsync(o => o.Id == org), "This transfer stage is outside your assigned coverage.", 403);
-        if (transfer.Status == "PendingAssociation") Check(await a.Visible(w).AnyAsync(o => o.Id == transfer.DestinationClubId), "Both clubs must be within final review authority.", 403);
+        var admin = await IciPolicy.Administrator(a, w);
+        var visible = a.Visible(w).Select(o => o.Id);
+        return a.Db.MembershipTransfers.Where(t => t.TenantId == w.TenantId && t.RequesterId != w.UserId
+            && new[] { "PendingSource", "PendingDestination", "PendingVicePresidentSource", "PendingVicePresidentDestination", "PendingAssociation" }.Contains(t.Status)
+            && (admin || ((t.Status == "PendingSource" || t.Status == "PendingDestination") && role == "Regional President")
+                || ((t.Status == "PendingVicePresidentSource" || t.Status == "PendingVicePresidentDestination") && role == "National Vice President")
+                || (t.Status == "PendingAssociation" && (role == "National President" || role == "Executive Board")))
+            && (t.Status == "PendingDestination" || t.Status == "PendingVicePresidentDestination"
+                ? visible.Contains(t.DestinationClubId)
+                : a.Db.Memberships.Any(m => m.Id == t.MembershipId && m.TenantId == w.TenantId && visible.Contains(m.ClubId)))
+            && (t.Status != "PendingAssociation" || visible.Contains(t.DestinationClubId)));
     }
+    public static string TransferReviewer(string status) => status switch
+    {
+        "PendingSource" => "Source Regional President", "PendingDestination" => "Destination Regional President",
+        "PendingVicePresidentSource" => "Source National Vice President", "PendingVicePresidentDestination" => "Destination National Vice President",
+        "PendingAssociation" => "National President or Executive Board", _ => ""
+    };
+    public static async Task CheckTransfer(Access a, Assignment w, MembershipTransfer transfer) =>
+        Check(await (await ReviewableTransfers(a,w)).AnyAsync(t => t.Id == transfer.Id), "This role cannot review the current transfer stage within its assigned coverage.", 403);
     public static async Task<Assignment> Assign(Access a, IciAssignmentInput input)
     {
         var acting = await a.Workspace("roles.assign");

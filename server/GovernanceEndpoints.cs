@@ -550,6 +550,9 @@ public static class GovernanceEndpoints
                     .SingleOrDefaultAsync(x =>
                         x.WorkflowId == r.WorkflowId && x.Sequence == r.CurrentSequence
                     );
+                var iciReviewAllowed = true;
+                try { await IciWorkflow.CheckGovernanceReview(s.Db,w,r); }
+                catch (ApiError error) when (error.Status is 403 or 404) { iciReviewAllowed = false; }
                 return new
                 {
                     finance = r.Kind=="FinanceExpense" ? (object?)await s.Db.FinanceExpenses.SingleOrDefaultAsync(x=>x.RequestId==r.Id) : r.Kind=="FinanceBudget" ? await s.Db.FinanceBudgets.SingleOrDefaultAsync(x=>x.RequestId==r.Id) : null,
@@ -570,7 +573,7 @@ public static class GovernanceEndpoints
                             stage.AllowDelegation,
                             Roles = stage.Roles.Select(x => x.RoleId),
                         },
-                    canDecide = (await s.A.Grants(w)).Contains("governance.approve")
+                    canDecide = iciReviewAllowed && (await s.A.Grants(w)).Contains("governance.approve")
                         && (await ApprovalEngine.HierarchyRequest(s.Db, w, r) || r.CreatorId != w.UserId)
                         && (await ApprovalEngine.PlatformAuthority(s.Db, w) && r.Kind == "OfficerAppointment" || r.SubjectUserId != w.UserId)
                         && new[] { "Submitted", "Under Review" }.Contains(r.Status)

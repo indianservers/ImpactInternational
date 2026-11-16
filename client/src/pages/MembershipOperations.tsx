@@ -143,13 +143,7 @@ export default function MembershipOperations() {
                           <MemberStatus status={r.status} />
                         </td>
                         <td>
-                          {[
-                            "PendingSource",
-                            "PendingDestination",
-                  "PendingVicePresidentSource", "PendingVicePresidentDestination",
-                            "PendingAssociation",
-                            "Blocked",
-                          ].includes(r.status) && (
+                          {(r.canReview || (r.status === "Blocked" && grants.includes("members.manage"))) && (
                             <button
                               className="secondary"
                               onClick={() => setSelected(r)}
