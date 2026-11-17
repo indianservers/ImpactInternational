@@ -1,0 +1,62 @@
+[
+  {
+    "test": "Changing category clears subcategory",
+    "passed": true
+  },
+  {
+    "test": "Enter creates business tag",
+    "passed": true
+  },
+  {
+    "test": "Tags deduplicate without case sensitivity",
+    "passed": true
+  },
+  {
+    "test": "Business tag removal works",
+    "passed": true
+  },
+  {
+    "test": "Saved business specialty survives reload",
+    "passed": true
+  },
+  {
+    "test": "Saved business tags survive reload",
+    "passed": true
+  },
+  {
+    "test": "Member business profile tab renders saved company",
+    "passed": true
+  },
+  {
+    "test": "Edit business shortcut opens professional fields",
+    "passed": true
+  },
+  {
+    "test": "Editor mobile has no horizontal overflow",
+    "passed": true
+  },
+  {
+    "test": "Category/subcategory/tag filters discover saved business",
+    "passed": true
+  },
+  {
+    "test": "Business card includes company and tags",
+    "passed": true
+  },
+  {
+    "test": "Business title stays white on teal background",
+    "passed": true
+  },
+  {
+    "test": "Business modal mobile has no horizontal overflow",
+    "passed": true
+  },
+  {
+    "test": "Clear filters resets business filters",
+    "passed": true
+  },
+  {
+    "test": "No browser runtime errors",
+    "passed": true
+  }
+]

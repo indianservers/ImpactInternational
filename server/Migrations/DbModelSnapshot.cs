@@ -8345,6 +8345,14 @@ namespace Clubs.Api.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<string>("BusinessDescription")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("BusinessSubcategory")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<string>("Company")
                         .IsRequired()
                         .HasColumnType("text");

@@ -2,6 +2,12 @@
 
 React/TypeScript/Vite frontend, ASP.NET Core 10 API, EF Core/Npgsql and PostgreSQL. The repository was empty at the start of implementation. No SQLite, browser storage, or mock production API is used.
 
+## Member business profiles
+
+Members can add a business category, subcategory, business summary and up to 30 service or product tags through **My networking profile** or the **Professional** section of the member editor. Category suggestions support custom entries. Member profiles include a dedicated **Business profile** tab and a business card in the complete profile. The networking directory supports business category, subcategory and tag filters, plus text search across business summaries and tags. Business visibility follows the existing directory and professional privacy preferences.
+
+Apply the additive `MemberBusinessProfile` EF migration before running this version. It adds business subcategory and description to `Persons`; business tags use the existing `PersonTags` table. Older clients that omit the new business fields preserve existing values.
+
 ## Four-level organization, training certifications and activity posting
 
 The active hierarchy is International → National → Region → Club. Migration `FourLevelTrainingActivities` reparents clubs to their existing region, archives removed units with snapshots, hides obsolete roles, and revokes appointments in removed scopes. It does not automatically promote former hierarchy leaders. Old hierarchy URLs redirect to Regions. Preserve the pre-migration database backup when upgrading; recovering the old hierarchy requires restoring that backup rather than running an automatic downgrade.

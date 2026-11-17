@@ -1,3 +1,4 @@
+import { BusinessProfileFields } from "./BusinessProfile";
 import MembershipLocationPicker from "./MembershipLocationPicker";
 import { useEffect, useState } from "react";
 import { X, Plus, ArrowLeft } from "lucide-react";
@@ -140,8 +141,8 @@ export function ClubCategoryFields({
     </>
   );
 }
-export function PersonEditor({ person, onSave, onCancel, busy = false, submitLabel = "Save profile" }: any) {
-  const [tab, setTab] = useState("Personal");
+export function PersonEditor({ person, onSave, onCancel, busy = false, submitLabel = "Save profile", initialTab = "Personal" }: any) {
+  const [tab, setTab] = useState(initialTab);
   const [form, setForm] = useState<any>(() => ({
     legalName: person?.legalName || person?.name || "",
     socialLinks: person?.socialLinks || {},
@@ -161,6 +162,9 @@ export function PersonEditor({ person, onSave, onCancel, busy = false, submitLab
     industry: person?.professional?.industry || "",
     profession: person?.professional?.profession || "",
     businessCategory: person?.professional?.businessCategory || "",
+    businessSubcategory: person?.professional?.businessSubcategory || "",
+    businessDescription: person?.professional?.businessDescription || "",
+    businessTags: person?.professional?.businessTags || [],
     workLocation: person?.professional?.workLocation || "",
     website: person?.professional?.website || "",
     networking: person?.professional?.networking || "",
@@ -452,7 +456,7 @@ export function PersonEditor({ person, onSave, onCancel, busy = false, submitLab
               ["employmentStatus", "Employment status (employed, business, student, retired…)"],
               ["company", "Company / organization"],
               ["designation", "Designation"],
-              ["businessCategory", "Business category"],
+
               ["industry", "Industry"],
               ["profession", "Profession"],
               ["workLocation", "Work location"],
@@ -460,6 +464,7 @@ export function PersonEditor({ person, onSave, onCancel, busy = false, submitLab
               ["networking", "Networking preferences"],
             ].map(([k, l]) => input(k, l, k === "website" ? "url" : "text"))}
           </div>
+          <BusinessProfileFields value={form} onChange={(patch) => setForm({ ...form, ...patch })} />
           {[
             ["skills", "Skills"],
             ["expertise", "Expertise"],

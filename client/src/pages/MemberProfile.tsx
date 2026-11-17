@@ -1,3 +1,4 @@
+import { BusinessProfileCard } from "../BusinessProfile";
 import CompleteMemberProfile from './CompleteMemberProfile';
 import "./Members.css";
 import {MemberAchievements} from "./Operations";
@@ -44,6 +45,7 @@ export default function MemberProfile({membershipId,directoryMode}:{membershipId
   });
   const hierarchy=useQuery<any>({queryKey:["profile-hierarchy",w?.id,q.data?.membership?.clubId],queryFn:()=>api("/membership/hierarchy?clubId="+q.data.membership.clubId),enabled:!!q.data?.membership?.clubId&&!!w});
   function refresh() {
+    qc.invalidateQueries({ queryKey: ["networking"] });
     qc.invalidateQueries({ queryKey: ["member-profile"] });
     qc.invalidateQueries({ queryKey: ["members"] });
     qc.invalidateQueries({ queryKey: ["member-metrics"] });
@@ -77,6 +79,7 @@ export default function MemberProfile({membershipId,directoryMode}:{membershipId
     "Personal details",
     "Contact information",
     "Organizational hierarchy",
+    "Business profile",
     "Professional",
     "Membership history",
     "Leadership",
@@ -344,6 +347,7 @@ export default function MemberProfile({membershipId,directoryMode}:{membershipId
               ))}
             </>
           )}
+          {tab === "Business profile" && <><div className="header-actions"><h2>Business profile</h2>{d.canEditPerson && <button className="secondary" onClick={() => setEditing(true)}><Pencil size={14}/>Edit business profile</button>}</div><BusinessProfileCard professional={p.professional} /></>}
           {tab === "Professional" && (
             <>
               <h2>Professional profile</h2>
@@ -709,6 +713,7 @@ export default function MemberProfile({membershipId,directoryMode}:{membershipId
           <ErrorBox error={error} />
           <PersonEditor
             person={p}
+            initialTab={tab === "Business profile" ? "Professional" : "Personal"}
             busy={busy}
             onCancel={() => setEditing(false)}
             onSave={async (person: any) => {

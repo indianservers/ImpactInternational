@@ -7,7 +7,8 @@ namespace Clubs;
 public record NetworkingProfileInput(string Company, string Designation, string Industry, string Profession,
     string BusinessCategory, string WorkLocation, string Website, string City, string State, string Country,
     string Networking, string[] Skills, string[] Interests, string[] Expertise, bool Visible,
-    bool AllowRequests, long Version, long PrivacyVersion);
+    bool AllowRequests, long Version, long PrivacyVersion, string? BusinessSubcategory = null,
+    string? BusinessDescription = null, string[]? BusinessTags = null);
 public record NetworkingRequestInput(string Message);
 public record NetworkingResponseInput(string Status, string Reply = "");
 
@@ -34,6 +35,8 @@ public static class NetworkingEndpoints
     static string Location(Person p) => p.Addresses.OrderByDescending(a => a.Type == "Office").ThenByDescending(a => a.IsPrimary).Select(a => a.City).FirstOrDefault() ?? "";
     static object MyProfile(Person? p, bool eligible) => new { eligible, personId = p?.Id, company = p?.Company ?? "", designation = p?.Designation ?? "",
         industry = p?.Industry ?? "", profession = p?.Profession ?? "", businessCategory = p?.BusinessCategory ?? "", workLocation = p?.WorkLocation ?? "", website = p?.Website ?? "",
+        businessSubcategory = p?.BusinessSubcategory ?? "", businessDescription = p?.BusinessDescription ?? "",
+        businessTags = p?.Tags.Where(t => t.Kind == "Business").Select(t => t.Value).ToArray() ?? [],
         city = p == null ? "" : Location(p), state = p?.Addresses.OrderByDescending(a => a.Type == "Office").Select(a => a.State).FirstOrDefault() ?? "",
         country = p?.Addresses.OrderByDescending(a => a.Type == "Office").Select(a => a.Country).FirstOrDefault() ?? "", networking = p?.Networking ?? "",
         skills = p?.Tags.Where(t => t.Kind == "Skill").Select(t => t.Value).ToArray() ?? [], interests = p?.Tags.Where(t => t.Kind == "Interest").Select(t => t.Value).ToArray() ?? [],
@@ -55,9 +58,17 @@ public static class NetworkingEndpoints
             var text = new[] { input.Company, input.Designation, input.Industry, input.Profession, input.BusinessCategory, input.WorkLocation, input.Website, input.City, input.State, input.Country };
             Check(text.All(v => v != null && v.Length <= 200) && input.Networking is { Length: <= 1000 }, "Keep profile fields within 200 characters and networking notes within 1,000.");
             Check(input.Website == "" || Uri.TryCreate(input.Website, UriKind.Absolute, out var url) && url.Scheme is "http" or "https" && url.UserInfo == "", "Use a valid HTTP or HTTPS business website.");
+            Check((input.BusinessSubcategory?.Length ?? 0) <= 200 && (input.BusinessDescription?.Length ?? 0) <= 2000, "Business subcategory is limited to 200 characters and description to 2,000.");
+            var businessTags = input.BusinessTags == null ? null : Tags(input.BusinessTags);
             var skills = Tags(input.Skills); var interests = Tags(input.Interests); var expertise = Tags(input.Expertise);
             p.Company = input.Company.Trim(); p.Designation = input.Designation.Trim(); p.Industry = input.Industry.Trim(); p.Profession = input.Profession.Trim();
             p.BusinessCategory = input.BusinessCategory.Trim(); p.WorkLocation = input.WorkLocation.Trim(); p.Website = input.Website.Trim(); p.Networking = input.Networking.Trim();
+            if (input.BusinessSubcategory != null) p.BusinessSubcategory = input.BusinessSubcategory.Trim();
+            if (input.BusinessDescription != null) p.BusinessDescription = input.BusinessDescription.Trim();
+            if (businessTags != null) {
+                s.Db.PersonTags.RemoveRange(p.Tags.Where(t => t.Kind == "Business"));
+                foreach (var value in businessTags) s.Db.PersonTags.Add(new() { PersonId = p.Id, Kind = "Business", Value = value });
+            }
             var address = p.Addresses.FirstOrDefault(a => a.Type == "Office");
             if (address == null) { address = new PersonAddress { PersonId = p.Id, Type = "Office" }; p.Addresses.Add(address); s.Db.PersonAddresses.Add(address); }
             address.City = input.City.Trim(); address.State = input.State.Trim(); address.Country = input.Country.Trim();
@@ -74,23 +85,30 @@ public static class NetworkingEndpoints
             var tags = await a.Db.PersonTags.Where(t => q.Any(p => p.Id == t.PersonId)).Select(t => new { t.Kind, t.Value }).Distinct().ToListAsync();
             return new { skills = tags.Where(t => t.Kind == "Skill").Select(t => t.Value).Concat(SuggestedSkills).Distinct(StringComparer.OrdinalIgnoreCase).Order().Take(300),
                 interests = tags.Where(t => t.Kind == "Interest").Select(t => t.Value).Concat(SuggestedInterests).Distinct(StringComparer.OrdinalIgnoreCase).Order().Take(300),
+                categories = await q.Where(p => p.BusinessCategory != "").Select(p => p.BusinessCategory).Distinct().OrderBy(x => x).Take(200).ToListAsync(),
+                subcategories = await q.Where(p => p.BusinessSubcategory != "").Select(p => p.BusinessSubcategory).Distinct().OrderBy(x => x).Take(500).ToListAsync(),
+                businessTags = tags.Where(t => t.Kind == "Business").Select(t => t.Value).Distinct(StringComparer.OrdinalIgnoreCase).Order().Take(300),
                 industries = await q.Where(p => p.Industry != "").Select(p => p.Industry).Distinct().OrderBy(x => x).Take(200).ToListAsync(),
                 cities = await a.Db.PersonAddresses.Where(ad => ad.City != "" && q.Any(p => p.Id == ad.PersonId)).Select(ad => ad.City).Distinct().OrderBy(x => x).Take(300).ToListAsync(),
                 areas = await q.Where(p => p.WorkLocation != "").Select(p => p.WorkLocation).Distinct().OrderBy(x => x).Take(300).ToListAsync() };
         });
-        api.MapGet("/networking/people", async (MembershipService s, string search = "", string skill = "", string interest = "", string industry = "", string city = "", string area = "", int page = 1, string sort = "matches") => {
-            var w = await Workspace(s.Access); Check(new[] { search, skill, interest, industry, city, area }.All(v => v.Length <= 100) && page is >= 1 and <= 10000 && sort is "matches" or "name", "Invalid networking filters.");
+        api.MapGet("/networking/people", async (MembershipService s, string search = "", string skill = "", string interest = "", string industry = "", string city = "", string area = "", int page = 1, string sort = "matches", string category = "", string subcategory = "", string tag = "") => {
+            var w = await Workspace(s.Access); Check(new[] { search, skill, interest, industry, city, area, tag }.All(v => v.Length <= 100) && new[] { category, subcategory }.All(v => v.Length <= 200) && page is >= 1 and <= 10000 && sort is "matches" or "name", "Invalid networking filters.");
             var own = await s.People.SingleOrDefaultAsync(p => p.UserId == w.UserId);
             var ownSkills = own?.Tags.Where(t => t.Kind == "Skill").Select(t => t.Value.ToLower()).ToArray() ?? [];
             var ownInterests = own?.Tags.Where(t => t.Kind == "Interest").Select(t => t.Value.ToLower()).ToArray() ?? [];
             var q = Visible(s.Db, w.TenantId).Where(p => p.UserId != w.UserId);
-            if (search.Trim() != "") { var term = search.Trim().ToLower(); q = q.Where(p => p.DisplayName.ToLower().Contains(term) || p.Company.ToLower().Contains(term) || p.Profession.ToLower().Contains(term) || p.BusinessCategory.ToLower().Contains(term) || p.Networking.ToLower().Contains(term) || p.Tags.Any(t => new[] { "Skill", "Interest", "Expertise" }.Contains(t.Kind) && t.Value.ToLower().Contains(term))); }
+            if (search.Trim() != "") { var term = search.Trim().ToLower(); q = q.Where(p => p.DisplayName.ToLower().Contains(term) || p.Company.ToLower().Contains(term) || p.Profession.ToLower().Contains(term) || p.BusinessCategory.ToLower().Contains(term) || p.BusinessSubcategory.ToLower().Contains(term) || p.BusinessDescription.ToLower().Contains(term) || p.Networking.ToLower().Contains(term) || p.Tags.Any(t => new[] { "Skill", "Interest", "Expertise", "Business" }.Contains(t.Kind) && t.Value.ToLower().Contains(term))); }
+            if (category != "") q = q.Where(p => p.BusinessCategory.ToLower() == category.ToLower());
+            if (subcategory != "") q = q.Where(p => p.BusinessSubcategory.ToLower() == subcategory.ToLower());
+            if (tag != "") q = q.Where(p => p.Tags.Any(t => t.Kind == "Business" && t.Value.ToLower() == tag.ToLower()));
             if (skill != "") q = q.Where(p => p.Tags.Any(t => t.Kind == "Skill" && t.Value.ToLower() == skill.ToLower()));
             if (interest != "") q = q.Where(p => p.Tags.Any(t => t.Kind == "Interest" && t.Value.ToLower() == interest.ToLower()));
             if (industry != "") q = q.Where(p => p.Industry.ToLower() == industry.ToLower());
             if (city != "") q = q.Where(p => p.Addresses.Any(a => a.City.ToLower() == city.ToLower()));
             if (area != "") q = q.Where(p => p.WorkLocation.ToLower().Contains(area.ToLower()));
-            var ranked = q.Select(p => new { p.Id, p.DisplayName, p.Company, p.Designation, p.Industry, p.Profession, p.BusinessCategory, p.WorkLocation,
+            var ranked = q.Select(p => new { p.Id, p.DisplayName, p.Company, p.Designation, p.Industry, p.Profession, p.BusinessCategory, p.BusinessSubcategory, p.BusinessDescription,
+                businessTags = p.Tags.Where(t => t.Kind == "Business").Select(t => t.Value).ToArray(), p.WorkLocation,
                 city = p.Addresses.OrderByDescending(ad => ad.Type == "Office").Select(ad => ad.City).FirstOrDefault() ?? "",
                 skills = p.Tags.Where(t => t.Kind == "Skill").Select(t => t.Value).ToArray(), interests = p.Tags.Where(t => t.Kind == "Interest").Select(t => t.Value).ToArray(),
                 shared = p.Tags.Count(t => t.Kind == "Skill" && ownSkills.Contains(t.Value.ToLower()) || t.Kind == "Interest" && ownInterests.Contains(t.Value.ToLower())),
@@ -101,7 +119,8 @@ public static class NetworkingEndpoints
         api.MapGet("/networking/people/{id:guid}", async (Guid id, MembershipService s) => {
             var w = await Workspace(s.Access); Check(await Visible(s.Db, w.TenantId).AnyAsync(p => p.Id == id), "Networking profile is unavailable.", 404);
             var p = await s.People.SingleAsync(p => p.Id == id); var clubs = await Active(s.Db, w.TenantId).Where(m => m.PersonId == id).Select(m => new { m.Club.Name }).Distinct().ToListAsync();
-            return new { p.Id, name = p.DisplayName, p.Company, p.Designation, p.Industry, p.Profession, p.BusinessCategory, p.WorkLocation, p.Website, p.Networking,
+            return new { p.Id, name = p.DisplayName, p.Company, p.Designation, p.Industry, p.Profession, p.BusinessCategory, p.BusinessSubcategory, p.BusinessDescription,
+                businessTags = p.Tags.Where(t => t.Kind == "Business").Select(t => t.Value).ToArray(), p.WorkLocation, p.Website, p.Networking,
                 city = Location(p), state = p.Addresses.OrderByDescending(a => a.Type == "Office").Select(a => a.State).FirstOrDefault(),
                 country = p.Addresses.OrderByDescending(a => a.Type == "Office").Select(a => a.Country).FirstOrDefault(), clubs,
                 skills = p.Tags.Where(t => t.Kind == "Skill").Select(t => t.Value), interests = p.Tags.Where(t => t.Kind == "Interest").Select(t => t.Value), expertise = p.Tags.Where(t => t.Kind == "Expertise").Select(t => t.Value),

@@ -31,6 +31,8 @@ public class Person
     public string Industry { get; set; } = "";
     public string Profession { get; set; } = "";
     public string BusinessCategory { get; set; } = "";
+    public string BusinessSubcategory { get; set; } = "";
+    public string BusinessDescription { get; set; } = "";
     public string WorkLocation { get; set; } = "";
     public string Website { get; set; } = "";
     public string Networking { get; set; } = "";

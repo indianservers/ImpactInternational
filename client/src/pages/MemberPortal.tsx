@@ -37,6 +37,7 @@ export default function MemberPortal() {
     queryFn: () => api("/membership/me"),
   });
   function refresh() {
+    qc.invalidateQueries({ queryKey: ["networking"] });
     qc.invalidateQueries({ queryKey: ["my-membership"] });
     qc.invalidateQueries({ queryKey: ["member-profile"] });
     qc.invalidateQueries({ queryKey: ["workspaces"] });

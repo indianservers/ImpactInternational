@@ -42,7 +42,10 @@ public record PersonInput(
     string Institution = "",
     string EmploymentStatus = "",
     string AdditionalInformation = "",
-    Dictionary<string, string>? SocialLinks = null
+    Dictionary<string, string>? SocialLinks = null,
+    string? BusinessSubcategory = null,
+    string? BusinessDescription = null,
+    string[]? BusinessTags = null
 );
 
 public record MemberRow(
@@ -195,6 +198,8 @@ public class MembershipService(
     public void Validate(PersonInput r)
     {
         SocialProfiles.Normalize(r.SocialLinks);
+        Check((r.BusinessCategory?.Length ?? 0) <= 200 && (r.BusinessSubcategory?.Length ?? 0) <= 200, "Business category and subcategory must be at most 200 characters.");
+        Check((r.BusinessDescription?.Length ?? 0) <= 2000, "Business description must be at most 2,000 characters.");
         Check(
             !string.IsNullOrWhiteSpace(r.LegalName) && r.LegalName.Length <= 200,
             "Legal name is required (maximum 200 characters)."
@@ -238,10 +243,10 @@ public class MembershipService(
                     "Invalid telephone number."
                 );
         }
-        foreach (var values in new[] { r.Skills, r.Expertise, r.Interests, r.Languages })
+        foreach (var values in new[] { r.Skills, r.Expertise, r.Interests, r.Languages, r.BusinessTags })
             Check(
                 values == null
-                    || values.Length <= 30 && values.All(x => x.Length is > 0 and <= 100),
+                    || values.Length <= 30 && values.All(x => x != null && x.Trim().Length is > 0 and <= 100),
                 "Limit tags to 30 values of 100 characters each."
             );
         Check(
@@ -294,11 +299,13 @@ public class MembershipService(
             ("Expertise", r.Expertise),
             ("Interest", r.Interests),
             ("Language", r.Languages),
+            ("Business", r.BusinessTags),
         }
             .SelectMany(k =>
                 (k.Item2 ?? [])
-                    .Distinct()
-                    .Select(v => new PersonTag { Kind = k.Item1, Value = v.Trim() })
+                    .Select(v => v.Trim())
+                    .Distinct(StringComparer.OrdinalIgnoreCase)
+                    .Select(v => new PersonTag { Kind = k.Item1, Value = v })
             )
             .ToList();
 
@@ -323,7 +330,9 @@ public class MembershipService(
         p.Designation = r.Designation;
         p.Industry = r.Industry;
         p.Profession = r.Profession;
-        p.BusinessCategory = r.BusinessCategory;
+        p.BusinessCategory = r.BusinessCategory ?? "";
+        if (r.BusinessSubcategory != null) p.BusinessSubcategory = r.BusinessSubcategory.Trim();
+        if (r.BusinessDescription != null) p.BusinessDescription = r.BusinessDescription.Trim();
         p.WorkLocation = r.WorkLocation;
         p.Website = r.Website;
         p.Networking = r.Networking;
@@ -357,6 +366,8 @@ public class MembershipService(
                 403
             );
         }
+        // Older editors omit business fields; preserve their tags when updating other details.
+        if (r.BusinessTags == null) r = r with { BusinessTags = p.Tags.Where(t => t.Kind == "Business").Select(t => t.Value).ToArray() };
         Db.PersonContacts.RemoveRange(p.Contacts);
         Db.PersonAddresses.RemoveRange(p.Addresses);
         Db.PersonTags.RemoveRange(p.Tags);
@@ -479,6 +490,9 @@ public class MembershipService(
                     p.Industry,
                     p.Profession,
                     p.BusinessCategory,
+                    p.BusinessSubcategory,
+                    p.BusinessDescription,
+                    BusinessTags = p.Tags.Where(x => x.Kind == "Business").Select(x => x.Value),
                     p.WorkLocation,
                     p.Website,
                     p.Networking,
