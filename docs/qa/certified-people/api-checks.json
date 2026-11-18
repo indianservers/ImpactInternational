@@ -1,0 +1,78 @@
+[
+  {
+    "test": "Anonymous certificate access and enrollment denied",
+    "passed": true
+  },
+  {
+    "test": "Register restricted to Platform Admin",
+    "passed": true
+  },
+  {
+    "test": "Independent participant registers and verifies email without club selection",
+    "passed": true
+  },
+  {
+    "test": "Independent account starts without workspaces",
+    "passed": true
+  },
+  {
+    "test": "Certification portal is available without workspace",
+    "passed": true
+  },
+  {
+    "test": "Train the Trainer program available to standalone accounts",
+    "passed": true
+  },
+  {
+    "test": "Enrollment idempotent and grants no role",
+    "passed": true
+  },
+  {
+    "test": "Independent participant records workshop certification",
+    "passed": true
+  },
+  {
+    "test": "Duplicate certificate numbers rejected",
+    "passed": true
+  },
+  {
+    "test": "Ordinary member cannot read another participant certifications",
+    "passed": true
+  },
+  {
+    "test": "Independent graduate visible in admin register with no club",
+    "passed": true
+  },
+  {
+    "test": "Only Platform Admin verifies current certificate version",
+    "passed": true
+  },
+  {
+    "test": "Editing certificate clears verification",
+    "passed": true
+  },
+  {
+    "test": "Club member retains existing person profile",
+    "passed": true
+  },
+  {
+    "test": "Club member is also a training graduate",
+    "passed": true
+  },
+  {
+    "test": "Admin adding existing member reuses profile",
+    "passed": true
+  },
+  {
+    "test": "Admin records standalone alumni with certifications before signup",
+    "passed": true
+  },
+  {
+    "test": "Verified email claims admin-created alumni profile without duplicates",
+    "passed": true
+  },
+  {
+    "test": "Independent filter excludes active club members",
+    "passed": true
+  }
+]

@@ -1,0 +1,194 @@
+[
+  {
+    "test": "Platform Admin can enable public approval",
+    "passed": true
+  },
+  {
+    "test": "Public post enters parent-unit review",
+    "passed": true
+  },
+  {
+    "test": "Pending post absent from anonymous feed",
+    "passed": true
+  },
+  {
+    "test": "Pending post hidden from ordinary members",
+    "passed": true
+  },
+  {
+    "test": "Author can find own pending activity",
+    "passed": true
+  },
+  {
+    "test": "Regional president receives club review",
+    "passed": true
+  },
+  {
+    "test": "Parent review publishes the post",
+    "passed": true
+  },
+  {
+    "test": "Stale or duplicate review rejected",
+    "passed": true
+  },
+  {
+    "test": "Accepted public post visible in feed",
+    "passed": true
+  },
+  {
+    "test": "Tagging alone cannot issue a certificate",
+    "passed": true
+  },
+  {
+    "test": "Verified accepted participation issues certificate idempotently",
+    "passed": true
+  },
+  {
+    "test": "Public verification respects withheld recipient name",
+    "passed": true
+  },
+  {
+    "test": "Public activity hides participant names without public-name consent",
+    "passed": true
+  },
+  {
+    "test": "Participant downloads generated certificate PDF",
+    "passed": true
+  },
+  {
+    "test": "Verified contributions earn first milestone",
+    "passed": true
+  },
+  {
+    "test": "Accepted participation appears in member history",
+    "passed": true
+  },
+  {
+    "test": "Withdrawing consent revokes public certificate validity",
+    "passed": true
+  },
+  {
+    "test": "Editing approved public content requires review again",
+    "passed": true
+  },
+  {
+    "test": "Reviewer can request changes with reason",
+    "passed": true
+  },
+  {
+    "test": "Rejected update can be edited and resubmitted",
+    "passed": true
+  },
+  {
+    "test": "Internal updates publish immediately",
+    "passed": true
+  },
+  {
+    "test": "Business requirements match member business categories and tags",
+    "passed": true
+  },
+  {
+    "test": "Member recommendations include clear matching reasons",
+    "passed": true
+  },
+  {
+    "test": "Hidden professional profiles excluded from recommendations",
+    "passed": true
+  },
+  {
+    "test": "Opportunity owner sees private responses",
+    "passed": true
+  },
+  {
+    "test": "Members can follow activity topics",
+    "passed": true
+  },
+  {
+    "test": "Live personalized digest includes followed visible posts",
+    "passed": true
+  },
+  {
+    "test": "Following a club does not reveal club-only posts",
+    "passed": true
+  },
+  {
+    "test": "Weekly digest preference persists",
+    "passed": true
+  },
+  {
+    "test": "Regional discovery includes permitted descendant club activities",
+    "passed": true
+  },
+  {
+    "test": "Map contains only permitted activity coordinates",
+    "passed": true
+  },
+  {
+    "test": "Map hides private activities from other clubs",
+    "passed": true
+  },
+  {
+    "test": "Leadership impact includes verified participants and reporting coverage",
+    "passed": true
+  },
+  {
+    "test": "Event draft copies venue coordinates and checked-in members",
+    "passed": true
+  },
+  {
+    "test": "An event creates only one activity post",
+    "passed": true
+  },
+  {
+    "test": "Event gallery copied to Google without reuploading local files",
+    "passed": true
+  },
+  {
+    "test": "Repeating gallery import does not duplicate photos",
+    "passed": true
+  },
+  {
+    "test": "Failed upload appears in storage health",
+    "passed": true
+  },
+  {
+    "test": "Storage retry recovers an interrupted upload",
+    "passed": true
+  },
+  {
+    "test": "Opt-in weekly digest is queued by the background worker",
+    "passed": true
+  },
+  {
+    "test": "Opting out suppresses pending digest delivery",
+    "passed": true
+  },
+  {
+    "test": "Storage health available to Platform Admin",
+    "passed": true
+  },
+  {
+    "test": "Removed participation cannot be restored by replaying member consent",
+    "passed": true
+  },
+  {
+    "test": "Removing a revoked participant preserves certificate audit history",
+    "passed": true
+  },
+  {
+    "test": "Expired requirements can be retained as closed",
+    "passed": true
+  },
+  {
+    "test": "Partial map coordinates are rejected",
+    "passed": true
+  },
+  {
+    "test": "Cannot tag members from another club outside posting unit",
+    "passed": true
+  },
+  {
+    "test": "Optional approval policy can allow direct public publication",
+    "passed": true
+  }
+]

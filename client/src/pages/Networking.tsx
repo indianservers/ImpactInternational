@@ -13,7 +13,8 @@ function Chips({items=[],kind=''}:{items?:string[];kind?:string}){return <div cl
 function Pagination({data,page,set}:{data:any;page:number;set:(p:number)=>void}){return data?.total>data?.pageSize?<div className="nw-pagination"><span>Page {page} · {data.total} records</span><button className="secondary" disabled={page===1} onClick={()=>set(page-1)}>Previous</button><button className="secondary" disabled={page*data.pageSize>=data.total} onClick={()=>set(page+1)}>Next</button></div>:null;}
 export default function Networking(){const path=useLocation().pathname;return path.endsWith('/profile')?<MyProfile/>:path.endsWith('/connections')?<Connections/>:<Discover/>;}
 function Discover(){
- const [filters,setFilters]=useState({skill:'',interest:'',industry:'',city:'',area:'',category:'',subcategory:'',tag:'',sort:'matches'}),[search,setSearch]=useState(''),[term,setTerm]=useState(''),[page,setPage]=useState(1),[selected,setSelected]=useState('');
+ const location=useLocation();
+ const [filters,setFilters]=useState({skill:'',interest:'',industry:'',city:'',area:'',category:'',subcategory:'',tag:'',sort:'matches'}),[search,setSearch]=useState(''),[term,setTerm]=useState(''),[page,setPage]=useState(1),[selected,setSelected]=useState(()=>new URLSearchParams(location.search).get('personId')||'');
  useEffect(()=>{const t=setTimeout(()=>{setTerm(search);setPage(1);},300);return()=>clearTimeout(t);},[search]);
  const options=useNetwork('/networking/options'),me=useNetwork('/networking/me');
  const query=new URLSearchParams({...filters,search:term,page:String(page)});const q=useNetwork('/networking/people?'+query);

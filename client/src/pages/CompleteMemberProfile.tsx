@@ -1,3 +1,4 @@
+import {MemberParticipationHistory} from '../ParticipationManager';
 import { BusinessProfileCard } from "../BusinessProfile";
 import {MemberCertifications} from "./Certifications";
 import {useQuery} from '@tanstack/react-query';
@@ -31,6 +32,7 @@ export default function CompleteMemberProfile({membershipId,data,directory=false
   <Section title="Contact information & emergency contacts">{p.contacts?.length?<Fields items={p.contacts.map((c:Row)=>[c.kind+' · '+(c.label||'Contact')+(c.primary?' · Primary':''),c.value])}/>:<p className="cmp-empty">No contacts are recorded or shared with this workspace.</p>}</Section>
   <Section title="Addresses">{p.addresses?.length?<div className="cmp-addresses">{p.addresses.map((a:Row,i:number)=><div key={a.id||i}><strong>{a.kind||a.type||a.label||'Address'}{a.isPrimary?' · Primary':''}</strong><p>{[a.address,a.city,a.state,a.postalCode,a.country].filter(Boolean).join(', ')}</p></div>)}</div>:<p className="cmp-empty">No addresses are recorded or shared.</p>}</Section>
   <BusinessProfileCard professional={p.professional}/>
+  <MemberParticipationHistory personId={p.id}/>
   <Section title="Professional profile & interests">{p.professional?<Fields items={Object.entries(p.professional).map(([k,v])=>[label(k),v])}/>:<p className="cmp-empty">Professional information is not recorded or not shared.</p>}</Section>
   <Section title="Social profiles">{p.socialLinks&&Object.keys(p.socialLinks).length?<div className="cmp-social">{Object.entries(p.socialLinks).map(([name,url])=>/^https?:\/\//i.test(String(url))?<a key={name} href={String(url)} target="_blank" rel="noopener noreferrer">{name} ↗</a>:<span key={name}>{name}: {String(url)}</span>)}</div>:<p className="cmp-empty">No shared social profiles.</p>}</Section>
   <Section title="Membership & organizational hierarchy">{m&&<Fields items={[

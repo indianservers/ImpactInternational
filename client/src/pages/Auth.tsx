@@ -26,13 +26,14 @@ export default function Auth({ mode }: { mode: string }) {
     complete = mode === "complete",
     verify =
       complete && new URLSearchParams(location.search).get("kind") === "verify";
+  const [portalOnly,setPortalOnly]=useState(new URLSearchParams(location.search).get('portal')==='1');
   const [nationalId, setNationalId] = useState('');
   const [regionId, setRegionId] = useState(''), [clubId, setClubId] = useState('');
   const [clubSearch, setClubSearch] = useState(''), [querySearch, setQuerySearch] = useState(''), [clubPage, setClubPage] = useState(1);
   useEffect(() => { const timer = setTimeout(() => { setQuerySearch(clubSearch); setClubPage(1); }, 300); return () => clearTimeout(timer); }, [clubSearch]);
   const catalog = useQuery<any>({ queryKey: ['public-membership-options', nationalId, regionId, querySearch, clubPage],
     queryFn: () => api('/public/membership-options?page='+clubPage+(nationalId?'&nationalId='+nationalId:'')+(regionId?'&regionId='+regionId:'')+(querySearch?'&search='+encodeURIComponent(querySearch):'')),
-    enabled: signup, staleTime: 30000 });
+    enabled: signup && !portalOnly, staleTime: 30000 });
   async function submit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setBusy(true);
@@ -56,7 +57,7 @@ export default function Auth({ mode }: { mode: string }) {
       } else {
         const result = await api(
           signup
-            ? "/public/membership-signup"
+            ? portalOnly ? "/auth/register" : "/public/membership-signup"
             : forgot
               ? mode === "resend-verification"
                 ? "/auth/resend-verification"
@@ -120,15 +121,16 @@ export default function Auth({ mode }: { mode: string }) {
         </h1>
         <p>
           {signup
-            ? "Choose your national, region and club, then sign up. Your application stays pending until your club president or region president approves it."
+            ? portalOnly ? "Create an account for workshops and certifications. You can join without choosing a club. Existing club members can use their current account." : "Choose your national, region and club, then sign up. Your application stays pending until your club president or region president approves it."
             : forgot
               ? "Enter your email to request a password reset."
               : complete
                 ? "Complete your secure account request."
                 : otpEnabled ? "Members sign in with a one-time email code. Enter your registered email or phone number." : "Sign in with your email and password. Email OTP login is temporarily paused."}
         </p>
-        {signup&&message?<section className="signup-pending success" role="status"><h2>Pending approval</h2><p>{message}</p><p>Your signup does not grant active membership or club access.</p><Link className="button" to="/login?applicant=1">Sign in after verifying your email</Link></section>:<form onSubmit={submit} className="form-stack">
-          {signup&&<fieldset className="signup-community"><legend>Choose your community</legend>
+        {signup&&message?<section className="signup-pending success" role="status"><h2>{portalOnly?"Verify your account":"Pending approval"}</h2><p>{message}</p><p>{portalOnly?"After verifying your email, sign in and open My certifications to join the learning portal. No club is required.":"Your signup does not grant active membership or club access."}</p><Link className="button" to="/login?applicant=1">Sign in after verifying your email</Link></section>:<form onSubmit={submit} className="form-stack">
+          {signup&&<label>How would you like to join?<select aria-label="How would you like to join?" value={portalOnly?"portal":"club"} onChange={e=>setPortalOnly(e.target.value==="portal")}><option value="club">Apply for club membership</option><option value="portal">Learning & certifications — no club required</option></select></label>}
+          {signup&&!portalOnly&&<fieldset className="signup-community"><legend>Choose your community</legend>
             <p>{catalog.data?`${catalog.data.nationals.length} national units · ${catalog.data.availableRegions} available regions · ${catalog.data.availableClubs} active clubs`:'Loading available regions and clubs…'}</p>
             <ErrorBox error={catalog.error}/>
             <label>National<select name="nationalId" required value={nationalId} disabled={catalog.isPending||busy} onChange={e=>{setNationalId(e.target.value);setRegionId('');setClubId('');setClubSearch('');setQuerySearch('');setClubPage(1);}}><option value="">Choose an available national</option>{catalog.data?.nationals.map((d:any)=><option value={d.id} key={d.id}>{d.name} · {d.regionCount} regions</option>)}</select></label>
@@ -252,11 +254,11 @@ export default function Auth({ mode }: { mode: string }) {
               {message}
             </div>
           )}
-          <button className="auth-submit" type="submit" disabled={busy || mode === "login" && methods.isPending || signup && (!nationalId || !regionId || !clubId || !catalog.data?.signupAvailable || catalog.isFetching)}>
+          <button className="auth-submit" type="submit" disabled={busy || mode === "login" && methods.isPending || signup && !portalOnly && (!nationalId || !regionId || !clubId || !catalog.data?.signupAvailable || catalog.isFetching)}>
             {busy
               ? "Please wait…"
               : signup
-                ? "Sign up — pending approval"
+                ? portalOnly ? "Create learning portal account" : "Sign up — pending approval"
                 : forgot
                   ? "Send recovery instructions"
                   : complete

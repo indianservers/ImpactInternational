@@ -1,0 +1,66 @@
+[
+  {
+    "test": "Member posts and discovers a business opportunity",
+    "passed": true
+  },
+  {
+    "test": "Recommendations explain matching reasons",
+    "passed": true
+  },
+  {
+    "test": "A recommendation opens the member profile",
+    "passed": true
+  },
+  {
+    "test": "Following and opt-in digest persist through reload",
+    "passed": true
+  },
+  {
+    "test": "Member sees milestones participation and certificates",
+    "passed": true
+  },
+  {
+    "test": "Certificate verification opens without signing in",
+    "passed": true
+  },
+  {
+    "test": "Authorized activities render on a world map",
+    "passed": true
+  },
+  {
+    "test": "Activity map zoom control works",
+    "passed": true
+  },
+  {
+    "test": "Discovery mobile has no horizontal overflow",
+    "passed": true
+  },
+  {
+    "test": "Opportunity board mobile has no horizontal overflow",
+    "passed": true
+  },
+  {
+    "test": "Event import prefills activity title venue and coordinates",
+    "passed": true
+  },
+  {
+    "test": "Public activity is submitted rather than immediately published",
+    "passed": true
+  },
+  {
+    "test": "Regional president approves a club public activity in the browser",
+    "passed": true
+  },
+  {
+    "test": "National president sees impact and silent-club metrics",
+    "passed": true
+  },
+  {
+    "test": "Platform Admin sees storage health metrics",
+    "passed": true
+  },
+  {
+    "test": "No browser runtime errors",
+    "passed": true
+  }
+]

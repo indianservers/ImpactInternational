@@ -55,6 +55,8 @@ const Profile = lazy(() => import("./pages/Profile"));
 const Auth = lazy(() => import("./pages/Auth"));
 const Members = lazy(() => import("./pages/Members"));
 const Networking = lazy(() => import("./pages/Networking"));
+const PublicActivityCertificate = lazy(() => import("./pages/CommunityGrowth").then(m=>({default:m.PublicActivityCertificate})));
+const PublicActivities = lazy(() => import("./pages/PublicActivities"));
 const Community = lazy(() => import("./pages/Community"));
 const PersonMemberProfile = lazy(() => import("./pages/PersonMemberProfile"));
 const MemberProfile = lazy(() => import("./pages/MemberProfile"));
@@ -120,6 +122,8 @@ const VerifyCertificate = lazy(() =>
   import("./pages/Operations").then((m) => ({ default: m.VerifyCertificate })),
 );
 const IciWorkspace = lazy(() => import("./pages/IciWorkspace"));
+const CertifiedPeople = lazy(() => import("./pages/CertifiedPeople"));
+const MyCertifications = lazy(() => import("./pages/CertifiedPeople").then(m=>({default:m.MyCertifications})));
 const Certifications = lazy(() => import("./pages/Certifications"));
 const Communications = lazy(() => import("./pages/Communications"));
 const Events = lazy(() => import("./pages/Events"));
@@ -283,7 +287,7 @@ function Shell() {
   }
   const visibleSections = navigationSections.map((section) => ({
     ...section,
-    tabs: section.tabs.filter((tab) => canOpenTab(tab, w?.permissions || [], experience.data?.disabledFeatures || [])),
+    tabs: section.tabs.filter((tab) => (tab.to !== "/app/certified-people" || me.data?.platformAdmin) && canOpenTab(tab, w?.permissions || [], experience.data?.disabledFeatures || [])),
   })).filter((section) => section.tabs.length > 0);
   const activeSection = visibleSections.find((section) =>
     section.tabs.some((tab) => matchesTab(location.pathname, tab.to)),
@@ -411,6 +415,7 @@ function Shell() {
             <ErrorBox error={error} />
             {!w &&
             ![
+              "/app/my-certifications",
               "/app/profile",
               "/app/my-membership",
               "/app/my-id",
@@ -434,6 +439,7 @@ function Shell() {
                 <Link className="button" to="/app/apply">
                   Find a club and apply →
                 </Link>
+                <Link className="button" to="/app/my-certifications">Join the learning & certification portal →</Link>
                 <Link className="panel-link" to="/app/my-membership">
                   Open my membership portal →
                 </Link>
@@ -557,6 +563,9 @@ export default function App() {
           path="/verify/certificates/:token"
           element={<VerifyCertificate />}
         />
+        <Route path="/activity-certificate/:token" element={<PublicActivityCertificate />} />
+        <Route path="/activities/:tenantId" element={<PublicActivities />} />
+        <Route path="/activities/:tenantId/:postId" element={<PublicActivities />} />
         <Route path="/event/:id" element={<PublicEvent />} />
         <Route path="/event-invitation" element={<EventInvitation />} />
         <Route path="/" element={<Auth mode="login" />} />
@@ -602,6 +611,8 @@ export default function App() {
           <Route path="finance/*" element={<Finance />} />
           <Route path="operations/*" element={<Operations />} />
           <Route path="ici" element={<IciWorkspace />} />
+          <Route path="certified-people" element={<CertifiedPeople />} />
+          <Route path="my-certifications" element={<MyCertifications />} />
           <Route path="certifications" element={<Certifications />} />
           <Route path="communications/*" element={<Communications />} />
           <Route path="events" element={<Events />} />

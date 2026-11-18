@@ -1,0 +1,54 @@
+[
+  {
+    "test": "Club president has four audience choices",
+    "passed": true
+  },
+  {
+    "test": "Composer queues both photos and videos",
+    "passed": true
+  },
+  {
+    "test": "Interrupted upload keeps saved activity with retry action",
+    "passed": true
+  },
+  {
+    "test": "Direct image upload displays in activity feed",
+    "passed": true
+  },
+  {
+    "test": "Uploaded video plays with range streaming",
+    "passed": true
+  },
+  {
+    "test": "Retry did not duplicate the activity post",
+    "passed": true
+  },
+  {
+    "test": "Public activity opens with photos without login",
+    "passed": true
+  },
+  {
+    "test": "Public feed mobile has no horizontal overflow",
+    "passed": true
+  },
+  {
+    "test": "Changing to club visibility removes the public story",
+    "passed": true
+  },
+  {
+    "test": "Composer mobile has no horizontal overflow",
+    "passed": true
+  },
+  {
+    "test": "Platform Admin can manage connected Google accounts",
+    "passed": true
+  },
+  {
+    "test": "Platform Admin completes Google consent flow in browser",
+    "passed": true
+  },
+  {
+    "test": "No browser runtime errors",
+    "passed": true
+  }
+]

@@ -26,7 +26,7 @@ const featureSections = [
     tab("Settings", "/membership-settings", "members.workflow.manage"),
   ] },
   { id: "networking", label: "Networking", icon: Users, tabs: [
-    tab("Discover people", "/networking", "directory.view"), tab("Community spaces", "/community", "directory.view"),
+    tab("Discover people", "/networking", "directory.view"), tab("Activity feed", "/community", "directory.view"),
     tab("Activity reports", "/community/reports", "communications.manage", "reports.view", "governance.reports"),
     tab("My connections", "/networking/connections", "directory.view"), tab("My networking profile", "/networking/profile", "directory.view"),
   ] },
@@ -53,10 +53,10 @@ const featureSections = [
   { id: "cards", label: "ID Card Studio", icon: CreditCard, tabs: [tab("ID Card Studio", "/id-cards", "members.cards"), tab("My digital ID", "/my-id")] },
   { id: "intelligence", label: "Intelligence", icon: ChartNoAxesCombined, tabs: [tab("Intelligence", "/intelligence", "intelligence.assistant")] },
   { id: "administration", label: "Administration", icon: Settings, tabs: [
-    tab("Roles & access", "/administration", "roles.view"), tab("Audit trail", "/audit", "audit.view"), tab("Impact settings", "/settings", "settings.view"), tab("Certifications", "/certifications", "settings.manage"),
+    tab("Roles & access", "/administration", "roles.view"), tab("Audit trail", "/audit", "audit.view"), tab("Impact settings", "/settings", "settings.view"), tab("Certifications", "/certifications", "settings.manage"), tab("Certified people", "/certified-people", "settings.manage"),
   ] },
   { id: "community", label: "My Impact community", icon: UserRound, tabs: [
-    tab("My membership", "/my-membership"), tab("Join a club", "/apply"), tab("Profile & security", "/profile"),
+    tab("My membership", "/my-membership"), tab("My certifications", "/my-certifications"), tab("Join a club", "/apply"), tab("Profile & security", "/profile"),
   ] },
 ];
 

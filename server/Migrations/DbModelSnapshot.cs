@@ -23,6 +23,135 @@ namespace Clubs.Api.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("Clubs.ActivityCertificate", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateOnly>("ActivityOn")
+                        .HasColumnType("date");
+
+                    b.Property<string>("ActivitySnapshot")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTimeOffset>("IssuedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("IssuedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("NameSnapshot")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Number")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("OrganizationSnapshot")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("ParticipationId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("PersonId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("ProtectedToken")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("RevocationReason")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("TokenHash")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasAlternateKey("TenantId", "Id");
+
+                    b.HasIndex("ParticipationId")
+                        .IsUnique();
+
+                    b.HasIndex("TokenHash")
+                        .IsUnique();
+
+                    b.HasIndex("TenantId", "ParticipationId");
+
+                    b.ToTable("ActivityCertificates");
+                });
+
+            modelBuilder.Entity("Clubs.ActivityParticipation", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Consent")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Evidence")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<decimal>("Hours")
+                        .HasColumnType("numeric");
+
+                    b.Property<Guid>("PersonId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("PostId")
+                        .HasColumnType("uuid");
+
+                    b.Property<bool>("PublicName")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Role")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid");
+
+                    b.Property<bool>("Verified")
+                        .HasColumnType("boolean");
+
+                    b.Property<Guid?>("VerifiedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<long>("Version")
+                        .IsConcurrencyToken()
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PersonId");
+
+                    b.HasIndex("PostId", "PersonId")
+                        .IsUnique();
+
+                    b.HasIndex("TenantId", "PostId");
+
+                    b.ToTable("ActivityParticipations");
+                });
+
             modelBuilder.Entity("Clubs.Assignment", b =>
                 {
                     b.Property<Guid>("Id")
@@ -137,6 +266,69 @@ namespace Clubs.Api.Migrations
                     b.HasIndex("ActorId", "At");
 
                     b.ToTable("AuthenticationAudits");
+                });
+
+            modelBuilder.Entity("Clubs.BusinessOpportunity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Body")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Category")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("City")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateOnly>("ClosesOn")
+                        .HasColumnType("date");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("OrgId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("PersonId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Subcategory")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.PrimitiveCollection<string[]>("Tags")
+                        .IsRequired()
+                        .HasColumnType("text[]");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<long>("Version")
+                        .IsConcurrencyToken()
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TenantId", "Status", "ClosesOn");
+
+                    b.ToTable("BusinessOpportunities");
                 });
 
             modelBuilder.Entity("Clubs.CertificateTemplate", b =>
@@ -1602,6 +1794,174 @@ namespace Clubs.Api.Migrations
                     b.ToTable("CommunityComments");
                 });
 
+            modelBuilder.Entity("Clubs.CommunityDigestPreference", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("AssignmentId")
+                        .HasColumnType("uuid");
+
+                    b.Property<bool>("Enabled")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTimeOffset?>("LastQueuedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTimeOffset?>("LastSeenAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTimeOffset>("NextDigestAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasAlternateKey("TenantId", "Id");
+
+                    b.HasIndex("Enabled", "NextDigestAt");
+
+                    b.HasIndex("TenantId", "UserId")
+                        .IsUnique();
+
+                    b.ToTable("CommunityDigestPreferences");
+                });
+
+            modelBuilder.Entity("Clubs.CommunityFollow", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Kind")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Target")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasAlternateKey("TenantId", "Id");
+
+                    b.HasIndex("TenantId", "UserId", "Kind", "Target")
+                        .IsUnique();
+
+                    b.ToTable("CommunityFollows");
+                });
+
+            modelBuilder.Entity("Clubs.CommunityMedia", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("Attempts")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTimeOffset?>("CompletedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("ConnectionId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("DriveFileId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("FileName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("LastError")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("MimeType")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("PostId")
+                        .HasColumnType("uuid");
+
+                    b.Property<long>("Size")
+                        .HasColumnType("bigint");
+
+                    b.Property<Guid?>("SourceDocumentId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("UploadedBy")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasAlternateKey("TenantId", "Id");
+
+                    b.HasIndex("DriveFileId")
+                        .IsUnique();
+
+                    b.HasIndex("PostId", "SourceDocumentId")
+                        .IsUnique()
+                        .HasFilter("\"SourceDocumentId\" IS NOT NULL");
+
+                    b.HasIndex("TenantId", "ConnectionId");
+
+                    b.HasIndex("TenantId", "PostId");
+
+                    b.HasIndex("PostId", "Status", "CreatedAt");
+
+                    b.ToTable("CommunityMedia");
+                });
+
+            modelBuilder.Entity("Clubs.CommunityPolicy", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<bool>("RequirePublicApproval")
+                        .HasColumnType("boolean");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid");
+
+                    b.Property<long>("Version")
+                        .IsConcurrencyToken()
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasAlternateKey("TenantId", "Id");
+
+                    b.HasIndex("TenantId")
+                        .IsUnique();
+
+                    b.ToTable("CommunityPolicies");
+                });
+
             modelBuilder.Entity("Clubs.CommunityPost", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1610,6 +1970,9 @@ namespace Clubs.Api.Migrations
 
                     b.Property<DateOnly>("ActivityOn")
                         .HasColumnType("date");
+
+                    b.Property<Guid?>("AudienceOrgId")
+                        .HasColumnType("uuid");
 
                     b.Property<Guid>("AuthorId")
                         .HasColumnType("uuid");
@@ -1625,6 +1988,16 @@ namespace Clubs.Api.Migrations
                     b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<string>("DriveFolderId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid?>("GoogleConnectionId")
+                        .HasColumnType("uuid");
+
+                    b.Property<double?>("Latitude")
+                        .HasColumnType("double precision");
+
                     b.Property<string>("LinkUrl")
                         .IsRequired()
                         .HasColumnType("text");
@@ -1632,6 +2005,9 @@ namespace Clubs.Api.Migrations
                     b.Property<string>("Location")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<double?>("Longitude")
+                        .HasColumnType("double precision");
 
                     b.Property<Guid>("OrgId")
                         .HasColumnType("uuid");
@@ -1649,6 +2025,22 @@ namespace Clubs.Api.Migrations
                     b.Property<string>("RequestKey")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<string>("ReviewNote")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid?>("ReviewOrgId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset?>("ReviewedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("ReviewedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("SourceEventId")
+                        .HasColumnType("uuid");
 
                     b.Property<string>("Status")
                         .IsRequired()
@@ -1668,6 +2060,10 @@ namespace Clubs.Api.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("bigint");
 
+                    b.Property<string>("Visibility")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<decimal>("VolunteerHours")
                         .HasColumnType("numeric");
 
@@ -1675,10 +2071,20 @@ namespace Clubs.Api.Migrations
 
                     b.HasIndex("AuthorId");
 
+                    b.HasIndex("TenantId", "AudienceOrgId");
+
+                    b.HasIndex("TenantId", "GoogleConnectionId");
+
+                    b.HasIndex("TenantId", "SourceEventId")
+                        .IsUnique()
+                        .HasFilter("\"SourceEventId\" IS NOT NULL");
+
                     b.HasIndex("TenantId", "AuthorId", "RequestKey")
                         .IsUnique();
 
                     b.HasIndex("TenantId", "OrgId", "Status", "ActivityOn");
+
+                    b.HasIndex("TenantId", "Status", "Visibility", "CreatedAt");
 
                     b.ToTable("CommunityPosts");
                 });
@@ -4801,6 +5207,102 @@ namespace Clubs.Api.Migrations
                     b.ToTable("FinanceWebhooks");
                 });
 
+            modelBuilder.Entity("Clubs.GoogleMediaConnection", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset>("AccessExpiresAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("AccessTokenProtected")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<bool>("ActiveForUploads")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("Connected")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTimeOffset>("ConnectedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("ConnectedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("GoogleSubject")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("RefreshTokenProtected")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("RootFolderId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TenantId")
+                        .IsUnique()
+                        .HasFilter("\"ActiveForUploads\" = TRUE");
+
+                    b.HasIndex("TenantId", "GoogleSubject")
+                        .IsUnique();
+
+                    b.ToTable("GoogleMediaConnections");
+                });
+
+            modelBuilder.Entity("Clubs.GoogleMediaOAuthState", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<bool>("Consumed")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTimeOffset>("ExpiresAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("SessionId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("StateHash")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("VerifierProtected")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasAlternateKey("TenantId", "Id");
+
+                    b.HasIndex("StateHash")
+                        .IsUnique();
+
+                    b.ToTable("GoogleMediaOAuthStates");
+                });
+
             modelBuilder.Entity("Clubs.GovernanceDelegation", b =>
                 {
                     b.Property<Guid>("Id")
@@ -6421,6 +6923,12 @@ namespace Clubs.Api.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<DateTimeOffset?>("VerifiedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("VerifiedBy")
+                        .HasColumnType("uuid");
+
                     b.Property<long>("Version")
                         .IsConcurrencyToken()
                         .HasColumnType("bigint");
@@ -7793,6 +8301,43 @@ namespace Clubs.Api.Migrations
                     b.ToTable("OperationTasks");
                 });
 
+            modelBuilder.Entity("Clubs.OpportunityResponse", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("OpportunityId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("PersonId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasAlternateKey("TenantId", "Id");
+
+                    b.HasIndex("OpportunityId", "UserId")
+                        .IsUnique();
+
+                    b.HasIndex("TenantId", "OpportunityId");
+
+                    b.ToTable("OpportunityResponses");
+                });
+
             modelBuilder.Entity("Clubs.Org", b =>
                 {
                     b.Property<Guid>("Id")
@@ -8663,6 +9208,33 @@ namespace Clubs.Api.Migrations
                         .IsUnique();
 
                     b.ToTable("PersonTags");
+                });
+
+            modelBuilder.Entity("Clubs.PortalParticipant", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset>("JoinedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("PersonId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasAlternateKey("TenantId", "Id");
+
+                    b.HasIndex("PersonId");
+
+                    b.HasIndex("TenantId", "PersonId")
+                        .IsUnique();
+
+                    b.ToTable("PortalParticipants");
                 });
 
             modelBuilder.Entity("Clubs.ProjectActivity", b =>
@@ -9640,6 +10212,44 @@ namespace Clubs.Api.Migrations
                     b.ToTable("VolunteerShifts");
                 });
 
+            modelBuilder.Entity("Clubs.ActivityCertificate", b =>
+                {
+                    b.HasOne("Clubs.Tenant", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Clubs.ActivityParticipation", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "ParticipationId")
+                        .HasPrincipalKey("TenantId", "Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Clubs.ActivityParticipation", b =>
+                {
+                    b.HasOne("Clubs.Person", null)
+                        .WithMany()
+                        .HasForeignKey("PersonId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Clubs.Tenant", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Clubs.CommunityPost", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "PostId")
+                        .HasPrincipalKey("TenantId", "Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Clubs.Assignment", b =>
                 {
                     b.HasOne("Clubs.User", null)
@@ -9671,6 +10281,15 @@ namespace Clubs.Api.Migrations
                         .WithMany()
                         .HasForeignKey("TenantId", "RoleId")
                         .HasPrincipalKey("TenantId", "Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Clubs.BusinessOpportunity", b =>
+                {
+                    b.HasOne("Clubs.Tenant", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });
@@ -10149,6 +10768,56 @@ namespace Clubs.Api.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Clubs.CommunityDigestPreference", b =>
+                {
+                    b.HasOne("Clubs.Tenant", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Clubs.CommunityFollow", b =>
+                {
+                    b.HasOne("Clubs.Tenant", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Clubs.CommunityMedia", b =>
+                {
+                    b.HasOne("Clubs.Tenant", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Clubs.GoogleMediaConnection", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "ConnectionId")
+                        .HasPrincipalKey("TenantId", "Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Clubs.CommunityPost", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "PostId")
+                        .HasPrincipalKey("TenantId", "Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Clubs.CommunityPolicy", b =>
+                {
+                    b.HasOne("Clubs.Tenant", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Clubs.CommunityPost", b =>
                 {
                     b.HasOne("Clubs.User", null)
@@ -10165,10 +10834,28 @@ namespace Clubs.Api.Migrations
 
                     b.HasOne("Clubs.Org", null)
                         .WithMany()
+                        .HasForeignKey("TenantId", "AudienceOrgId")
+                        .HasPrincipalKey("TenantId", "Id")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Clubs.GoogleMediaConnection", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "GoogleConnectionId")
+                        .HasPrincipalKey("TenantId", "Id")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Clubs.Org", null)
+                        .WithMany()
                         .HasForeignKey("TenantId", "OrgId")
                         .HasPrincipalKey("TenantId", "Id")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.HasOne("Clubs.ClubEvent", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "SourceEventId")
+                        .HasPrincipalKey("TenantId", "Id")
+                        .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("Clubs.CommunityReaction", b =>
@@ -11640,6 +12327,24 @@ namespace Clubs.Api.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Clubs.GoogleMediaConnection", b =>
+                {
+                    b.HasOne("Clubs.Tenant", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Clubs.GoogleMediaOAuthState", b =>
+                {
+                    b.HasOne("Clubs.Tenant", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Clubs.GovernanceDelegation", b =>
                 {
                     b.HasOne("Clubs.Tenant", null)
@@ -12754,6 +13459,22 @@ namespace Clubs.Api.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Clubs.OpportunityResponse", b =>
+                {
+                    b.HasOne("Clubs.Tenant", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Clubs.BusinessOpportunity", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "OpportunityId")
+                        .HasPrincipalKey("TenantId", "Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Clubs.Org", b =>
                 {
                     b.HasOne("Clubs.Tenant", null)
@@ -12878,6 +13599,21 @@ namespace Clubs.Api.Migrations
                         .WithMany("Tags")
                         .HasForeignKey("PersonId")
                         .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Clubs.PortalParticipant", b =>
+                {
+                    b.HasOne("Clubs.Person", null)
+                        .WithMany()
+                        .HasForeignKey("PersonId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Clubs.Tenant", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });
 

@@ -1,0 +1,58 @@
+[
+  {
+    "test": "Platform Admin can open certified people register",
+    "passed": true
+  },
+  {
+    "test": "Search finds independent workshop graduate",
+    "passed": true
+  },
+  {
+    "test": "Admin verification updates certificate status",
+    "passed": true
+  },
+  {
+    "test": "Admin opens shared certification history",
+    "passed": true
+  },
+  {
+    "test": "Admin register has no mobile horizontal overflow",
+    "passed": true
+  },
+  {
+    "test": "Participant without workspace can open verified certifications",
+    "passed": true
+  },
+  {
+    "test": "Independent participant adds another certification from portal",
+    "passed": true
+  },
+  {
+    "test": "Independent portal fits mobile",
+    "passed": true
+  },
+  {
+    "test": "Club member uses same learning portal",
+    "passed": true
+  },
+  {
+    "test": "Participant cannot open Platform Admin module",
+    "passed": true
+  },
+  {
+    "test": "Public learning signup requires no club or region",
+    "passed": true
+  },
+  {
+    "test": "Learning account signup succeeds without club membership",
+    "passed": true
+  },
+  {
+    "test": "Learning signup fits mobile",
+    "passed": true
+  },
+  {
+    "test": "No browser runtime errors",
+    "passed": true
+  }
+]

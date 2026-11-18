@@ -2,6 +2,12 @@
 
 React/TypeScript/Vite frontend, ASP.NET Core 10 API, EF Core/Npgsql and PostgreSQL. The repository was empty at the start of implementation. No SQLite, browser storage, or mock production API is used.
 
+## Activity feeds and Google media
+
+The community tools also include event import, parent-unit public-post reviews, member participation consent and history, opportunities and explained member matches, map discovery, follows and opt-in weekly digests, leadership impact, verified certificates/milestones, and storage recovery. See [Community growth workflows](docs/COMMUNITY_GROWTH.md) for permissions, rollout and verification.
+
+Activity feeds now support Club, Region, National and Public audiences, direct Google Drive photo/video uploads, and National President oversight. Platform Admin connects Google accounts through **Activity feed → Google media storage**. See [Google activity media setup](docs/GOOGLE_ACTIVITY_MEDIA.md) for OAuth configuration, migration, privacy behavior and storage limits. Google Photos is not used for website media hosting.
+
 ## Member business profiles
 
 Members can add a business category, subcategory, business summary and up to 30 service or product tags through **My networking profile** or the **Professional** section of the member editor. Category suggestions support custom entries. Member profiles include a dedicated **Business profile** tab and a business card in the complete profile. The networking directory supports business category, subcategory and tag filters, plus text search across business summaries and tags. Business visibility follows the existing directory and professional privacy preferences.

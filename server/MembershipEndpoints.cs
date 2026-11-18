@@ -403,6 +403,7 @@ public static class MembershipEndpoints
                                     h.At,
                                 })
                                 .ToListAsync(),
+                        canPresidentTransfer = w != null && (await IciPolicy.Role(s.Access, w) is "Regional President" or "National President"),
                         canManage = grants.Contains("members.manage"),
                         canEditPerson = own
                             || grants.Contains("members.manage") && p.UserId == null,

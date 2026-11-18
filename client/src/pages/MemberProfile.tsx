@@ -688,6 +688,7 @@ export default function MemberProfile({membershipId,directoryMode}:{membershipId
               </div>
             </section>
           )}
+          {d.canPresidentTransfer && m.status === "Active" && (<section className="panel spaced"><h3>Transfer member</h3><p>Transfer immediately to another club within your presidential scope. Membership history is preserved.</p><button onClick={() => setAction("president-transfer")}>Transfer to another club</button></section>)}
           {own && m.status === "Active" && (
             <section className="panel spaced">
               <h3>Need a new chapter?</h3>
@@ -732,15 +733,16 @@ export default function MemberProfile({membershipId,directoryMode}:{membershipId
       {action && (
         <MemberDrawer
           title={
-            action === "transfer"
+            (action === "transfer" || action === "president-transfer")
               ? "Request membership transfer"
               : "Membership action"
           }
           onClose={() => setAction("")}
         >
           <ErrorBox error={error} />
-          {action === "transfer" ? (
+          {(action === "transfer" || action === "president-transfer") ? (
             <TransferForm
+              direct={action === "president-transfer"}
               membership={m}
               onDone={() => {
                 setAction("");
@@ -770,7 +772,7 @@ function Detail({ label, value }: any) {
     </div>
   );
 }
-export function TransferForm({ membership: m, onDone }: any) {
+export function TransferForm({ membership: m, onDone, direct = false }: any) {
   const [f, setF] = useState<any>({
       clubId: "",
       categoryId: m.categoryId,
@@ -787,7 +789,7 @@ export function TransferForm({ membership: m, onDone }: any) {
         e.preventDefault();
         setBusy(true);
         try {
-          await api("/members/" + m.id + "/transfers", "POST", {
+          await api("/members/" + m.id + (direct ? "/president-transfer" : "/transfers"), "POST", {
             destinationClubId: f.clubId,
             categoryId: f.categoryId,
             reason: f.reason,
@@ -805,24 +807,23 @@ export function TransferForm({ membership: m, onDone }: any) {
       }}
     >
       <p>
-        Source and destination reviews follow Impact International policy. Independent
-        officer roles remain separate from membership access.
+        {direct ? "Transfer immediately within your region or national scope. Financial clearance requirements still apply." : "Source and destination reviews follow Impact International policy. Independent officer roles remain separate from membership access."}
       </p>
       <ClubCategoryFields
         {...f}
-        publicCatalog
+        publicCatalog={!direct}
         fixedTenant
         excludeClub={m.clubId}
         onChange={(v: any) => setF({ ...f, ...v })}
       />
-      <label>
+      {!direct && <label>
         Requested effective date (blank means now)
         <input
           type="date"
           value={f.effectiveAt}
           onChange={(e) => setF({ ...f, effectiveAt: e.target.value })}
         />
-      </label>
+      </label>}
       <label>
         Reason
         <textarea
@@ -835,7 +836,7 @@ export function TransferForm({ membership: m, onDone }: any) {
       </label>
       <ErrorBox error={error} />
       <button disabled={busy}>
-        {busy ? "Submitting…" : "Submit transfer request"}
+        {busy ? "Submitting…" : direct ? "Transfer member now" : "Submit transfer request"}
       </button>
     </form>
   );

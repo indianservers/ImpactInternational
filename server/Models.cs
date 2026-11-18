@@ -251,13 +251,16 @@ public partial class Db(DbContextOptions<Db> options) : DbContext(options)
     {
         ConfigureIci(b);
         ConfigureTraining(b);
+        ConfigurePortalParticipants(b);
         ConfigureMembership(b);
         b.Entity<Level>().HasQueryFilter(l => l.Name != "District" && l.Name != "Zone");
         b.Entity<Org>().HasQueryFilter(o => Levels.Any(l => l.Id == o.LevelId));
         b.Entity<Membership>().HasQueryFilter(m => Levels.Any(l => l.Id == m.Club.LevelId));
         b.Entity<OfficerPosition>().HasQueryFilter(p => Levels.Any(l => l.Id == p.LevelId));
         b.Entity<Role>().HasQueryFilter(r => r.Name != "District President" && r.Name != "Zonal President" && r.Name != "Zone President" && r.Name != "District Administrator" && r.Name != "Zone Administrator");
+        ConfigureGoogleMedia(b);
         ConfigureCommunity(b);
+        ConfigureCommunityGrowth(b);
         b.Entity<User>()
             .SplitToTable(
                 "UserProfiles",

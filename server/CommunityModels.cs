@@ -16,6 +16,17 @@ public class CommunityPost : ITenantRecord
     public string Location { get; set; } = "";
     public string LinkUrl { get; set; } = "";
     public bool Pinned { get; set; }
+    public Guid? SourceEventId { get; set; }
+    public Guid? ReviewOrgId { get; set; }
+    public Guid? ReviewedBy { get; set; }
+    public string ReviewNote { get; set; } = "";
+    public DateTimeOffset? ReviewedAt { get; set; }
+    public double? Latitude { get; set; }
+    public double? Longitude { get; set; }
+    public string Visibility { get; set; } = "Hierarchy";
+    public Guid? AudienceOrgId { get; set; }
+    public Guid? GoogleConnectionId { get; set; }
+    public string DriveFolderId { get; set; } = "";
     public string Status { get; set; } = "Published";
     public string RequestKey { get; set; } = "";
     public string RequestHash { get; set; } = "";
@@ -51,8 +62,13 @@ public partial class Db
         b.Entity<CommunityPost>().HasAlternateKey(p => new { p.TenantId, p.Id });
         b.Entity<CommunityPost>().HasOne<Org>().WithMany().HasForeignKey(p => new { p.TenantId, p.OrgId }).HasPrincipalKey(o => new { o.TenantId, o.Id }).OnDelete(DeleteBehavior.Restrict);
         b.Entity<CommunityPost>().HasOne<User>().WithMany().HasForeignKey(p => p.AuthorId).OnDelete(DeleteBehavior.Restrict);
+        b.Entity<CommunityPost>().HasIndex(p => new { p.TenantId, p.Status, p.Visibility, p.CreatedAt });
+        b.Entity<CommunityPost>().HasOne<Org>().WithMany().HasForeignKey(p => new { p.TenantId, p.AudienceOrgId }).HasPrincipalKey(o => new { o.TenantId, o.Id }).OnDelete(DeleteBehavior.Restrict);
+        b.Entity<CommunityPost>().HasOne<GoogleMediaConnection>().WithMany().HasForeignKey(p => new { p.TenantId, p.GoogleConnectionId }).HasPrincipalKey(c => new { c.TenantId, c.Id }).OnDelete(DeleteBehavior.Restrict);
         b.Entity<CommunityPost>().Property(p => p.Version).IsConcurrencyToken();
         b.Entity<CommunityPost>().HasIndex(p => new { p.TenantId, p.OrgId, p.Status, p.ActivityOn });
+        b.Entity<CommunityPost>().HasIndex(p => new { p.TenantId, p.SourceEventId }).IsUnique().HasFilter("\"SourceEventId\" IS NOT NULL");
+        b.Entity<CommunityPost>().HasOne<ClubEvent>().WithMany().HasForeignKey(p => new { p.TenantId, p.SourceEventId }).HasPrincipalKey(e => new { e.TenantId, e.Id }).OnDelete(DeleteBehavior.Restrict);
         b.Entity<CommunityPost>().HasIndex(p => new { p.TenantId, p.AuthorId, p.RequestKey }).IsUnique();
         b.Entity<CommunityComment>().HasOne<CommunityPost>().WithMany().HasForeignKey(c => new { c.TenantId, c.PostId }).HasPrincipalKey(p => new { p.TenantId, p.Id }).OnDelete(DeleteBehavior.Restrict);
         b.Entity<CommunityComment>().HasOne<User>().WithMany().HasForeignKey(c => c.AuthorId).OnDelete(DeleteBehavior.Restrict);

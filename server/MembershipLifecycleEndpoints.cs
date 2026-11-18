@@ -21,6 +21,41 @@ public static class MembershipLifecycleEndpoints
 {
     public static void MapMembershipLifecycle(this RouteGroupBuilder api)
     {
+        api.MapPost("/members/{id:guid}/president-transfer", async (Guid id, TransferInput r, MembershipService s, NotificationService n) =>
+        {
+            var w = await s.Access.Workspace("members.transfer.approve");
+            var role = await IciPolicy.Role(s.Access, w);
+            Check(role is "Regional President" or "National President", "Only a Regional or National President can perform this transfer.", 403);
+            await using var tx = await s.Access.Mutation(w);
+            var m = await s.Find(id, "members.transfer.approve", allowOwn: false);
+            await s.Lock(m.PersonId);
+            await s.Db.Entry(m).ReloadAsync();
+            Check(m.Version == r.Version, "Membership changed. Refresh before transferring.", 409);
+            Check(m.Status == "Active" && !m.FinancialHold && (m.EndsAt == null || m.EndsAt > DateTimeOffset.UtcNow), "Only a current active membership without a financial hold can transfer.", 409);
+            Check(!string.IsNullOrWhiteSpace(r.Reason) && r.Reason.Trim().Length is >= 5 and <= 2000, "A transfer reason of 5–2000 characters is required.");
+            var club = await s.Club(r.DestinationClubId, w.TenantId);
+            Check(club.Id != m.ClubId, "Select another club.");
+            Check(await s.Access.Visible(w).AnyAsync(o => o.Id == club.Id), "Destination club is outside your authorized region or national scope.", 403);
+            // Presidents must act from the corresponding hierarchy level, including when their account is a platform administrator.
+            var level = role == "Regional President" ? "Region" : "National";
+            Check(await s.Db.Orgs.AnyAsync(o => o.Id == w.OrgId && o.TenantId == w.TenantId && o.Status == "Active" && s.Db.Levels.Any(l => l.Id == o.LevelId && l.Name == level)), "Activate the appropriate president workspace.", 403);
+            var tree = s.Access.Tree(w.TenantId, w.OrgId);
+            Check(await tree.AnyAsync(o => o.Id == m.ClubId) && await tree.AnyAsync(o => o.Id == club.Id), "Both clubs must be within your presidential scope.", 403);
+            await s.Category(r.CategoryId, w.TenantId);
+            Check(!await s.Db.MembershipTransfers.AnyAsync(t => t.MembershipId == m.Id && t.Status != "Completed" && t.Status != "Rejected" && t.Status != "Cancelled"), "Resolve the existing transfer before creating another.", 409);
+            var policy = await s.Db.MembershipPolicies.SingleAsync(p => p.TenantId == w.TenantId);
+            Check(!policy.FinancialClearanceRequired, "Financial clearance is required. Use the reviewed transfer process.", 409);
+            Check(r.EffectiveAt == null, "Presidential transfers take effect immediately.");
+            var transfer = new MembershipTransfer { TenantId = w.TenantId, MembershipId = m.Id, DestinationClubId = club.Id, CategoryId = r.CategoryId, RequesterId = w.UserId, Reason = r.Reason.Trim(), EffectiveAt = DateTimeOffset.UtcNow, SourceRequired = false, AssociationRequired = false, ClearanceRequired = false, Status = "Scheduled" };
+            s.Db.MembershipTransfers.Add(transfer);
+            await CompleteTransfer(transfer, s, w.UserId);
+            await s.Access.Log(w, "membership.president-transfer", m.Id.ToString(), $"{m.ClubId} -> {club.Id}: {r.Reason.Trim()}");
+            await s.Access.Log(w, "transfer.president", transfer.Id.ToString(), transfer.Reason);
+            await n.User(m.Person.UserId, "transfer.status", "Your membership has been transferred to " + club.Name + ".", "/app/my-membership", w.TenantId, club.Id);
+            await s.Db.SaveChangesAsync();
+            await tx.CommitAsync();
+            return Results.Ok(new { transfer.Id, transfer.Status, transfer.DestinationMembershipId });
+        });
         api.MapPost(
             "/members/{id:guid}/transfers",
             async (Guid id, TransferInput r, MembershipService s, NotificationService n) =>

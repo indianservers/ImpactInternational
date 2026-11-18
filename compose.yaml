@@ -23,6 +23,9 @@ services:
       Communications__MetaVersion: ${META_GRAPH_VERSION:-}
       Smtp__VerifiedSenders__0: ${SMTP_VERIFIED_SENDER:-}
       PublicOrigin: ${PUBLIC_ORIGIN:?Set PUBLIC_ORIGIN to the HTTPS public URL}
+      GoogleMedia__ClientId: ${GOOGLE_MEDIA_CLIENT_ID:-}
+      GoogleMedia__ClientSecret: ${GOOGLE_MEDIA_CLIENT_SECRET:-}
+      GoogleMedia__RedirectUri: ${GOOGLE_MEDIA_REDIRECT_URI:-}
       Smtp__Host: ${SMTP_HOST:-}
       Smtp__Port: ${SMTP_PORT:-587}
       Smtp__From: ${SMTP_FROM:-}

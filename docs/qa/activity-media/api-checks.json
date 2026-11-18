@@ -1,0 +1,158 @@
+[
+  {
+    "test": "Club president can post all four audience types",
+    "passed": true
+  },
+  {
+    "test": "Own club members see club activity",
+    "passed": true
+  },
+  {
+    "test": "Sibling club cannot see club-only activity",
+    "passed": true
+  },
+  {
+    "test": "Sibling club sees region audience",
+    "passed": true
+  },
+  {
+    "test": "Other region cannot see region-only activity",
+    "passed": true
+  },
+  {
+    "test": "Other region within same national sees national audience",
+    "passed": true
+  },
+  {
+    "test": "Regional president oversees club-only activity",
+    "passed": true
+  },
+  {
+    "test": "National president oversees all descendant activities",
+    "passed": true
+  },
+  {
+    "test": "Ordinary member cannot publish",
+    "passed": true
+  },
+  {
+    "test": "Region post cannot target nonexistent club audience",
+    "passed": true
+  },
+  {
+    "test": "Club president cannot post in parent unit",
+    "passed": true
+  },
+  {
+    "test": "Regional president can publish own unit activity",
+    "passed": true
+  },
+  {
+    "test": "Anonymous feed contains only public posts",
+    "passed": true
+  },
+  {
+    "test": "Activity reactions and comments still work",
+    "passed": true
+  },
+  {
+    "test": "Google account management limited to Platform Admin",
+    "passed": true
+  },
+  {
+    "test": "Media upload blocked until admin connects Google",
+    "passed": true
+  },
+  {
+    "test": "Consent uses state PKCE offline and least privilege Drive scope",
+    "passed": true
+  },
+  {
+    "test": "OAuth state bound to initiating session",
+    "passed": true
+  },
+  {
+    "test": "OAuth callback connects account",
+    "passed": true
+  },
+  {
+    "test": "OAuth callback replay rejected",
+    "passed": true
+  },
+  {
+    "test": "Account list never returns OAuth secrets",
+    "passed": true
+  },
+  {
+    "test": "Refresh token encrypted at rest",
+    "passed": true
+  },
+  {
+    "test": "Upload yields scoped session not Google OAuth credentials",
+    "passed": true
+  },
+  {
+    "test": "Interrupted Google upload reports resumable offset",
+    "passed": true
+  },
+  {
+    "test": "Upload completion verified and idempotent",
+    "passed": true
+  },
+  {
+    "test": "Public photo streams without sign-in",
+    "passed": true
+  },
+  {
+    "test": "Byte range playback supported",
+    "passed": true
+  },
+  {
+    "test": "Restricting visibility revokes anonymous and sibling media access",
+    "passed": true
+  },
+  {
+    "test": "Same club still sees restricted media",
+    "passed": true
+  },
+  {
+    "test": "Media authorization type and size validated",
+    "passed": true
+  },
+  {
+    "test": "Activity folder stored only as Google reference",
+    "passed": true
+  },
+  {
+    "test": "Separate national unit excluded from club region and national audiences",
+    "passed": true
+  },
+  {
+    "test": "National president cannot see another national unit private update",
+    "passed": true
+  },
+  {
+    "test": "Consent uses state PKCE offline and least privilege Drive scope",
+    "passed": true
+  },
+  {
+    "test": "Additional Google account connects",
+    "passed": true
+  },
+  {
+    "test": "Default storage account can be switched",
+    "passed": true
+  },
+  {
+    "test": "Disconnect revokes an account and retains original activity access",
+    "passed": true
+  },
+  {
+    "test": "Expired OAuth state rejected",
+    "passed": true
+  },
+  {
+    "test": "National report includes descendant club updates",
+    "passed": true
+  }
+]

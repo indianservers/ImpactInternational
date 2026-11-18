@@ -17,6 +17,8 @@ public class MemberCertification : ITenantRecord
     public Guid TenantId { get; set; }
     public Guid PersonId { get; set; }
     public Guid ProgramId { get; set; }
+    public Guid? VerifiedBy { get; set; }
+    public DateTimeOffset? VerifiedAt { get; set; }
     public string CertificateId { get; set; } = "";
     public string Batch { get; set; } = "";
     public string Issuer { get; set; } = "";
@@ -53,6 +55,7 @@ public static class TrainingCertifications
 {
     public static async Task Apply(Db db, Guid tenant, Guid person, CertificationInput input, MemberCertification row)
     {
+        row.VerifiedBy = null; row.VerifiedAt = null;
         Check(input.CertificateId is { Length: > 0 and <= 120 } && input.CertificateId.Trim().Length > 0
             && input.Batch is { Length: <= 120 } && input.Issuer is { Length: <= 200 }
             && input.TrainingCenter is { Length: <= 200 } && input.Notes is { Length: <= 4000 }
@@ -67,43 +70,50 @@ public static class TrainingCertifications
         row.TrainingCenter = input.TrainingCenter.Trim(); row.IssuedOn = input.IssuedOn; row.ValidUntil = input.ValidUntil;
         row.Notes = input.Notes; row.VerificationUrl = input.VerificationUrl; row.Version++; row.UpdatedAt = DateTimeOffset.UtcNow;
     }
-    static async Task<(Assignment Workspace, Guid Person)> Scope(MembershipService s, Guid? personId, bool write)
+    static async Task<(Guid TenantId, Guid PersonId, Assignment? Workspace)> Scope(MembershipService s, Guid? personId, bool write)
     {
         var user = await s.Access.User();
-        var w = await s.Access.Workspace("organization.view");
-        var person = personId ?? await s.Db.Persons.Where(p => p.UserId == user.Id).Select(p => (Guid?)p.Id).SingleOrDefaultAsync();
-        Check(person != null, "A linked member profile is required.", 404);
-        if (await s.Db.Persons.AnyAsync(p => p.Id == person && p.UserId == user.Id))
-            Check(await s.Db.Memberships.AnyAsync(m => m.PersonId == person && m.TenantId == w.TenantId), "Member is outside this association.", 404);
-        else
+        var tenant = await PortalParticipants.Tenant(s.Access);
+        var own = await s.Db.Persons.SingleOrDefaultAsync(p => p.UserId == user.Id);
+        if (own != null && (personId == null || personId == own.Id))
         {
-            w = await s.Access.Workspace(write ? "members.manage" : "members.view");
-            Check(await s.Scoped(w).AnyAsync(m => m.PersonId == person), "Member is outside your scope.", 404);
+            Check(await s.Db.PortalParticipants.AnyAsync(p => p.TenantId == tenant && p.PersonId == own.Id)
+                || await s.Db.Memberships.AnyAsync(m => m.PersonId == own.Id && m.TenantId == tenant), "Join the certification portal first.", 403);
+            return (tenant, own.Id, null);
         }
-        return (w, person!.Value);
+        var w = await s.Access.Workspace(write ? "members.manage" : "members.view");
+        Check(personId != null && (await s.Scoped(w).AnyAsync(m => m.PersonId == personId)
+            || user.PlatformAdmin && await s.Db.PortalParticipants.AnyAsync(p => p.TenantId == w.TenantId && p.PersonId == personId)), "Person is outside your scope.", 404);
+        return (w.TenantId, personId!.Value, w);
+    }
+    static async Task Audit(MembershipService s, Guid tenant, Assignment? w, string action, Guid id)
+    {
+        s.Db.Audits.Add(new() { TenantId = tenant, OrgId = w?.OrgId, ActorId = (await s.Access.User()).Id, Action = action, Resource = id.ToString() });
+        await s.Db.SaveChangesAsync();
     }
     public static void MapTrainingCertifications(this RouteGroupBuilder api)
     {
         api.MapGet("/certifications", async (Access a) => {
-            var w = await a.Workspace("organization.view");
-            return await a.Db.TrainingPrograms.Where(p => p.TenantId == w.TenantId).OrderBy(p => p.Name).ToListAsync();
+            await a.User();
+            var tenant = await PortalParticipants.Tenant(a);
+            return await a.Db.TrainingPrograms.Where(p => p.TenantId == tenant).OrderBy(p => p.Name).ToListAsync();
         });
         api.MapPost("/certifications", async (TrainingProgramInput input, Access a) => await Program(null, input, a));
         api.MapPut("/certifications/{id:guid}", async (Guid id, TrainingProgramInput input, Access a) => await Program(id, input, a));
         api.MapGet("/member-certifications", async (MembershipService s, Guid? personId = null) => {
-            var (w, person) = await Scope(s, personId, false);
+            var (tenant, person, w) = await Scope(s, personId, false);
             var today = DateOnly.FromDateTime(DateTime.UtcNow);
             return await (from c in s.Db.MemberCertifications join p in s.Db.TrainingPrograms on c.ProgramId equals p.Id
-                where c.TenantId == w.TenantId && c.PersonId == person orderby c.UpdatedAt descending
-                select new { certification = c, program = p.Name, status = c.ValidUntil != null && c.ValidUntil < today ? "Expired" : "Current", verification = "Member reported" }).ToListAsync();
+                where c.TenantId == tenant && c.PersonId == person orderby c.UpdatedAt descending
+                select new { certification = c, program = p.Name, status = c.ValidUntil != null && c.ValidUntil < today ? "Expired" : "Current", verification = c.VerifiedAt != null ? "Platform verified" : "Self reported" }).ToListAsync();
         });
         api.MapPost("/member-certifications", async (CertificationInput input, MembershipService s, Guid? personId = null) => await Save(null, input, s, personId));
         api.MapPut("/member-certifications/{id:guid}", async (Guid id, CertificationInput input, MembershipService s, Guid? personId = null) => await Save(id, input, s, personId));
         api.MapDelete("/member-certifications/{id:guid}", async (Guid id, MembershipService s, Guid? personId = null) => {
-            var (w, person) = await Scope(s, personId, true);
-            var row = await s.Db.MemberCertifications.SingleOrDefaultAsync(c => c.Id == id && c.TenantId == w.TenantId && c.PersonId == person);
+            var (tenant, person, w) = await Scope(s, personId, true);
+            var row = await s.Db.MemberCertifications.SingleOrDefaultAsync(c => c.Id == id && c.TenantId == tenant && c.PersonId == person);
             Check(row != null, "Certification not found.", 404);
-            s.Db.MemberCertifications.Remove(row!); await s.Access.Log(w, "member.certification.delete", id.ToString()); await s.Db.SaveChangesAsync(); return Results.NoContent();
+            s.Db.MemberCertifications.Remove(row!); await Audit(s, tenant, w, "member.certification.delete", id); await s.Db.SaveChangesAsync(); return Results.NoContent();
         });
     }
     static async Task<TrainingProgram> Program(Guid? id, TrainingProgramInput input, Access a)
@@ -120,10 +130,10 @@ public static class TrainingCertifications
     }
     static async Task<MemberCertification> Save(Guid? id, CertificationInput input, MembershipService s, Guid? personId)
     {
-        var (w, person) = await Scope(s, personId, true);
-        var row = id == null ? new MemberCertification() : await s.Db.MemberCertifications.SingleOrDefaultAsync(c => c.Id == id && c.PersonId == person && c.TenantId == w.TenantId);
+        var (tenant, person, w) = await Scope(s, personId, true);
+        var row = id == null ? new MemberCertification() : await s.Db.MemberCertifications.SingleOrDefaultAsync(c => c.Id == id && c.PersonId == person && c.TenantId == tenant);
         Check(row != null, "Certification not found.", 404); Check(id == null || row!.Version == input.Version, "Certification changed. Reload and retry.", 409);
-        await Apply(s.Db, w.TenantId, person, input, row!); if (id == null) s.Db.MemberCertifications.Add(row!);
-        await s.Access.Log(w, "member.certification.save", row!.Id.ToString()); await s.Db.SaveChangesAsync(); return row;
+        await Apply(s.Db, tenant, person, input, row!); if (id == null) s.Db.MemberCertifications.Add(row!);
+        await Audit(s, tenant, w, "member.certification.save", row!.Id); await s.Db.SaveChangesAsync(); return row;
     }
 }
