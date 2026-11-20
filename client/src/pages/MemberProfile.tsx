@@ -1,9 +1,13 @@
+import SectionTabs from "../SectionTabs";
+import { MemberHierarchyDiagram } from "../HierarchyExplorer";
+import { useLanguage } from "../i18n";
+import "./MemberProfileNavigation.css";
 import { BusinessProfileCard } from "../BusinessProfile";
 import CompleteMemberProfile from './CompleteMemberProfile';
 import "./Members.css";
 import {MemberAchievements} from "./Operations";
 import {MemberOffices} from "../GovernanceUI";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useParams, useSearchParams } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
@@ -28,17 +32,20 @@ import {
 } from "../MemberComponents";
 export default function MemberProfile({membershipId,directoryMode}:{membershipId?:string;directoryMode?:boolean}={}) {
   const { id:routeId } = useParams(),
-    [params] = useSearchParams(),
+    [params, setParams] = useSearchParams(),
     { w } = useWorkspace(),
     qc = useQueryClient();
   const id=membershipId||routeId;
   const directory = directoryMode??(params.get("directory") === "true");
-  const [tab, setTab] = useState(params.get("tab")||"Complete profile"),
+  const { t } = useLanguage();
+  const [remembered, setRemembered] = useState<Record<string, string>>({});
+  const [requestedTab, setTab] = useState(params.get("tab")||"Complete profile"),
     [editing, setEditing] = useState(false),
     [action, setAction] = useState(""),
     [error, setError] = useState<unknown>(),
     [message, setMessage] = useState(""),
     [busy, setBusy] = useState(false);
+  useEffect(() => { setTab(params.get("tab") || "Complete profile"); }, [params.get("tab"), id]);
   const q = useQuery({
     queryKey: ["member-profile", id, directory, w?.id],
     queryFn: () => api("/members/" + id + (directory ? "?directory=true" : "")),
@@ -90,6 +97,21 @@ export default function MemberProfile({membershipId,directoryMode}:{membershipId
     ...(!directory&&w?.permissions.includes("communications.view")?["Communication"]:[]),
     ...(!directory&&w?.permissions.includes("audit.view")?["Audit history"]:[]),
   ];
+  const groups = [
+    { label: "Profile", sections: ["Complete profile", "Personal details", "Contact information", "Business profile", "Professional"] },
+    { label: "Membership", sections: ["Overview", "Membership history", "Organizational hierarchy", "Dues & payments"] },
+    { label: "Engagement", sections: ["Leadership", "Participation", "Communication"] },
+    { label: "Records", sections: ["Documents", "Audit history"] },
+    { label: "Privacy", sections: ["Privacy & preferences"] },
+  ].map(group => ({ ...group, sections: group.sections.filter(section => tabs.includes(section)) })).filter(group => group.sections.length);
+  const tab = tabs.includes(requestedTab) ? requestedTab : "Complete profile";
+  const currentGroup = groups.find(group => group.sections.includes(tab)) || groups[0];
+  function choose(section: string) {
+    setTab(section);
+    const group = groups.find(group => group.sections.includes(section));
+    if (group) setRemembered(previous => ({ ...previous, [group.label]: section }));
+    if (!membershipId) { const next = new URLSearchParams(params); next.set("tab", section); setParams(next, { replace: true }); }
+  }
   return (
     <>
       <Link
@@ -183,27 +205,15 @@ export default function MemberProfile({membershipId,directoryMode}:{membershipId
           </label>
         )}
       </section>
-      <div
-        className="member-tabs profile-tabs"
-        role="tablist"
-        aria-label="Member profile tabs"
-      >
-        {tabs.map((t) => (
-          <button
-            role="tab"
-            aria-selected={t === tab}
-            key={t}
-            className={t === tab ? "active" : ""}
-            onClick={() => setTab(t)}
-          >
-            {t}
-          </button>
-        ))}
-      </div>
-      <div className="profile-layout">
-        <section className="panel profile-body">
+      <section className="member-profile-navigation" aria-label="Member profile navigation">
+        <SectionTabs id="member-profile-groups" label="Member profile groups" tabs={groups.map(group => group.label)} value={currentGroup.label} onChange={label => { const group = groups.find(group => group.label === label)!; choose(group.sections.includes(remembered[label]) ? remembered[label] : group.sections[0]); }} />
+        {currentGroup.sections.length > 1 && <SectionTabs id="member-profile-sections" label={`${currentGroup.label} sections`} tabs={currentGroup.sections} value={tab} onChange={choose} />}
+        <p className="profile-section-context">{t(currentGroup.label)} <span>/</span> {t(tab)}</p>
+      </section>
+      <div className="profile-layout" role="tabpanel" id={`member-profile-groups-panel-${groups.indexOf(currentGroup)}`} aria-labelledby={`member-profile-groups-tab-${groups.indexOf(currentGroup)}`}>
+        <section className="panel profile-body" {...(currentGroup.sections.length > 1 ? {role: "tabpanel", id: `member-profile-sections-panel-${currentGroup.sections.indexOf(tab)}`, "aria-labelledby": `member-profile-sections-tab-${currentGroup.sections.indexOf(tab)}`} : {})}>
           {tab==="Complete profile"&&<CompleteMemberProfile membershipId={id} data={d} directory={directory}/>}
-          {tab==="Organizational hierarchy"&&<><h2>Organizational hierarchy</h2><p>Affiliation within your authorized structure.</p><ErrorBox error={hierarchy.error}/>{[...(hierarchy.data?.selectedPath||[])].reverse().map((o:any)=><div className="context-row" key={o.id}><span>{o.kind}</span><b>{o.name}</b></div>)}<p>Club: {m.club} · Category: {m.category}</p></>}
+          {tab === "Organizational hierarchy" && <><h2>{t("Organizational hierarchy")}</h2><p>Explore this member’s affiliation within the authorized structure.</p><ErrorBox error={hierarchy.error}/>{hierarchy.isPending ? <Skeleton/> : <MemberHierarchyDiagram path={hierarchy.data?.selectedPath || []}/>}<p>Club: {m.club} · Category: {m.category}</p></>}
           {tab==="Contact information"&&<><h2>Contact information</h2>{p.contacts?.length?p.contacts.map((c:any,i:number)=><div key={i} className="context-row"><span>{c.kind} · {c.label}</span><b>{c.value}</b></div>):<p>No contact information is shared with this workspace.</p>}{p.addresses?.map((a:any,i:number)=><div key={i} className="context-row"><span>Address</span><b>{[a.address,a.city,a.state,a.country,a.postalCode].filter(Boolean).join(", ")}</b></div>)}</>}
           {tab==="Dues & payments"&&<><h2>Dues & payments</h2><p>Collections, verification and payment records remain in the authorized finance workspace. Membership administrative holds do not represent an accounting balance.</p><Link className="button secondary" to="/app/finance/dues-reports">Open authorized dues reports →</Link></>}
           {tab==="Communication"&&<><h2>Communication workspace</h2><p>Use the Communication Center for messages within your assigned hierarchy and permitted audiences.</p><Link className="button secondary" to="/app/communications">Open Communication Center →</Link></>}

@@ -1,167 +1,106 @@
-import {IciCareerProfile} from "./IciCareerProfile";
-import {MemberCertifications} from "./Certifications";
+import { IciCareerProfile } from "./IciCareerProfile";
+import { MemberCertifications } from "./Certifications";
 import SectionTabs from "../SectionTabs";
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { api } from "../api";
 import { PageHeader, ErrorBox, useWorkspace } from "../App";
+import { useLanguage } from "../i18n";
 export default function Profile() {
-  const [section, setSection] = useState("Profile");
-  const { me, w } = useWorkspace(),
-    qc = useQueryClient();
-  const [error, setError] = useState<unknown>(),
-    [message, setMessage] = useState("");
-  const memberProfile = useQuery({queryKey:["my-membership"],queryFn:()=>api("/membership/me")});
-  const q = useQuery({
-    queryKey: ["sessions"],
-    queryFn: () => api("/auth/sessions"),
-  });
-  async function submit(
-    e: React.FormEvent<HTMLFormElement>,
-    path: string,
-    method: string,
-  ) {
-    e.preventDefault();
-    setError(null);
-    try {
-      await api(
-        path,
-        method,
-        Object.fromEntries(new FormData(e.currentTarget)),
-      );
-      setMessage("Your account has been updated.");
-      qc.invalidateQueries({ queryKey: ["me"] });
-      qc.invalidateQueries({ queryKey: ["sessions"] });
-    } catch (e) {
-      setError(e);
+    const { t } = useLanguage();
+    const [section, setSection] = useState("Profile");
+    const { me, w } = useWorkspace(), qc = useQueryClient();
+    const [error, setError] = useState<unknown>(), [message, setMessage] = useState("");
+    const memberProfile = useQuery({ queryKey: ["my-membership"], queryFn: () => api("/membership/me") });
+    const q = useQuery({
+        queryKey: ["sessions"],
+        queryFn: () => api("/auth/sessions"),
+    });
+    async function submit(e: React.FormEvent<HTMLFormElement>, path: string, method: string) {
+        e.preventDefault();
+        setError(null);
+        try {
+            await api(path, method, Object.fromEntries(new FormData(e.currentTarget)));
+            setMessage("Your account has been updated.");
+            qc.invalidateQueries({ queryKey: ["me"] });
+            qc.invalidateQueries({ queryKey: ["sessions"] });
+        }
+        catch (e) {
+            setError(e);
+        }
     }
-  }
-  return (
-    <>
-      <PageHeader
-        eyebrow="YOUR IMPACT ACCOUNT"
-        title="My Impact profile & security"
-        description="Manage your Impact International profile, preferences, password, and sessions."
-      />
-      <ErrorBox error={error} />
-      {message && (
-        <div className="success" role="status">
+    return (<>
+      <PageHeader eyebrow="YOUR IMPACT ACCOUNT" title={t("My Impact profile & security")} description="Manage your Impact International profile, preferences, password, and sessions."/>
+      <ErrorBox error={error}/>
+      {message && (<div className="success" role="status">
           {message}
-        </div>
-      )}
-      <SectionTabs id="account" label="Account settings" tabs={["Profile", "Password", "Sessions", "Certifications", ...(w?.permissions.includes("ici.view")?["Career & bank"]:[])]} value={section} onChange={setSection} />
+        </div>)}
+      <SectionTabs id="account" label="Account settings" tabs={["Profile", "Password", "Sessions", "Certifications", ...(w?.permissions.includes("ici.view") ? ["Career & bank"] : [])]} value={section} onChange={setSection}/>
       <div className="account-panels">
         <section className="panel" role="tabpanel" id="account-panel-0" aria-labelledby="account-tab-0" hidden={section !== "Profile"}>
-          <h2>Your profile</h2>
-          <form
-            className="form-stack"
-            onSubmit={(e) => submit(e, "/users/profile", "PUT")}
-          >
-            <label>
-              Full name
-              <input
-                name="name"
-                defaultValue={me.name}
-                required
-                minLength={2}
-              />
+          <h2>{t("Your profile")}</h2>
+          <form className="form-stack" onSubmit={(e) => submit(e, "/users/profile", "PUT")}>
+            <label>{t("Full name")}<input name="name" defaultValue={me.name} required minLength={2}/>
             </label>
-            <label>
-              Email
-              <input value={me.email} readOnly />
+            <label>{t("Email")}<input value={me.email} readOnly/>
             </label>
-            <label>
-              Phone
-              <input name="phone" defaultValue={me.phone} />
+            <label>{t("Phone")}<input name="phone" defaultValue={me.phone}/>
             </label>
-            <label>
-              Content language preference
-              <select name="locale" defaultValue={me.locale || "en"}>
-                <option value="en">English</option>
-                <option value="hi">Hindi</option>
+            <label>{t("Content language preference")}<select name="locale" defaultValue={me.locale || "en"}>
+                <option value="en">{t("English")}</option>
+                <option value="te">తెలుగు</option>
+                <option value="hi">{t("Hindi")}</option>
               </select>
             </label>
-            <label>
-              Personal time zone
-              <input
-                name="timeZone"
-                required
-                defaultValue={me.timeZone || "UTC"}
-              />
+            <label>{t("Personal time zone")}<input name="timeZone" required defaultValue={me.timeZone || "UTC"}/>
             </label>
-            <label>
-              Theme
-              <select name="theme" defaultValue={me.theme || "light"}>
-                <option value="light">Light</option>
-                <option value="dark">Dark</option>
+            <label>{t("Theme")}<select name="theme" defaultValue={me.theme || "light"}>
+                <option value="light">{t("Light")}</option>
+                <option value="dark">{t("Dark")}</option>
               </select>
             </label>
-            <button>Save profile</button>
+            <button>{t("Save profile")}</button>
           </form>
         </section>
         <section className="panel" role="tabpanel" id="account-panel-1" aria-labelledby="account-tab-1" hidden={section !== "Password"}>
-          <h2>Change password</h2>
-          <form
-            className="form-stack"
-            onSubmit={(e) => submit(e, "/auth/change-password", "POST")}
-          >
-            <label>
-              Current password
-              <input
-                type="password"
-                name="current"
-                required
-                autoComplete="current-password"
-              />
+          <h2>{t("Change password")}</h2>
+          <form className="form-stack" onSubmit={(e) => submit(e, "/auth/change-password", "POST")}>
+            <label>{t("Current password")}<input type="password" name="current" required autoComplete="current-password"/>
             </label>
-            <label>
-              New password
-              <input
-                type="password"
-                name="password"
-                minLength={12}
-                required
-                autoComplete="new-password"
-              />
+            <label>{t("New password")}<input type="password" name="password" minLength={12} required autoComplete="new-password"/>
             </label>
-            <p>Use at least 12 characters. Other sessions will be revoked.</p>
-            <button>Update password</button>
+            <p>{t("Use at least 12 characters. Other sessions will be revoked.")}</p>
+            <button>{t("Update password")}</button>
           </form>
         </section>
       </div>
       <section className="panel spaced" role="tabpanel" id="account-panel-2" aria-labelledby="account-tab-2" hidden={section !== "Sessions"}>
-        <h2>Active sessions</h2>
-        <ErrorBox error={q.error} />
-        {q.data?.map((s: any) => (
-          <div className="context-row" key={s.id}>
+        <h2>{t("Active sessions")}</h2>
+        <ErrorBox error={q.error}/>
+        {q.data?.map((s: any) => (<div className="context-row" key={s.id}>
             <span>
-              {s.current ? "This session" : "Browser session"}
-              <small>
-                Created {new Date(s.createdAt).toLocaleString()} · Expires{" "}
+              {t(s.current ? "This session" : "Browser session")}
+              <small>{t("Created")}{new Date(s.createdAt).toLocaleString()}{t("\u00B7 Expires")}{" "}
                 {new Date(s.expiresAt).toLocaleString()}
               </small>
             </span>
-            <button
-              className="secondary"
-              onClick={async () => {
+            <button className="secondary" onClick={async () => {
                 try {
-                  await api("/auth/sessions/" + s.id, "DELETE");
-                  if (s.current) location.assign("/login");
-                  else qc.invalidateQueries({ queryKey: ["sessions"] });
-                } catch (e) {
-                  setError(e);
+                    await api("/auth/sessions/" + s.id, "DELETE");
+                    if (s.current)
+                        location.assign("/login");
+                    else
+                        qc.invalidateQueries({ queryKey: ["sessions"] });
                 }
-              }}
-            >
-              Revoke session
-            </button>
-          </div>
-        ))}
+                catch (e) {
+                    setError(e);
+                }
+            }}>{t("Revoke session")}</button>
+          </div>))}
       </section>
       <section role="tabpanel" id="account-panel-3" aria-labelledby="account-tab-3" hidden={section !== "Certifications"}>
-        {section === "Certifications" && (memberProfile.data?.profile ? <MemberCertifications/> : <p>Certifications are available once a member profile is linked to your account.</p>)}
+        {section === "Certifications" && (memberProfile.data?.profile ? <MemberCertifications /> : <p>{t("Certifications are available once a member profile is linked to your account.")}</p>)}
       </section>
-      {w?.permissions.includes("ici.view")&&<section role="tabpanel" id="account-panel-4" aria-labelledby="account-tab-4" hidden={section!=="Career & bank"}>{section==="Career & bank"&&<IciCareerProfile/>}</section>}
-    </>
-  );
+      {w?.permissions.includes("ici.view") && <section role="tabpanel" id="account-panel-4" aria-labelledby="account-tab-4" hidden={section !== "Career & bank"}>{section === "Career & bank" && <IciCareerProfile />}</section>}
+    </>);
 }

@@ -33,6 +33,8 @@ b.Services.AddHostedService<MailWorker>();
 b.Services.AddHostedService<MembershipWorker>();
 b.Services.AddHostedService<MaintenanceWorker>();
 b.Services.AddHttpContextAccessor();
+b.Services.AddSingleton<FirebaseGoogleVerifier>();
+b.Services.AddHttpClient("firebase-auth", c => c.Timeout = TimeSpan.FromSeconds(15)).ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler { AllowAutoRedirect = false });
 b.Services.AddScoped<Access>();
 b.Services.AddHttpClient<GoogleMediaService>(c => c.Timeout = TimeSpan.FromMinutes(2));
 b.Services.AddRateLimiter(o=>o.AddPolicy("idcards",c=>RateLimitPartition.GetFixedWindowLimiter(c.Connection.RemoteIpAddress?.ToString()??"unknown",_=>new(){PermitLimit=240,Window=TimeSpan.FromMinutes(1)})));
@@ -238,6 +240,7 @@ api.MapMemberMedia();
 api.MapMemberImports();
 api.MapImpactStructure();
 api.MapOrganizationIntelligence();
+api.MapOfficeServiceRecords();
 api.MapLeadershipCenter();
 api.MapGet(
     "/auth/csrf",
@@ -275,7 +278,8 @@ api.MapPost(
         }
     )
     .RequireRateLimiting("auth");
-api.MapGet("/auth/methods", (IConfiguration config) => new { memberOtpEnabled = config.GetValue("Authentication:MemberOtpEnabled", true) });
+api.MapGet("/auth/methods", (IConfiguration config) => new { memberOtpEnabled = config.GetValue("Authentication:MemberOtpEnabled", true), googleEnabled = FirebaseGoogleVerifier.Enabled(config) });
+api.MapGoogleSignIn();
 api.MapPost(
         "/auth/login",
         async (Login r, Db db, IPasswordHasher<User> h, HttpContext c, Access access) =>
@@ -317,45 +321,7 @@ api.MapPost(
                 await db.SaveChangesAsync();
                 throw new ApiError(401, "Unable to sign in with these credentials.");
             }
-            u.FailedAttempts = 0;
-            u.LockedUntil = null;
-            var raw = Token();
-            Guid? defaultWorkspace = null;
-            foreach (var assignment in await db.Assignments.Where(x => x.UserId == u.Id)
-                .OrderBy(x => db.Roles.Any(r => r.Id == x.RoleId && LeaderCommunications.SendingRoles.Contains(r.Name)) ? 0 : 1)
-                .ThenBy(x => x.Id).ToListAsync())
-            {
-                if (access.BoundTenant != null && assignment.TenantId != access.BoundTenant) continue;
-                if (!await access.Effective(assignment)) continue;
-                defaultWorkspace = assignment.Id;
-                break;
-            }
-            db.Sessions.Add(
-                new()
-                {
-                    Id = Hash(raw),
-                    UserId = u.Id,
-                    WorkspaceId = defaultWorkspace,
-                    ExpiresAt = DateTimeOffset.UtcNow.AddHours(8),
-                }
-            );
-            db.AuthenticationAudits.Add(new() { ActorId = u.Id, Action = "auth.login" });
-            await db.SaveChangesAsync();
-            c.Response.Cookies.Append(
-                "clubs_session",
-                raw,
-                new()
-                {
-                    HttpOnly = true,
-                    Secure = !app.Environment.IsDevelopment(),
-                    SameSite = SameSiteMode.Strict,
-                    Path = "/",
-                    MaxAge = TimeSpan.FromHours(8),
-                }
-            );
-            return Results.Ok(new { u.Name,
-                pendingMembership = defaultWorkspace == null && await db.MembershipApplications.AnyAsync(a => a.ApplicantUserId == u.Id
-                    && new[] { "Draft", "Submitted", "Under Review", "Changes Requested" }.Contains(a.Status)) });
+            return await AppSignIn.Complete(u, db, access, c, app.Environment);
         }
     )
     .RequireRateLimiting("auth");
@@ -507,7 +473,7 @@ api.MapPut(
         var u = await a.User();
         u.Name = r.Name!;
         u.Phone = r.Phone;
-        Check(new[] { "en", "hi" }.Contains(r.Locale), "Unsupported language preference.");
+        Check(new[] { "en", "hi", "te" }.Contains(r.Locale), "Unsupported language preference.");
         try
         {
             TimeZoneInfo.FindSystemTimeZoneById(r.TimeZone);
@@ -524,6 +490,14 @@ api.MapPut(
         return Results.NoContent();
     }
 );
+api.MapPut("/users/language", async (LanguagePreference input, Access access) =>
+{
+    Check(input.Locale is "en" or "te", "Unsupported interface language.");
+    var user = await access.User();
+    user.Locale = input.Locale;
+    await access.Db.SaveChangesAsync();
+    return Results.NoContent();
+});
 api.MapPost(
     "/auth/change-password",
     async (ChangePassword r, Access a, IPasswordHasher<User> h) =>
@@ -882,6 +856,7 @@ api.MapPut(
         t.Name = ImpactSetup.Name;
         t.Currency = r.Currency!;
         t.TimeZone = r.TimeZone;
+        Check(r.Language is "en" or "te" or "hi", "Unsupported language preference.");
         t.Language = r.Language;
         Check(
             System.Text.RegularExpressions.Regex.IsMatch(r.Color ?? "", "^#[0-9a-fA-F]{6}$"),
@@ -1115,6 +1090,7 @@ public record Register(
 public record Login(string Email, string Password);
 
 public record EmailRequest(string Email);
+public record LanguagePreference(string Locale);
 
 public record Complete(string Token, string Password);
 

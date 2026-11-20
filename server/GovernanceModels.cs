@@ -297,6 +297,7 @@ public partial class Db
                 typeof(LeadershipTerm),
                 typeof(OfficerAppointment),
                 typeof(OfficerAppointmentHistory),
+                typeof(HistoricalOfficeRecord),
                 typeof(LeadershipHandover),
                 typeof(HandoverChecklistItem),
                 typeof(Committee),
@@ -330,6 +331,8 @@ public partial class Db
             if (type.GetProperty("Version") != null)
                 e.Property("Version").IsConcurrencyToken();
         }
+        b.Entity<HistoricalOfficeRecord>().HasIndex(x => new { x.TenantId, x.OrgId, x.EndYear, x.StartYear });
+        b.Entity<HistoricalOfficeRecord>().ToTable(t => t.HasCheckConstraint("CK_HistoricalOfficeRecord_Years", "\"StartYear\" >= 1800 AND \"EndYear\" >= \"StartYear\" AND \"EndYear\" <= 9999"));
         F<OfficerPosition, Level>("LevelId");
         F<OfficerPosition, OfficerPosition>("ReportsToId");
         F<OfficerPosition, Role>("GrantRoleId");

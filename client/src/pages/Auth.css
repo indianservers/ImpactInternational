@@ -36,6 +36,12 @@
 @media(min-width:1500px){.impact-auth-page .auth-founder-portrait{width:140px;height:125px}.impact-auth-page .auth-founder-portrait img{width:100%;height:100%}}
 @media(min-width:761px) and (max-height:850px){.impact-auth-page .auth-story{padding-top:24px;padding-bottom:26px;gap:18px}.impact-auth-page .auth-story-copy{padding-top:0}.impact-auth-page .auth-story .impact-brand-logo{width:66px;height:66px}.impact-auth-page .auth-story h1{font-size:clamp(43px,4.4vw,65px)}.impact-auth-page .auth-story p{margin-top:24px;font-size:15px}.impact-auth-page .impact-auth-founder{margin-top:26px;padding:10px}.impact-auth-page .auth-founder-portrait{width:88px;height:95px}.impact-auth-page .auth-story-footer{font-size:14px}.impact-auth-page .auth-story .eyebrow{margin-bottom:18px}.impact-auth-page .auth-form{padding-top:34px;padding-bottom:40px}}
 
+.impact-auth-page .auth-google{display:flex;align-items:center;justify-content:center;gap:12px;width:100%;min-height:48px;background:#fff;color:#263b56;border:1px solid #c8d2df;border-radius:12px;font-weight:600;box-shadow:0 2px 5px #10244208}
+.impact-auth-page .auth-google:hover{background:#f5f8fc;border-color:#92a8c1}
+.impact-auth-page .auth-google:disabled{opacity:.6;cursor:wait}
+.auth-divider{display:flex;align-items:center;gap:14px;color:#708095;font-size:12px}
+.auth-divider:before,.auth-divider:after{content:"";height:1px;flex:1;background:#e0e6ee}
+.auth-google-note{text-align:center;color:#66778e;font-size:11px;line-height:1.5}
 .public-signup-page .auth-form{max-width:650px}
 .public-signup-page .auth-form h1{white-space:normal}
 .signup-community{border:1px solid #ded8eb;border-radius:14px;padding:18px;display:grid;gap:15px;min-width:0;background:#faf8ff}

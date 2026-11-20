@@ -6,6 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 import { api } from "./api";
 import { ErrorBox, useWorkspace } from "./App";
 import { useDialog } from "./useDialog";
+import { useLanguage } from "./i18n";
 export function MemberAvatar({
   name,
   id,
@@ -88,6 +89,7 @@ export function ClubCategoryFields({
   excludeClub,
   fixedTenant,
 }: any) {
+  const { t } = useLanguage();
   const { w } = useWorkspace();
   const [association, setAssociation] = useState(tenantId || w?.tenantId || "");
   const catalog = useQuery({
@@ -120,18 +122,19 @@ export function ClubCategoryFields({
       <MembershipLocationPicker clubId={clubId} onChange={onChange} publicCatalog={publicCatalog} tenantId={association} excludeClub={excludeClub} />
       <div className="form-grid">
         <label>
-          Membership category
+          {t("Membership category")}
           <select
             required
+            aria-label={t("Membership category")}
             value={categoryId || ""}
             onChange={(e) => onChange({ categoryId: e.target.value })}
           >
-            <option value="">Choose category</option>
+            <option value="">{t("Choose category")}</option>
             {categories
               ?.filter((c: any) => c.active !== false)
               .map((c: any) => (
                 <option key={c.id} value={c.id}>
-                  {c.name}
+                  {c.name === "Regular" ? t("Regular") : c.name}
                 </option>
               ))}
           </select>

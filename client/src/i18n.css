@@ -1,0 +1,12 @@
+.language-picker{position:relative;display:flex;align-items:center;gap:8px;color:inherit;font-size:12px;white-space:nowrap}
+.language-picker select{height:38px;min-height:38px;min-width:100px;max-width:110px;padding:6px 22px 6px 9px;border:1px solid #b7c2d1;border-radius:7px;background:var(--surface,#faf8f5);color:var(--text,#142b46);font-size:14px}
+.language-picker small{position:absolute;right:0;top:100%;z-index:5;background:#fff1f1;color:#9d2631;padding:8px;white-space:normal;width:200px;border-radius:5px}
+.top-actions .language-picker>span{display:none}
+.reference-login .login-topbar{flex-wrap:wrap}
+.login-header-actions{display:flex;align-items:center;gap:18px;margin-left:auto}
+.login-header-actions .language-picker>span{display:none}
+html[lang=te] .reference-login .auth-story h1{white-space:normal;line-height:1.45;font-size:clamp(25px,3vw,48px)}
+html[lang=te] .reference-login .auth-form h1{line-height:1.5;letter-spacing:0;font-size:clamp(29px,2.7vw,44px)}
+html[lang=te] .reference-login .auth-form label,html[lang=te] .reference-login .auth-google{line-height:1.7}
+html[lang=te] .sidebar nav a{line-height:1.6}
+@media(max-width:760px){.top-actions{flex-wrap:wrap}.top-actions .language-picker select{min-width:94px;width:94px;font-size:13px;padding-left:6px}.login-header-actions{gap:12px}html[lang=te] .reference-login .auth-story h1{font-size:27px}.reference-login .login-header-actions .language-picker select{width:100px}}

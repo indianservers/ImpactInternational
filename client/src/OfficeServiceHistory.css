@@ -1,0 +1,14 @@
+.office-service-history{padding:20px;color:var(--text,#17314f)}
+.office-service-history>header{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.office-service-history h3{font-size:20px;margin:0 0 6px}.office-service-history header p{font-size:13px;margin:0;color:var(--muted,#66788d)}
+.service-history-help{font-size:13px;line-height:1.7;max-width:850px;color:var(--muted,#66788d)}
+.service-history-filters{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;margin:24px 0}
+.service-history-filters>div{display:flex;gap:8px;flex-wrap:wrap}.service-history-filters label{display:grid;gap:6px;font-size:12px}
+.service-history-filters select{min-height:44px;min-width:130px}.office-service-history button{min-height:44px}
+.service-record-list{display:grid;gap:12px}.service-record{display:grid;grid-template-columns:140px minmax(0,1fr) auto;gap:24px;padding:20px;border:1px solid var(--line,#dbe3ec);border-radius:12px;background:var(--surface,#fff)}
+.service-years{display:grid;align-content:start;gap:8px}.service-years span{font-size:11px;color:var(--muted,#66788d)}.service-years strong{font-size:21px;color:var(--text,#17314f)}
+.service-record-person h4{margin:0;font-size:17px;line-height:1.5}.service-record-person p{margin:5px 0;line-height:1.6;font-size:14px}.service-record-person small{font-size:11px;color:var(--muted,#66788d)}
+.service-record-notes{white-space:pre-wrap;overflow-wrap:anywhere;color:var(--muted,#66788d)}.service-record-actions{display:flex;gap:8px;align-self:start;flex-wrap:wrap}
+.office-service-history>footer{display:flex;align-items:center;gap:10px;justify-content:flex-end;margin-top:20px;font-size:12px}
+.service-inline-editor{margin-top:24px;padding:18px;border:1px solid var(--line,#dbe3ec);border-radius:10px;background:var(--surface,#fff)}.service-inline-editor>header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}.service-inline-editor h4{margin:0;font-size:17px}.service-inline-editor .form-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+@media(max-width:760px){.office-service-history{padding:16px 10px}.office-service-history>header>button{width:100%}.service-record{grid-template-columns:1fr;gap:14px;padding:16px}.service-years{display:flex;justify-content:space-between;align-items:center}.service-years strong{font-size:19px}.service-record-actions{border-top:1px solid var(--line,#dbe3ec);padding-top:12px}.service-history-filters>div{width:100%;display:grid;grid-template-columns:1fr 1fr}.service-history-filters label{width:100%}.service-record-person h4{overflow-wrap:anywhere}}

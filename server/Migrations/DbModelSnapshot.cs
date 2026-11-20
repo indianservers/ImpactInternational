@@ -5629,6 +5629,72 @@ namespace Clubs.Api.Migrations
                     b.ToTable("HandoverChecklistItems");
                 });
 
+            modelBuilder.Entity("Clubs.HistoricalOfficeRecord", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<bool>("Archived")
+                        .HasColumnType("boolean");
+
+                    b.Property<int>("EndYear")
+                        .HasColumnType("integer");
+
+                    b.Property<bool>("IsPresident")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<string>("Notes")
+                        .IsRequired()
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)");
+
+                    b.Property<string>("OfficeTitle")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("character varying(150)");
+
+                    b.Property<Guid>("OrgId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset>("RecordedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("RecordedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("StartYear")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<long>("Version")
+                        .IsConcurrencyToken()
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasAlternateKey("TenantId", "Id");
+
+                    b.HasIndex("TenantId", "OrgId");
+
+                    b.HasIndex("TenantId", "OrgId", "EndYear", "StartYear");
+
+                    b.ToTable("HistoricalOfficeRecords", t =>
+                        {
+                            t.HasCheckConstraint("CK_HistoricalOfficeRecord_Years", "\"StartYear\" >= 1800 AND \"EndYear\" >= \"StartYear\" AND \"EndYear\" <= 9999");
+                        });
+                });
+
             modelBuilder.Entity("Clubs.IciDecision", b =>
                 {
                     b.Property<Guid>("Id")
@@ -12481,6 +12547,22 @@ namespace Clubs.Api.Migrations
                     b.HasOne("Clubs.LeadershipHandover", null)
                         .WithMany()
                         .HasForeignKey("TenantId", "HandoverId")
+                        .HasPrincipalKey("TenantId", "Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Clubs.HistoricalOfficeRecord", b =>
+                {
+                    b.HasOne("Clubs.Tenant", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Clubs.Org", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "OrgId")
                         .HasPrincipalKey("TenantId", "Id")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();

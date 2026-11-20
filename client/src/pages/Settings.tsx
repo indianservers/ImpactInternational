@@ -68,8 +68,9 @@ export default function Settings() {
               <div className="form-grid">
                 <label>
                   Default language
-                  <select name="language" defaultValue={q.data?.language}>
+                  <select name="language" defaultValue={q.data?.language || "en"}>
                     <option value="en">English</option>
+                    <option value="te">తెలుగు</option>
                     <option value="hi">Hindi (content preference)</option>
                   </select>
                 </label>

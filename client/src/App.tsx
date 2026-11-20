@@ -30,6 +30,7 @@ import "./mobile.css";
 import "./navigation.css";
 import { navigationSections, canOpenTab, matchesTab, taskGroups, financeMenu } from "./navigation";
 import { TenantBrand } from "./TenantBrand";
+import { LanguagePicker, useLanguage } from "./i18n";
 import { impact, impactRole, ImpactDocumentTitle, ImpactPageContext } from "./brand";
 import { api, type Workspace } from "./api";
 // Lazy pages keep the same context even when this shell is hot-reloaded.
@@ -172,25 +173,28 @@ export function Skeleton() {
   );
 }
 export function ErrorBox({ error }: { error: unknown }) {
+  const { t } = useLanguage();
   return error ? (
     <div role="alert" className="error">
-      {error instanceof Error ? error.message : String(error)}
+      {t(error instanceof Error ? error.message : String(error))}
     </div>
   ) : null;
 }
 export function PageHeader({ eyebrow, title, description, children }: any) {
+  const { t } = useLanguage();
   return (
     <div className="page-header">
       <div>
         <div className="eyebrow">IMPACT INTERNATIONAL{eyebrow ? " / " + eyebrow : ""}</div>
-        <h1>{title}</h1>
-        <p>{description}</p>
+        <h1>{t(title || "")}</h1>
+        <p>{t(description || "")}</p>
       </div>
       {children}
     </div>
   );
 }
 function Shell() {
+  const { t, setLanguage } = useLanguage();
   const sidebarRef = useRef<HTMLElement>(null);
   const qc = useQueryClient(),
     nav = useNavigate(),
@@ -221,6 +225,7 @@ function Shell() {
     return () => { document.body.style.overflow = overflow; document.removeEventListener("keydown", keydown); previous?.focus(); };
   }, [open]);
   const me = useQuery({ queryKey: ["me"], queryFn: () => api("/auth/me") });
+  useEffect(() => { if (me.data) setLanguage(me.data.locale || "en"); }, [me.data?.locale, setLanguage]);
   useEffect(() => {
     document.documentElement.dataset.theme = me.data?.theme || "light";
     return () => {
@@ -314,11 +319,11 @@ function Shell() {
             <TenantBrand identity={identity} />
             <span className="brand-dot" />
           </Link>
-          <div className="sidebar-label">YOUR ORGANIZATION</div>
+          <div className="sidebar-label">{t("YOUR ORGANIZATION")}</div>
           <div className="foundation-organization" aria-label="Your organization"><img src={impact.logo} alt="" width="38" height="38" /><strong>Impact International</strong></div>
           {workspaces.data && workspaces.data.length > 1 && <label className="foundation-scope-picker">Your role and unit<select aria-label="Active role and unit" value={active || me.data?.workspaceId || ""} onChange={e => activate(e.target.value)}>{workspaces.data.map(x => <option key={x.id} value={x.id}>{x.organization} · {[impactRole(x.role),x.portfolio,x.slot].filter(Boolean).join(" · ")}</option>)}</select></label>}
           {w && <div className="organization-context"><strong>{w.organization}</strong><span>{impactRole(w.role)}</span></div>}
-          <div className="sidebar-label">ORGANIZATION</div>
+          <div className="sidebar-label">{t("ORGANIZATION")}</div>
           <nav>
             {visibleSections.map((section) => {
               const Icon = section.icon;
@@ -327,12 +332,12 @@ function Shell() {
                 className={selected ? "active" : undefined}
                 aria-current={selected ? "true" : undefined}
                 onClick={() => setOpen(false)}>
-                <Icon size={19} />{section.label}
+                <Icon size={19} />{t(section.label)}
               </Link>{section.id === "tools" && location.pathname.startsWith("/app/finance") && section.tabs.some(tab => tab.to === "/app/finance") && <nav className="impact-sidebar-submenu" aria-label="Finance pages">{financeMenu.filter(([path])=>!path||(path==='dues'?w?.permissions.includes('finance.dues.reports'):w?.permissions.some(p=>['finance.view','finance.manage','finance.reconcile','finance.configure','finance.post','finance.approve'].includes(p)))).map(([path, label]) => {
                 const to = "/app/finance" + (path ? "/" + path : "");
                 const current = path ? matchesTab(location.pathname, to) : location.pathname === to;
                 return <Link key={to} to={to} className={current ? "active" : undefined} aria-current={current ? "page" : undefined} onClick={() => setOpen(false)}>{label}</Link>;
-              })}</nav>}{membershipMode&&section.id==="people"&&selected&&<div className="mm-sidebar-submenu" aria-label="People and membership">{[["Members","/app/members","members.view"],["Membership Insights","/app/membership-insights","members.view"],["Applications & transfers","/app/approvals","members.approve"],["Transfer requests","/app/transfers","members.transfer.approve"],["Directory","/app/directory","directory.view"],["Membership plans & categories","/app/membership-settings","members.workflow.manage"]].filter(([,url,permission])=>canOpenTab({to:url,label:"",permissions:[permission]},w?.permissions||[],experience.data?.disabledFeatures||[])).map(([label,url])=><Link key={url} to={url} className={location.pathname===url?"active":""} onClick={()=>setOpen(false)}>{label}</Link>)}</div>}{section.id === "leadership" && selected && <div className="impact-sidebar-submenu" aria-label="Leadership pages">{section.tabs.map(tab=><Link key={tab.to} to={tab.to} onClick={()=>setOpen(false)} className={location.pathname===tab.to?"active":undefined}>{tab.label}</Link>)}</div>}{section.id === "organization" && selected && <div className="impact-sidebar-submenu" aria-label="Impact structure submenus">{section.tabs.filter(tab => ["/app/organizations", "/app/international", "/app/national", "/app/regions", "/app/districts", "/app/zones", "/app/clubs"].includes(tab.to)).map(tab => <Link key={tab.to} to={tab.to} onClick={() => setOpen(false)} className={location.pathname === tab.to ? "active" : undefined} aria-current={location.pathname === tab.to ? "page" : undefined}>{tab.label}</Link>)}</div>}</div>;
+              })}</nav>}{membershipMode&&section.id==="people"&&selected&&<div className="mm-sidebar-submenu" aria-label="People and membership">{[["Members","/app/members","members.view"],["Membership Insights","/app/membership-insights","members.view"],["Applications & transfers","/app/approvals","members.approve"],["Transfer requests","/app/transfers","members.transfer.approve"],["Directory","/app/directory","directory.view"],["Membership plans & categories","/app/membership-settings","members.workflow.manage"]].filter(([,url,permission])=>canOpenTab({to:url,label:"",permissions:[permission]},w?.permissions||[],experience.data?.disabledFeatures||[])).map(([label,url])=><Link key={url} to={url} className={location.pathname===url?"active":""} onClick={()=>setOpen(false)}>{label}</Link>)}</div>}{section.id === "leadership" && selected && <div className="impact-sidebar-submenu" aria-label="Leadership pages">{section.tabs.map(tab=><Link key={tab.to} to={tab.to} onClick={()=>setOpen(false)} className={location.pathname===tab.to?"active":undefined}>{t(tab.label)}</Link>)}</div>}{section.id === "organization" && selected && <div className="impact-sidebar-submenu" aria-label="Impact structure submenus">{section.tabs.filter(tab => ["/app/organizations", "/app/international", "/app/national", "/app/regions", "/app/districts", "/app/zones", "/app/clubs"].includes(tab.to)).map(tab => <Link key={tab.to} to={tab.to} onClick={() => setOpen(false)} className={location.pathname === tab.to ? "active" : undefined} aria-current={location.pathname === tab.to ? "page" : undefined}>{t(tab.label)}</Link>)}</div>}</div>;
             })}
           </nav>
           <div className="mobile-account-actions"><button className="secondary" onClick={toggleTheme}><Moon size={17} />{me.data.theme === "dark" ? "Light theme" : "Dark theme"}</button><button className="secondary" onClick={signOut}><LogOut size={17} />Sign out</button></div>
@@ -371,6 +376,7 @@ function Shell() {
               Impact International <span>/</span> <b>{w ? [w.organization, w.organizationType].filter(Boolean).join(" · ") : "Your account"}</b>
             </div>
             <div className="top-actions">
+              <LanguagePicker persist />
               <Suspense fallback={null}>
                 <SearchLauncher />
               </Suspense>
@@ -447,27 +453,27 @@ function Shell() {
               </div>
             ) : (
               <Suspense fallback={<Skeleton />}>
-                {activeSection && !location.pathname.startsWith("/app/finance") && <section className="section-navigation" aria-label={activeSection.label}>
-                  <div className="section-navigation-heading">{activeSection.label}</div>
-                  {groups.length > 1 && <nav aria-label={`${activeSection.label} tabs`} className="section-tabs">
+                {activeSection && !location.pathname.startsWith("/app/finance") && <section className="section-navigation" aria-label={t(activeSection.label)}>
+                  <div className="section-navigation-heading">{t(activeSection.label)}</div>
+                  {groups.length > 1 && <nav aria-label={`${t(activeSection.label)} tabs`} className="section-tabs">
                     {groups.map(group => <Link key={group.id} to={group.tabs[0].to}
                       className={activeGroup?.id === group.id ? "active" : undefined}
-                      aria-current={activeGroup?.id === group.id ? "true" : undefined}>{group.label}</Link>)}
+                      aria-current={activeGroup?.id === group.id ? "true" : undefined}>{t(group.label)}</Link>)}
                   </nav>}
                   {activeGroup && activeGroup.tabs.length > 1 && <nav aria-label={`${activeGroup.label} tools`} className="section-tools">
                     {activeGroup.tabs.map(tab => <Link key={tab.to} to={tab.to}
                       className={matchesTab(location.pathname, tab.to) ? "active" : undefined}
-                      aria-current={matchesTab(location.pathname, tab.to) ? "page" : undefined}>{tab.label}</Link>)}
+                      aria-current={matchesTab(location.pathname, tab.to) ? "page" : undefined}>{t(tab.label)}</Link>)}
                   </nav>}
-                  {activeGroup && activeGroup.tabs.length > 1 && <label className="tool-picker mobile-tool-picker"><span>View</span><select aria-label={`${activeGroup.label} view`} value={activeGroup.tabs.find(tab => matchesTab(location.pathname, tab.to))?.to || activeGroup.tabs[0].to} onChange={e => nav(e.target.value)}>{activeGroup.tabs.map(tab => <option key={tab.to} value={tab.to}>{tab.label}</option>)}</select></label>}
+                  {activeGroup && activeGroup.tabs.length > 1 && <label className="tool-picker mobile-tool-picker"><span>View</span><select aria-label={`${activeGroup.label} view`} value={activeGroup.tabs.find(tab => matchesTab(location.pathname, tab.to))?.to || activeGroup.tabs[0].to} onChange={e => nav(e.target.value)}>{activeGroup.tabs.map(tab => <option key={tab.to} value={tab.to}>{t(tab.label)}</option>)}</select></label>}
                 </section>}
                 <Outlet key={w?.id} />
               </Suspense>
             )}
           </main>
           <nav className="mobile-bottom-nav" aria-label="Main navigation" style={{ gridTemplateColumns: `repeat(${Math.min(4, visibleSections.length) + 1}, minmax(0, 1fr))` }}>
-            {visibleSections.slice(0, 4).map(section => { const Icon = section.icon; return <Link key={section.id} to={section.tabs[0].to} className={activeSection?.id === section.id ? "active" : undefined} aria-current={activeSection?.id === section.id ? "page" : undefined}><Icon size={20} /><span>{section.label}</span></Link>; })}
-            <button onClick={() => setOpen(true)} aria-expanded={open} aria-controls="organization-navigation" className={visibleSections.slice(4).some(s => s.id === activeSection?.id) ? "secondary active" : "secondary"}><Menu size={20} /><span>More</span></button>
+            {visibleSections.slice(0, 4).map(section => { const Icon = section.icon; return <Link key={section.id} to={section.tabs[0].to} className={activeSection?.id === section.id ? "active" : undefined} aria-current={activeSection?.id === section.id ? "page" : undefined}><Icon size={20} /><span>{t(section.label)}</span></Link>; })}
+            <button onClick={() => setOpen(true)} aria-expanded={open} aria-controls="organization-navigation" className={visibleSections.slice(4).some(s => s.id === activeSection?.id) ? "secondary active" : "secondary"}><Menu size={20} /><span>{t("More")}</span></button>
           </nav>
           <footer>
             Impact International{" "}

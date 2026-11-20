@@ -1,3 +1,4 @@
+import { MemberHierarchyDiagram } from "../HierarchyExplorer";
 import {MemberParticipationHistory} from '../ParticipationManager';
 import { BusinessProfileCard } from "../BusinessProfile";
 import {MemberCertifications} from "./Certifications";
@@ -37,7 +38,7 @@ export default function CompleteMemberProfile({membershipId,data,directory=false
   <Section title="Social profiles">{p.socialLinks&&Object.keys(p.socialLinks).length?<div className="cmp-social">{Object.entries(p.socialLinks).map(([name,url])=>/^https?:\/\//i.test(String(url))?<a key={name} href={String(url)} target="_blank" rel="noopener noreferrer">{name} ↗</a>:<span key={name}>{name}: {String(url)}</span>)}</div>:<p className="cmp-empty">No shared social profiles.</p>}</Section>
   <Section title="Membership & organizational hierarchy">{m&&<Fields items={[
    ['Membership ID',m.number],['Club',m.club],['Category',m.category],['Status',m.status],['Joined',m.joinedAt?new Date(m.joinedAt).toLocaleDateString():null],['Valid till',m.endsAt?new Date(m.endsAt).toLocaleDateString():'While active'],['Renewal status',m.renewalStatus]
-  ]}/>}<ErrorBox error={hierarchy.error}/>{hierarchy.isPending&&m?.clubId?<p>Loading organizational hierarchy…</p>:<ol className="cmp-hierarchy">{[...(hierarchy.data?.selectedPath||[])].reverse().map((o:Row)=><li key={o.id}><small>{o.kind}</small><strong>{o.name}</strong></li>)}</ol>}
+  ]}/>}<ErrorBox error={hierarchy.error}/>{hierarchy.isPending&&m?.clubId?<p>Loading organizational hierarchy…</p>:<MemberHierarchyDiagram path={hierarchy.data?.selectedPath || []}/>}
   {(d.memberships||[]).map((a:Row)=><Link className="cmp-affiliation" key={a.id} to={'/app/members/'+a.id+(directory?'?directory=true':'?tab=Complete+profile')}><strong>{a.club}</strong><span>{a.number} · {a.category} · {a.status}</span></Link>)}</Section>
   <Section title="Roles & leadership assignments">{membershipId&&(!directory||p.privacy!=null)&&!leadershipData&&<MemberOffices id={membershipId}/>}<Records rows={d.roles||[]} empty="No roles are visible in this scope."/>{(d.appointments||leadershipData?.appointments)&&<Records rows={d.appointments||leadershipData?.appointments} empty="No leadership assignments recorded."/>}</Section>
   {leadershipData?.committees&&<Section title="Committee assignments"><Records rows={leadershipData.committees} empty="No committee assignments visible in this scope."/></Section>}
