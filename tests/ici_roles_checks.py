@@ -126,6 +126,13 @@ INSERT INTO "Assignments" ("Id","TenantId","UserId","OrgId","RoleId","IciPortfol
  check('Late-entered dues use the actual date and first-half fee',dated_payment['paidOn']==actual_date and dated_payment['amount']==settings['firstHalfFee'])
  csv_status,csv_body,_=cp.request(annual+'/members?clubId='+c1+'&status=paid&format=csv&search=QA%20Benevolent%20'+tag)
  check('Dues CSV includes the selected scope and actual payment date',csv_status==200 and actual_date.encode() in csv_body and registered['number'].encode() in csv_body)
+ club_group=good(rp,annual+'/members?view=club&clubId='+c1)
+ club_totals=club_group['groups'][0]
+ check('Club-wise dues reconcile collected and unpaid membership totals',club_totals['id']==c1 and club_totals['collected']==club_group['totals']['collected'] and club_totals['unpaid']==club_group['totals']['unpaid'])
+ region_group=good(cp,annual+'/members?view=region&regionId='+r1)
+ check('Club President region report aggregates only their own club',region_group['groups'][0]['id']==r1 and region_group['groups'][0]['members']==club_totals['members'])
+ export_status,export_data,_=rp.request(annual+'/members?view=club&clubId='+c1+'&format=csv')
+ check('Club-wise CSV includes totals and estimated pending dues',export_status==200 and b'Estimated pending (INR)' in export_data)
  prior=good(cp,annual+'/members?clubId='+c1+'&cycleYear='+str(unpaid['cycleYear']-1)+'&search=QA%20Benevolent%20'+tag)
  check('Prior-year dues exclude memberships created later',prior['historical'] and prior['total']==0)
  good(cp,membership_path+'/payment','PUT',{'paid':False})

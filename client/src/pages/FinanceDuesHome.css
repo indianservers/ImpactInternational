@@ -5,3 +5,10 @@
 .sf-quick-filters{grid-template-columns:1fr}.sf-select-action{grid-template-columns:minmax(0,1fr) auto;align-items:end}.sf-select-action>button{min-width:150px}.sf-collection-status{display:grid;gap:7px;max-width:300px;font-size:12px;margin-bottom:18px}@media(max-width:500px){.sf-select-action{grid-template-columns:1fr}.sf-select-action>button{min-width:0}}
 
 .simple-finance>*{min-width:0}.sf-group-toggle strong{overflow-wrap:anywhere}.sf-group-toggle>span:first-child>span{min-width:0}
+
+.annual-dues-kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 170px), 1fr)); gap: 12px; }
+.annual-dues-kpis > div { display: grid; align-content: start; gap: 7px; background: var(--op-paper); border: 1px solid var(--op-line); border-radius: 14px; padding: 18px; }
+.annual-dues-kpis strong { font-size: clamp(20px, 3vw, 28px); color: var(--op-ink); font-variant-numeric: tabular-nums; }
+.annual-dues-kpis span, .annual-dues-kpis small { color: var(--op-muted); }
+.annual-dues-kpis progress { width: 100%; height: 8px; accent-color: #55308c; }
+.annual-dues-report .sf-table td:nth-child(n+3) { font-variant-numeric: tabular-nums; }

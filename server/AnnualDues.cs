@@ -106,7 +106,9 @@ public static class AnnualDues
             var firstReportYear = earliest.HasValue
                 ? Math.Max(1901, Math.Min(end.Year - 1, CycleEnd(settings, DateOnly.FromDateTime(TimeZoneInfo.ConvertTime(earliest.Value, India).DateTime)).Year))
                 : end.Year;
-            var organizations = await access.Visible(workspace)
+            var visible = access.Visible(workspace);
+            var organizations = await access.Db.Orgs.Where(o => o.TenantId == workspace.TenantId
+                    && (visible.Any(v => v.Id == o.Id) || visible.Any(v => v.Id == workspace.OrgId && v.ParentId == o.Id)))
                 .Where(o => access.Db.Levels.Any(l => l.Id == o.LevelId && (l.Name == "Region" || l.Name == "Club")))
                 .OrderBy(o => o.Name)
                 .Select(o => new { o.Id, o.Name, o.ParentId, type = access.Db.Levels.Where(l => l.Id == o.LevelId).Select(l => l.Name).First() })
@@ -246,7 +248,7 @@ public static class AnnualDues
     }
 
     private static async Task<IResult> Report(Access access, Guid? regionId, Guid? clubId, string? status,
-        string? search, int? cycleYear, string? format, int page = 1)
+        string? search, int? cycleYear, string? format, string? view, int page = 1)
     {
         var workspace = await Workspace(access);
         var db = access.Db;
@@ -255,11 +257,19 @@ public static class AnnualDues
         var end = ReportEnd(settings, currentEnd, cycleYear);
         var historical = end != currentEnd;
         var cutoff = EndsAt(end);
+        var valuationDate = historical ? end : Today;
+        var pendingFee = valuationDate < SecondHalfStarts(end) ? settings.FirstHalfFee : settings.SecondHalfFee;
+        Check(view is null or "member" or "club" or "region", "Choose a member, club, or region report.");
+        Check(status is null or "paid" or "unpaid", "Choose Paid or Unpaid.");
+        page = Math.Clamp(page, 1, 10000);
         var members = Members(access, workspace);
         if (regionId.HasValue)
         {
             var region = access.Tree(workspace.TenantId, regionId.Value);
-            Check(await access.Visible(workspace).AnyAsync(o => o.Id == regionId && db.Levels.Any(l => l.Id == o.LevelId && l.Name == "Region")),
+            var visible = access.Visible(workspace);
+            Check(await db.Orgs.AnyAsync(o => o.TenantId == workspace.TenantId && o.Id == regionId
+                && db.Levels.Any(l => l.Id == o.LevelId && l.Name == "Region")
+                && (visible.Any(v => v.Id == o.Id) || region.Any(v => v.Id == workspace.OrgId))),
                 "Region outside your scope.", 404);
             members = members.Where(m => region.Any(o => o.Id == m.ClubId));
         }
@@ -279,7 +289,7 @@ public static class AnnualDues
                    where payment != null || (member.JoinedAt <= cutoff && CurrentStatuses.Contains(statusAtEnd))
                    select new
                    {
-                       member.Id, member.Number, member.ClubId, club = member.Club.Name,
+                       member.Id, member.Number, member.ClubId, club = member.Club.Name, regionId = member.Club.ParentId,
                        name = member.Person.DisplayName, membershipStatus = statusAtEnd, member.Version,
                        member.EndsAt, paid = payment != null, amount = payment == null ? 0 : payment.Amount,
                        paidOn = payment == null ? (DateOnly?)null : payment.PaidOn,
@@ -288,26 +298,59 @@ public static class AnnualDues
         {
             paid = g.Count(x => x.paid), unpaid = g.Count(x => !x.paid), collected = g.Sum(x => x.amount),
         }).SingleOrDefaultAsync();
+        if (view is "club" or "region")
+        {
+            var byRegion = view == "region";
+            var term = string.IsNullOrWhiteSpace(search) ? null : "%" + search.Trim() + "%";
+            var aggregates = rows.GroupBy(row => byRegion ? row.regionId : (Guid?)row.ClubId)
+                .Select(g => new { id = g.Key, members = g.Count(), paid = g.Count(x => x.paid),
+                    unpaid = g.Count(x => !x.paid), collected = g.Sum(x => x.amount) });
+            var grouped = from aggregate in aggregates
+                          join organization in db.Orgs.Where(o => o.TenantId == workspace.TenantId) on aggregate.id equals (Guid?)organization.Id into organizations
+                          from organization in organizations.DefaultIfEmpty()
+                          select new
+                          {
+                              aggregate.id, aggregate.members, aggregate.paid, aggregate.unpaid, aggregate.collected,
+                              name = organization == null ? "Unassigned region" : organization.Name,
+                          };
+            if (term != null) grouped = grouped.Where(g => EF.Functions.ILike(g.name, term));
+            if (status == "paid") grouped = grouped.Where(g => g.paid > 0);
+            if (status == "unpaid") grouped = grouped.Where(g => g.unpaid > 0);
+            var orderedGroups = grouped.OrderByDescending(g => g.unpaid).ThenBy(g => g.name).ThenBy(g => g.id);
+            if (format == "csv")
+            {
+                var exported = await orderedGroups.ToListAsync();
+                return BulkImportEndpoints.Csv(["Year ending", byRegion ? "Region" : "Club", "Members", "Paid", "Unpaid", "Collected (INR)", "Estimated pending (INR)"],
+                    exported.Select(g => new[] { end.ToString("yyyy-MM-dd"), g.name, g.members.ToString(), g.paid.ToString(),
+                        g.unpaid.ToString(), g.collected.ToString("0.00", CultureInfo.InvariantCulture),
+                        (g.unpaid * pendingFee).ToString("0.00", CultureInfo.InvariantCulture) }),
+                    $"dues-{view}-{end.Year}.csv");
+            }
+            return Results.Ok(new
+            {
+                cycleYear = end.Year, cycleStart = end.AddYears(-1).AddDays(1), cycleEnd = end, historical, pendingFee, totals,
+                total = await grouped.CountAsync(), page,
+                groups = await orderedGroups.Skip((page - 1) * 50).Take(50).ToListAsync(),
+            });
+        }
         if (!string.IsNullOrWhiteSpace(search))
         {
             var term = "%" + search.Trim() + "%";
             rows = rows.Where(x => EF.Functions.ILike(x.name, term) || EF.Functions.ILike(x.Number, term));
         }
-        Check(status is null or "paid" or "unpaid", "Choose Paid or Unpaid.");
         if (status != null) rows = rows.Where(x => x.paid == (status == "paid"));
         var ordered = rows.OrderBy(x => x.name).ThenBy(x => x.Id);
         if (format == "csv")
         {
             var exported = await ordered.ToListAsync();
-            return BulkImportEndpoints.Csv(["Year ending", "Membership ID", "Member", "Club", "Membership status", "Payment status", "Paid on", "Collected (INR)"],
+            return BulkImportEndpoints.Csv(["Year ending", "Membership ID", "Member", "Club", "Membership status", "Payment status", "Paid on", "Collected (INR)", "Estimated pending (INR)"],
                 exported.Select(r => new[] { end.ToString("yyyy-MM-dd"), r.Number, r.name, r.club, r.membershipStatus,
-                    r.paid ? "Paid" : "Unpaid", r.paidOn?.ToString("yyyy-MM-dd") ?? "", r.amount.ToString("0.00", CultureInfo.InvariantCulture) }),
+                    r.paid ? "Paid" : "Unpaid", r.paidOn?.ToString("yyyy-MM-dd") ?? "", r.amount.ToString("0.00", CultureInfo.InvariantCulture), (r.paid ? 0 : pendingFee).ToString("0.00", CultureInfo.InvariantCulture) }),
                 $"dues-{end.Year}-{status ?? "all"}.csv");
         }
-        page = Math.Clamp(page, 1, 10000);
         return Results.Ok(new
         {
-            cycleYear = end.Year, cycleStart = end.AddYears(-1).AddDays(1), cycleEnd = end, historical,
+            cycleYear = end.Year, cycleStart = end.AddYears(-1).AddDays(1), cycleEnd = end, historical, pendingFee,
             totals, total = await rows.CountAsync(), page,
             items = await ordered.Skip((page - 1) * 50).Take(50).ToListAsync(),
         });
