@@ -152,6 +152,50 @@ namespace Clubs.Api.Migrations
                     b.ToTable("ActivityParticipations");
                 });
 
+            modelBuilder.Entity("Clubs.AnnualDuesPayment", b =>
+                {
+                    b.Property<Guid>("MembershipId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("CycleYear")
+                        .HasColumnType("integer");
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("numeric");
+
+                    b.Property<DateOnly>("PaidOn")
+                        .HasColumnType("date");
+
+                    b.HasKey("MembershipId", "CycleYear");
+
+                    b.ToTable("AnnualDuesPayments");
+                });
+
+            modelBuilder.Entity("Clubs.AnnualDuesSettings", b =>
+                {
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("ExpiryDay")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("ExpiryMonth")
+                        .HasColumnType("integer");
+
+                    b.Property<decimal>("FirstHalfFee")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal>("SecondHalfFee")
+                        .HasColumnType("numeric");
+
+                    b.Property<long>("Version")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("TenantId");
+
+                    b.ToTable("AnnualDuesSettings");
+                });
+
             modelBuilder.Entity("Clubs.Assignment", b =>
                 {
                     b.Property<Guid>("Id")
@@ -7251,6 +7295,9 @@ namespace Clubs.Api.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<bool?>("BenevolentFund")
+                        .HasColumnType("boolean");
+
                     b.Property<Guid>("CategoryId")
                         .HasColumnType("uuid");
 
@@ -10313,6 +10360,24 @@ namespace Clubs.Api.Migrations
                         .HasForeignKey("TenantId", "PostId")
                         .HasPrincipalKey("TenantId", "Id")
                         .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Clubs.AnnualDuesPayment", b =>
+                {
+                    b.HasOne("Clubs.Membership", null)
+                        .WithMany()
+                        .HasForeignKey("MembershipId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Clubs.AnnualDuesSettings", b =>
+                {
+                    b.HasOne("Clubs.Tenant", null)
+                        .WithOne()
+                        .HasForeignKey("Clubs.AnnualDuesSettings", "TenantId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 

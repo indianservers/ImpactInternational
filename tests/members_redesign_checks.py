@@ -22,7 +22,7 @@ for i in range(4):
  person=dict(legalName=prefix+' '+str(i),displayName='',contacts=[dict(kind='Email',label='Personal',value=f'members-redesign-{tag}-{i}@example.test')])
  body=dict(person=person,clubId=club if i<3 else foreign,categoryId=category,photoBase64=base64.b64encode(photo).decode() if i==0 else None)
  d=request(a,'Create member '+str(i),'/members',200,'POST',body);created.append(d)
-check('Generated member IDs unique',len({m['number'] for m in created})==4 and all(m['number'].startswith('IM-') for m in created))
+check('Generated member IDs unique',len({m['number'] for m in created})==4 and all(m['number'].startswith('ICI-') for m in created))
 mid=created[0]['id'];detail=request(a,'Profile read','/members/'+mid)
 check('Profile photo persisted',detail['person']['hasPhoto'])
 s,data,_=a.request('/members/'+mid+'/photo');check('Protected photo read',s==200 and data.startswith(b'\x89PNG'))

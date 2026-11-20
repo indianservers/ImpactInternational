@@ -11,13 +11,13 @@ public static class IciPolicy
     public static readonly IciRoleDefinition[] Roles = [
         new("Executive Board","International",["Title clearance","Final member transfer approval","Club creation and regional mapping","Region-to-NVP mapping","Regional event bid and report approval","Leadership handovers including National President","Confidential legal case tracking"],["Members and activities across authorized regions and clubs"],[]),
         new("Office Bearers","National",["Own profile and career updates"],["Member and activity reports in assigned regions"],[]),
-        new("National President","National",["Own profile and career updates","Title clearance","Final member transfer approval","Club creation and regional mapping","Region-to-NVP mapping","Club event bid approval","Leadership handovers excluding National President"],["Members and activities within national scope"],[]),
-        new("National Secretary","National",["Own profile and career updates"],["Assigned-region reporting; no additional approval powers specified by the source"],[]),
-        new("National Treasurer","National",["Own profile and career updates"],["Event and project submissions requesting financial aid"],[]),
+        new("National President","National",["Own profile and career updates","Title clearance","Final member transfer approval","Club creation and regional mapping","Region-to-NVP mapping","Club event bid approval","Leadership handovers excluding National President"],["ICI member information across the association","Activities within national scope"],[]),
+        new("National Secretary","National",["Own profile and career updates"],["ICI member information across the association","Assigned-region reporting"],[]),
+        new("National Treasurer","National",["Own profile and career updates"],["ICI member information across the association","Event and project submissions requesting financial aid"],[]),
         new("National Vice President","National",["Own profile and career updates","Inward and outward member transfer review"],["Members and activities in assigned regions"],[]),
         new("National Director","National",["Own profile and career updates","Final club event approval after Regional President","Regional event pre-approval before Executive Board"],["Activities in assigned portfolio across national, region and club scopes"],[..ActivityPortfolios,"National pro"]),
         new("National Coordinator","National",["Own profile and career updates"],["Activities in assigned initiative across national, region and club scopes"],CoordinatorPortfolios),
-        new("Regional President","Region",["Own profile, bank and career updates","Inward and outward member transfer review","Event bidding, reporting and creation","Club event and report review"],["Region and club members","Region and club activities"],[]),
+        new("Regional President","Region",["Own profile, bank and career updates","Inward and outward member transfer review","Event bidding, reporting and creation","Club event and report review"],["Information for clubs and members within the assigned region","Region and club activities"],[]),
         new("Regional Director","Region",["Own profile and career updates"],["Region and club activities in assigned portfolio"],ActivityPortfolios),
         new("Club President","Club",["Own profile, bank and career updates","Subscription payment records: INR 365/member; initial minimum 20","Add new and existing members","Member transfer requests","New LO title clearance: INR 100","Event bidding, reporting and creation"],["Club member details","Extended LOs and title-clearance status","Event calendar"],[])
     ];
@@ -25,6 +25,7 @@ public static class IciPolicy
     public static bool IsRole(string role) => Roles.Any(r => r.Name == role);
     public static bool CoverageRequired(string role) => role is "National Vice President" or "Office Bearers" or "National Secretary";
     public static bool PortfolioRequired(string role) => role is "National Director" or "National Coordinator" or "Regional Director";
+    public static readonly string[] AssociationMemberReaders = ["National President", "National Secretary", "National Treasurer"];
     public static bool OwnBank(string role) => role is "Club President" or "Regional President";
     public static Task<string> Role(Access a, Assignment w) => a.Db.Roles.Where(r => r.Id == w.RoleId && r.TenantId == w.TenantId).Select(r => r.Name).SingleAsync();
     public static async Task<bool> Administrator(Access a, Assignment w) => (await a.User()).PlatformAdmin || (await Role(a, w)) is "Association Super Admin" or "Main Admin";
@@ -32,13 +33,15 @@ public static class IciPolicy
     {
         if (!IsRole(role)) return [];
         var p = new List<string> { "organization.view", "ici.view", "events.view", "events.reports", "finance.self" };
-        if (role is "Club President") p.AddRange(["members.view", "members.manage", "members.personal.view", "members.contacts.view", "members.export", "members.import", "members.invite", "members.approve", "directory.view", "leadership.view", "events.manage", "ici.submit"]);
-        if (role is "Regional President") p.AddRange(["members.view", "members.personal.view", "members.contacts.view", "members.approve", "members.transfer.approve", "directory.view", "leadership.view", "events.manage", "governance.approve", "ici.submit", "ici.review"]);
+        if (role is "Club President") p.AddRange(["members.view", "members.manage", "members.personal.view", "members.contacts.view", "members.export", "members.import", "members.invite", "members.approve", DuesCenter.View, "directory.view", "leadership.view", "events.manage", "ici.submit"]);
+        if (role is "Regional President") p.AddRange(["members.view", "members.personal.view", "members.contacts.view", "members.approve", "members.transfer.approve", DuesCenter.View, "directory.view", "leadership.view", "events.manage", "governance.approve", "ici.submit", "ici.review"]);
         if (role is "National Vice President") p.AddRange(["members.view", "members.contacts.view", "directory.view", "members.transfer.approve", "ici.review"]);
-        if (role is "Office Bearers" or "National Secretary") p.AddRange(["members.view", "directory.view"]);
+        if (role is "Office Bearers") p.AddRange(["members.view", "directory.view"]);
+        if (AssociationMemberReaders.Contains(role)) p.AddRange(["members.view", "members.personal.view", "members.contacts.view", "directory.view"]);
         if (role is "Executive Board") p.Add("governance.approve");
         if (role is "National Director") p.AddRange(["governance.approve", "ici.review"]);
-        if (role is "National President" or "Executive Board") p.AddRange(["members.view", "members.personal.view", "members.contacts.view", "directory.view", "leadership.view", "members.transfer.approve", "ici.submit", "ici.review", "ici.team"]);
+        if (role is "Executive Board") p.AddRange(["members.view", "members.personal.view", "members.contacts.view", "directory.view"]);
+        if (role is "National President" or "Executive Board") p.AddRange(["leadership.view", "members.transfer.approve", "ici.submit", "ici.review", "ici.team"]);
         return p.Distinct().ToArray();
     }
     public static async Task Configure(Db db)

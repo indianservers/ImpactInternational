@@ -40,6 +40,7 @@ public class FinanceWorker(IServiceScopeFactory scopes, ILogger<FinanceWorker> l
         var recurring = await db
             .DuesPlans.Where(x =>
                 x.AutoBill && x.NextBillOn <= FinanceService.Today && x.NextBillOn <= x.EffectiveTo
+                && !db.Tenants.Any(t => t.Id == x.TenantId && t.Name == ImpactSetup.Name)
             )
             .OrderBy(x => x.NextBillOn)
             .Take(5)
@@ -192,6 +193,14 @@ public class FinanceWorker(IServiceScopeFactory scopes, ILogger<FinanceWorker> l
         await s.Lock(job.EntityId);
         if (job.Status is not "Queued" and not "Running")
         {
+            await tx.CommitAsync(stop);
+            return;
+        }
+        if (await AnnualDues.Applies(db, job.TenantId))
+        {
+            job.Status = "Failed";
+            job.Error = "Replaced by annual membership dues.";
+            await db.SaveChangesAsync(stop);
             await tx.CommitAsync(stop);
             return;
         }

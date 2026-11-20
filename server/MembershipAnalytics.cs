@@ -53,7 +53,7 @@ public static class MembershipAnalytics
         Check(new[]{"day","week","month","quarter","year"}.Contains(bucket),"Unsupported aggregation interval.");
         var mode=Read("workspace");if(mode=="")mode="overview";
         Check(new[]{"overview","growth","organization","cohorts","lifecycle","renewals","categories","geography","engagement","forecasting","actions","network"}.Contains(mode),"Unknown analytical workspace.");
-        var visible=await s.Access.Visible(w).AsNoTracking().Select(o=>new AnalyticsOrg{Id=o.Id,ParentId=o.ParentId,Name=o.Name,LevelId=o.LevelId,Status=o.Status,Country=o.Country,State=o.State,Latitude=o.Latitude,Longitude=o.Longitude}).ToListAsync();
+        var visible=await s.MemberOrganizations(w).AsNoTracking().Select(o=>new AnalyticsOrg{Id=o.Id,ParentId=o.ParentId,Name=o.Name,LevelId=o.LevelId,Status=o.Status,Country=o.Country,State=o.State,Latitude=o.Latitude,Longitude=o.Longitude}).ToListAsync();
         Check(visible.Count<=10000,"Narrow your workspace before exploring more than 10,000 organizational units.");
         var allowed=visible.Select(o=>o.Id).ToArray();
         foreach(var (key,kind) in new[]{("nationalId","National"),("regionId","Region"),("clubId","Club")})
@@ -62,7 +62,7 @@ public static class MembershipAnalytics
             Check(await db.Orgs.AnyAsync(o=>o.Id==id&&o.TenantId==w.TenantId&&db.Levels.Any(l=>l.Id==o.LevelId&&l.Name==kind)) && (allowed.Contains(id)||await s.Access.Tree(w.TenantId,id).AnyAsync(o=>o.Id==w.OrgId)),kind+" outside authorized scope.",404);
             var branch=await s.Access.Tree(w.TenantId,id).Select(o=>o.Id).ToArrayAsync();allowed=allowed.Intersect(branch).ToArray();
         }
-        var scoped=await s.ScopedList(w);var oldest=await scoped.MinAsync(m=>(DateTimeOffset?)m.JoinedAt);
+        var scoped=await s.ReadableList(w);var oldest=await scoped.MinAsync(m=>(DateTimeOffset?)m.JoinedAt);
         var quarter=new DateOnly(today.Year,((today.Month-1)/3)*3+1,1);
         var from=period switch{"7d"=>today.AddDays(-6),"30d"=>today.AddDays(-29),"90d"=>today.AddDays(-89),"quarter"=>quarter,"previous-quarter"=>quarter.AddMonths(-3),"previous-year"=>new DateOnly(today.Year-1,1,1),"all"=>oldest==null?today:DateOnly.FromDateTime(TimeZoneInfo.ConvertTime(oldest.Value,tz).DateTime),"custom"=>Date("from")??today.AddDays(-29),_=>new DateOnly(today.Year,1,1)};
         var to=period switch{"previous-quarter"=>quarter.AddDays(-1),"previous-year"=>new DateOnly(today.Year,1,1).AddDays(-1),"custom"=>Date("to")??today,_=>today};

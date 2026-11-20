@@ -358,6 +358,7 @@ public static partial class FinanceEndpoints
             async (Guid entity, FinancePlanInput i, FinanceService s) =>
             {
                 var e = await s.Entity(entity, "finance.configure");
+                Check(!await AnnualDues.Applies(s.Db, e.TenantId), "Use annual membership dues settings.", 409);
                 Check(
                     i.Name.Length is > 0 and <= 150
                         && FinanceService.Purposes.Contains(i.Purpose)
@@ -423,6 +424,7 @@ public static partial class FinanceEndpoints
                 var plan = await s.Db.DuesPlans.SingleOrDefaultAsync(x => x.Id == id);
                 Check(plan != null, "Plan unavailable.", 404);
                 var e = await s.Entity(plan.EntityId, "finance.manage");
+                Check(!await AnnualDues.Applies(s.Db, e.TenantId), "Use annual membership dues to record payments.", 409);
                 if (i.Discount > 0)
                     await s.Entity(e.Id, "finance.post");
                 await using var tx = await s.Db.Database.BeginTransactionAsync();
@@ -453,6 +455,7 @@ public static partial class FinanceEndpoints
                 var p = await s.Db.DuesPlans.SingleOrDefaultAsync(x => x.Id == id);
                 Check(p != null, "Plan unavailable.", 404);
                 var e = await s.Entity(p.EntityId, "finance.manage");
+                Check(!await AnnualDues.Applies(s.Db, e.TenantId), "Use annual membership dues to record payments.", 409);
                 Check(
                     i.StartsOn < i.EndsOn
                         && i.StartsOn >= p.EffectiveFrom

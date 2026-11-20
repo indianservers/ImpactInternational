@@ -97,23 +97,38 @@ public static class IciWorkflow
         Check(await IciPolicy.Administrator(a, acting), "Use the reviewed team-handover workflow for leadership changes.", 403);
         return await InstallAssignment(a, acting, input);
     }
-    public static async Task<Assignment> InstallAssignment(Access a, Assignment acting, IciAssignmentInput input)
+    public static async Task<Assignment> InstallAssignment(Access a, Assignment acting, IciAssignmentInput input, Guid? membershipId = null)
     {
         Check(input.Email.Length <= 200, "Invalid account email.");
         var role = await a.Db.Roles.SingleOrDefaultAsync(r => r.Id == input.RoleId && r.TenantId == acting.TenantId);
-        Check(role != null && IciPolicy.IsRole(role.Name), "Choose an ICI role.");
+        Check(role != null && (IciPolicy.IsRole(role.Name) || membershipId.HasValue && DelegatedPositions.IsClubRole(role.Name)), "Choose an ICI role.");
         Check(await a.Visible(acting).AnyAsync(o => o.Id == input.OrgId), "Role assignment is outside your authority.", 403);
-        var user = await a.Db.Users.SingleOrDefaultAsync(u => u.Email == input.Email.Trim().ToLowerInvariant() && u.Verified);
+        var user = await a.Db.Users.SingleOrDefaultAsync(u => u.Email == input.Email.Trim().ToLowerInvariant() && (u.Verified || membershipId.HasValue));
         Check(user != null, "A verified account is required.");
         Check(await a.Db.Assignments.AnyAsync(w => w.UserId == user!.Id && w.TenantId == acting.TenantId) || await a.Db.Memberships.AnyAsync(m => m.TenantId == acting.TenantId && m.Person.UserId == user!.Id), "Account is outside this association.", 403);
         var regions = input.RegionIds ?? [];
         await IciPolicy.ValidateAssignment(a, acting.TenantId, input.OrgId, role!.Name, input.Portfolio, input.Slot, regions);
         Check(!await a.Db.Assignments.AnyAsync(w => w.UserId == user!.Id && w.OrgId == input.OrgId && w.RoleId == role.Id && w.IciPortfolio == input.Portfolio && w.IciSlot == input.Slot), "This assignment already exists.", 409);
-        var result = new Assignment { TenantId = acting.TenantId, OrgId = input.OrgId, RoleId = role.Id, UserId = user!.Id, IciPortfolio = input.Portfolio, IciSlot = input.Slot };
+        var result = new Assignment { TenantId = acting.TenantId, OrgId = input.OrgId, RoleId = role.Id, UserId = user!.Id, MembershipId = membershipId, IciPortfolio = input.Portfolio, IciSlot = input.Slot };
         a.Db.Assignments.Add(result);
         foreach (var id in regions) a.Db.IciRegionCoverages.Add(new() { TenantId = acting.TenantId, AssignmentId = result.Id, RegionId = id });
         await a.Log(acting, "ici.role.assign", result.Id.ToString(), role.Name); return result;
     }
+    public static async Task RemoveAssignment(Access access, Assignment acting, Assignment holder, string role)
+    {
+        if (holder.AppointmentId.HasValue)
+        {
+            var office = await access.Db.OfficerAppointments.SingleAsync(o => o.Id == holder.AppointmentId);
+            office.Status = "Revoked";
+            office.Version++;
+        }
+        await access.Db.Sessions.Where(s => s.WorkspaceId == holder.Id)
+            .ExecuteUpdateAsync(set => set.SetProperty(s => s.WorkspaceId, (Guid?)null));
+        access.Db.Assignments.Remove(holder);
+        await access.Log(acting, "ici.role.remove", holder.Id.ToString(), role);
+        await access.Db.SaveChangesAsync();
+    }
+
     public static async Task Validate(Access a, Assignment w, string role, IciRequestInput input, IciRequest row, bool submit)
     {
         var admin = await IciPolicy.Administrator(a, w);
@@ -208,9 +223,7 @@ public static class IciWorkflow
             if (input.OldAssignmentId != null)
             {
                 var old = await a.Db.Assignments.SingleAsync(t => t.Id == input.OldAssignmentId && t.TenantId == w.TenantId);
-                if (old.AppointmentId != null) { var office = await a.Db.OfficerAppointments.SingleAsync(o => o.Id == old.AppointmentId); office.Status = "Revoked"; office.Version++; }
-                await a.Db.Sessions.Where(s => s.WorkspaceId == old.Id).ExecuteUpdateAsync(set => set.SetProperty(s => s.WorkspaceId, (Guid?)null));
-                a.Db.Assignments.Remove(old); await a.Db.SaveChangesAsync();
+                await RemoveAssignment(a, w, old, input.Role);
             }
             var role = await a.Db.Roles.SingleAsync(r => r.TenantId == w.TenantId && r.Name == input.Role);
             var assignment = await InstallAssignment(a, w, new(input.Email, role.Id, input.OrgId, input.Portfolio, input.Slot, input.RegionIds));

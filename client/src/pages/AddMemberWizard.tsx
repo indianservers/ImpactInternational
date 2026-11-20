@@ -9,6 +9,21 @@ import { CertificationRegistration } from "./Certifications";
 import { memberDraft } from "../memberDraft";
 import "./AddMemberWizard.css";
 import { useLanguage } from "../i18n";
+import { businessCategories } from "../BusinessProfile";
+import { MemberChoice, MemberTags, memberChoices, memberTagSuggestions } from "./MemberEntryFields";
+
+const businessCategoryChoices = Object.keys(businessCategories).filter(category => category !== "Other");
+const tagLabels = {
+    languages: "Languages",
+    skills: "Skills",
+    expertise: "Expertise",
+    interests: "Areas of interest",
+    businessTags: "Business tags",
+};
+type TagField = keyof typeof tagLabels;
+function tagValues(form: any, field: TagField): string[] {
+    return form[field] ?? (form[field + "Text"] || "").split(",").map((value: string) => value.trim()).filter(Boolean);
+}
 const steps = [
     { name: "Basic Details", icon: UserRound },
     { name: "Community & Membership", icon: Network },
@@ -37,7 +52,6 @@ const initial = () => ({
     maritalStatus: "",
     spouseName: "",
     anniversary: "",
-    languagesText: "",
     contacts: [
         { kind: "Phone", label: "Primary mobile", value: "" },
         { kind: "Phone", label: "Alternative mobile", value: "" },
@@ -47,14 +61,12 @@ const initial = () => ({
     ],
     addresses: [blankAddress()],
     socialLinks: {},
-    skillsText: "",
-    expertiseText: "",
-    interestsText: "",
     company: "",
     designation: "",
     industry: "",
     profession: "",
     businessCategory: "",
+    businessSubcategory: "",
     workLocation: "",
     website: "",
     networking: "",
@@ -79,6 +91,8 @@ export default function AddMemberWizard({ onClose, onDone, }: {
         joinedAt: "",
         status: "Active",
     }), [step, setStep] = useState(0), [completed, setCompleted] = useState<number[]>([]), [review, setReview] = useState(false), [photo, setPhoto] = useState(""), [documents, setDocuments] = useState<File[]>([]), [error, setError] = useState(""), [notice, setNotice] = useState(""), [busy, setBusy] = useState(false), [photoBusy, setPhotoBusy] = useState(false), [confirm, setConfirm] = useState(false), [dirty, setDirty] = useState(false), [saved, setSaved] = useState<any>(null), [matches, setMatches] = useState<any[]>([]), [decision, setDecision] = useState(""), [personId, setPersonId] = useState<string | null>(null), [created, setCreated] = useState<any>(null), [uploaded, setUploaded] = useState<string[]>([]), [requestKey, setRequestKey] = useState(() => crypto.randomUUID());
+    const knownBusinessCategory = businessCategoryChoices.includes(form.businessCategory);
+    const businessSubcategories = knownBusinessCategory ? businessCategories[form.businessCategory] : [];
     const formRef = useRef<HTMLFormElement>(null), lock = useRef(false), lastPayload = useRef<any>(null), dialogRef = useRef<HTMLElement>(null);
     const me = useQuery({
         queryKey: ["wizard-session"],
@@ -149,19 +163,7 @@ export default function AddMemberWizard({ onClose, onDone, }: {
         return (<label className="aw-field" key={name}>
         {t(label)}
         {required && <span className="aw-required"> *</span>}
-        <input name={"field:" + name} type={name === "website" ? "url" : type} pattern={name === "website" ? "https?://.+" : undefined} min={type === "date" ? "1900-01-01" : undefined} max={type === "date" ? today : undefined} value={form[name] || ""} required={required} maxLength={name.endsWith("Text") ? 3029 : maxLength} onChange={(e) => {
-                const value = e.target.value;
-                if (name.endsWith("Text")) {
-                    const tags = value
-                        .split(",")
-                        .map((v) => v.trim())
-                        .filter(Boolean);
-                    e.target.setCustomValidity(tags.length > 30 || tags.some((v) => v.length > 100)
-                        ? "Use up to 30 comma-separated values, each up to 100 characters."
-                        : "");
-                }
-                change(name, value);
-            }} onInput={type === "date"
+        <input name={"field:" + name} type={name === "website" ? "url" : type} pattern={name === "website" ? "https?://.+" : undefined} min={type === "date" ? "1900-01-01" : undefined} max={type === "date" ? today : undefined} value={form[name] || ""} required={required} maxLength={maxLength} onChange={(e) => change(name, e.target.value)} onInput={type === "date"
                 ? (e) => change(name, e.currentTarget.value)
                 : undefined}/>
       </label>);
@@ -170,10 +172,16 @@ export default function AddMemberWizard({ onClose, onDone, }: {
         return (<label className="aw-field" key={name}>
         {t(label)}
         <select name={"field:" + name} value={form[name] || ""} onChange={(e) => change(name, e.target.value)}>
-          <option value="">{t("Select")}{label.toLowerCase()}</option>
+          <option value="">{t("Select")}</option>
           {values.map((v) => (<option key={v}>{v}</option>))}
         </select>
       </label>);
+    }
+    function choice(name: keyof typeof memberChoices, label: string) {
+        return <MemberChoice label={label} value={form[name] || ""} choices={memberChoices[name]} onChange={value => change(name, value)}/>;
+    }
+    function tags(field: TagField, suggestions: readonly string[] = memberTagSuggestions[field]) {
+        return <MemberTags label={tagLabels[field]} values={tagValues(form, field)} suggestions={suggestions} onChange={values => change(field, values)}/>;
     }
     function validate(index: number) {
         const panel = formRef.current?.querySelector<HTMLElement>(`[data-step="${index}"]`);
@@ -204,20 +212,17 @@ export default function AddMemberWizard({ onClose, onDone, }: {
             setStep((s) => Math.min(3, s + 1));
     }
     function person(f: any) {
-        const tags = (v: string) => v
-            .split(",")
-            .map((x) => x.trim())
-            .filter(Boolean);
         return {
             ...f,
             legalName: f.legalName.trim(),
             displayName: f.displayName.trim() || f.legalName.trim(),
             birthDate: f.birthDate || null,
             anniversary: f.anniversary || null,
-            languages: tags(f.languagesText),
-            skills: tags(f.skillsText),
-            expertise: tags(f.expertiseText),
-            interests: tags(f.interestsText),
+            languages: tagValues(f, "languages"),
+            skills: tagValues(f, "skills"),
+            expertise: tagValues(f, "expertise"),
+            interests: tagValues(f, "interests"),
+            businessTags: tagValues(f, "businessTags"),
             contacts: f.contacts.filter((c: any) => c.value.trim()),
             addresses: f.addresses
                 .filter(hasAddress)
@@ -274,7 +279,9 @@ export default function AddMemberWizard({ onClose, onDone, }: {
     async function prepare() {
         sync();
         for (let i = 0; i < 4; i++) {
-            const invalid = Array.from(formRef.current?.querySelectorAll<HTMLInputElement>(`[data-step="${i}"] input,[data-step="${i}"] select,[data-step="${i}"] textarea`) || []).find((f) => !f.checkValidity());
+            // The restored club ID is validated below while its hierarchy options load.
+            const invalid = Array.from(formRef.current?.querySelectorAll<HTMLInputElement>(`[data-step="${i}"] input,[data-step="${i}"] select,[data-step="${i}"] textarea`) || [])
+                .find((f) => !f.closest(".membership-location-picker") && !f.checkValidity());
             if (invalid) {
                 setStep(i);
                 setError("Please complete the required fields and correct any invalid values in this step.");
@@ -556,7 +563,7 @@ export default function AddMemberWizard({ onClose, onDone, }: {
         ])}
                       {input("spouseName", "Spouse name")}
                       {input("anniversary", "Marriage anniversary", "date")}
-                      {input("languagesText", "Languages (comma separated)")}
+                      {tags("languages")}
                     </div>
                   </section>
                   <section className="aw-card" data-step="1" hidden={step !== 1 || review}>
@@ -585,6 +592,17 @@ export default function AddMemberWizard({ onClose, onDone, }: {
             status: e.target.value,
         }))}>
                           {["Active", "Inactive", "Suspended"].map((s) => (<option key={s}>{s}</option>))}
+                        </select>
+                      </label>
+                      <label className="aw-field">{t("Benevolent Fund")}
+                        <select value={target.benevolentFund == null ? "" : String(target.benevolentFund)} onChange={(e) => {
+                            const value = e.target.value;
+                            setTarget((p: any) => ({ ...p, benevolentFund: value === "" ? null : value === "true" }));
+                            setDirty(true);
+                        }}>
+                          <option value="">{t("Select Yes or No")}</option>
+                          <option value="true">{t("Yes")}</option>
+                          <option value="false">{t("No")}</option>
                         </select>
                       </label>
                       <label className="aw-field">{t("Current office")}<input readOnly value="No office assigned"/>
@@ -637,7 +655,15 @@ export default function AddMemberWizard({ onClose, onDone, }: {
                 "city",
                 "postalCode",
                 "address",
-            ].map((k) => (<label className={"aw-field " + (k === "address" ? "wide" : "")} key={k}>
+            ].map((k) => {
+                const setAddressValue = (value: string) => change("addresses", form.addresses.map((x: any, n: number) => n === i ? { ...x, [k]: value } : x));
+                if (k === "country")
+                    return <MemberChoice key={k} label="Country" value={a.country} choices={memberChoices.country} onChange={setAddressValue}/>;
+                if (k === "state" && a.country.trim().toLowerCase() === "india")
+                    return <MemberChoice key={k} label="State / Province" value={a.state} choices={memberChoices.indianStates} onChange={setAddressValue}/>;
+                if (k === "city" && a.country.trim().toLowerCase() === "india")
+                    return <MemberChoice key={k} label="City" value={a.city} choices={memberChoices.indianCities} onChange={setAddressValue}/>;
+                return (<label className={"aw-field " + (k === "address" ? "wide" : "")} key={k}>
                               {({
                     type: "Address type",
                     country: "Country",
@@ -646,9 +672,7 @@ export default function AddMemberWizard({ onClose, onDone, }: {
                     postalCode: "PIN / Postal code",
                     address: "Postal address",
                 } as any)[k]}
-                              {k === "type" ? (<select value={a[k]} onChange={(e) => change("addresses", form.addresses.map((x: any, n: number) => n === i
-                        ? { ...x, [k]: e.target.value }
-                        : x))}>
+                              {k === "type" ? (<select value={a[k]} onChange={e => setAddressValue(e.target.value)}>
                                   {["Residential", "Office", "Other"].map((v) => (<option key={v}>{v}</option>))}
                                 </select>) : (<input maxLength={k === "postalCode"
                         ? 20
@@ -657,10 +681,9 @@ export default function AddMemberWizard({ onClose, onDone, }: {
                             : 200} pattern={k === "postalCode" &&
                         a.country.trim().toLowerCase() === "india"
                         ? "[1-9][0-9]{5}"
-                        : undefined} value={a[k]} onChange={(e) => change("addresses", form.addresses.map((x: any, n: number) => n === i
-                        ? { ...x, [k]: e.target.value }
-                        : x))}/>)}
-                            </label>))}
+                        : undefined} value={a[k]} onChange={e => setAddressValue(e.target.value)}/>)}
+                            </label>);
+            })}
                         </div>
                       </div>))}
                     {form.addresses.length < 5 && (<button type="button" className="aw-secondary" onClick={() => change("addresses", [
@@ -675,26 +698,28 @@ export default function AddMemberWizard({ onClose, onDone, }: {
                     <CertificationRegistration value={form.certifications || []} onChange={(certifications: any[]) => change("certifications", certifications)}/>
                     <p className="aw-section-note">{t("Complete their story. Everything in this section is optional.")}</p>
                     <div className="aw-grid">
-                      {[
-            ["profession", "Profession"],
-            ["company", "Organization / Employer"],
-            ["designation", "Designation"],
-            ["industry", "Industry"],
-            ["businessCategory", "Business category"],
-            ["employmentStatus", "Employment status"],
-            ["workLocation", "Work location"],
-            ["website", "Website"],
-            ["educationLevel", "Highest education level"],
-            ["qualification", "Educational qualifications"],
-            ["institution", "Institution"],
-            [
-                "interestsText",
-                "Areas of interest (comma separated)",
-            ],
-            ["skillsText", "Skills (comma separated)"],
-            ["expertiseText", "Expertise (comma separated)"],
-            ["networking", "Networking preferences"],
-        ].map(([k, l]) => input(k, l))}
+                      {choice("profession", "Profession")}
+                      {input("company", "Organization / Employer")}
+                      {choice("designation", "Designation")}
+                      {choice("industry", "Industry")}
+                      <MemberChoice label="Business category" choices={businessCategoryChoices} value={form.businessCategory || ""} onChange={value => {
+                          change("businessCategory", value);
+                          change("businessSubcategory", "");
+                      }}/>
+                      {form.businessCategory && <MemberChoice key={knownBusinessCategory ? form.businessCategory : "custom-category"}
+                          label="Business subcategory" choices={businessSubcategories}
+                          value={form.businessSubcategory || ""} onChange={value => change("businessSubcategory", value)}/>}
+                      {tags("businessTags", [...new Set([...businessSubcategories, ...memberTagSuggestions.businessTags])])}
+                      {choice("employmentStatus", "Employment status")}
+                      {input("workLocation", "Work location")}
+                      {input("website", "Website")}
+                      {choice("educationLevel", "Highest education level")}
+                      {choice("qualification", "Educational qualifications")}
+                      {input("institution", "Institution")}
+                      {tags("interests")}
+                      {tags("skills")}
+                      {tags("expertise")}
+                      {choice("networking", "Networking preferences")}
                       {form.contacts.map((c: any, i: number) => c.kind === "Emergency" && (<label className="aw-field" key={i}>{t("Emergency contact (name & phone)")}<input value={c.value} maxLength={200} onChange={(e) => change("contacts", form.contacts.map((x: any, n: number) => n === i
                 ? { ...x, value: e.target.value }
                 : x))}/>
@@ -786,6 +811,8 @@ export default function AddMemberWizard({ onClose, onDone, }: {
                       <dt>{t("Membership")}</dt>
                       <dd>
                         {category?.name} · {target.status}
+                        <br />
+                        {t("Benevolent Fund")}: {target.benevolentFund == null ? t("Not recorded") : t(target.benevolentFund ? "Yes" : "No")}
                       </dd>
                     </div>
                     <div>
@@ -830,6 +857,17 @@ export default function AddMemberWizard({ onClose, onDone, }: {
                 .join(" · ") || "Not provided"}
                       </dd>
                     </div>
+                    {form.businessCategory && <div>
+                      <dt>{t("Business category")}</dt>
+                      <dd>{[form.businessCategory, form.businessSubcategory].filter(Boolean).join(" · ")}</dd>
+                    </div>}
+                    {(Object.keys(tagLabels) as TagField[]).map(field => {
+                        const values = tagValues(form, field);
+                        return values.length > 0 && <div key={field}>
+                          <dt>{t(tagLabels[field])}</dt>
+                          <dd><ul className="aw-tag-list">{values.map((value, index) => <li className="aw-tag" key={index}>{value}</li>)}</ul></dd>
+                        </div>;
+                    })}
                     <div>
                       <dt>{t("Documents")}</dt>
                       <dd>

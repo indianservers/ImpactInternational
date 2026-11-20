@@ -15,7 +15,7 @@ public static class RegionalDirectory
         }
         return await s.Db.Orgs.Where(o => o.TenantId == w.TenantId && o.Status == "Active"
             && s.Db.Levels.Any(l => l.Id == o.LevelId && l.Name == "Region"))
-            .Where(o => s.Access.Visible(w).Any(v => v.Id == o.Id)
+            .Where(o => s.MemberOrganizations(w).Any(v => v.Id == o.Id)
                 || ancestors.Contains(o.Id))
             .OrderBy(o => o.Name).Select(o => new { o.Id, o.Name, o.Code }).ToListAsync();
     });
@@ -25,7 +25,7 @@ public static class RegionalDirectory
         if (regionId == null) return q;
         Check(await s.Db.Orgs.AnyAsync(o => o.Id == regionId && o.TenantId == w.TenantId && o.Status == "Active"
             && s.Db.Levels.Any(l => l.Id == o.LevelId && l.Name == "Region"))
-            && (await s.Access.Visible(w).AnyAsync(o => o.Id == regionId)
+            && (await s.MemberOrganizations(w).AnyAsync(o => o.Id == regionId)
                 || await s.Access.Tree(w.TenantId, regionId.Value).AnyAsync(o => o.Id == w.OrgId)), "Region is outside your authorized scope.", 404);
         return q.Where(m => s.Access.Tree(w.TenantId, regionId.Value).Any(o => o.Id == m.ClubId));
     }

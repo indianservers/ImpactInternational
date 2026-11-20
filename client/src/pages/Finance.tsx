@@ -1,3 +1,4 @@
+import AnnualDuesPage from "./AnnualDuesPage";
 import FinanceOverview from "./FinanceOverview";
 
 import DuesReports, {InvoiceDetails, CollectionForm, CollectionReview} from "./DuesReports";
@@ -272,10 +273,13 @@ const key = () => crypto.randomUUID();
 export default function Finance() {
   const { w } = useWorkspace();
   const q = useData("/finance/entities");
+  const annualDues = w?.association === "Impact International";
   const generalFinance = w?.permissions.some(p => ["finance.view","finance.manage","finance.reconcile","finance.configure","finance.post","finance.approve"].includes(p));
   const [entityId, setEntity] = useState("");
   const location = useLocation();
-  const consolidated = location.pathname === "/app/finance" || location.pathname.startsWith("/app/finance/dues");
+  const annualDuesPage = annualDues && (location.pathname.startsWith("/app/finance/dues")
+    || location.pathname === "/app/finance/club-collections" || (location.pathname === "/app/finance" && !generalFinance));
+  const consolidated = annualDuesPage || location.pathname === "/app/finance" || location.pathname.startsWith("/app/finance/dues");
   const [create, setCreate] = useState(false);
   const a = useAction();
   useEffect(() => {
@@ -314,13 +318,14 @@ export default function Finance() {
             </button>
           )}
         </div>}
-        {generalFinance && <details className="fc-configuration"><summary>Books & configuration</summary><nav aria-label="Finance configuration">{[["settings","Financial settings"],["dues-plans","Dues rules & generation"],["funding","Donations & sponsors"],["sources","Events & projects"],["allocations","Inter-entity allocations"],["member","My finances"]].map(([path,label])=><Link key={path} to={root+"/"+path}>{label}</Link>)}</nav></details>}
-        <ErrorBox error={q.error ?? a.error} />
+        {generalFinance && !annualDuesPage && <details className="fc-configuration"><summary>Books & configuration</summary><nav aria-label="Finance configuration">{[["settings","Financial settings"],...(!annualDues ? [["dues-plans","Dues rules & generation"]] : []),["funding","Donations & sponsors"],["sources","Events & projects"],["allocations","Inter-entity allocations"],["member","My finances"]].map(([path,label])=><Link key={path} to={root+"/"+path}>{label}</Link>)}</nav></details>}
+        {!annualDuesPage && <ErrorBox error={q.error ?? a.error} />}
         <Routes>
           <Route index element={generalFinance || w?.permissions.includes("finance.dues.reports") ? <FinanceOverview /> : <MemberFinance />} />
-          <Route path="dues-reports" element={<DuesReports />} />
-          <Route path="dues" element={<DuesReports management />} />
-          <Route path="club-collections" element={<DuesReports collecting />} />
+          <Route path="dues-reports" element={annualDues ? <AnnualDuesPage /> : <DuesReports />} />
+          {annualDues && <Route path="dues-plans" element={<AnnualDuesPage initialSettings />} />}
+          <Route path="dues" element={annualDues ? <AnnualDuesPage /> : <DuesReports management />} />
+          <Route path="club-collections" element={annualDues ? <AnnualDuesPage /> : <DuesReports collecting />} />
           <Route path="member" element={<MemberFinance />} />
           <Route path="invoices/:id" element={<Invoice />} />
           <Route

@@ -407,6 +407,7 @@ public static class MembershipLifecycleEndpoints
                 await using var tx = await s.Access.Mutation(w);
                 await s.Lock(id);
                 var m = await s.Find(id, "members.manage", false);
+                Check(!await AnnualDues.Applies(s.Db, w.TenantId), "Activate the membership from Dues & Membership using the configured expiry date.", 409);
                 var previous = await s.Db.MembershipRenewals.SingleOrDefaultAsync(x =>
                     x.MembershipId == id && x.RequestKey == r.RequestKey
                 );
@@ -521,6 +522,20 @@ public static class MembershipLifecycleEndpoints
             );
         await s.Db.SaveChangesAsync();
         var next = await s.Activate(m.Person, club, category, actor, t.EffectiveAt);
+        next.BenevolentFund = m.BenevolentFund;
+        if (await AnnualDues.Applies(s.Db, m.TenantId))
+        {
+            var year = AnnualDues.CycleEnd(await AnnualDues.Settings(s.Db, m.TenantId), AnnualDues.Today).Year;
+            var payment = await s.Db.AnnualDuesPayments.FindAsync(m.Id, year);
+            if (payment != null)
+            {
+                s.Db.AnnualDuesPayments.Remove(payment);
+                s.Db.AnnualDuesPayments.Add(new AnnualDuesPayment
+                {
+                    MembershipId = next.Id, CycleYear = year, Amount = payment.Amount, PaidOn = payment.PaidOn,
+                });
+            }
+        }
         t.DestinationMembershipId = next.Id;
         t.Status = "Completed";
         t.Version++;

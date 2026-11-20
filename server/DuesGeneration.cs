@@ -36,6 +36,7 @@ public static partial class DuesCenter
             ) =>
             {
                 var w = await Workspace(a, comm, View);
+                Check(!await AnnualDues.Applies(a.Db, w.TenantId), "Use annual membership dues to record payments.", 409);
                 var db = a.Db;
                 Check(
                     input.PlanIds != null
@@ -214,6 +215,7 @@ public static partial class DuesCenter
             ) =>
             {
                 var w = await Workspace(a, comm, View);
+                Check(!await AnnualDues.Applies(a.Db, w.TenantId), "Use annual membership dues to record payments.", 409);
                 Check(
                     input.Rows != null
                         && input.Rows.All(r =>

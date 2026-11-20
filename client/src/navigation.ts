@@ -9,12 +9,12 @@ export const financeMenu = [
   ["payments", "Payments"],
   ["expenses", "Expenses"],
   ["reconciliation", "Bank Reconciliation"],
-  ["dues", "Dues & Membership"],
   ["budgets", "Budgets & Allocation"],
   ["reports", "Financial Reports & Analytics"],
   ["audit", "Audit Trail"],
 ] as const;
 const tab = (label: string, path: string, ...permissions: string[]): Tab => ({ label, to: `/app${path}`, permissions });
+export const duesTab = tab("Dues & Membership", "/finance/dues", "finance.dues.reports");
 
 // Keep feature URLs stable: bookmarks, detail links and browser history select the same tab.
 const featureSections = [

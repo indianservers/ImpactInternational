@@ -659,19 +659,23 @@ public static partial class IdCardEndpoints
         app.MapGet("/api/v1/my/id-card/download-latest", async (IdCardService s, Guid? membershipId = null) =>
         {
             var user = await s.A.User();
-            var now = DateTimeOffset.UtcNow;
-            var id = await (from c in s.Db.DigitalCards
-                            join m in s.Db.Memberships on c.MembershipId equals m.Id
-                            where m.Person.UserId == user.Id
-                                && (s.A.BoundTenant == null || c.TenantId == s.A.BoundTenant)
-                                && (membershipId == null || m.Id == membershipId) && c.RevokedAt == null
-                                && (c.State == "Legacy" && c.TemplateVersionId == null || c.State == "Issued" && c.TemplateVersionId != null && c.Files != "{}")
-                                && (c.ExpiryAt == null || c.ExpiryAt > now)
-                                && m.Status == "Active" && (m.EndsAt == null || m.EndsAt > now)
-                            orderby (c.State == "Issued" ? 0 : 1), c.IssuedAt descending, c.Id
-                            select (Guid?)c.Id).FirstOrDefaultAsync();
+            var id = await LatestDownloadable(s, user.Id, membershipId);
             Check(id != null, "No active membership card is available. Pending, expired and revoked memberships cannot download a current ID card.", 409);
             return await Download(id!.Value, s, "pdf", true);
+        });
+        app.MapGet("/api/v1/my/id-card/availability", async (Guid membershipId, IdCardService s) =>
+        {
+            var user = await s.A.User();
+            var membership = await s.Db.Memberships.Where(m => m.Id == membershipId && m.Person.UserId == user.Id
+                && (s.A.BoundTenant == null || m.TenantId == s.A.BoundTenant))
+                .Select(m => new { m.TenantId, m.Status, m.EndsAt }).SingleOrDefaultAsync();
+            Check(membership != null, "Membership unavailable.", 404);
+            if (membership!.Status != "Active" || membership.EndsAt <= DateTimeOffset.UtcNow)
+                return Results.Ok(new { canDownload = false, reason = "Your club must activate your membership before you can download an ID card." });
+            if (!(await s.Policy(membership.TenantId)).AllowMemberDownload)
+                return Results.Ok(new { canDownload = false, reason = "Your association has disabled member ID card downloads." });
+            var id = await LatestDownloadable(s, user.Id, membershipId);
+            return Results.Ok(new { canDownload = id.HasValue, reason = id.HasValue ? "" : "A current downloadable card has not been issued yet." });
         });
         api.MapPost(
             "/issuances/{id:guid}/requests",
@@ -944,6 +948,21 @@ public static partial class IdCardEndpoints
             d.Width == original.Width && d.Height == original.Height,
             "Inherited card dimensions are fixed."
         );
+    }
+
+    private static Task<Guid?> LatestDownloadable(IdCardService s, Guid userId, Guid? membershipId)
+    {
+        var now = DateTimeOffset.UtcNow;
+        return (from c in s.Db.DigitalCards
+                join m in s.Db.Memberships on c.MembershipId equals m.Id
+                where m.Person.UserId == userId
+                    && (s.A.BoundTenant == null || c.TenantId == s.A.BoundTenant)
+                    && (membershipId == null || m.Id == membershipId) && c.RevokedAt == null
+                    && (c.State == "Legacy" && c.TemplateVersionId == null || c.State == "Issued" && c.TemplateVersionId != null && c.Files != "{}")
+                    && (c.ExpiryAt == null || c.ExpiryAt > now)
+                    && m.Status == "Active" && (m.EndsAt == null || m.EndsAt > now)
+                orderby (c.State == "Issued" ? 0 : 1), c.IssuedAt descending, c.Id
+                select (Guid?)c.Id).FirstOrDefaultAsync();
     }
 
     static async Task<IResult> Download(

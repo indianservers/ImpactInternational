@@ -72,11 +72,74 @@ INSERT INTO "Assignments" ("Id","TenantId","UserId","OrgId","RoleId","IciPortfol
  for label,client in [('NVP',nvp),('Office Bearer',ob),('Secretary',ns)]:
   expected=r2 if client is ob else r1
   units=good(client,'/ici/context')['units']
-  check(label+' sees assigned regions only',all(o['id']==expected or o['parentId']==expected for o in units) and len(units)>=125)
+  check(label+' workspace context shows assigned regions only',all(o['id']==expected or o['parentId']==expected for o in units) and len(units)>=125)
+  if client is ns: continue
   check(label+' hierarchy picker preserves coverage',good(client,'/membership/hierarchy?kind=Region')['total']==1)
   foreign=sql('SELECT "Id" FROM "Memberships" WHERE "ClubId"=\''+(c1 if client is ob else c2)+"' LIMIT 1")
   check(label+' cannot fetch another area member',client.req('/members/'+foreign)[0] in (403,404))
- check('Directors and Treasurer have no member directory or finance management',all(c.req('/members')[0]==403 and not any('finance.manage' in w['permissions'] for w in good(c,'/workspaces') if w['role']!='Club Member') for c in [nd,rd,nc,nt]))
+ foreign=sql('SELECT "Id" FROM "Memberships" WHERE "ClubId"=\''+c2+"' LIMIT 1")
+ for label,client in [('National President',np),('National Secretary',ns),('National Treasurer',nt)]:
+  check(label+' can list members outside the first region',good(client,'/members?regionId='+r2)['total']>0)
+  detail=good(client,'/members/'+foreign)
+  check(label+' can view member details and club hierarchy',detail['membership']['id']==foreign and bool(good(client,'/membership/hierarchy?clubId='+c2)['selectedPath']))
+  check(label+' has contact and personal profile read grants',any(w['role']==label and {'members.personal.view','members.contacts.view'} <= set(w['permissions']) and 'members.manage' not in w['permissions'] for w in good(client,'/workspaces')))
+ for label,client in [('Regional President',rp),('Club President',cp)]:
+  check(label+' can list own club members',good(client,'/members?clubId='+c1)['total']>0)
+  check(label+' cannot list or open another region member',good(client,'/members?clubId='+c2)['total']==0 and client.req('/members/'+foreign)[0]==404)
+ sibling=sql(f'''SELECT m."Id" FROM "Memberships" m JOIN "Orgs" o ON o."Id"=m."ClubId" WHERE o."ParentId"='{r1}' AND o."Id"<>'{c1}' LIMIT 1''')
+ check('Regional President can open a member of another club in the same region',bool(sibling) and rp.req('/members/'+sibling)[0]==200)
+ check('Club President cannot open a member of another club in the same region',bool(sibling) and cp.req('/members/'+sibling)[0]==404)
+ check('Directors have no member directory or finance management',all(c.req('/members')[0]==403 and not any('finance.manage' in w['permissions'] for w in good(c,'/workspaces') if w['role']!='Club Member') for c in [nd,rd,nc]))
+ club_options=good(cp,'/membership/options')
+ registered=good(cp,'/members','POST',{'person':{'legalName':'QA Benevolent '+tag,'displayName':'QA Benevolent '+tag},'clubId':c1,'categoryId':club_options['categories'][0]['id'],'benevolentFund':True})
+ fund_member='/members/'+registered['id']
+ fund_record=good(cp,fund_member)['membership']
+ check('Benevolent Fund Yes is saved at registration',fund_record['benevolentFund'] is True)
+ fund_update={'benevolentFund':False,'version':fund_record['version']}
+ check('Regional President has read-only Benevolent Fund access',good(rp,fund_member)['membership']['benevolentFund'] is True and rp.req(fund_member+'/benevolent-fund','PUT',fund_update)[0]==403)
+ good(cp,fund_member+'/benevolent-fund','PUT',fund_update)
+ check('Benevolent Fund No is saved and visible nationally',good(nt,fund_member)['membership']['benevolentFund'] is False)
+ check('Benevolent Fund rejects stale changes',cp.req(fund_member+'/benevolent-fund','PUT',fund_update)[0]==409)
+ check('Existing membership has no recorded choice',good(np,'/members/'+foreign)['membership']['benevolentFund'] is None)
+ annual='/finance/annual-dues'
+ platform_email,platform_id=fake('dues-platform')
+ sql(f'''UPDATE "Users" SET "PlatformAdmin"=true WHERE "Id"='{platform_id}' ''')
+ platform=login(platform_email,'Club Member')
+ settings=good(platform,annual+'/settings')
+ check('Annual dues default to March 31 and two INR fees',settings['expiryMonth']==3 and settings['expiryDay']==31 and settings['firstHalfFee']==500 and settings['secondHalfFee']==250)
+ settings_input={key:settings[key] for key in ('expiryMonth','expiryDay','firstHalfFee','secondHalfFee','version')}
+ president_write=rp.req(annual+'/settings','PUT',settings_input)
+ check('Only Platform Admin can change annual dues settings',settings['canConfigure'] and not good(cp,annual+'/settings')['canConfigure'] and president_write[0]==403,president_write)
+ check('Club President cannot record payment outside their club',cp.req(annual+'/members/'+foreign+'/payment','PUT',{'paid':True})[0]==404)
+ check('Regional President cannot activate outside their region',rp.req(annual+'/members/'+foreign+'/activate','POST',{'version':1})[0]==404)
+ membership_path=annual+'/members/'+registered['id']
+ good(cp,membership_path+'/payment','PUT',{'paid':True})
+ good(cp,membership_path+'/payment','PUT',{'paid':True})
+ paid=good(rp,annual+'/members?regionId='+r1+'&clubId='+c1+'&status=paid&search=QA%20Benevolent%20'+tag)
+ check('Regional dues report shows the actual fee and counts the payment once',paid['total']==1 and paid['items'][0]['amount']==settings['currentFee'] and paid['items'][0]['paid'])
+ good(cp,membership_path+'/payment','PUT',{'paid':False})
+ unpaid=good(rp,annual+'/members?regionId='+r1+'&clubId='+c1+'&status=unpaid&search=QA%20Benevolent%20'+tag)
+ check('Unpaid report includes a member after correction',unpaid['total']==1 and not unpaid['items'][0]['paid'] and unpaid['totals']['collected']==paid['totals']['collected']-settings['currentFee'])
+ actual_date=unpaid['cycleStart']
+ good(cp,membership_path+'/payment','PUT',{'paid':True,'paidOn':actual_date,'cycleYear':unpaid['cycleYear']})
+ dated_payment=good(cp,annual+'/members?clubId='+c1+'&status=paid&search=QA%20Benevolent%20'+tag)['items'][0]
+ check('Late-entered dues use the actual date and first-half fee',dated_payment['paidOn']==actual_date and dated_payment['amount']==settings['firstHalfFee'])
+ csv_status,csv_body,_=cp.request(annual+'/members?clubId='+c1+'&status=paid&format=csv&search=QA%20Benevolent%20'+tag)
+ check('Dues CSV includes the selected scope and actual payment date',csv_status==200 and actual_date.encode() in csv_body and registered['number'].encode() in csv_body)
+ prior=good(cp,annual+'/members?clubId='+c1+'&cycleYear='+str(unpaid['cycleYear']-1)+'&search=QA%20Benevolent%20'+tag)
+ check('Prior-year dues exclude memberships created later',prior['historical'] and prior['total']==0)
+ good(cp,membership_path+'/payment','PUT',{'paid':False})
+ current=good(cp,fund_member)['membership']
+ good(cp,fund_member+'/status','POST',{'status':'Inactive','version':current['version'],'reason':'QA activation check'})
+ inactive=good(cp,fund_member)['membership']
+ good(rp,membership_path+'/activate','POST',{'version':inactive['version']})
+ activated=good(cp,fund_member)['membership']
+ check('Regional President activates a club member through the cycle end',activated['status']=='Active' and activated['endsAt'].startswith(settings['expiryDate']))
+ changed_settings={**settings_input,'expiryDay':30,'firstHalfFee':550,'secondHalfFee':275}
+ good(platform,annual+'/settings','PUT',changed_settings)
+ changed=good(platform,annual+'/settings')
+ check('Platform Admin can edit date and fees',changed['expiryDay']==30 and changed['firstHalfFee']==550 and changed['secondHalfFee']==275 and good(cp,fund_member)['membership']['endsAt'].startswith(changed['expiryDate']))
+ good(platform,annual+'/settings','PUT',{**settings_input,'version':changed['version']})
  badEmail,_=fake('invalid')
  check('Director assignment requires a valid portfolio',admin.req('/ici/team','POST',{'email':badEmail,'roleId':roles['National Director'],'orgId':nat})[0]==400)
  check('Generic assignment endpoint cannot bypass portfolio validation',admin.req('/assignments','POST',{'email':badEmail,'roleId':roles['National Director'],'orgId':nat})[0]==400)
@@ -188,6 +251,81 @@ INSERT INTO "Assignments" ("Id","TenantId","UserId","OrgId","RoleId","IciPortfol
  check('National President cannot initiate replacement of own office',np.req('/ici/requests','POST',{'kind':'TeamHandover','orgId':nat,'title':'QA NP replacement','email':incomingNp,'role':'National President','oldAssignmentId':oldNp['id']})[0]==403)
  replacement=request(eb,'TeamHandover',nat,email=incomingNp,role='National President',oldAssignmentId=oldNp['id']);replacement=action(eb,replacement,'Submit');replacement=action(eb2,replacement,'Approve')
  check('Executive Board can independently hand over National President office',replacement['status']=='Approved' and good(login(incomingNp,'National President'),'/ici/context')['role']=='National President')
+ positions='/ici/delegated-positions'
+ new_rp=login(incoming,'Regional President');new_np=login(incomingNp,'National President')
+ regional_units=good(new_rp,positions+'/units')
+ check('Regional President can open only clubs in their region',bool(regional_units) and all(u['level']=='Club' and u['parentId']==r1 for u in regional_units))
+ check('Club President cannot manage delegated positions',cp.req(positions+'/units')[0]==403)
+ check('Regional President cannot manage other regions or their regional office',new_rp.req(positions+'/'+c2)[0]==404 and new_rp.req(positions+'/'+r1)[0]==404)
+ check('National President can select a region and manage director portfolios',good(new_np,positions+'/'+r1)['roles']==['Regional President','Regional Director'])
+ from openpyxl import Workbook
+ import io
+ excel_email='ici-excel-'+tag+'@example.test'
+ workbook=Workbook()
+ workbook.active.append(['Name','Email'])
+ workbook.active.append(['QA Excel '+tag,excel_email])
+ workbook.active.append(['QA Missing Email '+tag,None])
+ stream=io.BytesIO();workbook.save(stream)
+ code,job=cp.upload('/membership/imports','members.xlsx',stream.getvalue(),{'clubId':c1,'categoryId':club_options['categories'][0]['id'],'requestKey':str(uuid.uuid4())})
+ assert code==200,(code,job)
+ job_path='/membership/imports/'+job['id']
+ assert cp.req(job_path+'/mapping','POST',{'fields':{'name':'Name','email':'Email'}})[0]==202
+ def import_state(status):
+  for _ in range(100):
+   data=good(cp,job_path)
+   if data['status']==status:return data
+   if data['status'] in ['Failed','NeedsReview']:raise AssertionError(data)
+   time.sleep(.2)
+  raise AssertionError(data)
+ import_state('Ready')
+ assert cp.req(job_path+'/commit','POST',{})[0]==202
+ check('Excel import completes with a linked but unverified account',import_state('Completed')['importedRows']==2 and sql(f'''SELECT count(*) FROM "Users" u JOIN "Persons" p ON p."UserId"=u."Id" WHERE u."Email"='{excel_email}' AND NOT u."Verified"''')=='1')
+ candidates=good(new_rp,positions+'/'+c1+'/members?search=QA%20Excel%20'+tag)
+ check('Imported active member appears in the appointment picker before first sign-in',candidates['total']==1 and candidates['items'][0]['accountLinked'])
+ account_report=good(cp,job_path+'/accounts?status=issues')
+ check('Completed imports identify email issues and show linked totals',account_report['total']==1 and account_report['items'][0]['state']=='MissingEmail' and any(r['state']=='Linked' and r['count']==1 for r in account_report['summary']))
+ repair_id=account_report['items'][0]['membershipId']
+ repair_name='QA Missing Email '+tag
+ good(cp,'/members/'+repair_id+'/person','PUT',{'legalName':repair_name,'displayName':repair_name,'contacts':[{'kind':'Email','label':'Primary email','value':'ici-repaired-'+tag+'@example.test'}]})
+ good(cp,job_path+'/accounts/recheck','POST',{})
+ repaired=good(cp,job_path+'/accounts?status=issues')
+ check('Corrected import email becomes eligible without a second import',repaired['total']==0 and any(r['state']=='Linked' and r['count']==2 for r in repaired['summary']))
+ page_one=good(new_rp,positions+'/'+c1+'/members')
+ page_two=good(new_rp,positions+'/'+c1+'/members?page=2')
+ check('Appointment picker returns counts and non-overlapping pages',page_one['total']==page_two['total'] and page_two['page']==2 and not set(m['id'] for m in page_one['items']) & set(m['id'] for m in page_two['items']))
+ imported_id=candidates['items'][0]['id']
+ manual_email='ici-manual-'+tag+'@example.test'
+ manual=good(cp,'/members','POST',{'person':{'legalName':'QA Manual '+tag,'displayName':'QA Manual '+tag,'contacts':[{'kind':'Email','label':'Primary email','value':manual_email},{'kind':'Email','label':'Alternate email','value':'ici-alternate-'+tag+'@example.test'}]},'clubId':c1,'categoryId':club_options['categories'][0]['id']})
+ check('Manual registration provisions the primary email immediately',manual['loginAvailable'] and sql(f'''SELECT u."Email" FROM "Users" u JOIN "Persons" p ON p."UserId"=u."Id" WHERE p."Id"='{manual["personId"]}' ''')==manual_email)
+ member_client=support.Client()
+ assert member_client.req('/auth/forgot-password','POST',{'email':excel_email})[0]==202
+ token=sql(f'''SELECT split_part(split_part(m."Link",'token=',2),'&',1) FROM "Mails" m JOIN "Users" u ON u."Id"=m."UserId" WHERE u."Email"='{excel_email}' AND m."Kind"='reset' ORDER BY m."CreatedAt" DESC LIMIT 1''')
+ good(member_client,'/auth/complete','POST',{'token':token,'password':support.PASSWORD})
+ member_client=login(excel_email,'Club Member')
+ club_peers=good(member_client,'/membership/me/club-members?clubId='+c1+'&search=QA%20Manual%20'+tag)
+ check('Club member can see active peers in own club only',club_peers['total']==1 and list(club_peers['items'][0])==['id','name'] and member_client.req('/membership/me/club-members?clubId='+c2)[0]==404)
+ card_available=good(member_client,'/my/id-card/availability?membershipId='+imported_id)
+ check('ID download availability matches active ownership',card_available['canDownload'] and member_client.req('/my/id-card/availability?membershipId='+manual['id'])[0]==404)
+ pdf_status,pdf,_=member_client.request('/my/id-card/download-latest?membershipId='+imported_id)
+ check('Imported active member downloads their own PDF card',pdf_status==200 and pdf.startswith(b'%PDF') and member_client.request('/my/id-card/download-latest?membershipId='+manual['id'])[0]==409)
+ officer_email,officer_uid=fake('delegated-officer')
+ sql(f'''UPDATE "Persons" SET "UserId"='{officer_uid}' WHERE "Id"='{registered["personId"]}' ''')
+ office=positions+'/'+c1
+ members=good(new_rp,office+'/members?search=QA%20Benevolent%20'+tag)
+ check('Appointment search lists active members with linked accounts',any(m['id']==registered['id'] for m in members['items']))
+ original=next((h for h in good(new_rp,office)['holders'] if h['role']=='Club Secretary'),None)
+ appointment={'role':'Club Secretary','portfolio':'','membershipId':registered['id'],'currentAssignmentId':original['id'] if original else None}
+ check('Presidents cannot appoint a member from another club',new_np.req(office,'PUT',{**appointment,'membershipId':foreign})[0]==404)
+ good(new_rp,office,'PUT',appointment)
+ secretary=login(officer_email,'Club Secretary')
+ check('Club appointee can activate the assigned workspace',any(w['role']=='Club Secretary' and w['orgId']==c1 for w in good(secretary,'/workspaces')))
+ check('The same club position cannot be overwritten from a stale screen',new_np.req(office,'PUT',appointment)[0]==409)
+ assigned=next(h for h in good(new_np,office)['holders'] if h['role']=='Club Secretary')
+ good(new_np,office,'PUT',{**appointment,'currentAssignmentId':assigned['id'],'membershipId':None})
+ check('Vacating a position revokes that workspace',all(w['role']!='Club Secretary' for w in good(secretary,'/workspaces')))
+ region_office=positions+'/'+r1
+ good(new_np,region_office,'PUT',{'role':'Regional Director','portfolio':'Training','membershipId':registered['id'],'currentAssignmentId':None})
+ check('National President can appoint a Regional Director in a specific portfolio',good(login(officer_email,'Regional Director'),'/ici/context')['portfolio']=='Training')
  pathlib.Path('.infra/ici-qa-actors.json').write_text(json.dumps({'emails':emails,'assignments':assignments,'tag':tag},indent=2))
  print('Completed '+str(len(results))+' role acceptance checks.',flush=True)
 finally:

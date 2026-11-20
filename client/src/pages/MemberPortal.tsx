@@ -316,6 +316,8 @@ export default function MemberPortal() {
             {contact?.phone && (
               <a href={"tel:" + contact.phone}>{contact.phone}</a>
             )}
+            {m?.status === "Active" && (!m.endsAt || new Date(m.endsAt) > new Date()) &&
+              <ClubMembers key={m.clubId} clubId={m.clubId} />}
             {w?.permissions.includes("directory.view") && (
               <Link className="panel-link spaced" to="/app/directory">
                 Browse authorized directory →
@@ -418,12 +420,17 @@ function DigitalIdentity({ membership: m }: any) {
     queryKey: ["my-cards", m.id],
     queryFn: () => api("/members/" + m.id + "/cards"),
   });
+  const availability = useQuery<{canDownload: boolean; reason: string}>({
+    queryKey: ["my-card-availability", m.id],
+    queryFn: () => api("/my/id-card/availability?" + new URLSearchParams({ membershipId: m.id })),
+  });
   const valid =
       m.status === "Active" && (!m.endsAt || new Date(m.endsAt) > new Date()),
     card = cards.data?.find((c: any) => !c.revokedAt);
   return (
     <div className="digital-identity">
-      <ErrorBox error={error} />
+      <ErrorBox error={error || cards.error || availability.error} />
+      {availability.data?.reason && <p role="status">{availability.data.reason}</p>}
       {valid && card ? (
         <>
           <img
@@ -432,14 +439,14 @@ function DigitalIdentity({ membership: m }: any) {
             alt={"Digital membership card for " + m.name}
           />
           <div className="header-actions">
-            <a
+            {availability.data?.canDownload && <a
               className="button secondary"
               href={"/api/v1/my/id-card/download-latest?membershipId=" + m.id}
               download
             >
               <Download size={14} />
               Download ID card (PDF)
-            </a>
+            </a>}
             <button
               className="text-button"
               onClick={async () => {
@@ -456,6 +463,7 @@ function DigitalIdentity({ membership: m }: any) {
                     {},
                   );
                   qc.invalidateQueries({ queryKey: ["my-cards", m.id] });
+                  qc.invalidateQueries({ queryKey: ["my-card-availability", m.id] });
                 } catch (e) {
                   setError(e);
                 }
@@ -487,6 +495,7 @@ function DigitalIdentity({ membership: m }: any) {
                     version: m.version,
                   });
                   qc.invalidateQueries({ queryKey: ["my-cards", m.id] });
+                  qc.invalidateQueries({ queryKey: ["my-card-availability", m.id] });
                 } catch (e) {
                   setError(e);
                 }
@@ -562,4 +571,28 @@ function ContactResponse({ request: r, onDone }: any) {
       )}
     </div>
   );
+}
+
+function ClubMembers({ clubId }: { clubId: string }) {
+  const [open, setOpen] = useState(false);
+  const [search, setSearch] = useState("");
+  const [page, setPage] = useState(1);
+  const query = useQuery<{ total: number; items: { id: string; name: string }[] }>({
+    queryKey: ["my-club-members", clubId, page, search],
+    queryFn: () => api("/membership/me/club-members?" + new URLSearchParams({ clubId, search, page: String(page) })),
+    enabled: open,
+  });
+  return <details className="spaced" onToggle={e => setOpen(e.currentTarget.open)}>
+    <summary>Other members in your club</summary>
+    <label className="spaced">Find a member<input value={search} onChange={e => { setSearch(e.target.value); setPage(1); }} /></label>
+    <ErrorBox error={query.error} />
+    {open && query.isPending && <Skeleton />}
+    {query.data && <>
+      {query.data.items.length ? <ul>{query.data.items.map(member => <li key={member.id}>{member.name}</li>)}</ul> : <p>No members found.</p>}
+      {query.data.total > 50 && <div className="header-actions">
+        <button className="secondary" disabled={page === 1} onClick={() => setPage(page - 1)}>Previous</button>
+        <button className="secondary" disabled={page * 50 >= query.data.total} onClick={() => setPage(page + 1)}>Next</button>
+      </div>}
+    </>}
+  </details>;
 }

@@ -8,12 +8,14 @@ import {useFinance} from './FinanceContext';
 import DuesManagement from './DuesManagement';
 import './FinanceOverview.css';
 import FinanceDuesHome from './FinanceDuesHome';
+import AnnualDuesPage from './AnnualDuesPage';
 type Row=Record<string,any>;
 const levels=['National','Region','Club'];
 const money=(n:number,c:string)=>new Intl.NumberFormat(undefined,{style:'currency',currency:c}).format(n||0);
 export default function FinanceOverview(){
  const {w}=useWorkspace();
- return w?.permissions.includes('finance.dues.reports')?<FinanceDuesHome advanced={<FinanceLedgerOverview/>}/>:<FinanceLedgerOverview/>;
+ if(w?.association==='Impact International'&&w.permissions.includes('finance.dues.reports')&&!w.permissions.includes('finance.view'))return <AnnualDuesPage/>;
+ return w?.association!=='Impact International'&&w?.permissions.includes('finance.dues.reports')?<FinanceDuesHome advanced={<FinanceLedgerOverview/>}/>:<FinanceLedgerOverview/>;
 }
 function FinanceLedgerOverview(){
  const {w}=useWorkspace(),{onEntityChange}=useFinance(),navigate=useNavigate();
@@ -34,7 +36,7 @@ function FinanceLedgerOverview(){
  function openLedger(row:Row){onEntityChange?.(row.entityId);navigate('/app/finance/'+(kind==='invoices'?'invoices/'+row.id:kind));}
  return <div className="finance-overview">{d?.mockData&&<div className="dues-mock-banner" role="status">MOCK DATA PREVIEW · Isolated QA financial records. No real funds.</div>}<header className="fc-page-header"><div><p>IMPACT INTERNATIONAL / FINANCE</p><h1>Finance Overview</h1><span>One view of dues, collections and financial records across your authorized hierarchy.</span></div><button className="secondary" aria-label="Refresh consolidated finance" onClick={()=>q.refetch()}><RefreshCw size={17}/>Refresh</button></header>
  <nav className="fo-tabs" aria-label="Finance workspace sections">{['Overview',...(canDues?['Dues & Collections']:[]),'Records','Reports'].map(x=><button key={x} aria-current={tab===x?'page':undefined} className={tab===x?'':'secondary'} onClick={()=>setTab(x)}>{x}</button>)}</nav>
- {tab==='Dues & Collections'?<DuesManagement initialOrg={orgId} initialFrom={from} initialTo={to}/>:<>
+ {tab==='Dues & Collections'?(w?.association==='Impact International'?<AnnualDuesPage/>:<DuesManagement initialOrg={orgId} initialFrom={from} initialTo={to}/>):<>
  <section className="fo-filters" aria-label="Consolidated finance filters">{levels.map((level,i)=>{const parent=scope.slice(0,i).reverse().find(Boolean);return <label key={level}>{level}<select aria-label={'Finance '+level.toLowerCase()} value={scope[i]} onChange={e=>selectScope(i,e.target.value)}><option value="">All authorized {level.toLowerCase()}{level==='Country'?'':'s'}</option>{orgs.filter(o=>o.type===level&&(!parent||under(o.id,parent))).map(o=><option key={o.id} value={o.id}>{o.name}</option>)}</select></label>})}<label>From<input aria-label="Finance from" type="date" value={from} onChange={e=>{setFrom(e.target.value);setPage(1)}}/></label><label>Through<input aria-label="Finance through" type="date" value={to} onChange={e=>{setTo(e.target.value);setPage(1)}}/></label><label>Currency<select aria-label="Finance currency" value={currency} onChange={e=>{setCurrency(e.target.value);setPage(1)}}><option value="">All · separate totals</option>{d?.currencies?.map((c:string)=><option key={c}>{c}</option>)}</select></label><button className="secondary" onClick={()=>{setScope(['','','','','']);setCurrency('');setStatus('');setBalance('');setSearch('');setPage(1)}}>Reset filters</button></section>
  {!valid&&<p role="alert">Choose a valid date range.</p>}<ErrorBox error={q.error}/>{q.isPending&&<Skeleton/>}
  {d&&<><p className="fo-scope"><Wallet size={16}/>{orgs.find(o=>o.id===orgId)?.name||w?.organization||'Impact International'} · {d.ledgerCount} authorized source ledgers · Currencies shown separately</p>

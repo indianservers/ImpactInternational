@@ -24,7 +24,7 @@ for k in ['legalName','birthDate','gender','anniversary','maritalStatus','spouse
  check('Persist '+k,p[k]==person[k],p.get(k))
 check('Display name saved',p['name']==person['displayName']);check('All contacts saved',len(p['contacts'])==5)
 check('Multiple addresses retain type and primary',len(p['addresses'])==2 and next(x for x in p['addresses'] if x['isPrimary'])['type']=='Office',p['addresses'])
-check('Initial status saved',detail['membership']['status']=='Inactive');check('Generated ID unchanged',created['number'].startswith('IM-'))
+check('Initial status saved',detail['membership']['status']=='Inactive');check('Generated ID uses ICI prefix',created['number'].startswith('ICI-'))
 check('Photo saved',p['hasPhoto']);check('Profession saved',sql(f'''SELECT "Profession" FROM "Persons" WHERE "Id"='{created["personId"]}' ''' )=='Trainer' );check('Tags saved',sql(f'''SELECT "Value" FROM "PersonTags" WHERE "PersonId"='{created["personId"]}' AND "Kind"='Skill' ''')=='Public speaking' );check('Languages saved',p['languages']==['English','Telugu']);check('Social links normalized',p['socialLinks']['LinkedIn'].startswith('https://'))
 row=req(admin,'Directory uses primary address','/members?search='+created['number']);check('Primary city displayed',row['items'][0]['city']=='Secunderabad')
 replay=req(admin,'Same request safely replayed','/members',body);check('Replay returns same member',replay==created)

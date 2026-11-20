@@ -71,7 +71,8 @@ public record MemberRow(
     string? Profession,
     string? Industry,
     bool HasPhoto,
-    bool ContactRequestsAllowed
+    bool ContactRequestsAllowed,
+    bool? BenevolentFund
 );
 
 public class MembershipService(
@@ -95,7 +96,25 @@ public class MembershipService(
             x.TenantId == w.TenantId && access.VisibleIds(w).Contains(x.ClubId)
         );
 
-    public async Task<IQueryable<Membership>> ScopedList(Assignment w)
+    public IQueryable<Org> MemberOrganizations(Assignment w)
+    {
+        if (Db.Roles.Any(r => r.Id == w.RoleId && r.TenantId == w.TenantId
+            && IciPolicy.AssociationMemberReaders.Contains(r.Name)))
+            return Db.Orgs.Where(o => o.TenantId == w.TenantId);
+
+        return access.Visible(w);
+    }
+
+    public IQueryable<Membership> Readable(Assignment w)
+    {
+        var organizationIds = MemberOrganizations(w).Select(o => o.Id);
+        return Db.Memberships.Where(m => m.TenantId == w.TenantId
+            && organizationIds.Contains(m.ClubId));
+    }
+
+    public Task<IQueryable<Membership>> ReadableList(Assignment w) => ScopedList(w, memberRead: true);
+
+    public async Task<IQueryable<Membership>> ScopedList(Assignment w, bool memberRead = false)
     {
         var roots = await Db
             .Orgs.Where(o => o.TenantId == w.TenantId && o.ParentId == null)
@@ -103,7 +122,7 @@ public class MembershipService(
             .Take(2)
             .ToArrayAsync();
         if (roots.Length != 1 || roots[0] != w.OrgId)
-            return Scoped(w);
+            return memberRead ? Readable(w) : Scoped(w);
         // Recheck the sole-root invariant in the data statement, preventing a hierarchy race.
         return Db.Memberships.Where(x =>
             x.TenantId == w.TenantId
@@ -171,7 +190,8 @@ public class MembershipService(
         if (own != null)
             return own;
         var w = await access.Workspace(permission);
-        return await Scoped(w)
+        var memberships = allowOwn && permission is ("members.view" or "directory.view") ? Readable(w) : Scoped(w);
+        return await memberships
                 .Include(x => x.Person)
                     .ThenInclude(p => p.Privacy)
                 .Include(x => x.Club)
@@ -565,7 +585,8 @@ public class MembershipService(
                 ? m.Person.Industry
                 : null,
             m.Person.Photo != null && (!directory || m.Person.Privacy.PhotoVisible || m.Person.UserId == user),
-            m.Person.Privacy.DirectoryVisible && m.Person.Privacy.AllowContactRequests
+            m.Person.Privacy.DirectoryVisible && m.Person.Privacy.AllowContactRequests,
+            directory && m.Person.UserId != user ? null : m.BenevolentFund
         ));
     }
 
@@ -574,13 +595,15 @@ public class MembershipService(
             $"SELECT pg_advisory_xact_lock(hashtext({id.ToString()}))"
         );
 
+    public static string FormatNumber(long sequence) =>
+        "ICI-" + sequence.ToString("D4", System.Globalization.CultureInfo.InvariantCulture);
+
     public async Task<string> Number() =>
-        "IM-"
-        + (
+        FormatNumber(
             await Db
                 .Database.SqlQuery<long>($"SELECT nextval('membership_numbers') AS \"Value\"")
                 .SingleAsync()
-        ).ToString("D9");
+        );
 
     public async Task<Membership> Activate(
         Person person,
@@ -623,10 +646,7 @@ public class MembershipService(
             CategoryId = category.Id,
             Number = number ?? await Number(),
             JoinedAt = start,
-            EndsAt =
-                category.ValidityMonths == null
-                    ? null
-                    : start.AddMonths(category.ValidityMonths.Value),
+            EndsAt = await AnnualDues.InitialExpiry(Db, club.TenantId, start, category.ValidityMonths),
             SourceApplicationId = application,
             ImportRowId = importRow,
         };
@@ -804,6 +824,8 @@ public class MembershipService(
             at <= DateTimeOffset.UtcNow && at >= m.JoinedAt && (last == null || at >= last),
             "Effective date would contradict the recorded history."
         );
+        if (status == "Active" && await AnnualDues.Applies(Db, m.TenantId))
+            m.EndsAt = AnnualDues.EndsAt(AnnualDues.CycleEnd(await AnnualDues.Settings(Db, m.TenantId), AnnualDues.Today));
         Check(
             status != "Active" || m.EndsAt == null || m.EndsAt > DateTimeOffset.UtcNow,
             "Renew the expired validity period before activation."

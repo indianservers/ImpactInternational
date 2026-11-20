@@ -50,6 +50,17 @@ export default function MemberProfile({membershipId,directoryMode}:{membershipId
     queryKey: ["member-profile", id, directory, w?.id],
     queryFn: () => api("/members/" + id + (directory ? "?directory=true" : "")),
   });
+  const repair = params.get("repair");
+  useEffect(() => {
+    if (!repair || !q.data || directory) return;
+    if (repair === "email" && q.data.canEditPerson) setEditing(true);
+    if (repair === "link" && q.data.canManage) setAction("link");
+    setParams(previous => {
+      const next = new URLSearchParams(previous);
+      next.delete("repair");
+      return next;
+    }, { replace: true });
+  }, [repair, q.data, directory, setParams]);
   const hierarchy=useQuery<any>({queryKey:["profile-hierarchy",w?.id,q.data?.membership?.clubId],queryFn:()=>api("/membership/hierarchy?clubId="+q.data.membership.clubId),enabled:!!q.data?.membership?.clubId&&!!w});
   function refresh() {
     qc.invalidateQueries({ queryKey: ["networking"] });
@@ -215,7 +226,7 @@ export default function MemberProfile({membershipId,directoryMode}:{membershipId
           {tab==="Complete profile"&&<CompleteMemberProfile membershipId={id} data={d} directory={directory}/>}
           {tab === "Organizational hierarchy" && <><h2>{t("Organizational hierarchy")}</h2><p>Explore this member’s affiliation within the authorized structure.</p><ErrorBox error={hierarchy.error}/>{hierarchy.isPending ? <Skeleton/> : <MemberHierarchyDiagram path={hierarchy.data?.selectedPath || []}/>}<p>Club: {m.club} · Category: {m.category}</p></>}
           {tab==="Contact information"&&<><h2>Contact information</h2>{p.contacts?.length?p.contacts.map((c:any,i:number)=><div key={i} className="context-row"><span>{c.kind} · {c.label}</span><b>{c.value}</b></div>):<p>No contact information is shared with this workspace.</p>}{p.addresses?.map((a:any,i:number)=><div key={i} className="context-row"><span>Address</span><b>{[a.address,a.city,a.state,a.country,a.postalCode].filter(Boolean).join(", ")}</b></div>)}</>}
-          {tab==="Dues & payments"&&<><h2>Dues & payments</h2><p>Collections, verification and payment records remain in the authorized finance workspace. Membership administrative holds do not represent an accounting balance.</p><Link className="button secondary" to="/app/finance/dues-reports">Open authorized dues reports →</Link></>}
+          {tab==="Dues & payments"&&<><h2>Dues & payments</h2><Link className="button secondary" to="/app/finance/dues-reports">Open authorized dues reports →</Link></>}
           {tab==="Communication"&&<><h2>Communication workspace</h2><p>Use the Communication Center for messages within your assigned hierarchy and permitted audiences.</p><Link className="button secondary" to="/app/communications">Open Communication Center →</Link></>}
           {tab==="Audit history"&&<><h2>Membership audit history</h2>{d.history?.map((h:any)=><div className="history-entry" key={h.id}><b>{h.oldStatus||"Created"} → {h.newStatus}</b><p>{h.reason}</p><small>Effective {new Date(h.effectiveAt).toLocaleString()} · recorded {new Date(h.recordedAt).toLocaleString()}</small></div>)}{!d.history?.length&&<p>No membership history recorded.</p>}</>}
           {tab === "Overview" && (
@@ -224,6 +235,25 @@ export default function MemberProfile({membershipId,directoryMode}:{membershipId
               <p>
                 Your membership identity and current affiliations, together.
               </p>
+              {!directory && d.canManage && (
+                <form className="form-stack" key={m.version} onSubmit={(e) => {
+                  e.preventDefault();
+                  const choice = new FormData(e.currentTarget).get("benevolentFund");
+                  void mutation("/members/" + id + "/benevolent-fund", "PUT", {
+                    benevolentFund: choice === "true",
+                    version: m.version,
+                  });
+                }}>
+                  <label>{t("Benevolent Fund")}
+                    <select name="benevolentFund" defaultValue={m.benevolentFund == null ? "" : String(m.benevolentFund)} required>
+                      <option value="" disabled>{t("Select Yes or No")}</option>
+                      <option value="true">{t("Yes")}</option>
+                      <option value="false">{t("No")}</option>
+                    </select>
+                  </label>
+                  <button className="secondary" disabled={busy}>{t("Save Benevolent Fund")}</button>
+                </form>
+              )}
               <div className="detail-grid">
                 {[
                   ["Display name", p.name],
@@ -663,7 +693,7 @@ export default function MemberProfile({membershipId,directoryMode}:{membershipId
             <section className="panel spaced">
               <h3>Membership actions</h3>
               <div className="action-stack">
-                {["status", "renew", "category", "hold", "link", "transfer"].map((a) => (
+                {["status", ...(w?.association === "Impact International" ? [] : ["renew"]), "category", "hold", "link", "transfer"].map((a) => (
                   <button
                     className="secondary"
                     key={a}

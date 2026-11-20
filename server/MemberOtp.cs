@@ -1,5 +1,6 @@
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.EntityFrameworkCore;
 using static Clubs.Access;
@@ -27,15 +28,27 @@ public record OtpVerify(Guid ChallengeId, string Code);
 
 public static class MemberOtp
 {
+    private static readonly Regex MemberNumber = new("^(ICI|IM|CS)-[0-9]+$", RegexOptions.CultureInvariant);
+
+    public static string? NormalizeMemberNumber(string value)
+    {
+        var number = value.Trim().ToUpperInvariant();
+        return MemberNumber.IsMatch(number) ? number : null;
+    }
+
     public static string Normalize(string value)
     {
-        if (value.Contains('@')) return value.Trim().ToLowerInvariant();
+        value = value.Trim();
+        if (value.Contains('@')) return value.ToLowerInvariant();
+        if (NormalizeMemberNumber(value) is string number) return number;
         var digits = MembershipService.Normalize(value, "Phone");
         return digits.Length == 10 ? "91" + digits : digits;
     }
     record Target(string Email, Guid? UserId, Guid? PersonId);
     static async Task<Target?> Resolve(Db db, string identifier, Guid? tenant)
     {
+        if (MemberNumber.IsMatch(identifier))
+            return await ResolveMemberNumber(db, identifier, tenant);
         var emailLogin = identifier.Contains('@');
         var contacts = await db.PersonContacts.Where(c => c.Kind == (emailLogin ? "Email" : "Phone")
             && c.NormalizedValue == identifier && db.Memberships.Any(m => m.PersonId == c.PersonId
@@ -66,12 +79,47 @@ public static class MemberOtp
         if (tenant != null && person == null && (user == null || !await db.Assignments.AnyAsync(a => a.UserId == user.Id && a.TenantId == tenant))) return null;
         return user == null && person == null ? null : new(email, user?.Id, person?.Id);
     }
+
+    public static Task<Person?> FindActiveMember(Db db, string number, Guid? tenant)
+    {
+        var now = DateTimeOffset.UtcNow;
+        return db.Memberships
+            .Where(m => m.Number == number && (tenant == null || m.TenantId == tenant)
+                && m.Status == "Active" && m.Club.Status == "Active" && (m.EndsAt == null || m.EndsAt > now))
+            .Select(m => (Person?)m.Person).SingleOrDefaultAsync();
+    }
+
+    static async Task<Target?> ResolveMemberNumber(Db db, string number, Guid? tenant)
+    {
+        var now = DateTimeOffset.UtcNow;
+        var person = await FindActiveMember(db, number, tenant);
+        if (person == null) return null;
+
+        // A member number identifies the record. Only an email exclusive to that identity can authenticate it.
+        var exclusiveContacts = db.PersonContacts.Where(c => c.PersonId != person.Id && c.Kind == "Email");
+        if (person.UserId is Guid userId)
+        {
+            var linked = await db.Users.SingleOrDefaultAsync(u => u.Id == userId);
+            if (linked == null || linked.LockedUntil > now || !System.Net.Mail.MailAddress.TryCreate(linked.Email, out _)
+                || await exclusiveContacts.AnyAsync(c => c.NormalizedValue == linked.Email)) return null;
+            return new(linked.Email, linked.Id, person.Id);
+        }
+
+        var emails = await db.PersonContacts
+            .Where(c => c.PersonId == person.Id && c.Kind == "Email"
+                && !exclusiveContacts.Any(other => other.NormalizedValue == c.NormalizedValue)
+                && !db.Users.Any(u => u.Email == c.NormalizedValue))
+            .Select(c => c.NormalizedValue).Distinct().Take(2).ToListAsync();
+        return emails.Count == 1 && System.Net.Mail.MailAddress.TryCreate(emails[0], out _)
+            ? new(emails[0], null, person.Id)
+            : null;
+    }
     public static void MapMemberOtp(this RouteGroupBuilder api)
     {
         api.MapPost("/auth/otp/request", async (OtpRequest input, Db db, Access access, IDataProtectionProvider dp, IConfiguration config, IHostEnvironment env) =>
         {
             Check(config.GetValue("Authentication:MemberOtpEnabled", true), "Email OTP login is temporarily paused. Sign in using your password.", 503);
-            Check((input.Identifier?.Length ?? 0) is > 2 and <= 200, "Enter your registered email or phone number.");
+            Check((input.Identifier?.Length ?? 0) is > 2 and <= 200, "Enter your membership ID, registered email, or phone number.");
             Check(!string.IsNullOrWhiteSpace(config["Smtp:Host"]) || env.IsDevelopment(), "Email OTP is awaiting Amazon SES setup. Please contact your administrator.", 503);
             var identifier = Normalize(input.Identifier!);
             var key = Hash(identifier);
@@ -98,7 +146,7 @@ public static class MemberOtp
             db.LoginChallenges.Add(challenge);
             await db.SaveChangesAsync(); await tx.CommitAsync();
             return Results.Ok(new { challengeId = challenge.Id, expiresInSeconds = 600, resendAfterSeconds = 60,
-                message = "If your email or phone matches an eligible account, a code will be sent to its registered email.",
+                message = "If your sign-in details match an eligible account, a code will be sent to its registered email.",
                 deliveryConfigured = !string.IsNullOrWhiteSpace(config["Smtp:Host"]) });
         }).RequireRateLimiting("auth");
 

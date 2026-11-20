@@ -358,6 +358,71 @@ public static class MembershipImport
                 };
             }
         );
+        api.MapGet("/membership/imports/{id:guid}/accounts", async (Guid id, MembershipService service, string? status, int page = 1) =>
+        {
+            var (workspace, _) = await AccountImportJob(id, service);
+            var db = service.Db;
+            var now = DateTimeOffset.UtcNow;
+            var accounts = db.Database.SqlQuery<ImportedAccountState>($"""
+                SELECT m."Id" AS "MembershipId", CASE
+                    WHEN p."UserId" IS NOT NULL THEN 'Linked'
+                    WHEN emails.total = 0 THEN 'MissingEmail'
+                    WHEN chosen.email IS NULL OR EXISTS (
+                        SELECT 1 FROM "PersonContacts" other
+                        WHERE other."PersonId" <> p."Id" AND other."Kind" = 'Email' AND other."NormalizedValue" = chosen.email
+                    ) THEN 'ConflictingEmail'
+                    WHEN EXISTS (SELECT 1 FROM "Users" u WHERE u."Email" = chosen.email) THEN 'ExistingAccount'
+                    ELSE 'ReadyToLink'
+                END AS "State"
+                FROM "MemberImportRows" r
+                JOIN "Memberships" m ON m."ImportRowId" = r."Id"
+                JOIN "Persons" p ON p."Id" = m."PersonId"
+                CROSS JOIN LATERAL (
+                    SELECT count(DISTINCT c."NormalizedValue") AS total, min(c."NormalizedValue") AS any_email,
+                        count(DISTINCT c."NormalizedValue") FILTER (WHERE lower(c."Label") LIKE 'primary%') AS primary_count,
+                        min(c."NormalizedValue") FILTER (WHERE lower(c."Label") LIKE 'primary%') AS primary_email
+                    FROM "PersonContacts" c
+                    WHERE c."PersonId" = p."Id" AND c."Kind" = 'Email'
+                        AND c."NormalizedValue" ~ '^[^[:space:]<>@]+@[^[:space:]<>@]+$'
+                ) emails
+                CROSS JOIN LATERAL (
+                    SELECT CASE WHEN emails.total = 1 THEN emails.any_email
+                        WHEN emails.primary_count = 1 THEN emails.primary_email END AS email
+                ) chosen
+                WHERE r."JobId" = {id}
+                """);
+            var results = from member in service.Scoped(workspace)
+                          join row in db.MemberImportRows on member.ImportRowId equals row.Id
+                          join account in accounts on member.Id equals account.MembershipId
+                          where row.JobId == id
+                          select new
+                          {
+                              row.RowNumber, membershipId = member.Id, member.Number,
+                              name = member.Person.DisplayName, club = member.Club.Name, state = account.State,
+                              eligible = account.State == "Linked" && member.Status == "Active" && member.Club.Status == "Active"
+                                  && (member.EndsAt == null || member.EndsAt > now),
+                          };
+            var summary = await results.GroupBy(r => r.state).Select(g => new { state = g.Key, count = g.Count() }).ToListAsync();
+            if (status == "issues") results = results.Where(r => r.state != "Linked");
+            const int size = 50;
+            page = Math.Clamp(page, 1, 10000);
+            return new { summary, total = await results.CountAsync(), page, size,
+                items = await results.OrderBy(r => r.RowNumber).Skip((page - 1) * size).Take(size).ToListAsync() };
+        });
+        api.MapPost("/membership/imports/{id:guid}/accounts/recheck", async (Guid id, MembershipService service) =>
+        {
+            var (workspace, _) = await AccountImportJob(id, service);
+            await using var tx = await service.Access.Mutation(workspace);
+            var people = await (from member in service.Scoped(workspace)
+                                join row in service.Db.MemberImportRows on member.ImportRowId equals row.Id
+                                where row.JobId == id && member.Person.UserId == null
+                                select member.PersonId).Distinct().ToArrayAsync();
+            await MemberAccounts.Provision(service.Db, people);
+            await service.Access.Log(workspace, "member.import.accounts.rechecked", id.ToString());
+            await service.Db.SaveChangesAsync();
+            await tx.CommitAsync();
+            return Results.NoContent();
+        });
         api.MapPost(
             "/membership/imports/{id:guid}/mapping",
             async (Guid id, ImportMapping r, MembershipService s) =>
@@ -523,6 +588,16 @@ public static class MembershipImport
         api.MapPost("/membership/export", Export);
     }
 
+    private static async Task<(Assignment, MemberImportJob)> AccountImportJob(Guid id, MembershipService service)
+    {
+        var (workspace, job) = await Job(id, service);
+        Check(job.Status == "Completed", "Account results are available after the import completes.", 409);
+        Check(job.CreatorId == workspace.UserId || (await service.Access.Grants(workspace)).Contains("members.contacts.view"),
+            "Only the uploader or a contact-authorized officer can inspect import accounts.", 403);
+        return (workspace, job);
+    }
+
+    private sealed record ImportedAccountState(Guid MembershipId, string State);
     public static async Task<(Assignment, MemberImportJob)> Job(Guid id, MembershipService s)
     {
         var w = await s.Access.Workspace("members.import");

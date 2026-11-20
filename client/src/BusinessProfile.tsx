@@ -2,7 +2,7 @@ import { useId, useState } from 'react';
 import { BriefcaseBusiness, Building2, Tags, Globe, MapPin, X } from 'lucide-react';
 import './BusinessProfile.css';
 
-const categories: Record<string, string[]> = {
+export const businessCategories: Record<string, string[]> = {
   'Technology': ['Software development', 'IT consulting', 'Cybersecurity', 'Digital services'],
   'Professional services': ['Consulting', 'Legal services', 'Accounting', 'Marketing & advertising'],
   'Retail & commerce': ['Retail', 'Wholesale', 'E-commerce', 'Import & export'],
@@ -13,6 +13,10 @@ const categories: Record<string, string[]> = {
   'Finance & insurance': ['Financial services', 'Insurance', 'Banking', 'Investment services'],
   'Hospitality & travel': ['Hospitality', 'Travel services', 'Food & beverage', 'Events'],
   'Agriculture': ['Farming', 'Agricultural supplies', 'Agri technology'],
+  'Automotive & transport': ['Automotive sales', 'Vehicle services', 'Logistics', 'Freight'],
+  'Media & creative': ['Design', 'Photography', 'Publishing', 'Film & video'],
+  'Energy & utilities': ['Renewable energy', 'Electrical services', 'Water services'],
+  'Nonprofit & social services': ['Community development', 'Charitable services', 'Social enterprise'],
   'Other': [],
 };
 export function BusinessProfileFields({ value, onChange }: { value: any; onChange: (patch: any) => void }) {
@@ -29,8 +33,8 @@ export function BusinessProfileFields({ value, onChange }: { value: any; onChang
   return <section className="business-editor" aria-label="Business profile details">
     <div className="business-section-title"><BriefcaseBusiness size={20}/><div><h3>Business profile</h3><p>Help members understand what you do and where you can collaborate.</p></div></div>
     <div className="form-grid">
-      <label>Business category<input maxLength={200} list={id+'-categories'} value={value.businessCategory || ''} onChange={e => onChange({ businessCategory: e.target.value, businessSubcategory: '' })} placeholder="Choose or enter a category"/><datalist id={id+'-categories'}>{Object.keys(categories).map(c => <option key={c} value={c}/>)}</datalist></label>
-      <label>Business subcategory<input maxLength={200} list={id+'-subcategories'} value={value.businessSubcategory || ''} onChange={e => onChange({ businessSubcategory: e.target.value })} placeholder="Your business specialty"/><datalist id={id+'-subcategories'}>{(categories[value.businessCategory] || []).map(c => <option key={c} value={c}/>)}</datalist></label>
+      <label>Business category<input maxLength={200} list={id+'-categories'} value={value.businessCategory || ''} onChange={e => onChange({ businessCategory: e.target.value, businessSubcategory: '' })} placeholder="Choose or enter a category"/><datalist id={id+'-categories'}>{Object.keys(businessCategories).map(c => <option key={c} value={c}/>)}</datalist></label>
+      <label>Business subcategory<input maxLength={200} list={id+'-subcategories'} value={value.businessSubcategory || ''} onChange={e => onChange({ businessSubcategory: e.target.value })} placeholder="Your business specialty"/><datalist id={id+'-subcategories'}>{(businessCategories[value.businessCategory] || []).map(c => <option key={c} value={c}/>)}</datalist></label>
     </div>
     <label>About your business<textarea rows={4} maxLength={2000} value={value.businessDescription || ''} onChange={e => onChange({ businessDescription: e.target.value })} placeholder="Describe your products, services, customers, and what makes your business distinctive."/><small>{(value.businessDescription || '').length}/2,000 characters</small></label>
     <label htmlFor={id+'-tags'}>Business tags</label><div className="business-tag-input"><input id={id+'-tags'} value={draft} maxLength={1000} disabled={tags.length >= 30} onChange={e => setDraft(e.target.value)} onBlur={() => { if(draft.trim()) addTags(); }} onKeyDown={e => { if(e.key === 'Enter' || e.key === ',') {e.preventDefault();addTags();} }} placeholder="e.g. B2B, sustainable products, web design"/><button type="button" className="secondary" disabled={!draft.trim() || tags.length >= 30} onClick={addTags}>Add tags</button></div>

@@ -26,7 +26,7 @@ for i in range(5):
             'photoBase64': base64.b64encode(photo).decode() if i == 0 else None}
     status, created = c.req('/members', 'POST', body)
     assert status == 200, (status, created)
-    assert created['number'].startswith('IM-')
+    assert created['number'].startswith('ICI-')
     ids.append(created['id']); numbers.append(created['number'])
 assert len(set(numbers)) == 5
 status, detail = c.req('/members/' + ids[0])

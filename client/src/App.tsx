@@ -25,10 +25,13 @@ import {
   X,
   LogOut,
   Bell,
+  Wallet,
+  ShieldCheck,
+  Ellipsis,
 } from "lucide-react";
 import "./mobile.css";
 import "./navigation.css";
-import { navigationSections, canOpenTab, matchesTab, taskGroups, financeMenu } from "./navigation";
+import { navigationSections, canOpenTab, matchesTab, taskGroups, financeMenu, duesTab } from "./navigation";
 import { TenantBrand } from "./TenantBrand";
 import { LanguagePicker, useLanguage } from "./i18n";
 import { impact, impactRole, ImpactDocumentTitle, ImpactPageContext } from "./brand";
@@ -122,6 +125,8 @@ const Operations = lazy(() => import("./pages/Operations"));
 const VerifyCertificate = lazy(() =>
   import("./pages/Operations").then((m) => ({ default: m.VerifyCertificate })),
 );
+const primaryNavigation = new Set(["home", "people", "leadership", "activities"]);
+const DelegatedPositions = lazy(() => import("./pages/DelegatedPositions"));
 const IciWorkspace = lazy(() => import("./pages/IciWorkspace"));
 const CertifiedPeople = lazy(() => import("./pages/CertifiedPeople"));
 const MyCertifications = lazy(() => import("./pages/CertifiedPeople").then(m=>({default:m.MyCertifications})));
@@ -200,6 +205,7 @@ function Shell() {
     nav = useNavigate(),
     location = useLocation();
   const membershipMode = ["/app/members","/app/directory","/app/imports","/app/approvals","/app/transfers","/app/membership-settings","/app/membership-insights","/app/organizations","/app/international","/app/national","/app/regions","/app/districts","/app/zones","/app/clubs","/app/leadership","/app/handovers","/app/committees"].some(p=>location.pathname.startsWith(p));
+  const [moreOpen, setMoreOpen] = useState(false);
   const [open, setOpen] = useState(false),
     [active, setActive] = useState(""),
     [error, setError] = useState<unknown>();
@@ -299,6 +305,13 @@ function Shell() {
   );
   const groups = taskGroups(activeSection?.tabs || []);
   const activeGroup = groups.find(group => group.tabs.some(tab => matchesTab(location.pathname, tab.to)));
+  const showDues = canOpenTab(duesTab, w?.permissions || [], experience.data?.disabledFeatures || []);
+  const duesSelected = showDues && matchesTab(location.pathname, duesTab.to);
+  const showPositions = w?.permissions.includes("ici.view") && ["National President", "Regional President"].includes(w.role);
+  const positionsSelected = location.pathname === "/app/leadership/manage-positions";
+  useEffect(() => {
+    if (activeSection && !duesSelected && !positionsSelected && !primaryNavigation.has(activeSection.id)) setMoreOpen(true);
+  }, [activeSection?.id, duesSelected, positionsSelected]);
   if (me.isPending) return <Skeleton />;
   if (me.data && workspaces.isPending) return <Skeleton />;
   if (me.error) return <Navigate to="/login" replace />;
@@ -325,20 +338,40 @@ function Shell() {
           {w && <div className="organization-context"><strong>{w.organization}</strong><span>{impactRole(w.role)}</span></div>}
           <div className="sidebar-label">{t("ORGANIZATION")}</div>
           <nav>
-            {visibleSections.map((section) => {
+            {showDues && <Link to={duesTab.to} className={duesSelected ? "active" : undefined} aria-current={duesSelected ? "page" : undefined} onClick={() => setOpen(false)}>
+              <Wallet size={19} />{t(duesTab.label)}
+            </Link>}
+            {visibleSections.filter(section => primaryNavigation.has(section.id)).map(section => {
               const Icon = section.icon;
-              const selected = activeSection?.id === section.id;
-              return <div key={section.id}><Link to={section.tabs[0].to}
-                className={selected ? "active" : undefined}
-                aria-current={selected ? "true" : undefined}
-                onClick={() => setOpen(false)}>
+              const selected = !duesSelected && !positionsSelected && activeSection?.id === section.id;
+              return <Link key={section.id} to={section.tabs[0].to} className={selected ? "active" : undefined}
+                aria-current={selected ? "page" : undefined} onClick={() => setOpen(false)}>
                 <Icon size={19} />{t(section.label)}
-              </Link>{section.id === "tools" && location.pathname.startsWith("/app/finance") && section.tabs.some(tab => tab.to === "/app/finance") && <nav className="impact-sidebar-submenu" aria-label="Finance pages">{financeMenu.filter(([path])=>!path||(path==='dues'?w?.permissions.includes('finance.dues.reports'):w?.permissions.some(p=>['finance.view','finance.manage','finance.reconcile','finance.configure','finance.post','finance.approve'].includes(p)))).map(([path, label]) => {
-                const to = "/app/finance" + (path ? "/" + path : "");
-                const current = path ? matchesTab(location.pathname, to) : location.pathname === to;
-                return <Link key={to} to={to} className={current ? "active" : undefined} aria-current={current ? "page" : undefined} onClick={() => setOpen(false)}>{label}</Link>;
-              })}</nav>}{membershipMode&&section.id==="people"&&selected&&<div className="mm-sidebar-submenu" aria-label="People and membership">{[["Members","/app/members","members.view"],["Membership Insights","/app/membership-insights","members.view"],["Applications & transfers","/app/approvals","members.approve"],["Transfer requests","/app/transfers","members.transfer.approve"],["Directory","/app/directory","directory.view"],["Membership plans & categories","/app/membership-settings","members.workflow.manage"]].filter(([,url,permission])=>canOpenTab({to:url,label:"",permissions:[permission]},w?.permissions||[],experience.data?.disabledFeatures||[])).map(([label,url])=><Link key={url} to={url} className={location.pathname===url?"active":""} onClick={()=>setOpen(false)}>{label}</Link>)}</div>}{section.id === "leadership" && selected && <div className="impact-sidebar-submenu" aria-label="Leadership pages">{section.tabs.map(tab=><Link key={tab.to} to={tab.to} onClick={()=>setOpen(false)} className={location.pathname===tab.to?"active":undefined}>{t(tab.label)}</Link>)}</div>}{section.id === "organization" && selected && <div className="impact-sidebar-submenu" aria-label="Impact structure submenus">{section.tabs.filter(tab => ["/app/organizations", "/app/international", "/app/national", "/app/regions", "/app/districts", "/app/zones", "/app/clubs"].includes(tab.to)).map(tab => <Link key={tab.to} to={tab.to} onClick={() => setOpen(false)} className={location.pathname === tab.to ? "active" : undefined} aria-current={location.pathname === tab.to ? "page" : undefined}>{t(tab.label)}</Link>)}</div>}</div>;
+              </Link>;
             })}
+            {showPositions && <Link to="/app/leadership/manage-positions" className={positionsSelected ? "active" : undefined}
+              aria-current={positionsSelected ? "page" : undefined} onClick={() => setOpen(false)}>
+              <ShieldCheck size={19} />{t("Manage positions")}
+            </Link>}
+            <details className="sidebar-more" open={moreOpen || undefined} onToggle={event => setMoreOpen(event.currentTarget.open)}>
+              <summary><Ellipsis size={19} />{t("More")}</summary>
+              <div className="impact-sidebar-submenu">
+                {visibleSections.filter(section => !primaryNavigation.has(section.id)).map(section => {
+                  const Icon = section.icon;
+                  const selected = !duesSelected && activeSection?.id === section.id;
+                  return <Link key={section.id} to={section.tabs[0].to} className={selected ? "active" : undefined}
+                    aria-current={selected ? "page" : undefined} onClick={() => setOpen(false)}>
+                    <Icon size={16} />{t(section.label)}
+                  </Link>;
+                })}
+                {location.pathname.startsWith("/app/finance") && visibleSections.some(section => section.id === "tools") &&
+                  financeMenu.filter(([path]) => !path || w?.permissions.some(permission => ["finance.view", "finance.manage", "finance.reconcile", "finance.configure", "finance.post", "finance.approve"].includes(permission))).map(([path, label]) => {
+                    const to = "/app/finance" + (path ? "/" + path : "");
+                    return <Link key={to} to={to} className={location.pathname === to ? "active" : undefined}
+                      onClick={() => setOpen(false)}>{label}</Link>;
+                  })}
+              </div>
+            </details>
           </nav>
           <div className="mobile-account-actions"><button className="secondary" onClick={toggleTheme}><Moon size={17} />{me.data.theme === "dark" ? "Light theme" : "Dark theme"}</button><button className="secondary" onClick={signOut}><LogOut size={17} />Sign out</button></div>
           <div className="sidebar-bottom">
@@ -617,6 +650,7 @@ export default function App() {
           <Route path="finance/*" element={<Finance />} />
           <Route path="operations/*" element={<Operations />} />
           <Route path="ici" element={<IciWorkspace />} />
+          <Route path="leadership/manage-positions" element={<DelegatedPositions />} />
           <Route path="certified-people" element={<CertifiedPeople />} />
           <Route path="my-certifications" element={<MyCertifications />} />
           <Route path="certifications" element={<Certifications />} />

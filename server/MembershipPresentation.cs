@@ -13,7 +13,7 @@ public static class MembershipPresentation
         {
             if(id==null)continue;
             Check(await s.Db.Orgs.AnyAsync(o=>o.Id==id&&o.TenantId==w.TenantId&&s.Db.Levels.Any(l=>l.Id==o.LevelId&&l.Name==level))
-                && (await s.Access.Visible(w).AnyAsync(o=>o.Id==id)||await s.Access.Tree(w.TenantId,id.Value).AnyAsync(o=>o.Id==w.OrgId)),level+" outside authorized scope.",404);
+                && (await s.MemberOrganizations(w).AnyAsync(o=>o.Id==id)||await s.Access.Tree(w.TenantId,id.Value).AnyAsync(o=>o.Id==w.OrgId)),level+" outside authorized scope.",404);
             var branch=id.Value;q=q.Where(m=>s.Access.Tree(w.TenantId,branch).Any(o=>o.Id==m.ClubId));
         }
         Check((country?.Length??0)<=120&&(state?.Length??0)<=120,"Geographic filter is too long.");
@@ -40,7 +40,7 @@ public static class MembershipPresentation
     };
     public static async Task<object> Intelligence(MembershipService s,Assignment w,string? range,DateOnly? from,DateOnly? to)
     {
-        var db=s.Db;var q=await s.ScopedList(w);var now=DateTimeOffset.UtcNow;
+        var db=s.Db;var q=await s.ReadableList(w);var now=DateTimeOffset.UtcNow;
         var zone=TimeZoneInfo.FindSystemTimeZoneById(await db.Tenants.Where(t=>t.Id==w.TenantId).Select(t=>t.TimeZone).SingleAsync());
         var today=DateOnly.FromDateTime(TimeZoneInfo.ConvertTime(now,zone).DateTime);var period=range??"6m";
         Check(new[]{"30d","3m","6m","12m","custom"}.Contains(period),"Choose a supported membership period.");

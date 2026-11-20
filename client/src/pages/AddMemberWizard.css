@@ -337,6 +337,59 @@
   outline: 2px solid #8465be44;
   border-color: #805eb1;
 }
+.aw-field > label + label {
+  margin-top: 8px;
+}
+.aw-tag-field details {
+  margin-top: 8px;
+  border: 1px solid #d9d2e5;
+  border-radius: 8px;
+  padding: 10px 12px;
+}
+.aw-tag-field summary {
+  cursor: pointer;
+  min-height: 24px;
+  line-height: 24px;
+}
+.aw-tag-list,
+.aw-tag-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 8px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.aw-tag,
+.aw-tag-options button {
+  border: 1px solid #d9d2e5;
+  border-radius: 999px;
+  padding: 4px 9px;
+  overflow-wrap: anywhere;
+  text-align: start;
+}
+.aw-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: #efe8fb;
+  color: #3d245d;
+  max-width: 100%;
+}
+.aw-tag button {
+  display: inline-grid;
+  place-items: center;
+  min-width: 24px;
+  min-height: 24px;
+}
+.aw-tag button,
+.aw-tag-options button {
+  cursor: pointer;
+}
+.aw-tag-options button:hover {
+  background: #efe8fb;
+  color: #3d245d;
+}
 .aw-field input[readonly] {
   background: #faf9fc;
   color: #827a90;

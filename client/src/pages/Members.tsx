@@ -629,7 +629,14 @@ export default function Members({
       {drawer === "create" && (
           <AddMemberWizard onClose={() => setDrawer("")}
             onDone={(member: any) => {
-              if (member?.number) setMessage("Member " + member.number + " created.");
+              if (member?.number) {
+                const signIn = member.loginAvailable === true
+                  ? " The member can sign in with their registered email once they verify it."
+                  : member.loginAvailable === false
+                    ? " Add a unique email or link their existing account to enable sign-in."
+                    : "";
+                setMessage("Member " + member.number + " created." + signIn);
+              }
               setDrawer("");
               qc.invalidateQueries({ queryKey: ["members"] });
               qc.invalidateQueries({ queryKey: ["member-metrics"] });

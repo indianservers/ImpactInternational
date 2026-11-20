@@ -13,6 +13,7 @@ public static class MembershipHierarchy
             await a.User();
             Check(ImpactStructure.Kinds.Contains(kind), "Choose a National unit, Region, or Club.");
             Guid tenant, scope; Assignment? assignment = null;
+            var associationWide = false;
             if (publicCatalog)
             {
                 var organization = await a.Db.Tenants.SingleAsync(t => t.Name == ImpactSetup.Name);
@@ -27,7 +28,9 @@ public static class MembershipHierarchy
                     "members.transfer.approve", "members.workflow.manage", "directory.view");
                 assignment = w;
                 tenant = w.TenantId;
-                scope = (await a.User()).PlatformAdmin
+                var role = await IciPolicy.Role(a, w);
+                associationWide = IciPolicy.AssociationMemberReaders.Contains(role);
+                scope = associationWide || (await a.User()).PlatformAdmin
                     ? await a.Db.Orgs.Where(o => o.TenantId == tenant && o.ParentId == null).Select(o => o.Id).SingleAsync()
                     : w.OrgId;
             }
@@ -44,7 +47,7 @@ public static class MembershipHierarchy
                     WHERE p."TenantId"={tenant} AND p."Status"='Active'
                 ) SELECT * FROM ancestry
                 """).AsNoTracking();
-            if(assignment!=null&&IciPolicy.CoverageRequired(await IciPolicy.Role(a,assignment))&&!(await a.User()).PlatformAdmin)
+            if(!associationWide&&assignment!=null&&IciPolicy.CoverageRequired(await IciPolicy.Role(a,assignment))&&!(await a.User()).PlatformAdmin)
             {
                 var allowed=a.Visible(assignment).Select(o=>o.Id);
                 var ownNational=assignment.OrgId;

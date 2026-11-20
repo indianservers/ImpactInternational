@@ -121,6 +121,7 @@ public class Membership : ITenantRecord
     public DateTimeOffset? EndsAt { get; set; }
     public DateTimeOffset UpdatedAt { get; set; } = DateTimeOffset.UtcNow;
     public bool FinancialHold { get; set; }
+    public bool? BenevolentFund { get; set; }
     public long Version { get; set; } = 1;
     public Guid? SourceApplicationId { get; set; }
     public Guid? ImportRowId { get; set; }

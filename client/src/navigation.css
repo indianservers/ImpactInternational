@@ -62,3 +62,15 @@
   .app-shell.unified-navigation .topbar { padding-inline: 18px; }
   .app-shell.unified-navigation :is(.section-tabs, .section-tools) a { padding: 9px 10px; font-size: 11px; }
 }
+
+.sidebar-more summary {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  cursor: pointer;
+  border-radius: 8px;
+  font-weight: 600;
+}
+.sidebar-more summary::-webkit-details-marker { display: none; }
+.sidebar-more summary:hover, .sidebar-more summary:focus-visible { background: var(--surface-soft); }

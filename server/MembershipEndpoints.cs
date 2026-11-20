@@ -10,8 +10,12 @@ public record ManualMember(
     Guid? PersonId = null,
     DateTimeOffset? JoinedAt = null,
     string DuplicateDecision = "",
-    string? PhotoBase64 = null, string Status = "Active", string RequestKey = "", CertificationInput[]? Certifications = null
+    string? PhotoBase64 = null, string Status = "Active", string RequestKey = "", CertificationInput[]? Certifications = null,
+    [property: System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
+    bool? BenevolentFund = null
 );
+
+public record BenevolentFundInput(bool? BenevolentFund, long Version);
 
 public record StatusInput(
     string Status,
@@ -103,8 +107,8 @@ public static class MembershipEndpoints
                     "members.workflow.manage",
                     "directory.view"
                 );
-                var clubs = s
-                    .Access.Visible(w)
+                var memberOrganizations = s.MemberOrganizations(w);
+                var clubs = memberOrganizations
                     .Where(x =>
                         x.Status == "Active" && s.Db.Levels.Any(l => l.Id == x.LevelId && l.IsClub)
                     );
@@ -129,7 +133,7 @@ public static class MembershipEndpoints
                             x.TenantId, x.ClubType,
                         })
                         .ToListAsync(),
-                    membershipTypes = await s.Access.Visible(w).Where(o=>s.Db.Levels.Any(l=>l.Id==o.LevelId&&l.IsClub)).Select(o=>o.ClubType).Distinct().OrderBy(x=>x).ToListAsync(),
+                    membershipTypes = await memberOrganizations.Where(o=>s.Db.Levels.Any(l=>l.Id==o.LevelId&&l.IsClub)).Select(o=>o.ClubType).Distinct().OrderBy(x=>x).ToListAsync(),
                     categories = await s
                         .Db.MembershipCategories.Where(x => x.TenantId == w.TenantId && x.Active)
                         .Select(x => new { x.Id, x.Name })
@@ -230,10 +234,11 @@ public static class MembershipEndpoints
                 );
                 var grants = w == null ? [] : await s.Access.Grants(w);
                 var p = await s.People.SingleAsync(x => x.Id == m.PersonId);
-                var visible = own ? s.Own(u.Id) : s.Scoped(w!);
+                var visible = own ? s.Own(u.Id) : s.Readable(w!);
                 var membershipIds = visible.Where(x => x.PersonId == p.Id).Select(x => x.Id);
                 var privateProfile = own || !directory && grants.Contains("members.personal.view");
                 var contacts = own || directory || grants.Contains("members.contacts.view");
+                var memberOrganizations = w == null ? s.Db.Orgs.Where(o => false) : s.MemberOrganizations(w);
                 var roles =
                     p.UserId == null
                         ? []
@@ -246,7 +251,7 @@ public static class MembershipEndpoints
                                 && (
                                     own
                                     || a.TenantId == m.TenantId
-                                        && s.Access.Visible(w!).Any(v => v.Id == a.OrgId)
+                                        && memberOrganizations.Any(v => v.Id == a.OrgId)
                                 )
                             select new
                             {
@@ -458,6 +463,7 @@ public static class MembershipEndpoints
                 foreach (var m in await s.Own((await s.Access.User()).Id).ToListAsync())
                     s.Activity(m, (await s.Access.User()).Id, "profile.updated");
                 await s.Db.SaveChangesAsync();
+                await MemberAccounts.Provision(s.Db, [p.Id]);
                 await tx.CommitAsync();
                 return Results.Ok(await s.Profile(p, true, true, true, true));
             }
@@ -552,6 +558,7 @@ public static class MembershipEndpoints
                     person.PhotoType = image.Type;
                 }
                 var member = await s.Activate(person, club, category, w.UserId, r.JoinedAt);
+                member.BenevolentFund = r.BenevolentFund;
                 if(r.Status!="Active")await s.ChangeStatus(member,r.Status,"Initial member registration",w.UserId);
                 Check((r.Certifications?.Length ?? 0) <= 100, "At most 100 certifications per registration.");
                 foreach (var certification in r.Certifications ?? [])
@@ -560,11 +567,42 @@ public static class MembershipEndpoints
                     await TrainingCertifications.Apply(s.Db, w.TenantId, person.Id, certification, row);
                     s.Db.MemberCertifications.Add(row);
                 }
-                var result=new { id=member.Id,number=member.Number,personId=member.PersonId,version=member.Version,status=member.Status };
-                if(r.RequestKey!="")await s.Access.Log(w,"member.registration.create",r.RequestKey,System.Text.Json.JsonSerializer.Serialize(new{hash,result}));
                 await s.Db.SaveChangesAsync();
+                await MemberAccounts.Provision(s.Db, [person.Id]);
+                var loginAvailable = await s.Db.Persons.AnyAsync(p => p.Id == person.Id && p.UserId != null);
+                var result = new { member.Id, member.Number, member.PersonId, member.Version, member.Status, loginAvailable };
+                if (r.RequestKey != "")
+                {
+                    await s.Access.Log(w, "member.registration.create", r.RequestKey,
+                        System.Text.Json.JsonSerializer.Serialize(new { hash, result },
+                            System.Text.Json.JsonSerializerOptions.Web));
+                    await s.Db.SaveChangesAsync();
+                }
                 await tx.CommitAsync();
                 return Results.Ok(result);
+            }
+        );
+        api.MapPut(
+            "/members/{id:guid}/benevolent-fund",
+            async (Guid id, BenevolentFundInput input, MembershipService s) =>
+            {
+                var w = await s.Access.Workspace("members.manage");
+                Check(input.BenevolentFund.HasValue, "Select Yes or No for Benevolent Fund.");
+                await using var tx = await s.Access.Mutation(w);
+                await s.Lock(id);
+                var member = await s.Find(id, "members.manage", false);
+                Check(member.Version == input.Version, "Membership changed. Refresh.", 409);
+                if (member.BenevolentFund != input.BenevolentFund)
+                {
+                    member.BenevolentFund = input.BenevolentFund;
+                    member.UpdatedAt = DateTimeOffset.UtcNow;
+                    member.Version++;
+                    s.Activity(member, w.UserId, "membership.benevolent-fund.updated",
+                        member.BenevolentFund == true ? "Yes" : "No");
+                    await s.Db.SaveChangesAsync();
+                }
+                await tx.CommitAsync();
+                return Results.NoContent();
             }
         );
         api.MapPost(
@@ -598,6 +636,29 @@ public static class MembershipEndpoints
                 );
             }
         );
+        api.MapGet("/membership/me/club-members", async (Guid clubId, string? search, MembershipService service, int page = 1) =>
+        {
+            var user = await service.Access.User();
+            var now = DateTimeOffset.UtcNow;
+            var tenant = service.Access.BoundTenant;
+            var current = service.Db.Memberships.Where(m => m.ClubId == clubId && m.Status == "Active"
+                && m.Club.Status == "Active" && (m.EndsAt == null || m.EndsAt > now)
+                && (tenant == null || m.TenantId == tenant));
+            Check(await current.AnyAsync(m => m.Person.UserId == user.Id), "An active membership in this club is required.", 404);
+            var peers = current.Where(m => m.Person.UserId != user.Id);
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                var term = search.Trim().ToLowerInvariant();
+                peers = peers.Where(m => m.Person.SearchName.Contains(term));
+            }
+            var names = peers.Select(m => new { id = m.PersonId, name = m.Person.DisplayName }).Distinct();
+            page = Math.Clamp(page, 1, 10000);
+            return new
+            {
+                total = await names.CountAsync(),
+                items = await names.OrderBy(p => p.name).ThenBy(p => p.id).Skip((page - 1) * 50).Take(50).ToListAsync(),
+            };
+        });
         api.MapGet(
             "/membership/me",
             async (MembershipService s) =>
@@ -858,7 +919,7 @@ public static class MembershipEndpoints
             var w = await s.Access.WorkspaceAny("members.view", "directory.view");
             var grants = await s.Access.Grants(w);
             var directory = !grants.Contains("members.view");
-            var q = (await s.ScopedList(w)).Where(m => m.PersonId == id);
+            var q = (await s.ReadableList(w)).Where(m => m.PersonId == id);
             if (directory) q = q.Where(m => m.Person.UserId == w.UserId || (m.Status == "Active" && (m.EndsAt == null || m.EndsAt > DateTimeOffset.UtcNow) && m.Person.Privacy.DirectoryVisible));
             var membership = await q.OrderByDescending(m => m.Status == "Active").ThenByDescending(m => m.JoinedAt).ThenBy(m => m.Id).Select(m => new {m.Id}).FirstOrDefaultAsync();
             Check(membership != null, "No member profile is available within your authorized scope.", 404);
@@ -998,7 +1059,7 @@ public static class MembershipEndpoints
     {
         var w = await s.Access.Workspace(directory ? "directory.view" : "members.view");
         var grants = await s.Access.Grants(w);
-        var q = (await s.ScopedList(w)).AsNoTracking();
+        var q = (await s.ReadableList(w)).AsNoTracking();
         q = await RegionalDirectory.Filter(s, w, q, regionId);
         q = await MembershipPresentation.Filter(s,w,q,districtId,zoneId,membershipType,joinedFrom,joinedTo,renewalFrom,renewalTo,nationalId,country,state);
         if (directory)
@@ -1096,7 +1157,7 @@ public static class MembershipEndpoints
     private static async Task<IResult> Metrics(MembershipService s, string? range, DateOnly? from, DateOnly? to)
     {
         var w = await s.Access.Workspace("members.view");
-        var q = s.Scoped(w);
+        var q = s.Readable(w);
         var now = DateTimeOffset.UtcNow;
         var month = new DateTimeOffset(now.Year, now.Month, 1, 0, 0, 0, TimeSpan.Zero);
         var active = q.Where(x => x.Status == "Active" && (x.EndsAt == null || x.EndsAt > now));

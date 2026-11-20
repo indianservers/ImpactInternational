@@ -253,6 +253,7 @@ public partial class Db(DbContextOptions<Db> options) : DbContext(options)
         ConfigureTraining(b);
         ConfigurePortalParticipants(b);
         ConfigureMembership(b);
+        ConfigureAnnualDues(b);
         b.Entity<Level>().HasQueryFilter(l => l.Name != "District" && l.Name != "Zone");
         b.Entity<Org>().HasQueryFilter(o => Levels.Any(l => l.Id == o.LevelId));
         b.Entity<Membership>().HasQueryFilter(m => Levels.Any(l => l.Id == m.Club.LevelId));

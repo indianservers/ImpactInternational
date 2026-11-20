@@ -214,6 +214,7 @@ api.MapMembership();
 api.MapTrainingCertifications();
 api.MapPortalParticipants();
 api.MapIciPortal();
+api.MapDelegatedPositions();
 api.MapPresidentStatistics();
 api.MapMembershipAnalytics();
 api.MapMembershipWorkflows();
@@ -230,6 +231,7 @@ api.MapLeaderCommunications();
 api.MapMemberOtp();
 api.MapRegionalDirectory();
 api.MapDuesCenter();
+api.MapAnnualDues();
 api.MapOperations();
 app.MapIntelligence();
 app.MapIdCards();
@@ -284,13 +286,18 @@ api.MapPost(
         "/auth/login",
         async (Login r, Db db, IPasswordHasher<User> h, HttpContext c, Access access) =>
         {
-            var u = await db.Users.SingleOrDefaultAsync(x =>
-                x.Email == (r.Email ?? "").Trim().ToLowerInvariant()
-            );
+            var identifier = (r.Email ?? "").Trim();
+            var memberOtpEnabled = app.Configuration.GetValue("Authentication:MemberOtpEnabled", true);
+            var memberNumber = memberOtpEnabled ? null : MemberOtp.NormalizeMemberNumber(identifier);
+            var u = memberNumber == null
+                ? await db.Users.SingleOrDefaultAsync(x => x.Email == identifier.ToLowerInvariant())
+                : (await MemberOtp.FindActiveMember(db, memberNumber, access.BoundTenant))?.UserId is Guid userId
+                    ? await db.Users.SingleOrDefaultAsync(x => x.Id == userId)
+                    : null;
             var valid =
                 h.VerifyHashedPassword(u ?? new(), u?.PasswordHash ?? Dummy, r.Password ?? "")
                 != PasswordVerificationResult.Failed;
-            if (app.Configuration.GetValue("Authentication:MemberOtpEnabled", true) && u != null && valid && u.Verified && !(u.LockedUntil > DateTimeOffset.UtcNow) && !u.PlatformAdmin && await db.Assignments.AnyAsync(a => a.UserId == u.Id && db.Roles.Any(role => role.Id == a.RoleId && role.Name == "Club Member")))
+            if (memberOtpEnabled && u != null && valid && u.Verified && !(u.LockedUntil > DateTimeOffset.UtcNow) && !u.PlatformAdmin && await db.Assignments.AnyAsync(a => a.UserId == u.Id && db.Roles.Any(role => role.Id == a.RoleId && role.Name == "Club Member")))
                 throw new ApiError(403, "Members sign in with an email OTP. Request a code to continue.");
             if (u == null || !valid || !u.Verified || u.LockedUntil > DateTimeOffset.UtcNow)
             {
@@ -399,6 +406,8 @@ api.MapPost(
             else
             {
                 Check((r.Password?.Length ?? 0) >= 12, "Use at least 12 characters.");
+                if (u.PasswordHash == "" && await db.Persons.AnyAsync(p => p.UserId == u.Id))
+                    u.Verified = true;
                 u.PasswordHash = h.HashPassword(u, r.Password!);
                 await db.Sessions.Where(x => x.UserId == u.Id).ExecuteDeleteAsync();
             }

@@ -1,7 +1,7 @@
 import "./Members.css";
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   Upload,
   FileSpreadsheet,
@@ -12,7 +12,7 @@ import {
   Download,
 } from "lucide-react";
 import { api, apiForm } from "../api";
-import { PageHeader, Skeleton, ErrorBox } from "../App";
+import { PageHeader, Skeleton, ErrorBox, useWorkspace } from "../App";
 import MemberDuesImport, { ImportTemplates, ImportAudit } from "./MemberDuesImport";
 import { MemberStatus, ClubCategoryFields } from "../MemberComponents";
 export default function MemberImports() {
@@ -372,6 +372,7 @@ export default function MemberImports() {
                       </p>
                     </div>
                   )}
+                  {d.status === "Completed" && <ImportAccounts key={id} id={id} />}
                   <div className="header-actions spaced">
                     {[
                       "Uploaded",
@@ -551,4 +552,70 @@ function ExistingResolution({ row, onResolve }: any) {
       )}
     </div>
   );
+}
+
+const accountLabels: Record<string, string> = {
+  Linked: "Account linked", MissingEmail: "Valid email required",
+  ConflictingEmail: "Resolve conflicting email", ExistingAccount: "Link existing account",
+  ReadyToLink: "Ready for recheck",
+};
+
+function ImportAccounts({ id }: { id: string }) {
+  const { w } = useWorkspace();
+  const client = useQueryClient();
+  const [page, setPage] = useState(1);
+  const [issuesOnly, setIssuesOnly] = useState(false);
+  const base = "/membership/imports/" + id + "/accounts";
+  const key = ["import-account-results", w?.id, id];
+  const results = useQuery<{
+    summary: {state: string; count: number}[]; total: number; size: number;
+    items: {rowNumber: number; membershipId: string; number: string; name: string; club: string; state: string; eligible: boolean}[];
+  }>({
+    queryKey: [...key, page, issuesOnly],
+    queryFn: () => api(base + "?" + new URLSearchParams({ page: String(page), ...(issuesOnly ? { status: "issues" } : {}) })),
+  });
+  const recheck = useMutation({
+    mutationFn: () => api(base + "/recheck", "POST", {}),
+    onSuccess: async () => {
+      setPage(1);
+      await Promise.all([
+        client.invalidateQueries({ queryKey: key }),
+        client.invalidateQueries({ queryKey: ["delegated-position-members"] }),
+        client.invalidateQueries({ queryKey: ["member-profile"] }),
+      ]);
+    },
+  });
+  const data = results.data;
+  return <section className="panel spaced">
+    <h2>Member account results</h2>
+    <div className="header-actions">
+      <button type="button" className="secondary" onClick={() => recheck.mutate()} disabled={recheck.isPending}>Recheck accounts</button>
+      <label><input type="checkbox" checked={issuesOnly} onChange={e => { setIssuesOnly(e.target.checked); setPage(1); }} /> Show account issues only</label>
+    </div>
+    <ErrorBox error={results.error || recheck.error} />
+    {recheck.isSuccess && <p role="status">Account and appointment eligibility results updated.</p>}
+    {results.isPending && <Skeleton />}
+    {data && <>
+      <p>{Object.entries(accountLabels).map(([state, label]) => label + " " + (data.summary.find(row => row.state === state)?.count ?? 0)).join(" · ")}</p>
+      {data.items.length > 0 ? <div className="table-scroll"><table>
+        <thead><tr><th>Row</th><th>Member</th><th>Club</th><th>Account</th><th>Appointment eligibility</th></tr></thead>
+        <tbody>{data.items.map(row => <tr key={row.membershipId}>
+          <td>{row.rowNumber}</td><td><Link to={"/app/members/" + row.membershipId + "?tab=Personal+details"}>{row.name}</Link><br /><small>{row.number}</small></td>
+          <td>{row.club}</td><td>{accountLabels[row.state]}
+            {w?.permissions.includes("members.manage") && ["MissingEmail", "ConflictingEmail", "ExistingAccount"].includes(row.state) && <>
+              <br /><Link to={"/app/members/" + row.membershipId + "?tab=Personal+details&repair=" + (row.state === "ExistingAccount" ? "link" : "email")}>
+                {row.state === "ExistingAccount" ? "Open account linking" : "Edit email"}
+              </Link>
+            </>}
+          </td>
+          <td>{row.eligible ? "Eligible" : row.state === "Linked" ? "Active membership required" : "Account required"}</td>
+        </tr>)}</tbody>
+      </table></div> : <p>{issuesOnly ? "No account issues in the available import records." : "No retained member rows are available for this import."}</p>}
+      {data.total > data.size && <div className="header-actions">
+        <button className="secondary" disabled={page === 1} onClick={() => setPage(page - 1)}>Previous</button>
+        <span>Page {page} · {data.total} records</span>
+        <button className="secondary" disabled={page * data.size >= data.total} onClick={() => setPage(page + 1)}>Next</button>
+      </div>}
+    </>}
+  </section>;
 }

@@ -20,6 +20,7 @@ export default function Auth({ mode }: {
     const methods = useQuery<any>({ queryKey: ["auth-methods"], queryFn: () => api("/auth/methods"), enabled: mode === "login", staleTime: 0 });
     const otpEnabled = methods.data?.memberOtpEnabled === true;
     const staff = !otpEnabled || passwordMode;
+    const passwordMemberId = mode === "login" && methods.data?.memberOtpEnabled === false;
     const [identifier, setIdentifier] = useState("");
     const [challenge, setChallenge] = useState<string>();
     const [resendAt, setResendAt] = useState(0);
@@ -121,7 +122,7 @@ export default function Auth({ mode }: {
       <div className="auth-form">
         <div className="eyebrow">{t(signup ? "Join the community" : mode === "forgot-password" ? "Account recovery" : mode === "resend-verification" ? "Email verification" : complete ? "Account security" : "Member portal")}</div>
         <h1>{t(signup ? "Create your account" : forgot ? mode === "resend-verification" ? "Verify your email" : "Forgot password?" : complete ? "Secure your account" : "Welcome back")}</h1>
-        <p>{t(signup ? portalOnly ? "Join workshops and certifications. No club membership is required." : "Choose your community and introduce yourself. Your club or region president will review your application." : forgot ? mode === "resend-verification" ? "Enter your registered email and we’ll send a new verification link." : "Enter your registered email and we’ll send a link to reset your password." : complete ? "Complete your secure account request." : otpEnabled ? "Members sign in with a one-time email code. Enter your registered email or phone number." : "Sign in to your Impact International account.")}</p>
+        <p>{t(signup ? portalOnly ? "Join workshops and certifications. No club membership is required." : "Choose your community and introduce yourself. Your club or region president will review your application." : forgot ? mode === "resend-verification" ? "Enter your registered email and we’ll send a new verification link." : "Enter your registered email and we’ll send a link to reset your password." : complete ? "Complete your secure account request." : otpEnabled ? "Members sign in with a one-time email code." : "Sign in to your Impact International account.")}</p>
         {signup && message ? <section className="signup-pending success" role="status"><h2>{t(portalOnly ? "Verify your account" : "Pending approval")}</h2><p>{t(message)}</p><p>{t(portalOnly ? "After verifying your email, sign in and open My certifications to join the learning portal. No club is required." : "Your signup does not grant active membership or club access.")}</p><Link className="button" to="/login?applicant=1">{t("Sign in after verifying your email")}</Link></section> : <form onSubmit={submit} className="form-stack">
           {mode === "login" && methods.data?.googleEnabled && <>
             <button className="auth-google" type="button" disabled={busy} onClick={googleLogin}>
@@ -145,9 +146,9 @@ export default function Auth({ mode }: {
           {signup && (<label>{t("Full name")}<input name="name" autoComplete="name" minLength={2} maxLength={200} required/>
             </label>)}
           {mode === "login" && !staff && <>
-            <label>{t("Email or phone number")}<input name="identifier" autoComplete="username" required maxLength={200} value={identifier} readOnly={!!challenge} onChange={e => setIdentifier(e.target.value)} placeholder={t("Email or phone with country code")}/></label>
-            <small>{t("The code is sent to your registered email. WhatsApp OTP will be available later.")}</small>
-            {challenge && <><label>{t("One-time code")}<input name="code" inputMode="numeric" autoComplete="one-time-code" pattern="[0-9]{6}" maxLength={6} required placeholder={t("6-digit code")}/></label><small>{t("Codes expire in 10 minutes.")}</small><button type="button" className="secondary" disabled={busy} onClick={() => { setChallenge(undefined); setMessage(""); setError(null); }}>{t("Change email or phone")}</button><button type="button" className="secondary" disabled={busy} onClick={async () => {
+            <label>{t("Membership ID, email, or phone")}<input name="identifier" autoComplete="username" required maxLength={200} value={identifier} readOnly={!!challenge} onChange={e => setIdentifier(e.target.value)} placeholder={t("e.g. ICI-0132")}/></label>
+            <small>{t("Use your membership ID if you share a phone number or email. You need an email address only you use to receive your code.")}</small>
+            {challenge && <><label>{t("One-time code")}<input name="code" inputMode="numeric" autoComplete="one-time-code" pattern="[0-9]{6}" maxLength={6} required placeholder={t("6-digit code")}/></label><small>{t("Codes expire in 10 minutes.")}</small><button type="button" className="secondary" disabled={busy} onClick={() => { setChallenge(undefined); setMessage(""); setError(null); }}>{t("Change sign-in details")}</button><button type="button" className="secondary" disabled={busy} onClick={async () => {
                         if (Date.now() < resendAt) {
                             setError(new Error("Please wait 60 seconds before requesting another code."));
                             return;
@@ -169,8 +170,8 @@ export default function Auth({ mode }: {
                     }}>{t("Resend code")}</button></>}
           </>}
           {!complete && (mode !== "login" || staff) && (<label>
-              <span className="auth-field-title"><Mail size={20} aria-hidden="true"/>{t("Email address")}</span>
-              <input name="email" type="email" autoComplete="email" placeholder={t("you@example.com")} required/>
+              <span className="auth-field-title"><Mail size={20} aria-hidden="true"/>{t(passwordMemberId ? "Membership ID or email" : "Email address")}</span>
+              <input name="email" type={passwordMemberId ? "text" : "email"} autoComplete={mode === "login" ? "username" : "email"} placeholder={t(passwordMemberId ? "e.g. ICI-0132" : "you@example.com")} required/>
             </label>)}
           {signup && (<div className="form-grid">
               <label>{t("Country code")}<input name="countryCode" defaultValue="+91" pattern="\+[0-9]{1,4}" required/>

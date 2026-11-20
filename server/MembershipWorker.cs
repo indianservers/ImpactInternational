@@ -496,6 +496,10 @@ public class MembershipWorker(IServiceScopeFactory scopes, ILogger<MembershipWor
         )
             .Select(x => (x.UserId, x.OrgId))
             .ToHashSet();
+        var importedPersonIds = new HashSet<Guid>();
+        DateTimeOffset? annualEnd = await AnnualDues.Applies(db, job.TenantId)
+            ? AnnualDues.EndsAt(AnnualDues.CycleEnd(await AnnualDues.Settings(db, job.TenantId), AnnualDues.Today))
+            : null;
         for (int i = 0; i < rows.Count; i++)
         {
             var row = rows[i];
@@ -504,6 +508,7 @@ public class MembershipWorker(IServiceScopeFactory scopes, ILogger<MembershipWor
                 row.ExistingPersonId == null
                     ? s.NewPerson(MembershipImport.Person(v))
                     : people[row.ExistingPersonId.Value];
+            importedPersonIds.Add(person.Id);
             var club = clubs[Guid.Parse(v["clubId"])];
             var category = categories[Guid.Parse(v["categoryId"])];
             Check(
@@ -527,12 +532,11 @@ public class MembershipWorker(IServiceScopeFactory scopes, ILogger<MembershipWor
                 PersonId = person.Id,
                 ClubId = club.Id,
                 CategoryId = category.Id,
-                Number = "CS-" + numbers[i].ToString("D9"),
+                Number = MembershipService.FormatNumber(numbers[i]),
                 JoinedAt = joined,
-                EndsAt =
-                    category.ValidityMonths == null
-                        ? null
-                        : joined.AddMonths(category.ValidityMonths.Value),
+                EndsAt = annualEnd ?? (category.ValidityMonths == null
+                    ? null
+                    : joined.AddMonths(category.ValidityMonths.Value)),
                 ImportRowId = row.Id,
             };
             if (m.EndsAt < DateTimeOffset.UtcNow)
@@ -564,6 +568,8 @@ public class MembershipWorker(IServiceScopeFactory scopes, ILogger<MembershipWor
                 db.ChangeTracker.Clear();
             }
         }
+        await db.SaveChangesAsync(token);
+        await MemberAccounts.Provision(db, importedPersonIds.ToArray());
         if (db.Entry(job).State == EntityState.Detached)
             db.MemberImportJobs.Attach(job);
         job.Status = "Completed";
