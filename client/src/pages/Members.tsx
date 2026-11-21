@@ -4,6 +4,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   Plus,
   Search,
+  ChevronDown,
   Download,
   Upload,
   LayoutGrid,
@@ -35,6 +36,8 @@ export default function Members({
   const { w } = useWorkspace(),
     qc = useQueryClient();
   const grants = w?.permissions || [];
+  const [showInsights, setShowInsights] = useState(false);
+  const [showHierarchy, setShowHierarchy] = useState(false);
   const [bulkTarget,setBulkTarget]=useState<any>({clubId:"",categoryId:""});
   const [range,setRange]=useState("6m"),[dates,setDates]=useState<any>({}),[extra,setExtra]=useState<any>(()=>Object.fromEntries(Array.from(dashboardFilters.entries()).filter(([key])=>["nationalId","membershipType","joinedFrom","joinedTo","renewalFrom","renewalTo","country","state"].includes(key)))),[draftFilters,setDraftFilters]=useState<any>({}),[bulk,setBulk]=useState(""),[bulkReason,setBulkReason]=useState(""),[bulkStatus,setBulkStatus]=useState("Inactive"),[bulkCategory,setBulkCategory]=useState(""),[viewName,setViewName]=useState("");
   const [districtId,setDistrict]=useState(()=>dashboardFilters.get("districtId")||""),[zoneId,setZone]=useState(()=>dashboardFilters.get("zoneId")||"");
@@ -292,6 +295,7 @@ export default function Members({
       setError(e);
     }
   }
+  const hierarchyFilterCount = [regionId, clubId, categoryId].filter(Boolean).length;
   return (
     <div className="members-premium">
       <PageHeader
@@ -307,14 +311,14 @@ export default function Members({
       >
         <div className="header-actions">
           {!directory && grants.includes("members.invite") && (
-            <button className="secondary" onClick={() => setDrawer("invite")}>
+            <button className="secondary" aria-label="Invite member" onClick={() => setDrawer("invite")}>
               <Mail size={16} />
-              Invite member
+              <span className="mm-action-full">Invite member</span><span className="mm-action-phone" aria-hidden="true">Invite</span>
             </button>
           )}
-          {!directory&&grants.includes("members.import")&&<Link className="button secondary" to="/app/imports"><Upload size={16}/>Bulk import</Link>}
+          {!directory&&grants.includes("members.import")&&<Link className="button secondary" aria-label="Bulk import" to="/app/imports"><Upload size={16}/><span className="mm-action-full">Bulk import</span><span className="mm-action-phone" aria-hidden="true">Import</span></Link>}
           {!directory && grants.includes("members.manage") && (
-            <button onClick={() => setDrawer("create")}>
+            <button className="mm-header-add" onClick={() => setDrawer("create")}>
               <Plus size={16} />
               Add member
             </button>
@@ -322,10 +326,23 @@ export default function Members({
         </div>
       </PageHeader>
       <div className="mm-mobile-search search-field"><Search size={17}/><input aria-label="Search members on mobile" placeholder="Search name or member ID…" value={search} onChange={e=>setSearch(e.target.value)}/><small>{q.data?.total?.toLocaleString()??"…"}</small></div>
-      {!directory&&grants.includes("members.manage")&&<button className="mm-floating-add" aria-label="Add new member" onClick={()=>setDrawer("create")}><Plus size={18}/>Add member</button>}
       {!directory&&<nav className="mm-status-tabs" aria-label="Membership status">{[["All members",""],["Active","Active"],["Inactive","Inactive"],["Suspended","Suspended"],["Transferred","Transferred"],["Expired","Expired"],["Renewals due","Renewal Due"]].map(([label,status])=><button key={label} className={statuses.join(",")===status?"active":""} aria-pressed={statuses.join(",")===status} onClick={()=>setStatuses(status?[status]:[])}>{label}<span>{status===""?metrics.data?.memberships??"—":status==="Renewal Due"?metrics.data?.upcomingRenewals??"—":metrics.data?(metrics.data.intelligence?.statusCounts.find((x:any)=>x.status===status)?.count??0):"—"}</span></button>)}{grants.includes("members.approve")&&<Link to="/app/approvals?status=Pending">Pending applications <b>{metrics.data?.pendingApplications??"—"}</b></Link>}</nav>}
-      {!directory&&<MembershipIntelligence {...{metrics,range,setRange,setDates}} onStatus={setStatuses} onRegion={selectRegion} canApprove={grants.includes("members.approve")}/>}
-      <section className="mm-primary-filters" aria-label="Member hierarchy filters">
+      <div className="mm-phone-tools">
+        <button type="button" className="secondary mm-hierarchy-toggle" aria-expanded={showHierarchy}
+          aria-controls="member-hierarchy-filters" onClick={() => setShowHierarchy(value => !value)}>
+          Region & club{hierarchyFilterCount > 0 && ` (${hierarchyFilterCount})`} <ChevronDown size={16} aria-hidden="true"/>
+        </button>
+        {!directory &&
+        <button type="button" className="secondary mm-insights-toggle" aria-expanded={showInsights}
+          aria-controls="member-directory-insights" onClick={() => setShowInsights(value => !value)}>
+          Membership insights <ChevronDown size={16} aria-hidden="true"/>
+        </button>}
+      </div>
+      {!directory &&
+        <div id="member-directory-insights" className="mm-directory-insights" data-expanded={showInsights}>
+          <MembershipIntelligence {...{metrics,range,setRange,setDates}} onStatus={setStatuses} onRegion={selectRegion} canApprove={grants.includes("members.approve")}/>
+        </div>}
+      <section id="member-hierarchy-filters" className="mm-primary-filters" aria-label="Member hierarchy filters" data-expanded={showHierarchy}>
        <label>Region<select value={regionId} onChange={e=>selectRegion(e.target.value)}><option value="">All authorized regions</option>{regions.data?.map(r=><option key={r.id} value={r.id}>{r.name}</option>)}</select></label>
        <label>Club<select value={clubId} onChange={e=>setClub(e.target.value)}><option value="">All authorized clubs</option>{choices.data?.clubs.map((c:any)=><option key={c.id} value={c.id}>{c.name}</option>)}</select></label>
        <label>Category<select value={categoryId} onChange={e=>setCategory(e.target.value)}><option value="">All categories</option>{choices.data?.categories.map((c:any)=><option key={c.id} value={c.id}>{c.name}</option>)}</select></label>
@@ -532,6 +549,9 @@ export default function Members({
                   : "member-card-grid mobile-only"
               }
             >
+              {!q.data?.items.length && <p className="mm-card-empty">{directory
+                ? "No members have opted into this directory in your authorized scope."
+                : "No matching memberships. Adjust your filters or add a member."}</p>}
               {q.data?.items.map((m: any) => (
                 <article className="directory-person-card" key={m.id}>
                   <MemberAvatar
@@ -543,10 +563,10 @@ export default function Members({
                   />
                   {!directory&&<label className="mm-card-select"><input type="checkbox" aria-label={"Select member "+m.number} checked={selected.has(m.id)} onChange={e=>setSelected(old=>{const next=new Set(old);e.target.checked?next.add(m.id):next.delete(m.id);return next;})}/>Select</label>}<MemberStatus status={m.status} />
                   <h3>{m.name}</h3><b className="mm-card-id">{m.number}</b>
-                  <p>{m.category} · {m.profession || "Community member"}</p><small>{m.offices?.join(", ")||"No current office"} · Joined {new Date(m.joinedAt).toLocaleDateString()}</small>
-                  <span>{m.club}</span>
-                  <small>{[m.region].filter(Boolean).join(" → ")}</small>
-                  <small>{m.city || m.country || "Location not shared"}</small>
+                  <p>{m.category} · {m.profession || "Community member"}</p><small className="mm-card-membership">{m.offices?.join(", ")||"No current office"} · Joined {new Date(m.joinedAt).toLocaleDateString()}</small>
+                  <span className="mm-card-club">{m.club}</span>
+                  <small className="mm-card-region">{m.region}</small>
+                  <small className="mm-card-location">{m.city || m.country || "Location not shared"}</small>
                   <button className="secondary" onClick={() => setQuick(m)}>
                     View member <ArrowUpRight size={14} />
                   </button>

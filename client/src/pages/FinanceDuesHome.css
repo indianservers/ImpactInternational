@@ -69,8 +69,49 @@
 .annual-dues-member-details dd { margin: 3px 0 0; font-weight: 600; }
 .annual-dues-payment { display: flex; flex-wrap: wrap; align-items: end; gap: 12px; }
 .annual-dues-payment label { display: grid; gap: 6px; }
+.annual-phone-label { display: none; }
 @media (max-width: 720px) {
-  .annual-dues-grid > table { min-width: 530px; }
-  .annual-dues-nested { padding: 8px; }
-  .annual-dues-row-progress progress { display: none; }
+  .annual-dues-report { gap: 14px; }
+  .annual-dues-report > .sf-heading { align-items: start; }
+  .annual-dues-report :is(.sf-results, .sf-scope) { padding: 14px; min-width: 0; }
+  .annual-dues-report .sf-results > header > .button { color: #fff; }
+  .annual-dues-report .sf-extra-fields { grid-template-columns: repeat(2, minmax(0, 1fr)); margin: 0; }
+  .annual-dues-report .sf-extra-fields > label:first-child,
+  .annual-dues-report .sf-scope .sf-extra-fields > label:last-child { grid-column: 1 / -1; }
+  .annual-dues-report .sf-extra-fields input { width: 100%; }
+  .annual-dues-report .sf-table.annual-dues-grid { overflow: visible; }
+  .annual-dues-grid > table, .annual-dues-grid > table > tbody { display: block; }
+  .annual-dues-grid > table > thead { display: none; }
+  .annual-dues-grid > table > tbody { display: grid; gap: 10px; }
+  .annual-dues-grid > table > tbody > tr {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+    padding: 10px 12px;
+    border: 1px solid var(--op-line);
+    border-radius: 12px;
+    background: var(--op-paper);
+  }
+  .annual-dues-grid > table > tbody > tr > td { display: block; min-width: 0; padding: 0; border: 0; font-size: 13px; }
+  .annual-dues-report .annual-dues-grid td,
+  .annual-dues-report .annual-dues-grid td :is(h3, small, span, dd) {
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+  .annual-dues-grid > table > tbody > tr > td:first-child { grid-column: 1 / -1; }
+  .annual-dues-grid > table > tbody > .annual-dues-open { margin-bottom: -10px; border-radius: 12px 12px 0 0; border-bottom: 0; }
+  .annual-dues-grid > table > tbody > .annual-dues-detail { border-radius: 0 0 12px 12px; padding: 8px; background: var(--op-soft); }
+  .annual-dues-report .annual-dues-open > td { background: transparent; }
+  .annual-dues-report .annual-dues-row-toggle { justify-content: flex-start; width: 100%; font-size: 14px; white-space: normal; }
+  .annual-dues-report .annual-dues-count { min-height: 44px; min-width: 44px; padding-inline: 2px !important; }
+  .annual-phone-label { display: block; margin-bottom: 4px; font-size: 11px; line-height: 1.2; color: var(--op-muted); white-space: normal; }
+  .annual-dues-nested { padding: 8px 4px 4px 8px; border: 0; border-inline-start: 2px solid var(--op-line); border-radius: 0; background: transparent; }
+  .annual-dues-report .sf-pager { gap: 6px; padding: 8px 0; }
+  .annual-dues-report .sf-pager button { padding-inline: 8px; }
+  .annual-dues-row-progress { flex-wrap: wrap; gap: 3px; }
+  .annual-dues-row-progress progress { width: min(100%, 42px); }
+  .annual-dues-payment :is(label, input) { width: 100%; }
+}
+@media (max-width: 370px) {
+  .annual-dues-grid > table > tbody > tr { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }

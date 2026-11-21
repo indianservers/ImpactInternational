@@ -239,20 +239,20 @@ function DuesGrid({ report, view, config, params, page, onPage }: GridProps) {
   return <>
     <ErrorBox error={update.error}/>
     <div className="sf-table annual-dues-grid">
-      {memberView ? <table aria-label="Member dues">
-        <thead><tr><th scope="col">Member</th><th scope="col">Club</th><th scope="col">Membership</th><th scope="col">Dues</th><th scope="col">Collected</th><th scope="col">Estimated pending</th></tr></thead>
-        <tbody>{report.items.map(member => {
+      {memberView ? <table role="table" aria-label="Member dues">
+        <thead role="rowgroup"><tr role="row"><th role="columnheader" scope="col">Member</th><th role="columnheader" scope="col">Club</th><th role="columnheader" scope="col">Membership</th><th role="columnheader" scope="col">Dues</th><th role="columnheader" scope="col">Collected</th><th role="columnheader" scope="col">Estimated pending</th></tr></thead>
+        <tbody role="rowgroup">{report.items.map(member => {
           const open = !!expanded[member.id];
           const panel = gridId + member.id;
           const closed = !["Active", "Inactive", "Suspended", "Expired"].includes(member.membershipStatus);
           const current = member.membershipStatus === "Active" && member.endsAt && new Date(member.endsAt) > new Date();
           return <Fragment key={member.id}>
-            <tr className={open ? "annual-dues-open" : undefined}>
-              <td><RowToggle name={member.name} open={open} panel={panel} onClick={() => toggle(member.id, "all")}/><small className="annual-dues-member-number">{member.number}</small></td>
-              <td>{member.club}</td><td>{member.membershipStatus}</td><td>{member.paid ? "Paid" : "Unpaid"}</td>
-              <td>{member.paid ? money(member.amount) : "—"}</td><td>{member.paid ? "—" : money(pendingFee)}</td>
+            <tr role="row" className={open ? "annual-dues-open" : undefined}>
+              <td role="cell"><RowToggle name={member.name} open={open} panel={panel} onClick={() => toggle(member.id, "all")}/><small className="annual-dues-member-number">{member.number}</small></td>
+              <td role="cell"><span className="annual-phone-label">Club</span>{member.club}</td><td role="cell"><span className="annual-phone-label">Membership</span>{member.membershipStatus}</td><td role="cell"><span className="annual-phone-label">Dues</span>{member.paid ? "Paid" : "Unpaid"}</td>
+              <td role="cell">{member.paid ? money(member.amount) : "—"}</td><td role="cell">{member.paid ? "—" : money(pendingFee)}</td>
             </tr>
-            {open && <tr className="annual-dues-detail"><td colSpan={6}><div id={panel}>
+            {open && <tr role="row" className="annual-dues-detail"><td role="cell" colSpan={6}><div id={panel}>
               <dl className="annual-dues-member-details">
                 <div><dt>Membership ID</dt><dd>{member.number}</dd></div>
                 <div><dt>Membership expires</dt><dd>{member.endsAt ? printDate(member.endsAt) : "—"}</dd></div>
@@ -281,23 +281,23 @@ function DuesGrid({ report, view, config, params, page, onPage }: GridProps) {
             </div></td></tr>}
           </Fragment>;
         })}</tbody>
-      </table> : <table aria-label={label + " dues"}>
-        <thead><tr><th scope="col">{label}</th><th scope="col">Members</th><th scope="col">Paid</th><th scope="col">Unpaid</th><th scope="col">Collected</th><th scope="col">Estimated pending</th><th scope="col">Paid %</th></tr></thead>
-        <tbody>{report.groups?.map(group => {
+      </table> : <table role="table" aria-label={label + " dues"}>
+        <thead role="rowgroup"><tr role="row"><th role="columnheader" scope="col">{label}</th><th role="columnheader" scope="col">Members</th><th role="columnheader" scope="col">Paid</th><th role="columnheader" scope="col">Unpaid</th><th role="columnheader" scope="col">Collected</th><th role="columnheader" scope="col">Estimated pending</th><th role="columnheader" scope="col">Paid %</th></tr></thead>
+        <tbody role="rowgroup">{report.groups?.map(group => {
           const id = group.id;
           const panel = gridId + id;
           const mode = id ? expanded[id] : undefined;
           const coverage = group.members ? Math.round(group.paid * 100 / group.members) : 0;
           return <Fragment key={id ?? "unassigned"}>
-            <tr className={mode ? "annual-dues-open" : undefined}>
-              <td>{id ? <RowToggle name={group.name} open={!!mode} panel={panel} onClick={() => toggle(id, mode ?? "all")}/> : <strong>{group.name}</strong>}</td>
-              <td>{group.members}</td><td>{group.paid}</td>
-              <td>{id && group.unpaid > 0 ? <button type="button" className="annual-dues-count" aria-label={`View ${group.unpaid} unpaid members in ${group.name}`}
+            <tr role="row" className={mode ? "annual-dues-open" : undefined}>
+              <td role="cell">{id ? <RowToggle name={group.name} open={!!mode} panel={panel} onClick={() => toggle(id, mode ?? "all")}/> : <strong>{group.name}</strong>}</td>
+              <td role="cell"><span className="annual-phone-label">Members</span>{group.members}</td><td role="cell"><span className="annual-phone-label">Paid</span>{group.paid}</td>
+              <td role="cell"><span className="annual-phone-label">Unpaid</span>{id && group.unpaid > 0 ? <button type="button" className="annual-dues-count" aria-label={`View ${group.unpaid} unpaid members in ${group.name}`}
                 aria-expanded={mode === "unpaid"} aria-controls={mode === "unpaid" ? panel : undefined} onClick={() => toggle(id, "unpaid")}>{group.unpaid}</button> : group.unpaid}</td>
-              <td>{money(group.collected)}</td><td>{money(group.unpaid * pendingFee)}</td>
-              <td><div className="annual-dues-row-progress"><progress aria-label={group.name + " paid"} value={coverage} max={100}/><span>{coverage}%</span></div></td>
+              <td role="cell"><span className="annual-phone-label">Collected</span>{money(group.collected)}</td><td role="cell"><span className="annual-phone-label">Estimated pending</span>{money(group.unpaid * pendingFee)}</td>
+              <td role="cell"><span className="annual-phone-label">Paid %</span><div className="annual-dues-row-progress"><progress aria-label={group.name + " paid"} value={coverage} max={100}/><span>{coverage}%</span></div></td>
             </tr>
-            {id && mode && <tr className="annual-dues-detail"><td colSpan={7}><div id={panel}>
+            {id && mode && <tr role="row" className="annual-dues-detail"><td role="cell" colSpan={7}><div id={panel}>
               <NestedDuesGrid key={mode} id={id} name={group.name} parentView={view} mode={mode} config={config} params={params} workspaceId={w?.id}/>
             </div></td></tr>}
           </Fragment>;

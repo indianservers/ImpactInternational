@@ -1,5 +1,5 @@
 /* Phone defaults; larger screens progressively reveal the desktop layout. */
-.mobile-bottom-nav, .navigation-backdrop, .mobile-sidebar-close, .mobile-account-actions, .mobile-select-all { display: none; }
+.mobile-bottom-nav, .mobile-workspace-title, .navigation-backdrop, .mobile-sidebar-close, .mobile-account-actions, .mobile-select-all { display: none; }
 .app-shell .mobile-select-all { display: none; }
 .module-navigation { margin-bottom: 18px; min-width: 0; }
 .tool-picker { display: flex; gap: 10px; align-items: center; margin: 10px 0 0; font-size: 12px; }
@@ -171,4 +171,136 @@
 
 @media (min-width: 761px) {
   .mobile-tool-picker { display: none; }
+}
+
+@media (max-width: 760px) {
+  .app-shell.unified-navigation {
+    --phone-gutter: clamp(14px, 4vw, 24px);
+    --phone-nav-space: calc(70px + env(safe-area-inset-bottom, 0px));
+    --phone-top-space: calc(62px + env(safe-area-inset-top, 0px));
+    --phone-secondary-text: color-mix(in srgb, var(--text) 73%, var(--surface));
+  }
+  html { scroll-padding-top: calc(72px + env(safe-area-inset-top, 0px)); }
+  .app-shell.unified-navigation .main-column { padding-bottom: var(--phone-nav-space); }
+  .app-shell.unified-navigation main { padding: 18px max(var(--phone-gutter), env(safe-area-inset-right)) 28px max(var(--phone-gutter), env(safe-area-inset-left)); }
+  .app-shell.unified-navigation .topbar {
+    display: flex;
+    justify-content: start;
+    gap: 8px;
+    height: var(--phone-top-space);
+    padding: env(safe-area-inset-top, 0px) max(12px, env(safe-area-inset-right)) 0 max(12px, env(safe-area-inset-left));
+  }
+  .app-shell.unified-navigation .topbar:has(.op-scrim) { z-index: 70; }
+  .app-shell.unified-navigation .top-crumb,
+  .app-shell.unified-navigation .top-actions > .language-picker { display: none; }
+  .app-shell.unified-navigation .mobile-workspace-title {
+    display: flex;
+    align-items: center;
+    flex: 1;
+    gap: 9px;
+    min-width: 0;
+    min-height: 44px;
+    color: var(--text, var(--ink));
+    text-decoration: none;
+  }
+  .mobile-workspace-title img { flex: none; border-radius: 8px; }
+  .mobile-workspace-title span { display: grid; gap: 2px; min-width: 0; }
+  .mobile-workspace-title :is(strong, small) { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+  .mobile-workspace-title strong { font-size: clamp(.78rem, 3.5vw, 1rem); line-height: 1.15; letter-spacing: -.02em; }
+  .mobile-workspace-title small { font-size: .72rem; line-height: 1.2; color: var(--phone-secondary-text); }
+  .app-shell.unified-navigation .top-actions { gap: 4px; margin: 0; }
+  .app-shell.unified-navigation .topbar .mobile-menu,
+  .app-shell.unified-navigation .topbar .intel-search-launcher {
+    display: inline-grid;
+    place-items: center;
+    flex: 0 0 44px;
+    width: 44px;
+    min-height: 44px;
+    margin: 0;
+    padding: 0;
+    border-radius: 12px;
+  }
+  .app-shell .topbar .intel-search-launcher kbd { display: none; }
+  .app-shell.unified-navigation .topbar .avatar.small {
+    display: inline-grid;
+    place-items: center;
+    flex: 0 0 44px;
+    width: 44px;
+    height: 44px;
+    margin: 0;
+    text-decoration: none;
+  }
+  .app-shell.unified-navigation .mobile-bottom-nav {
+    grid-template-columns: none;
+    grid-auto-columns: minmax(0, 1fr);
+    grid-auto-flow: column;
+    gap: 1px;
+    padding: 5px max(8px, env(safe-area-inset-right)) calc(5px + env(safe-area-inset-bottom, 0px)) max(8px, env(safe-area-inset-left));
+    background: var(--surface);
+    box-shadow: 0 -6px 24px #2015450d;
+  }
+  .app-shell.unified-navigation .mobile-bottom-nav :is(a, button) {
+    gap: 2px;
+    min-height: 54px;
+    border: 0;
+    border-radius: 12px;
+    background: transparent;
+    box-shadow: none;
+    color: var(--phone-secondary-text);
+    font-size: .7rem;
+    line-height: 1.15;
+  }
+  .mobile-bottom-nav i { display: grid; place-items: center; width: min(52px, 100%); height: 28px; border-radius: 16px; }
+  .app-shell.unified-navigation .mobile-bottom-nav .active { color: var(--accent); font-weight: 750; }
+  .mobile-bottom-nav .active i { background: color-mix(in srgb, var(--accent) 14%, transparent); }
+  .mobile-bottom-nav :is(a, button):focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+  .app-shell.unified-navigation .sidebar {
+    padding-top: calc(12px + env(safe-area-inset-top, 0px));
+    padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+    overscroll-behavior: contain;
+  }
+  .app-shell .mobile-account-actions { flex-wrap: wrap; }
+  .app-shell .mobile-account-actions .language-picker { width: 100%; display: grid; gap: 4px; }
+  .app-shell .mobile-account-actions .language-picker > span { color: inherit; }
+  .app-shell .mobile-account-actions .language-picker select { width: 100%; }
+  .app-shell .sidebar-more summary { min-height: 48px; }
+  .app-shell.unified-navigation .page-header { gap: 14px; margin-bottom: 18px; }
+  .app-shell.unified-navigation .page-header h1 {
+    font-size: clamp(1.65rem, 7vw, 2.1rem);
+    line-height: 1.08;
+    letter-spacing: -.035em;
+    text-wrap: balance;
+  }
+  .app-shell.unified-navigation .page-header p { font-size: .875rem; line-height: 1.55; }
+  .app-shell.unified-navigation .header-actions > :is(button, .button) {
+    font-size: .8125rem;
+    min-height: 44px;
+    white-space: normal;
+  }
+  .app-shell.unified-navigation .mobile-record { padding: 14px; border-radius: 14px; }
+  .app-shell.unified-navigation .mobile-record dd { font-size: .875rem; line-height: 1.4; }
+  .app-shell.unified-navigation .mobile-record dt { font-size: .75rem; }
+  .app-shell.unified-navigation .mobile-record summary { font-size: .875rem; font-weight: 600; }
+  .app-shell.unified-navigation .op-scrim { overscroll-behavior: contain; }
+  .app-shell.unified-navigation .op-scrim > .op-dialog {
+    width: 100%;
+    height: 100dvh;
+    padding: calc(16px + env(safe-area-inset-top, 0px)) 16px calc(16px + env(safe-area-inset-bottom, 0px));
+    overscroll-behavior: contain;
+  }
+  .app-shell.unified-navigation .op-dialog-head h2 { font-size: 1.25rem; line-height: 1.2; }
+  .app-shell.unified-navigation .op-dialog-head button { flex: none; min-width: 44px; }
+  .app-shell.unified-navigation .section-tabs {
+    flex-wrap: nowrap;
+    gap: 6px;
+    overscroll-behavior-inline: contain;
+  }
+  .app-shell.unified-navigation .section-tabs a { flex: 0 0 auto; font-size: .8125rem; }
+  .app-shell.unified-navigation :is(.drawer-header, .modal) :is(h1, h2) { line-height: 1.2; text-wrap: balance; }
+  .app-shell.unified-navigation :is(.form-grid, .form-stack) > label { line-height: 1.35; }
+  .app-shell.unified-navigation :is(.form-grid, .form-stack) :is(input:not([type=checkbox], [type=radio], [type=hidden]), select, textarea) { font-size: 16px; }
+  .app-shell.unified-navigation > .main-column > footer { display: none; }
+  .reference-login .login-topbar { padding-top: calc(18px + env(safe-area-inset-top, 0px)); }
+  .reference-login .login-about { min-width: 44px; min-height: 44px; justify-content: center; }
+  .landing > header { padding-top: calc(18px + env(safe-area-inset-top, 0px)); }
 }

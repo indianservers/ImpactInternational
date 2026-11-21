@@ -29,8 +29,8 @@ import {
   ShieldCheck,
   Ellipsis,
 } from "lucide-react";
-import "./mobile.css";
 import "./navigation.css";
+import "./mobile.css";
 import { navigationSections, canOpenTab, matchesTab, taskGroups, financeMenu, duesTab } from "./navigation";
 import { TenantBrand } from "./TenantBrand";
 import { LanguagePicker, useLanguage } from "./i18n";
@@ -218,7 +218,8 @@ function Shell() {
     const previous = document.activeElement as HTMLElement | null;
     const overflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
-    const controls = () => Array.from(sidebarRef.current?.querySelectorAll<HTMLElement>('a[href], button, select, input, [tabindex="0"]') || []).filter(el => !el.hasAttribute("disabled"));
+    const controls = () => Array.from(sidebarRef.current?.querySelectorAll<HTMLElement>('a[href], button, select, input, summary, [tabindex="0"]') || [])
+      .filter(el => !el.hasAttribute("disabled") && el.getClientRects().length > 0);
     controls()[0]?.focus();
     const keydown = (event: KeyboardEvent) => {
       if (event.key === "Escape") setOpen(false);
@@ -309,6 +310,14 @@ function Shell() {
   const duesSelected = showDues && matchesTab(location.pathname, duesTab.to);
   const showPositions = w?.permissions.includes("ici.view") && ["National President", "Regional President"].includes(w.role);
   const positionsSelected = location.pathname === "/app/leadership/manage-positions";
+  const phoneTabs = ["home", "people", ...(showDues ? ["dues"] : ["leadership"]), "activities"]
+    .flatMap(id => {
+      if (id === "dues") return [{ id, to: duesTab.to, label: "Dues", icon: Wallet, selected: duesSelected }];
+      const section = visibleSections.find(candidate => candidate.id === id);
+      return section ? [{ id, to: section.tabs[0].to, label: section.label, icon: section.icon,
+        selected: !duesSelected && !positionsSelected && id === activeSection?.id }] : [];
+    });
+  const phoneMenuSelected = positionsSelected || (!duesSelected && !!activeSection && !phoneTabs.some(tab => tab.selected));
   useEffect(() => {
     if (activeSection && !duesSelected && !positionsSelected && !primaryNavigation.has(activeSection.id)) setMoreOpen(true);
   }, [activeSection?.id, duesSelected, positionsSelected]);
@@ -373,7 +382,7 @@ function Shell() {
               </div>
             </details>
           </nav>
-          <div className="mobile-account-actions"><button className="secondary" onClick={toggleTheme}><Moon size={17} />{me.data.theme === "dark" ? "Light theme" : "Dark theme"}</button><button className="secondary" onClick={signOut}><LogOut size={17} />Sign out</button></div>
+          {open && <div className="mobile-account-actions"><LanguagePicker persist /><button className="secondary" onClick={toggleTheme}><Moon size={17} />{me.data.theme === "dark" ? "Light theme" : "Dark theme"}</button><button className="secondary" onClick={signOut}><LogOut size={17} />Sign out</button></div>}
           <div className="sidebar-bottom">
             <div className="help-card">
               <span className="gold-dot" />
@@ -408,6 +417,10 @@ function Shell() {
             <div className="top-crumb">
               Impact International <span>/</span> <b>{w ? [w.organization, w.organizationType].filter(Boolean).join(" · ") : "Your account"}</b>
             </div>
+            <Link className="mobile-workspace-title" to="/app" onClick={() => setOpen(false)}>
+              <img src={impact.logo} alt="" width="32" height="32"/>
+              <span><strong>Impact International</strong>{w && <small>{w.organization === "Impact International" ? impactRole(w.role) : w.organization}</small>}</span>
+            </Link>
             <div className="top-actions">
               <LanguagePicker persist />
               <Suspense fallback={null}>
@@ -504,9 +517,11 @@ function Shell() {
               </Suspense>
             )}
           </main>
-          <nav className="mobile-bottom-nav" aria-label="Main navigation" style={{ gridTemplateColumns: `repeat(${Math.min(4, visibleSections.length) + 1}, minmax(0, 1fr))` }}>
-            {visibleSections.slice(0, 4).map(section => { const Icon = section.icon; return <Link key={section.id} to={section.tabs[0].to} className={activeSection?.id === section.id ? "active" : undefined} aria-current={activeSection?.id === section.id ? "page" : undefined}><Icon size={20} /><span>{t(section.label)}</span></Link>; })}
-            <button onClick={() => setOpen(true)} aria-expanded={open} aria-controls="organization-navigation" className={visibleSections.slice(4).some(s => s.id === activeSection?.id) ? "secondary active" : "secondary"}><Menu size={20} /><span>{t("More")}</span></button>
+          <nav className="mobile-bottom-nav" aria-label="Main navigation">
+            {phoneTabs.map(({ id, to, label, icon: Icon, selected }) =>
+              <Link key={id} to={to} className={selected ? "active" : undefined} aria-current={selected ? "page" : undefined}><i><Icon size={20} aria-hidden="true"/></i><span>{t(label)}</span></Link>
+            )}
+            <button onClick={() => setOpen(true)} aria-expanded={open} aria-controls="organization-navigation" className={phoneMenuSelected ? "secondary active" : "secondary"}><i><Ellipsis size={22} aria-hidden="true"/></i><span>{t("More")}</span></button>
           </nav>
           <footer>
             Impact International{" "}

@@ -17,6 +17,80 @@
 .membership-shell .import-steps>div.active{color:#5944a1;font-weight:700}.membership-shell .import-steps>div.active>span{background:#55419e;color:white}
 .membership-shell a.button.secondary{background:var(--mm-surface)!important;color:var(--mm-ink)!important;border:1px solid var(--mm-border)}.membership-shell main:has(.import-steps)>.foundation-page-context,.membership-shell main:has(.import-steps) .section-navigation{display:none}
 
-.mm-mobile-search,.mm-floating-add{display:none!important}@media(max-width:760px){.members-premium .mm-mobile-search{display:flex!important;min-width:0;margin-bottom:13px;width:100%;height:42px;border-radius:8px;border-color:var(--mm-border)}.mm-mobile-search input{font-size:12px}.mm-mobile-search small{font-size:10px;padding-right:8px;color:var(--mm-muted)}.members-premium .filter-bar .search-field{display:none}.members-premium .mm-floating-add{display:flex!important;align-items:center;gap:5px;position:fixed;right:16px;bottom:82px;z-index:25;padding:11px 15px;border-radius:25px;background:linear-gradient(110deg,#c59b31,#a77713)!important;color:white!important;font-size:12px;box-shadow:0 5px 15px #66521a33}}
+.mm-mobile-search{display:none!important}@media(max-width:760px){.members-premium .mm-mobile-search{display:flex!important;min-width:0;margin-bottom:13px;width:100%;height:42px;border-radius:8px;border-color:var(--mm-border)}.mm-mobile-search input{font-size:12px}.mm-mobile-search small{font-size:10px;padding-right:8px;color:var(--mm-muted)}.members-premium .filter-bar .search-field{display:none}}
 .mm-status-tabs{scrollbar-width:none}.mm-status-tabs::-webkit-scrollbar{display:none}@media(max-width:760px){.members-premium .mm-mobile-search small{display:none}.members-premium .directory-person-card>.mm-card-select{display:flex;align-items:center;justify-content:flex-start;gap:6px;grid-row:1;grid-column:1/-1;text-align:left}.members-premium .directory-person-card>.member-avatar{grid-row:2/6}.members-premium .directory-person-card>.badge{grid-row:2}.members-premium .directory-person-card>.mm-card-select input{width:20px;height:20px;flex:none}}
 @media(max-width:760px){.members-premium .directory-person-card{display:flex!important;flex-direction:column;align-items:flex-start;gap:7px;text-align:left;padding:18px}.members-premium .directory-person-card>.mm-card-select{display:flex!important;flex-direction:row!important;align-items:center;align-self:flex-start;justify-content:flex-start;order:-1;gap:6px;margin:0 0 5px;text-align:left;font-size:10px}.members-premium .directory-person-card>.member-avatar{margin:0 0 5px}.members-premium .directory-person-card>.member-status{position:absolute!important;right:18px;top:53px;align-self:flex-end}.members-premium .directory-person-card>h3{line-height:1.4}.members-premium .directory-person-card>button{align-self:stretch;margin-top:10px}.members-premium .directory-person-card>.mm-card-select input{margin:0}}
+.mm-phone-tools, .mm-action-phone { display: none; }
+.mm-card-empty { margin: 0; padding: 16px; }
+@media (max-width: 760px) {
+  .app-shell .members-premium .members-desktop-grid,
+  .app-shell .members-premium .view-toggle,
+  .mm-directory-insights[data-expanded="false"],
+  .app-shell .members-premium .mm-primary-filters[data-expanded="false"],
+  .mm-action-full { display: none; }
+  .mm-action-phone { display: inline; }
+  .app-shell .members-premium .mm-header-add { order: -1; }
+  .app-shell .members-premium .header-actions > :is(button, a) { margin-left: 0; gap: 5px; padding-inline: 8px; }
+  .mm-phone-tools { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+  .app-shell .members-premium .member-card-grid.mobile-only { display: grid; }
+  .app-shell .members-premium .mm-phone-tools button {
+    display: flex !important;
+    align-items: center;
+    justify-content: space-between;
+    flex: 1 1 auto;
+    gap: 6px;
+    margin: 0;
+    font-size: 12px;
+    padding-inline: 10px;
+    min-height: 44px;
+  }
+  .mm-phone-tools button[aria-expanded="true"] svg { transform: rotate(180deg); }
+  .app-shell .members-premium .mm-mobile-search { height: 48px; border-radius: 12px; }
+  .app-shell .members-premium .mm-mobile-search input { font-size: 16px; }
+  .app-shell .members-premium .mm-primary-filters > label { font-size: 12px; }
+  .app-shell .members-premium :is(.mm-primary-filters, .mm-advanced) select { font-size: 16px; }
+  .app-shell .members-premium .directory-person-card {
+    display: grid !important;
+    grid-template-columns: 44px minmax(0, 1fr) auto;
+    align-items: start;
+    gap: 4px 10px;
+    padding: 14px;
+    border-radius: 14px;
+  }
+  .app-shell .members-premium .directory-person-card > .member-avatar {
+    grid-column: 1; grid-row: 1 / 4;
+    width: 44px; height: 44px;
+    margin: 0;
+  }
+  .app-shell .members-premium .directory-person-card > h3 { grid-column: 2 / -1; grid-row: 1; font-size: 16px; }
+  .app-shell .members-premium .directory-person-card > .mm-card-id { grid-column: 2; grid-row: 2; font-size: 12px; }
+  .app-shell .members-premium .directory-person-card > .member-status {
+    grid-column: 3; grid-row: 2;
+    position: static !important;
+    justify-self: end;
+    font-size: 10px;
+  }
+  .app-shell .members-premium .directory-person-card > :is(p, .mm-card-membership, .mm-card-club, .mm-card-region, .mm-card-location) {
+    grid-column: 2 / -1;
+    font-size: 12px;
+    line-height: 1.4;
+  }
+  .app-shell .members-premium .directory-person-card > p { grid-row: 3; }
+  .app-shell .members-premium .directory-person-card > .mm-card-club { margin-top: 4px; font-weight: 650; }
+  .app-shell .members-premium .directory-person-card > .mm-card-select {
+    grid-column: 1 / 3; grid-row: auto;
+    order: initial;
+    min-height: 44px;
+    padding-inline: 4px;
+    align-self: end;
+    margin: 6px 0 0;
+    font-size: 12px;
+  }
+  .app-shell .members-premium .directory-person-card > button {
+    grid-column: 3;
+    min-height: 44px;
+    font-size: 12px;
+    margin-top: 6px;
+  }
+  .app-shell .members-premium .directory-person-card:not(:has(.mm-card-select)) > button { grid-column: 1 / -1; }
+}

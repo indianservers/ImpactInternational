@@ -1177,3 +1177,18 @@
     margin-bottom: 2px;
   }
 }
+@media (max-width: 540px) {
+  .aw-header { padding-top: calc(14px + env(safe-area-inset-top, 0px)); }
+  .aw-header h2 { font-size: 21px; }
+  .aw-header p { font-size: 12px; }
+  .aw-steps button { font-size: 10px; min-height: 68px; }
+  .aw-card :is(.aw-field, label) { font-size: 13px; }
+  .aw-section-note { font-size: 12px; }
+  .aw-footer {
+    align-items: stretch;
+    padding: 10px max(12px, env(safe-area-inset-right)) calc(10px + env(safe-area-inset-bottom, 0px)) max(12px, env(safe-area-inset-left));
+  }
+  .aw-footer-actions { flex-wrap: wrap; }
+  .aw-footer :is(.aw-primary, .aw-secondary) { min-height: 44px; font-size: 12px; }
+  .aw-footer-actions .aw-primary { flex: 1; justify-content: center; }
+}
